@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - luxe.com</title>
+    <link rel="stylesheet" href="/css/signUp.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/img/logo.png" alt="luxe.com Logo" class="logo-img">
+        </div>
+        <a href="#" class="contact-us">+ contact us</a>
+    </header>
+    <main>
+        <div class="signup-container">
+            <h1>CREATE LUXE.COM ACCOUNT</h1>
+            <a href="/login" class="login-link">Already have an account log in</a>
+            <div class="form-container">
+              <form id="signForm" method="post" action="/signup">
+                <div class="form-group">
+                  <div id="error1" class="error-message"></div>
+                  <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+                </div>
+                <div class="form-group">
+                  <div id="error2" class="error-message"></div>
+                  <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+                </div>
+                <div class="form-group">
+                  <div id="error3" class="error-message"></div>
+                  <input type="email" id="email" name="email" placeholder="Email Address" required>
+                </div>
+                <div class="form-group">
+                  <div id="error4" class="error-message"></div>
+                  <input type="password" id="password" name="password" placeholder="Password" autocomplete="new-password" required>
+                </div>
+                <div class="form-group">
+                  <div id="error5" class="error-message"></div>
+                  <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Your Password" autocomplete="new-password" required>
+                </div>
+                <p class="password-requirement">Use 8 or more characters with a mix of letters, numbers & symbols.</p>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="showPassword"> Show your Password
+                </label>
+                <button type="submit" class="continue-btn">CREATE AN ACCOUNT</button>
+              </form>
+            </div>
+            <div class="icons">
+              <img src="/img/image12.png" alt="Perfume Icon" class="icon">
+            </div>
+            <div class="footer-links">
+              <a href="#">Help</a>
+              <a href="#">Privacy</a>
+              <a href="#">Terms</a>
+            </div>
+          </div>
+    </main>
+
+    <script>
+        const firstName = document.getElementById("firstName");
+        const lastName = document.getElementById("lastName");
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+        const confirmPassword = document.getElementById("confirmPassword");
+    
+        const error1 = document.getElementById("error1");
+        const error2 = document.getElementById("error2");
+        const error3 = document.getElementById("error3");
+        const error4 = document.getElementById("error4");
+        const error5 = document.getElementById("error5");
+    
+        const signForm = document.getElementById("signForm");
+    
+        function firstNameValidateChecking() {
+            const firstNameVal = firstName.value.trim();
+            const namePattern = /^[A-Za-z\s]+$/;
+            const formGroup = firstName.parentElement;
+    
+            if (firstNameVal === "" || !namePattern.test(firstNameVal)) {
+                error1.innerHTML = "Please enter a valid first name";
+                formGroup.classList.add("invalid");
+            } else {
+                error1.innerHTML = "";
+                formGroup.classList.remove("invalid");
+            }
+        }
+    
+        function lastNameValidateChecking() {
+            const lastNameVal = lastName.value.trim();
+            const namePattern = /^[A-Za-z\s]+$/;
+            const formGroup = lastName.parentElement;
+    
+            if (lastNameVal === "" || !namePattern.test(lastNameVal)) {
+                error2.innerHTML = "Please enter a valid last name";
+                formGroup.classList.add("invalid");
+            } else {
+                error2.innerHTML = "";
+                formGroup.classList.remove("invalid");
+            }
+        }
+    
+        function emailValidateChecking() {
+            const emailVal = email.value.trim();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const formGroup = email.parentElement;
+    
+            if (!emailPattern.test(emailVal)) {
+                error3.innerHTML = "Invalid email format";
+                formGroup.classList.add("invalid");
+            } else {
+                error3.innerHTML = "";
+                formGroup.classList.remove("invalid");
+            }
+        }
+    
+        function passwordValidateChecking() {
+            const passwordVal = password.value;
+            const confirmPasswordVal = confirmPassword.value;
+            const alpha = /[A-Za-z]/;
+            const digit = /\d/;
+            const passwordGroup = password.parentElement;
+            const confirmPasswordGroup = confirmPassword.parentElement;
+    
+            if (passwordVal.length < 8) {
+                error4.innerHTML = "Should contain at least 8 characters";
+                passwordGroup.classList.add("invalid");
+            } else if (!alpha.test(passwordVal) || !digit.test(passwordVal)) {
+                error4.innerHTML = "Should contain both letters and numbers";
+                passwordGroup.classList.add("invalid");
+            } else {
+                error4.innerHTML = "";
+                passwordGroup.classList.remove("invalid");
+            }
+    
+            if (passwordVal !== confirmPasswordVal) {
+                error5.innerHTML = "Passwords do not match";
+                confirmPasswordGroup.classList.add("invalid");
+            } else {
+                error5.innerHTML = "";
+                confirmPasswordGroup.classList.remove("invalid");
+            }
+        }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            if (
+                !firstName ||
+                !lastName ||
+                !email ||
+                !password ||
+                !confirmPassword ||
+                !signForm
+            ) {
+                console.log("One or more elements not found");
+                return;
+            }
+    
+            signForm.addEventListener("submit", function (e) {
+                firstNameValidateChecking();
+                lastNameValidateChecking();
+                emailValidateChecking();
+                passwordValidateChecking();
+    
+                if (
+                    error1.innerHTML ||
+                    error2.innerHTML ||
+                    error3.innerHTML ||
+                    error4.innerHTML ||
+                    error5.innerHTML
+                ) {
+                    e.preventDefault(); // block form submit if any error exists
+                }
+            });
+    
+            // Add real-time validation on input
+            firstName.addEventListener("input", firstNameValidateChecking);
+            lastName.addEventListener("input", lastNameValidateChecking);
+            email.addEventListener("input", emailValidateChecking);
+            password.addEventListener("input", passwordValidateChecking);
+            confirmPassword.addEventListener("input", passwordValidateChecking);
+        });
+    </script>
+</body>
+</html>

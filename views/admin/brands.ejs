@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Management</title>
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+        .content-main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .content-header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .btn-add-brand {
+            background-color: #7db87d;
+            color: #000000;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .btn-add-brand:hover {
+            background-color: #6ca76c;
+            color: #ffffff;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .table thead {
+            background-color: #7db87d;
+            color: #000000;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .table th {
+            padding: 15px;
+            text-align: center;
+            border: none;
+            background-color: #7db87d !important;
+            color: #000000;
+        }
+        .table td {
+            padding: 15px;
+            text-align: center;
+            vertical-align: middle;
+            border: none;
+            background-color: #d3d3d3;
+            border-bottom: 2px solid white;
+            font-weight: 600;
+        }
+        
+        .table tbody tr {
+            background-color: #dcdcdc;
+        }
+        .table tbody tr:nth-child(odd) {
+            background-color: #d0d0d0;
+        }
+        .badge {
+            font-weight: normal;
+            padding: 5px 15px;
+            border-radius: 0;
+            width: auto;
+            display: inline-block;
+        }
+        .badge.alert-success {
+            background-color: transparent;
+            color: #000000;
+            font-weight: 600;
+        }
+        .badge.alert-danger {
+            background-color: transparent;
+            color: #000000;
+            font-weight: 600;
+        }
+        .action-icon {
+            color: #000000;
+            margin: 0 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .action-icon:hover {
+            color: #7db87d;
+        }
+        /* Pagination styles */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination .page-item .page-link {
+            color: #000000;
+            background-color: #dcdcdc;
+            border: none;
+            margin: 0 5px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #7db87d;
+            color: #000000;
+            font-weight: bold;
+        }
+        /* Modal styles */
+        .modal-header {
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem;
+        }
+        .modal-footer {
+            border-top: 1px solid #e9ecef;
+            padding: 1rem;
+        }
+        .image-preview-container {
+            width: 180px;
+            height: 180px;
+            border: 1px dashed #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            position: relative;
+            cursor: pointer;
+        }
+        .image-preview-container img {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+        .image-upload-placeholder {
+            text-align: center;
+        }
+        .image-upload-placeholder i {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .brand-image-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .add-btn, .edit-btn {
+            background-color: #7db87d;
+            border-color: #7db87d;
+            color: #000000;
+            width: 50%;
+            margin: 0 auto;
+            display: block;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .add-btn:hover, .edit-btn:hover {
+            background-color: #000000;
+            border-color: #000000;
+            color: white;
+        }
+        /* Close button for modals */
+        .close-button {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+            color: #000;
+            text-shadow: 0 1px 0 #fff;
+            opacity: .5;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        .close-button:hover {
+            opacity: .75;
+        }
+        .modal.fade.show {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        .modal {
+            z-index: 1055 !important;
+        }
+        .modal-backdrop {
+            z-index: 1050 !important;
+        }
+        /* Loading Overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .loading-overlay .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        .add-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .loading-overlay .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: #7db87d;
+        }
+        .loading-overlay {
+            background: rgba(0, 0, 0, 0.5); 
+        }
+    </style>
+</head>
+<body>
+    <%- include('../../views/partials/admin/header') %>
+
+    <section class="content-main">
+        <div class="content-header">
+            <button type="button" class="btn btn-add-brand" data-bs-toggle="modal" data-bs-target="#addBrandModal">
+                ADD BRAND
+            </button>
+        </div>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>BRAND</th>
+                    <th>LOGO</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (data && data.length > 0) { %>
+                    <% for(let i = 0; i < data.length; i++) { %>
+                        <tr>
+                            <td><%= data[i].brandName %></td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; margin: 0 auto;">
+                                    <img src="<%= data[i].brandImage %>" alt="<%= data[i].brandName %>" class="img-fluid rounded-circle" style="width: 100%; height: auto" />
+                                </div>
+                            </td>
+                            <td>
+                                <% if (!data[i].isBlocked) { %>
+                                    <span class="badge alert-success">Listed</span>
+                                <% } else { %>
+                                    <span class="badge alert-danger">Unlisted</span>
+                                <% } %>
+                            </td>
+                            <td class="actions-cell">
+                                <i class="fas fa-pencil-alt action-icon edit-icon"
+                                   data-id="<%= data[i]._id %>"
+                                   data-name="<%= data[i].brandName %>"
+                                   data-image="<%= data[i].brandImage %>"
+                                   data-status="<%= data[i].isBlocked ? 'unlisted' : 'listed' %>"></i>
+                                <i class="fas fa-trash-alt action-icon delete-icon"
+                                   data-id="<%= data[i]._id %>"></i>
+                            </td>
+                        </tr>
+                    <% } %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="4" class="text-center">No brands found</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+
+        <!-- Add Brand modal -->
+        <div class="modal fade" id="addBrandModal" tabindex="-1" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addBrandModalLabel">Add New Brand</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body position-relative">
+                
+                        <div class="loading-overlay d-none" id="loadingOverlay">
+                            <div class="spinner-border text-success" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <form id="addBrandForm" method="post" action="/admin/addBrand" enctype="multipart/form-data">
+                            <div class="image-preview-container">
+                                <img id="imagePreview" src="" alt="Brand Image Preview" />
+                                <div class="image-upload-placeholder" id="uploadPlaceholder">
+                                    <i class="fas fa-plus"></i>
+                                    <div>Add Brand Image</div>
+                                </div>
+                                <input
+                                    name="brandImage"
+                                    id="brandImage"
+                                    type="file"
+                                    accept="image/*"
+                                    class="brand-image-input"
+                                />
+                            </div>
+                            <div class="error-message" id="imageError" style="display: none; color: red; font-size: 12px; text-align: center; margin-bottom: 15px;"></div>
+                            
+                            <div class="mb-3">
+                                <label for="brandName" class="form-label">Brand Name</label>
+                                <input
+                                    type="text"
+                                    name="brandName"
+                                    id="brandName"
+                                    placeholder="Enter brand name"
+                                    class="form-control"
+                                    maxlength="100"
+                                />
+                                <div class="error-message" id="nameError" style="display: none; color: red; font-size: 12px;"></div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="status" class="form-label">Status</label>
+                                <select id="status" name="status" class="form-control">
+                                    <option value="active">Listed</option>
+                                    <option value="inactive">Unlisted</option>
+                                </select>
+                                <div class="error-message" id="statusError" style="display: none; color: red; font-size: 12px;"></div>
+                            </div>
+                            
+                            <div class="d-grid mt-4">
+                                <button class="btn add-btn" type="submit" id="addBrandButton">ADD</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       <!-- Edit Brand Modal -->
+      <div class="modal fade" id="editBrandModal" tabindex="-1" aria-labelledby="editBrandModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editBrandModalLabel">Edit Brand</h5>
+                        <button type="button" class="close-button" data-bs-dismiss="modal" aria-label="Close">×</button>
+                    </div>
+                    <div class="modal-body position-relative">
+                        <!-- Loading Overlay -->
+                        <div class="loading-overlay d-none" id="editLoadingOverlay">
+                            <div class="spinner-border text-success" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <form id="editBrandForm" class="brand-form" method="post" action="/admin/editBrand" enctype="multipart/form-data">
+                            <div class="image-preview-container">
+                                <img id="editImagePreview" src="" alt="Brand Image Preview" />
+                                <div class="image-upload-placeholder" id="editUploadPlaceholder">
+                                    <i class="fas fa-plus"></i>
+                                    <div>Update Brand Image</div>
+                                </div>
+                                <input
+                                    name="brandImage"
+                                    id="editBrandImage"
+                                    type="file"
+                                    accept="image/*"
+                                    class="brand-image-input"
+                                />
+                            </div>
+                            <div class="error-message" id="editImageError" style="display: none; color: red; font-size: 12px; text-align: center; margin-bottom: 15px;"></div>
+                            
+                            <div class="mb-3">
+                                <label for="editBrandName" class="form-label">Brand Name</label>
+                                <input
+                                    type="text"
+                                    name="brandName"
+                                    id="editBrandName"
+                                    placeholder="Enter brand name"
+                                    class="form-control brand-name"
+                                    maxlength="100"
+                                />
+                                <div class="error-message" id="editNameError" style="display: none; color: red; font-size: 12px;"></div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="editStatus" class="form-label">Status</label>
+                                <select id="editStatus" name="status" class="form-control brand-status">
+                                    <option value="active">Listed</option>
+                                    <option value="inactive">Unlisted</option>
+                                </select>
+                                <span class="selected-status" style="display: none;"></span>
+                                <div class="error-message" id="editStatusError" style="display: none; color: red; font-size: 12px;"></div>
+                            </div>
+                            
+                            <div class="d-grid mt-4">
+                                <button class="btn edit-btn" type="submit" id="editBrandButton">UPDATE</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('../../views/partials/admin/footer') %>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Validation functions
+        function validateForm(form, isEdit = false) {
+            clearErrorMessages(form);
+            const name = form.querySelector(isEdit ? '#editBrandName' : '#brandName').value.trim();
+            const status = form.querySelector(isEdit ? '#editStatus' : '#status').value.trim();
+            const image = form.querySelector(isEdit ? '#editBrandImage' : '#brandImage').files[0];
+            let isValid = true;
+
+            // Validate brand name
+            if (name === '') {
+                displayErrorMessage(form, isEdit ? 'editNameError' : 'nameError', 'Please enter a brand name');
+                isValid = false;
+            } else if (!/^[a-zA-Z0-9\s&'-]+$/.test(name)) {
+                displayErrorMessage(form, isEdit ? 'editNameError' : 'nameError', 'Brand name can only contain letters, numbers, spaces, &, \', or -');
+                isValid = false;
+            } else if (name.length < 2 || name.length > 50) {
+                displayErrorMessage(form, isEdit ? 'editNameError' : 'nameError', 'Brand name must be between 2 and 50 characters');
+                isValid = false;
+            }
+
+            // Validate status
+            if (status === '') {
+                displayErrorMessage(form, isEdit ? 'editStatusError' : 'statusError', 'Please select a status');
+                isValid = false;
+            }
+
+            // Validate image 
+            if (!isEdit && !image) {
+                displayErrorMessage(form, 'imageError', 'Please select a brand image');
+                isValid = false;
+            } else if (image) {
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                const maxSize = 5 * 1024 * 1024;
+                if (!allowedTypes.includes(image.type)) {
+                    displayErrorMessage(form, isEdit ? 'editImageError' : 'imageError', 'Only JPEG, PNG, or GIF images are allowed');
+                    isValid = false;
+                } else if (image.size > maxSize) {
+                    displayErrorMessage(form, isEdit ? 'editImageError' : 'imageError', 'Image size must not exceed 5MB');
+                    isValid = false;
+                }
+            }
+
+            if (!isValid) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Please fill all fields correctly'
+                });
+            }
+
+            return isValid;
+        }
+
+        function displayErrorMessage(form, elementId, message) {
+            const errorElement = form.querySelector(`#${elementId}`);
+            errorElement.innerHTML = message;
+            errorElement.style.display = 'block';
+        }
+
+        function clearErrorMessages(form) {
+            const errorElements = form.querySelectorAll('.error-message');
+            errorElements.forEach(element => {
+                element.innerHTML = '';
+                element.style.display = 'none';
+            });
+        }
+
+        // Handle image preview for add modal
+        document.getElementById('brandImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imagePreview = document.getElementById('imagePreview');
+                    imagePreview.src = event.target.result;
+                    imagePreview.style.display = 'block';
+                    document.getElementById('uploadPlaceholder').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle image preview for edit modal
+        document.getElementById('editBrandImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imagePreview = document.getElementById('editImagePreview');
+                    imagePreview.src = event.target.result;
+                    imagePreview.style.display = 'block';
+                    document.getElementById('editUploadPlaceholder').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+       // Handle add form submission
+        document.getElementById('addBrandForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = this;
+            const addButton = document.getElementById('addBrandButton');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            // Show loading state
+            addButton.disabled = true;
+            loadingOverlay.classList.remove('d-none');
+
+            if (!validateForm(form)) {
+                // Reset loading state if validation fails
+                addButton.disabled = false;
+                loadingOverlay.classList.add('d-none');
+                return;
+            }
+
+            const formData = new FormData(form);
+            try {
+                const response = await fetch('/admin/addBrand', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server response:', errorText);
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addBrandModal'));
+                    modal.hide();
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Brand added successfully!'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to add brand'
+                    });
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: `Failed to add brand: ${error.message}`
+                });
+            } finally {
+                // Reset loading state
+                addButton.disabled = false;
+                loadingOverlay.classList.add('d-none');
+            }
+        });
+
+        // Initialize the Edit Modal using Bootstrap's Modal API
+        const editModalElement = document.getElementById('editBrandModal');
+        const editModal = new bootstrap.Modal(editModalElement, {
+            keyboard: true,
+            backdrop: true
+        });
+
+        // Ensure the modal is hidden initially
+        editModalElement.classList.remove('show');
+        editModalElement.style.display = 'none';
+
+        // Edit Brand Modal - Handle edit icon click
+        const editIcons = document.querySelectorAll('.edit-icon');
+        editIcons.forEach(icon => {
+            icon.addEventListener('click', () => {
+                const id = icon.getAttribute('data-id');
+                if (!id) {
+                    console.error('Edit icon missing data-id:', icon);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Invalid brand ID'
+                    });
+                    return;
+                }
+                const name = icon.getAttribute('data-name');
+                const image = icon.getAttribute('data-image');
+                const status = icon.getAttribute('data-status');
+
+                const form = editModalElement.querySelector('.brand-form');
+                form.querySelector('.brand-name').value = name || '';
+                form.querySelector('.brand-status').value = status === 'listed' ? 'active' : 'inactive';
+                form.querySelector('.selected-status').textContent =
+                    (status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Listed');
+                form.dataset.brandId = id;
+
+                // Set image preview
+                const imagePreview = document.getElementById('editImagePreview');
+                const uploadPlaceholder = document.getElementById('editUploadPlaceholder');
+                if (image) {
+                    imagePreview.src = image;
+                    imagePreview.style.display = 'block';
+                    uploadPlaceholder.style.display = 'none';
+                } else {
+                    imagePreview.src = '';
+                    imagePreview.style.display = 'none';
+                    uploadPlaceholder.style.display = 'block';
+                }
+
+                clearErrorMessages(form);
+
+                // Show the modal using Bootstrap's API
+                editModal.show();
+            });
+        });
+
+        // Handle closing the modal with the close button
+        const editCloseButton = editModalElement.querySelector('.close-button');
+        editCloseButton.addEventListener('click', () => {
+            editModal.hide();
+        });
+
+        // Handle closing the modal when clicking outside (backdrop)
+        editModalElement.addEventListener('click', (event) => {
+            if (event.target === editModalElement) {
+                editModal.hide();
+            }
+        });
+
+        // Reset form when edit modal is closed
+        editModalElement.addEventListener('hidden.bs.modal', () => {
+            const form = editModalElement.querySelector('#editBrandForm');
+            form.reset();
+            document.getElementById('editImagePreview').style.display = 'none';
+            document.getElementById('editUploadPlaceholder').style.display = 'block';
+            clearErrorMessages(form);
+        });
+
+        // Handle edit form submission
+        document.getElementById('editBrandForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = this;
+            const editButton = document.getElementById('editBrandButton');
+            const loadingOverlay = document.getElementById('editLoadingOverlay');
+            const brandId = form.dataset.brandId;
+
+            // Show loading state
+            editButton.disabled = true;
+            loadingOverlay.classList.remove('d-none');
+
+            if (!validateForm(form, true)) {
+                // Reset loading state if validation fails
+                editButton.disabled = false;
+                loadingOverlay.classList.add('d-none');
+                return;
+            }
+
+            const formData = new FormData(form);
+            formData.append('id', brandId);
+
+            try {
+                const response = await fetch('/admin/editBrand', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server response:', errorText);
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    // Hide the modal using Bootstrap's API
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('editBrandModal'));
+                    editModal.hide();
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Brand updated successfully!'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to update brand'
+                    });
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: `Failed to update brand: ${error.message}`
+                });
+            } finally {
+                // Reset loading state
+                editButton.disabled = false;
+                loadingOverlay.classList.add('d-none');
+            }
+        });
+
+        // Reset form when add modal is closed
+        document.getElementById('addBrandModal').addEventListener('hidden.bs.modal', function() {
+            document.getElementById('addBrandForm').reset();
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('uploadPlaceholder').style.display = 'block';
+            clearErrorMessages(document.getElementById('addBrandForm'));
+        });
+
+        // Delete Brand
+        const deleteIcons = document.querySelectorAll('.delete-icon');
+        deleteIcons.forEach(icon => {
+            icon.addEventListener('click', () => {
+                const brandId = icon.getAttribute('data-id');
+                if (!brandId) {
+                    console.error('Delete icon missing data-id:', icon);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Invalid brand ID'
+                    });
+                    return;
+                }
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You will not be able to recover this brand!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#7db87d',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        console.log('Sending delete brand request:', { id: brandId });
+                        fetch('/admin/deleteBrand', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ id: brandId })
+                        })
+                            .then(response => {
+                                console.log('Delete brand response:', {
+                                    status: response.status,
+                                    statusText: response.statusText,
+                                    headers: Object.fromEntries(response.headers)
+                                });
+                                if (!response.ok) {
+                                    return response.text().then(text => {
+                                        try {
+                                            const data = JSON.parse(text);
+                                            throw new Error(data.error || `HTTP error ${response.status}`);
+                                        } catch (e) {
+                                            throw new Error(`Non-JSON response: ${text.substring(0, 50)}...`);
+                                        }
+                                    });
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Delete brand success:', data);
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Brand has been deleted.',
+                                    'success'
+                                ).then(() => {
+                                    location.reload();
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Delete Brand Error:', error.message);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: error.message
+                                });
+                            });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

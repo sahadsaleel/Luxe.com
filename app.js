@@ -1,24 +1,66 @@
-const express = require('express')
-const app = express()
-const path = require('path')
-const env = require('dotenv').config()
-const db = require("./config/db")
-const userRouter = require('./routes/userRouter')
-db()
+const express = require('express');
+const app = express();
+const path = require('path');
+const dotenv = require('dotenv');
+const session = require('express-session');
+const passport = require('./config/passport');
+const db = require('./config/db');
+const userRouter = require('./routes/userRouter');
+const adminRouter = require('./routes/adminRouter');
+ 
+dotenv.config();
 
-app.use(express.json())
-app.use(express.urlencoded({extended : true}))
+db().catch(error => {
+    console.error('Database connection failed:', error);
+});
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'default-secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: false, 
+        httpOnly: true,
+        maxAge: 72 * 60 * 60 * 1000
+    }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// logging for debugging
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
 
 app.set('view engine', 'ejs');
-app.set("views", path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'views'));
+
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'Uploads')));
+app.use('/uploads', express.static('public/uploads/products'));
 
-app.use('/', userRouter)
+// Routes
+app.use('/', userRouter);
+app.use('/admin', adminRouter);
 
-app.listen(process.env.PORT , ()=>{
-    console.log("Server running")
-})
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error('Error:', err.stack);
+    if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(500).json({ error: 'Something went wrong!' });
+    }
+    res.status(500).send('Something went wrong!');
+});
 
-module.exports = app ;
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
+module.exports = app;

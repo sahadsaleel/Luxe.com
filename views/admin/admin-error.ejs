@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found</title>
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .bodyDiv {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 90vh;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 100;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        p {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-button {
+            background-color: #92c292;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .dashboard-button:hover {
+            background-color: #7eb87e;
+        }
+                
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/img/image11.webp') repeat-x bottom;
+            background-size: 500px;
+            opacity: 0.7;
+            z-index: 1;
+        }
+
+    </style>
+</head>
+<body>
+    <%-include("../../views/partials/admin/header")%>
+    <div class="bodyDiv">
+        <div class="container">
+            <h1>404 Not Found</h1>
+            <p>Your visited page not found. You may go dashboard.</p>
+            <a href="" class="dashboard-button">GO BACK TO DASHBOARD</a>
+        </div>
+    </div>
+   
+</body>
+</html>

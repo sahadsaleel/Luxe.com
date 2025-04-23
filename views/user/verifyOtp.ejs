@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email</title>
+  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <link rel="stylesheet" href="/css/verifyOtp.css">
+</head>
+<body>
+    <div class="container">
+        <h1>VERIFY YOUR EMAIL</h1>
+        <p>Enter OTP received in your email</p>
+        <form id="form-submit" action="/verifyotp" method="post" onsubmit="return otpValidateForm(event)">
+            <input type="text" id="otp" placeholder="OTP" required>
+            <button type="submit">VERIFY</button>
+        </form>
+        <p class="resend">Resend OTP <span id="timer">in 2:00</span></p>
+        <div class="footer">
+            <a href="#">Help</a>
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+        </div>
+    </div>
+
+    <script>
+        function otpValidateForm(event) {
+            event.preventDefault();
+            const otpInput = document.getElementById('otp').value;
+
+            $.ajax({
+                type: "POST",
+                url: "/verifyotp",
+                data: { otp: otpInput },
+                dataType: 'json',
+                success: function(response) {
+                    if (response && response.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: response.message || 'Your email has been verified successfully.',
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#3085d6',
+                            customClass: { popup: 'animated fadeInDown' }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = response.redirectUrl || '/login';
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message || 'Invalid OTP. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'Try Again',
+                            confirmButtonColor: '#d33',
+                            customClass: { popup: 'animated fadeInDown' }
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Server Error",
+                        text: "An error occurred. Please try again later."
+                    });
+                }
+            });
+            return false;
+        }
+
+        let timeLeft = 120; 
+        const timerElement = document.getElementById('timer');
+        const resendText = document.querySelector('.resend');
+
+        const timer = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                timerElement.textContent = '';
+                resendText.innerHTML = 'Resend OTP <a href="#" onclick="resendOtp(event)">now</a>';
+                return;
+            }
+
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            timeLeft--;
+        }, 1000);
+
+        function resendOtp(event) {
+            event.preventDefault();
+            const email = '<%= userData.email %>'; 
+            if (!email) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Email not available. Please try again."
+                });
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/resend-otp",
+                data: { email: email },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'A new OTP has been sent to your email.',
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            timeLeft = 120;
+                            timerElement.textContent = 'in 2:00';
+                            resendText.innerHTML = 'Resend OTP <span id="timer">in 2:00</span>';
+                            setInterval(() => {
+                                if (timeLeft <= 0) {
+                                    clearInterval(timer);
+                                    timerElement.textContent = '';
+                                    resendText.innerHTML = 'Resend OTP <a href="#" onclick="resendOtp(event)">now</a>';
+                                    return;
+                                }
+                                const minutes = Math.floor(timeLeft / 60);
+                                const seconds = timeLeft % 60;
+                                timerElement.textContent = `in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                                timeLeft--;
+                            }, 1000);
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message || 'Failed to resend OTP.',
+                            icon: 'error',
+                            confirmButtonText: 'Try Again',
+                            confirmButtonColor: '#d33'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Server Error",
+                        text: "An error occurred. Please try again later."
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>

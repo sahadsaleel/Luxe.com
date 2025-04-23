@@ -25,6 +25,7 @@ header {
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 10px 20px;
 }
 
 .logo img {
@@ -61,6 +62,7 @@ header {
 .header-icons {
     display: flex;
     align-items: center;
+    gap: 20px;
 }
 
 .search-container {
@@ -71,7 +73,7 @@ header {
 
 .search-container input {
     padding: 10px 20px;
-    width: 200px;
+    width: 245px;
     border: 1px solid #ccc;
     border-radius: 4px 0 0 4px;
     outline: none;
@@ -111,6 +113,97 @@ header {
 
 .cart .cart-count {
     background-color: red;
+}
+
+
+/* Dropdown Styles */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #000;
+    min-width: 160px;
+    box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    right: 0;
+    border-radius: 4px;
+    top: 100%;
+}
+
+.dropdown.active .dropdown-content {
+    display: block;
+}
+
+.welcome-message {
+    display: block;
+    color: white;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 400;
+    border-bottom: 1px solid #333;
+}
+
+.user-name {
+    display: block;
+    color: white;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    border-bottom: 1px solid #333;
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    font-size: 14px;
+}
+
+.dropdown-content a:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+
+/* Auth Links */
+.auth-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.auth-links a {
+    text-decoration: none;
+    color: #555;
+    padding: 5px 8px;
+    transition: all 0.3s ease;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+    text-decoration-color: #ef7000;
+    color: #ef7000;
+}
+
+.auth-links a.login::after {
+    content: "|";
+    color: #ccc;
+    margin-left: 8px;
+    font-weight: 300;
+}
+
+.auth-links a.signup::after {
+    content: none;
 }
 
 /* Category Navigation */
@@ -153,43 +246,39 @@ header {
 }
 
 /* Hero Section */
-
-/* Existing Hero Section Styles (keep these) */
 .hero {
     position: relative;
-    height: 500px; /* Adjust height as needed */
+    height: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     text-align: center;
-    overflow: hidden; /* Prevents overflow issues with fixed content */
+    overflow: hidden;
 }
 
-/* New Styles for Hero Image */
 .hero-image {
     position: absolute;
     left: 0;
     width: 100%;
-    height: 500px; /* Match the hero height or adjust as needed */
-    z-index: -1; /* Places the image behind the content */
+    height: 500px;
+    z-index: -1;
 }
 
 .hero-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensures the image covers the area without distortion */
+    object-fit: cover;
 }
 
-/* Adjust Hero Content to work with fixed image */
 .hero-content {
     position: relative;
-    z-index: 1; /* Ensures content stays above the image */
+    z-index: 1;
     max-width: 800px;
     padding: 20px;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 10px;
-    margin-top: 20px; /* Optional: Add margin to avoid overlap with header */
+    margin-top: 20px;
 }
 
 .hero h2 {
@@ -201,7 +290,6 @@ header {
     font-size: 18px;
     margin-bottom: 30px;
 }
-
 
 .hero .add-to-cart {
     width: 200px;
@@ -273,13 +361,13 @@ h2.section-title::after {
 }
 
 .feature img {
-    width: 200px; /* Increased from 60px to 100px for larger size */
-    height: 200px; /* Increased from 60px to 100px for larger size */
+    width: 200px;
+    height: 200px;
     margin-bottom: 20px;
-    object-fit: cover; /* Ensures the image scales properly */
-    display: block; /* Ensures proper centering */
+    object-fit: cover;
+    display: block;
     margin-left: auto;
-    margin-right: auto; /* Centers the image horizontally */
+    margin-right: auto;
 }
 
 .feature h3 {
@@ -310,22 +398,6 @@ h2.section-title::after {
     background-color: #333;
     color: white;
 }
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .features {
-        flex-direction: column;
-        align-items: center;
-    }
-    .feature {
-        max-width: 100%;
-    }
-    .feature img {
-        width: 80px; /* Slightly reduced for mobile */
-        height: 80px;
-    }
-}
-
 
 /* Celebrity Section */
 .celebrity-section {
@@ -514,195 +586,20 @@ h2.section-title::after {
 
 /* Footer */
 footer {
-    background-color: #121212;
-    color: white;
-    padding: 60px 20px;
-    margin-top: auto;
-}
-
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 40px;
-}
-
-.footer-logo {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.footer-logo img {
-    width: 40px;
-    height: 40px;
-}
-
-.footer-logo h2 {
-    margin-left: 10px;
-    font-weight: 500;
-}
-
-.footer-about p {
-    color: #ccc;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-.footer-column h3 {
-    margin-bottom: 20px;
-    font-size: 18px;
-    position: relative;
-    padding-bottom: 10px;
-}
-
-.footer-column h3::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 40px;
-    height: 2px;
-    background-color: #9c8164;
-}
-
-.footer-column ul {
-    list-style: none;
-}
-
-.footer-column ul li {
-    margin-bottom: 10px;
-}
-
-.footer-column ul li a {
-    text-decoration: none;
-    color: #ccc;
-    transition: color 0.3s;
-}
-
-.footer-column ul li a:hover {
-    color: #9c8164;
-}
-
-.footer-contact p {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    color: #ccc;
-}
-
-.footer-contact svg {
-    margin-right: 10px;
-    min-width: 20px;
-}
-
-.social-links {
-    display: flex;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.social-links a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 35px;
-    height: 35px;
-    background-color: #333;
-    border-radius: 50%;
-    transition: background-color 0.3s;
-}
-
-.social-links a:hover {
-    background-color: #9c8164;
-}
-
-.footer-bottom {
-    text-align: center;
-    padding-top: 40px;
-    color: #999;
-    font-size: 14px;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .header-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .nav-links {
-        margin: 20px 0;
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .header-icons {
-        width: 100%;
-        justify-content: flex-end;
-    }
-
-    .product-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    }
-
-    .features {
-        grid-template-columns: 1fr;
-    }
-
-    .celebrity-content {
-        width: 100%;
-        padding: 20px;
-    }
-
-    .celebrity-products {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 480px) {
-    .header-container {
-        padding: 10px;
-    }
-
-    .nav-links {
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .product-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .timer {
-        flex-wrap: wrap;
-    }
-}
-
-@media (max-width: 768px) {
-    .hero-image {
-        height: 300px; 
-        top: 80px; 
-    }
-}
-/* Footer */
-footer {
     background-color: #000000;
     color: white;
     padding: 40px 20px;
     margin-top: auto;
 }
 
-
 .footer-logo {
     display: flex;
-    justify-content: center; /* Centers horizontally */
-    margin-bottom: 10px; /* Space below logo */
+    justify-content: center;
+    margin-bottom: 10px;
 }
 
 .footer-logo img {
-    width: 100px; /* Adjust size as needed */
+    width: 100px;
     height: auto;
 }
 
@@ -805,6 +702,67 @@ footer {
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-links {
+        margin: 20px 0;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .header-icons {
+        width: 100%;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .auth-links {
+        font-size: 13px;
+        gap: 5px;
+    }
+
+    .auth-links a {
+        padding: 3px 5px;
+    }
+
+    .auth-links a.login::after {
+        margin-left: 5px;
+    }
+
+    .dropdown-content {
+        min-width: 120px;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .features {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .feature {
+        max-width: 100%;
+    }
+
+    .feature img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .celebrity-content {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .celebrity-products {
+        grid-template-columns: 1fr;
+    }
+
     .footer-container {
         flex-direction: column;
         text-align: center;
@@ -817,9 +775,32 @@ footer {
     .care-visit p {
         text-align: left;
     }
-}
-@media (max-width: 768px) {
+
+    .hero-image {
+        height: 300px;
+        top: 80px;
+    }
+
     .footer-logo img {
         width: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-container {
+        padding: 10px;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .timer {
+        flex-wrap: wrap;
     }
 }

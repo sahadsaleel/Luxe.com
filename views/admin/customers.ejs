@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Customers</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+
+    <style>
+        * { 
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Container and table styles */
+        .container {
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        thead {
+            background-color: #7db87d;
+            color: #000;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .user-image img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f0f0f0;
+        }
+
+        .block-btn, .unblock-btn {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .block-btn {
+            background-color: #ff3b30;
+            color: white;
+        }
+
+        .block-btn:hover {
+            background-color: #e63229;
+        }
+
+        .unblock-btn {
+            background-color: #4cd964;
+            color: white;
+        }
+
+        .unblock-btn:hover {
+            background-color: #40b954;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1100px) {
+            .search-input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-user-section {
+                margin-top: 10px;
+                width: 100%;
+            }
+            
+            .search-container {
+                width: calc(100% - 140px);
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .search-user-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .search-container {
+                width: 100%;
+                margin-right: 0;
+            }
+            
+            .dropdown {
+                width: 100%;
+                margin-left: 0;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            th, td {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+            
+            .block-btn, .unblock-btn {
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+            
+            .dashboard-title {
+                font-size: 20px;
+            }
+        }
+        
+        .search-user-section {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-top: 30px;
+            padding-right: 20px;
+        }
+
+        .search-container {
+            position: relative;
+            margin-right: 15px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgb(0, 0, 0);
+        }
+
+        .search-input {
+            background-color: #7db87d;
+            border: none;
+            border-radius: 5px;
+            color: rgb(0, 0, 0);
+            padding: 12px 15px 12px 35px;
+            width: 300px;
+            font-size: 14px;
+        }
+
+        .search-input::placeholder {
+            color: black;
+        }
+
+        /* Dropdown styles */
+        .dropdown {
+            padding: 8px 12px;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            width: 120px;
+            margin-left: 10px;
+        }
+
+        .dropdown select {
+            border: none;
+            background: transparent;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 500;
+            outline: none;
+        }
+
+        /* Custom button styling */
+        .custom-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Success button (Unblock) */
+        .btn-success.custom-btn {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        /* Danger button (Block) */
+        .btn-danger.custom-btn {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        /* Hover effects */
+        .custom-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Link styling */
+        .custom-link {
+            text-decoration: none;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 5px; /* Space between icon and text */
+        }
+
+        /* Icon styling */
+        .custom-link i {
+            font-size: 16px;
+        }
+
+        /* Ensure the link takes up the full button area */
+        .custom-btn a {
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Dropdown container */
+        .dropdown {
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        .custom-select {
+            appearance: none; 
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 30px 8px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M8 12l-6-6h12l-6 6z"/></svg>'); /* Custom arrow */
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 12px;
+        }
+
+        /* Hover and focus effects */
+        .custom-select:hover,
+        .custom-select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Ensure consistency with Bootstrap */
+        .custom-select option {
+            background-color: #fff;
+            color: #333;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .custom-select {
+                font-size: 13px;
+                padding: 6px 25px 6px 10px;
+                background-size: 10px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <%- include('../../views/partials/admin/header') %>
+
+    <div class="search-user-section">
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" placeholder="Search..." class="search-input">
+        </div>
+        <div class="dropdown">
+            <select class="custom-select">
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="a-z">A-Z</option>
+                <option value="z-a">Z-A</option>
+            </select>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>USER IMAGE</th>
+                    <th>USERNAME</th>
+                    <th>EMAIL</th>
+                    <th>PHONE</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let i = 0; i < data.length; i++) { %>
+                <tr>
+                    <td class="user-image"><img src="<%= data[i].image %>" alt="IMAGE"></td>
+                    <td><%= data[i].firstName %></td>
+                    <td><%= data[i].email %></td>
+                    <td><%= data[i].phone  || "N/A" %></td>
+                    <td>
+                        <% if (data[i].isBlocked) { %>
+                            <button class="btn btn-success" style="width: 80px;">
+                                <a href="/admin/unblockCustomer?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">
+                                    <i class="bi bi-unlock"></i> Unblock
+                                </a>
+                            </button>
+                        <% } else { %>
+                            <button class="btn btn-danger" style="width: 80px;">
+                                <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">
+                                    <i class="bi bi-lock"></i> Block
+                                </a>
+                            </button>
+                        <% } %>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+    <%- include('../../views/partials/admin/footer') %>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.querySelector('.search-input');
+            const sortSelect = document.querySelector('.dropdown select');
+            const tbody = document.querySelector('table tbody');
+
+            // Debounce function to limit API calls
+            function debounce(func, delay) {
+                let timeoutId;
+                return (...args) => {
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => func(...args), delay);
+                };
+            }
+
+            // Function to fetch and update table
+            async function updateTable(searchTerm = '', sortOption = 'a-z') {
+                try {
+                    // Construct URL with search query
+                    const url = `/admin/customers?search=${encodeURIComponent(searchTerm)}`;
+                    const response = await fetch(url, {
+                        headers: {
+                            'Accept': 'application/json' 
+                            // Request JSON for easier parsing
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const { data } = await response.json(); 
+                    // Expect JSON response with data array
+
+                    // Sort data client-side
+                    const sortedData = [...data].sort((a, b) => {
+                        const nameA = a.firstName.toLowerCase();
+                        const nameB = b.firstName.toLowerCase();
+                        switch (sortOption) {
+                            case 'a-z':
+                                return nameA.localeCompare(nameB);
+                            case 'z-a':
+                                return nameB.localeCompare(nameA);
+                            case 'newest':
+                                return new Date(b.createdAt) - new Date(a.createdAt); // Assuming createdAt field
+                            case 'oldest':
+                                return new Date(a.createdAt) - new Date(b.createdAt);
+                            default:
+                                return 0;
+                        }
+                    });
+
+                    // Update table body
+                    tbody.innerHTML = sortedData.map(user => `
+                        <tr>
+                            <td class="user-image"><img src="${user.image}" alt="IMAGE"></td>
+                            <td>${user.firstName}</td>
+                            <td>${user.email}</td>
+                            <td>${user.phone || 'N/A'}</td>
+                            <td>
+                                ${user.isBlocked ? 
+                                    `<button class="btn btn-success" style="width: 80px;">
+                                        <a href="/admin/unblockCustomer?id=${user._id}" class="text-white" style="text-decoration: none;">
+                                            <i class="bi bi-unlock"></i> Unblock
+                                        </a>
+                                    </button>` : 
+                                    `<button class="btn btn-danger" style="width: 80px;">
+                                        <a href="/admin/blockCustomer?id=${user._id}" class="text-white" style="text-decoration: none;">
+                                            <i class="bi bi-lock"></i> Block
+                                        </a>
+                                    </button>`
+                                }
+                            </td>
+                        </tr>
+                    `).join('');
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    tbody.innerHTML = '<tr><td colspan="5">Error loading data</td></tr>';
+                }
+            }
+
+            // Debounced search handler
+            const debouncedSearch = debounce(() => {
+                const searchTerm = searchInput.value.trim();
+                const sortOption = sortSelect.value.toLowerCase();
+                updateTable(searchTerm, sortOption);
+            }, 300);
+
+            // Event listeners
+            if (searchInput) {
+                searchInput.addEventListener('input', debouncedSearch);
+            }
+            if (sortSelect) {
+                sortSelect.addEventListener('change', debouncedSearch);
+            }
+
+            // Initial load
+            updateTable();
+        });
+    </script>
+
+</body>
+</html>

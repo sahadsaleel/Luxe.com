@@ -1,0 +1,401 @@
+/* body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 20px 0px;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    height: 60px;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    width: 100px;
+    height: 100px;
+    padding-left: 20px;
+}
+
+.site-name {
+    font-size: 24px;
+    margin-left: auto;
+}
+
+.contact-us {
+    color: #000;
+    text-decoration: none;
+    font-size: 18px;
+    padding-right: 55px;
+}
+
+.login-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 400px;
+    margin-top: 80px;
+}
+
+.google-btn span {
+    text-decoration: none !important; 
+    color: black; 
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+
+
+.social-btn {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .google-btn {
+    background-color: #fff;
+  }
+  
+  
+  .google-btn::before {
+    content: none;
+  }
+  
+
+  .google-logo {
+    width: 18px; 
+    height: 18px;
+    object-fit: contain; 
+  }
+  
+ 
+
+.or-separator {
+    font-size: 14px;
+    color: #666;
+    margin: 20px 0;
+    position: relative;
+}
+
+.or-separator::before,
+.or-separator::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background-color: #ccc;
+}
+
+.or-separator::before {
+    left: 0;
+}
+
+.or-separator::after {
+    right: 0;
+}
+
+.instruction {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.sub-instruction {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.forgot-password {
+    display: block;
+    text-align: right;
+    color: #666;
+    font-size: 12px;
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.continue-btn {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.continue-btn:hover {
+    background-color: #333;
+}
+
+.create-account {
+    font-size: 12px;
+    color: #666;
+}
+
+.create-account a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.create-account a:hover {
+    text-decoration: underline;
+} */
+
+
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 20px 0px;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    height: 60px;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    width: 100px;
+    height: 100px;
+    padding-left: 20px;
+}
+
+.site-name {
+    font-size: 24px;
+    margin-left: auto;
+}
+
+.contact-us {
+    color: #000;
+    text-decoration: none;
+    font-size: 18px;
+    padding-right: 55px;
+}
+
+.login-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 400px;
+    margin-top: 80px;
+}
+
+.google-btn {
+    text-decoration: none !important;
+    color: black !important;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: #fff;
+}
+
+.google-btn span {
+    text-decoration: none !important;
+    color: black;
+}
+
+.google-btn:hover {
+    text-decoration: none !important;
+    color: white !important;
+    background-color: #4285F4; /* Google blue on hover */
+    border-color: #4285F4;
+}
+
+.google-btn:hover span {
+    text-decoration: none !important;
+    color: white;
+}
+
+.google-btn::before {
+    content: none;
+}
+
+.google-logo {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.or-separator {
+    font-size: 14px;
+    color: #666;
+    margin: 20px 0;
+    position: relative;
+}
+
+.or-separator::before,
+.or-separator::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background-color: #ccc;
+}
+
+.or-separator::before {
+    left: 0;
+}
+
+.or-separator::after {
+    right: 0;
+}
+
+.instruction {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.sub-instruction {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.forgot-password {
+    display: block;
+    text-align: right;
+    color: #666;
+    font-size: 12px;
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.continue-btn {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.continue-btn:hover {
+    background-color: #333;
+}
+
+.create-account {
+    font-size: 12px;
+    color: #666;
+}
+
+.create-account a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.create-account a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    color: red;
+    margin-bottom: 10px;
+    font-size: 14px;
+}

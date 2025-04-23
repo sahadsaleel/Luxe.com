@@ -1,0 +1,126 @@
+<!-- Sidebar Toggle Button -->
+<div class="sidebar-toggle">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo-container">
+        <img src="/img/logo.png" alt="Logo">
+    </div>
+    <div class="sidebar-menu">
+        <a href="/admin/dashboard" class="menu-item">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/admin/products" class="menu-item">
+            <i class="fas fa-box"></i>
+            <span>Products</span>
+        </a>
+        <a href="/admin/brands" class="menu-item">
+            <i class="fas fa-spray-can"></i>
+            <span>Brands</span>
+        </a>
+        <a href="/admin/customers" class="menu-item">
+            <i class="fas fa-users"></i>
+            <span>Customers</span>
+        </a>
+        <a href="/admin/category" class="menu-item">
+            <i class="fas fa-list"></i>
+            <span>Category</span>
+        </a>
+        <a href="/admin/orders" class="menu-item">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Orders</span>
+        </a>
+        <a href="/admin/coupons" class="menu-item">
+            <i class="fas fa-ticket-alt"></i>
+            <span>Coupons</span>
+        </a>
+        <a href="/admin/offers" class="menu-item">
+            <i class="fas fa-tag"></i>
+            <span>Offers</span>
+        </a>
+        <a href="/admin/banners" class="menu-item">
+            <i class="fas fa-image"></i>
+            <span>Banners</span>
+        </a>
+        <a href="/admin/settings" class="menu-item">
+            <i class="fas fa-cog"></i>
+            <span>Admin Setting</span>
+        </a>
+    </div>
+    <div class="logout-container">
+        <a href="/admin/logout" class="menu-item logout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</div>
+
+<!-- Main Content Wrapper -->
+<div class="main-content">
+    <!-- Header Bar -->
+    <div class="header">
+        <div class="title-section">
+            <h2 class="dashboard-title">PAGEERROR</h2>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const mainContent = document.querySelector('.main-content');
+            
+            // Set active menu item based on current path
+            const currentPath = window.location.pathname;
+            const menuItems = document.querySelectorAll('.sidebar-menu .menu-item');
+            menuItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href === currentPath) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Set page title based on active menu item
+            const activeItem = document.querySelector('.menu-item.active');
+            if (activeItem) {
+                const titleText = activeItem.querySelector('span').textContent;
+                document.querySelector('.dashboard-title').textContent = titleText.toUpperCase();
+            }
+            
+            // Sidebar toggle functionality
+            function updateLayout() {
+                if (window.innerWidth <= 768) {
+                    mainContent.style.marginLeft = '0';
+                    sidebar.classList.remove('collapsed');
+                    if (!sidebar.classList.contains('mobile-visible')) {
+                        sidebar.style.transform = 'translateX(-100%)';
+                    }
+                } else {
+                    mainContent.style.marginLeft = sidebar.classList.contains('collapsed') ? '80px' : '200px';
+                    sidebar.style.transform = 'translateX(0)';
+                }
+            }
+            
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.toggle('mobile-visible');
+                    } else {
+                        sidebar.classList.toggle('collapsed');
+                        mainContent.classList.toggle('expanded');
+                    }
+                    updateLayout();
+                });
+            }
+            
+            window.addEventListener('resize', updateLayout);
+            updateLayout();
+        });
+    </script>

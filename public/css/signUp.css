@@ -1,0 +1,181 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 20px 0px;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    height: 60px;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    width: 100px;
+    height: 100px;
+    padding-left: 20px;
+}
+
+.site-name {
+    font-size: 24px;
+    margin-left: auto;
+}
+
+.contact-us {
+    color: #000;
+    text-decoration: none;
+    font-size: 18px;
+    padding-right: 55px;
+}
+
+.signup-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 1000px;
+    margin-top: 100px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Aligns content to the left */
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.login-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.form-container {
+    margin-top: 20px;
+    width: 400px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative; /* For positioning error messages */
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    text-align: left;
+    position: absolute; /* Changed to absolute positioning */
+    top: -15px; /* Position above the input, adjust as needed */
+    left: 0;
+    visibility: hidden; /* Hidden by default, shown with .invalid */
+}
+
+.form-group.invalid .error-message {
+    visibility: visible; /* Show error when parent has .invalid class */
+}
+
+.form-group.invalid input {
+    border-color: #ff0000; /* Red border for invalid inputs */
+}
+
+/* Removed duplicate .form-group { color: red; font-size: 0.7rem; } as it conflicts with input styling */
+
+.password-requirement {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    margin: 10px 0; /* Keep vertical margin, remove horizontal if needed */
+    text-align: left;
+    width: 100%; /* Ensure it spans the form width */
+}
+
+.checkbox-label input {
+    margin-right: 4px; /* Reduce from 8px to 4px for tighter spacing */
+}
+
+button {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px; /* Space above the button */
+}
+
+button:hover {
+    background-color: #333;
+}
+
+.icons {
+    display: flex;
+    gap: 20px;
+    position: absolute;
+    top: 40px;
+    right: 40px;
+}
+
+.icon {
+    width: 500px;
+    height: 350px;
+    padding-top: 70px;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.footer-links a {
+    color: #000;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}

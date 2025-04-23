@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 40px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .add-button {
+            background-color: #7db87d;
+            color: rgb(0, 0, 0);
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: #7db87d;
+            color: rgb(0, 0, 0);
+            text-align: left;
+            padding: 20px 78px;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 20px 80px;
+            background-color: #d3d3d3;
+            border-bottom: 2px solid white;
+            font-size: 14px;
+        }
+
+        .actions-cell {
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .edit-icon {
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .delete-icon {
+            cursor: pointer;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 60%;
+            max-width: 600px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #000;
+            box-sizing: border-box;
+        }
+
+        .form-control.textarea {
+            height: 120px;
+            resize: none;
+        }
+
+        /* Dropdown styles */
+        .dropdown {
+            position: relative;
+            width: 100%;
+        }
+
+        .dropdown-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #000;
+            background-color: white;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 50%;
+            border: 1px solid #000;
+            border-top: none;
+            background-color: #7db87d;
+            z-index: 10;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background-color: #000000;
+            color: #f5f5f5;
+        }
+
+        .modal-footer {
+            text-align: right;
+            margin-top: 30px;
+        }
+
+        .modal-submit-btn {
+            background-color: #7db87d;
+            color: black;
+            border: none;
+            padding: 10px 25px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #000;
+        }
+
+        .close-button:hover {
+            color: #ff0000;
+        }
+
+        .error-message {
+            display: none;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../../views/partials/admin/header') %>
+
+    <div class="container">
+        <div class="button-container">
+            <button class="add-button" id="add-button">ADD CATEGORY</button>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>CATEGORY</th>
+                    <th>DESCRIPTION</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% cat.forEach((category, index) => { %>
+                <tr>
+                    <td><%= category.name %></td>
+                    <td><%= category.description %></td>
+                    <td><%= category.isListed ? 'Listed' : 'Unlisted' %></td>
+                    <td class="actions-cell">
+                        <i class="fas fa-pencil-alt edit-icon"
+                           data-id="<%= category._id %>"
+                           data-name="<%= category.name %>"
+                           data-description="<%= category.description %>"
+                           data-status="<%= category.isListed ? 'listed' : 'unlisted' %>"></i>
+                        <i class="fas fa-trash-alt delete-icon"
+                           data-id="<%= category._id %>"></i>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div id="addCategoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <form class="category-form" onsubmit="return handleAddFormSubmit(event)">
+                <div class="form-group">
+                    <label for="addCategoryName">Category Name :</label>
+                    <input type="text" class="form-control category-name" id="addCategoryName">
+                    <span class="error-message name-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="addCategoryStatus">Status :</label>
+                    <div class="dropdown">
+                        <div class="dropdown-select status-dropdown">
+                            <span class="selected-status">Select status</span>
+                            <span>▾</span>
+                        </div>
+                        <div class="dropdown-menu status-menu">
+                            <div class="dropdown-item" data-value="listed">Listed</div>
+                            <div class="dropdown-item" data-value="unlisted">Unlisted</div>
+                        </div>
+                        <input type="hidden" class="category-status" name="categoryStatus">
+                    </div>
+                    <span class="error-message status-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="addCategoryDescription">Category Description :</label>
+                    <textarea class="form-control textarea category-description" id="addCategoryDescription"></textarea>
+                    <span class="error-message description-error"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="modal-submit-btn">ADD</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Category Modal -->
+    <div id="editCategoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <form class="category-form" onsubmit="return handleEditFormSubmit(event)">
+                <div class="form-group">
+                    <label for="editCategoryName">Category Name :</label>
+                    <input type="text" class="form-control category-name" id="editCategoryName">
+                    <span class="error-message name-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="editCategoryStatus">Status :</label>
+                    <div class="dropdown">
+                        <div class="dropdown-select status-dropdown">
+                            <span class="selected-status">Select status</span>
+                            <span>▾</span>
+                        </div>
+                        <div class="dropdown-menu status-menu">
+                            <div class="dropdown-item" data-value="listed">Listed</div>
+                            <div class="dropdown-item" data-value="unlisted">Unlisted</div>
+                        </div>
+                        <input type="hidden" class="category-status" name="categoryStatus">
+                    </div>
+                    <span class="error-message status-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="editCategoryDescription">Category Description :</label>
+                    <textarea class="form-control textarea category-description" id="editCategoryDescription"></textarea>
+                    <span class="error-message description-error"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="modal-submit-btn">UPDATE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize dropdowns for all modals
+            initializeDropdowns();
+
+            // Add Category Modal
+            const addButton = document.getElementById('add-button');
+            const addModal = document.getElementById('addCategoryModal');
+            const addCloseButton = addModal.querySelector('.close-button');
+
+            addButton.addEventListener('click', () => {
+                addModal.style.display = 'block';
+                const form = addModal.querySelector('.category-form');
+                form.reset();
+                form.querySelector('.selected-status').textContent = 'Select status';
+                form.querySelector('.category-status').value = '';
+                clearErrorMessages(form);
+            });
+
+            addCloseButton.addEventListener('click', () => {
+                addModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === addModal) {
+                    addModal.style.display = 'none';
+                }
+            });
+
+            // Edit Category Modal
+            const editModal = document.getElementById('editCategoryModal');
+            const editCloseButton = editModal.querySelector('.close-button');
+            const editIcons = document.querySelectorAll('.edit-icon');
+
+            editIcons.forEach(icon => {
+                icon.addEventListener('click', () => {
+                    const id = icon.getAttribute('data-id');
+                    if (!id) {
+                        console.error('Edit icon missing data-id:', icon);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Invalid category ID'
+                        });
+                        return;
+                    }
+                    const name = icon.getAttribute('data-name');
+                    const description = icon.getAttribute('data-description');
+                    const status = icon.getAttribute('data-status');
+
+                    const form = editModal.querySelector('.category-form');
+                    form.querySelector('.category-name').value = name || '';
+                    form.querySelector('.category-description').value = description || '';
+                    form.querySelector('.category-status').value = status || 'listed';
+                    form.querySelector('.selected-status').textContent =
+                        (status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Listed');
+                    form.dataset.categoryId = id;
+
+                    clearErrorMessages(form);
+                    editModal.style.display = 'block';
+                });
+            });
+
+            editCloseButton.addEventListener('click', () => {
+                editModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === editModal) {
+                    editModal.style.display = 'none';
+                }
+            });
+
+            // Delete Category
+            const deleteIcons = document.querySelectorAll('.delete-icon');
+            deleteIcons.forEach(icon => {
+                icon.addEventListener('click', () => {
+                    const categoryId = icon.getAttribute('data-id');
+                    if (!categoryId) {
+                        console.error('Delete icon missing data-id:', icon);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Invalid category ID'
+                        });
+                        return;
+                    }
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'You will not be able to recover this category!',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#7db87d',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('Sending delete category request:', { id: categoryId });
+                            fetch('/admin/category/delete', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ id: categoryId })
+                            })
+                                .then(response => {
+                                    console.log('Delete category response:', {
+                                        status: response.status,
+                                        statusText: response.statusText,
+                                        headers: Object.fromEntries(response.headers)
+                                    });
+                                    if (!response.ok) {
+                                        return response.text().then(text => {
+                                            try {
+                                                const data = JSON.parse(text);
+                                                throw new Error(data.error || `HTTP error ${response.status}`);
+                                            } catch (e) {
+                                                throw new Error(`Non-JSON response: ${text.substring(0, 50)}...`);
+                                            }
+                                        });
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    console.log('Delete category success:', data);
+                                    Swal.fire(
+                                        'Deleted!',
+                                        'Category has been deleted.',
+                                        'success'
+                                    ).then(() => {
+                                        location.reload();
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Delete Category Error:', error.message);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: error.message
+                                    });
+                                });
+                        }
+                    });
+                });
+            });
+        });
+
+        // Initialize dropdowns for all modals
+        function initializeDropdowns() {
+            const dropdowns = document.querySelectorAll('.status-dropdown');
+            dropdowns.forEach(dropdown => {
+                const menu = dropdown.nextElementSibling;
+                const selectedStatus = dropdown.querySelector('.selected-status');
+                const statusInput = menu.nextElementSibling;
+
+                dropdown.addEventListener('click', () => {
+                    menu.classList.toggle('show');
+                });
+
+                const items = menu.querySelectorAll('.dropdown-item');
+                items.forEach(item => {
+                    item.addEventListener('click', () => {
+                        selectedStatus.textContent = item.textContent;
+                        statusInput.value = item.getAttribute('data-value');
+                        menu.classList.remove('show');
+                    });
+                });
+
+                document.addEventListener('click', (event) => {
+                    if (!dropdown.contains(event.target)) {
+                        menu.classList.remove('show');
+                    }
+                });
+            });
+        }
+
+        // Form validation
+        function validateForm(form) {
+            clearErrorMessages(form);
+            const name = form.querySelector('.category-name').value.trim();
+            const description = form.querySelector('.category-description').value.trim();
+            const status = form.querySelector('.category-status').value.trim();
+            let isValid = true;
+
+            if (name === '') {
+                displayErrorMessage(form, 'name-error', 'Please enter a name');
+                isValid = false;
+            } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+                displayErrorMessage(form, 'name-error', 'Category name should only contain alphabetic characters');
+                isValid = false;
+            }
+            if (description === '') {
+                displayErrorMessage(form, 'description-error', 'Please enter a description');
+                isValid = false;
+            }
+            if (status === '') {
+                displayErrorMessage(form, 'status-error', 'Please select a status');
+                isValid = false;
+            }
+            if (!isValid) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Please fill all fields correctly'
+                });
+            }
+            return isValid;
+        }
+
+        function displayErrorMessage(form, elementClass, message) {
+            const errorElement = form.querySelector(`.${elementClass}`);
+            errorElement.innerHTML = message;
+            errorElement.style.display = 'block';
+        }
+
+        function clearErrorMessages(form) {
+            const errorElements = form.querySelectorAll('.error-message');
+            errorElements.forEach(element => {
+                element.innerHTML = '';
+                element.style.display = 'none';
+            });
+        }
+
+        // Handle Add Form Submission
+        function handleAddFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            if (!validateForm(form)) {
+                return false;
+            }
+
+            const name = form.querySelector('.category-name').value.trim();
+            const description = form.querySelector('.category-description').value.trim();
+            const status = form.querySelector('.category-status').value.trim() === 'listed';
+
+            // Try the endpoint that was originally in your code
+            fetch('/admin/addCategory', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, description, isListed: status })
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        console.error('Error response text:', text);
+                        throw new Error(`HTTP error ${response.status}: ${text.substring(0, 100)}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success!', data);
+                document.getElementById('addCategoryModal').style.display = 'none';
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Category added successfully'
+                }).then(() => {
+                    location.reload();
+                });
+            })
+            .catch(error => {
+                console.error('Failed:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Failed to add category'
+                });
+            });
+            
+            return false;
+        }
+       // Handle Edit Form Submission
+        function handleEditFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            if (!validateForm(form)) {
+                return false;
+            }
+
+            const id = form.dataset.categoryId;
+            console.log('Form dataset before edit:', form.dataset); 
+            if (!id || id === 'null' || id === '') {
+                console.error('Invalid category ID found in form dataset:', form.dataset);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Invalid category ID'
+                });
+                return false;
+            }
+
+            const name = form.querySelector('.category-name').value.trim();
+            const description = form.querySelector('.category-description').value.trim();
+            const status = form.querySelector('.category-status').value.trim() === 'listed';
+
+            console.log('Sending edit category request:', { id, name, description, isListed: status });
+
+            fetch('/admin/category/edit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id, name, description, isListed: status })
+            })
+                .then(response => {
+                    console.log('Edit category response:', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        headers: Object.fromEntries(response.headers)
+                    });
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            try {
+                                const data = JSON.parse(text);
+                                throw new Error(data.error || `HTTP error ${response.status}`);
+                            } catch (e) {
+                                throw new Error(`Non-JSON response: ${text.substring(0, 50)}...`);
+                            }
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Edit category success:', data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Category updated successfully'
+                    }).then(() => {
+                        location.reload();
+                    });
+                })
+                .catch(error => {
+                    console.error('Edit Category Error:', error.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message === 'Category already exists' 
+                            ? 'Category name already exists' 
+                            : `Failed to update category: ${error.message}`
+                    });
+                });
+            return false;
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <%- include('../../views/partials/admin/footer') %>
+</body>
+</html>
