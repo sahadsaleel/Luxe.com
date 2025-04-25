@@ -1,23 +1,36 @@
 
 const express = require('express');
 const router = express.Router();
-const adminController = require('../controller/admin/adminController'); // Updated path
+const adminController = require('../controller/admin/adminController');
 const customerController = require('../controller/admin/customerController');
 const categoryController = require('../controller/admin/categoryController');
 const brandController = require('../controller/admin/brandController');
 const productController = require('../controller/admin/productController');
+const { uploadSingleImage, uploadMultipleImages } = require('../helpers/multer');
 const { userAuth, adminAuth } = require('../middleware/auth');
-const { uploadSingleImage, uploadMultipleImages } = require('../helpers/multer'); // Updated from middleware/multerConfig
+const multer = require('multer'); 
+const upload = require('../helpers/multer');
+const cloudinary = require('../config/cloudinary');
+const fs = require('fs').promises;
 
-// Multer error handling middleware
-const handleMulterErrors = (err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    return res.status(400).json({ success: false, message: err.message });
-  } else if (err) {
-    return res.status(400).json({ success: false, message: err.message });
+
+// Test route for Cloudinary uploads
+router.post('/test-cloudinary', adminAuth, uploadSingleImage, async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'test',
+    });
+    await fs.unlink(req.file.path);
+    res.json({ success: true, url: result.secure_url, public_id: result.public_id });
+  } catch (error) {
+    if (req.file) await fs.unlink(req.file.path);
+    console.error('Cloudinary test error:', error);
+    res.status(500).json({ success: false, message: `Cloudinary error: ${error.message}` });
   }
-  next();
-};
+});
 
 // Login management
 router.get('/login', adminController.loadLogin);
@@ -39,16 +52,17 @@ router.post('/deleteCategory', adminAuth, categoryController.deleteCategory);
 
 // Brand management
 router.get('/brands', adminAuth, brandController.getBrandPage);
-router.post('/addBrand', adminAuth, uploadSingleImage, handleMulterErrors, brandController.addBrand);
-router.post('/editBrand', adminAuth, uploadSingleImage, handleMulterErrors, brandController.editBrand);
+router.post('/addBrand', adminAuth, uploadSingleImage, brandController.addBrand);
+router.post('/editBrand', adminAuth, uploadSingleImage, brandController.editBrand);
 router.post('/deleteBrand', adminAuth, brandController.deleteBrand);
 
 // Product management
 router.get('/products', adminAuth, productController.getProductPage);
-router.get('/addProduct', adminAuth, productController.addProductPage);
-router.post('/addProduct', adminAuth, uploadMultipleImages, handleMulterErrors, productController.addProduct);
-router.get('/editProduct', adminAuth, productController.editProductPage);
-router.post('/editProduct', adminAuth, uploadMultipleImages, handleMulterErrors, productController.editProduct);
+router.post('/addProduct', adminAuth, uploadMultipleImages, productController.addProduct);
+router.post('/editProduct', adminAuth, uploadMultipleImages,  productController.editProduct);
 router.get('/deleteProduct', adminAuth, productController.deleteProduct);
+router.get('/editProduct', adminAuth, productController.getProductById)
+
+
 
 module.exports = router;

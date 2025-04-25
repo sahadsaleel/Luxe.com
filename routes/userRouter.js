@@ -15,6 +15,9 @@ router.post('/verifyotp', userController.verifyOtp);
 router.post('/signup', userController.signup);
 router.post('/login', userController.login);
 
+router.get('/shop',userController.loadShopPage)
+
+
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }), (req, res) => {
     req.session.user = req.user._id

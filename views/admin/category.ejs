@@ -12,6 +12,7 @@
             margin: 0;
             background-color: #f5f5f5;
         }
+        
 
         .container {
             max-width: 1200px;
@@ -401,7 +402,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             console.log('Sending delete category request:', { id: categoryId });
-                            fetch('/admin/category/delete', {
+                            fetch('/admin/deleteCategory', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -490,7 +491,7 @@
             if (name === '') {
                 displayErrorMessage(form, 'name-error', 'Please enter a name');
                 isValid = false;
-            } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+            } else if (!/^[a-zA-Z\s]+$/.test( new RegExp(name , "i"))) {
                 displayErrorMessage(form, 'name-error', 'Category name should only contain alphabetic characters');
                 isValid = false;
             }
@@ -526,10 +527,12 @@
             });
         }
 
-        // Handle Add Form Submission
+       // Handle Add Form Submission
         function handleAddFormSubmit(event) {
             event.preventDefault();
             const form = event.target;
+
+            // Validate form inputs
             if (!validateForm(form)) {
                 return false;
             }
@@ -538,46 +541,86 @@
             const description = form.querySelector('.category-description').value.trim();
             const status = form.querySelector('.category-status').value.trim() === 'listed';
 
-            // Try the endpoint that was originally in your code
+            // Send POST request to add category
             fetch('/admin/addCategory', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, description, isListed: status })
+                body: JSON.stringify({ name, description, isListed: status }),
             })
-            .then(response => {
-                console.log('Response status:', response.status);
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        console.error('Error response text:', text);
-                        throw new Error(`HTTP error ${response.status}: ${text.substring(0, 100)}`);
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            console.error('Error response:', data);
+                            throw new Error(data.error || `HTTP error ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    document.getElementById('addCategoryModal').style.display = 'none';
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Category added successfully',
+                    }).then(() => {
+                        location.reload();
                     });
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Success!', data);
-                document.getElementById('addCategoryModal').style.display = 'none';
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Category added successfully'
-                }).then(() => {
-                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Failed:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message || 'Failed to add category',
+                    });
                 });
-            })
-            .catch(error => {
-                console.error('Failed:', error);
+
+            return false;
+        }
+
+        // Validate form inputs
+        function validateForm(form) {
+            const name = form.querySelector('.category-name').value.trim();
+            const status = form.querySelector('.category-status').value.trim();
+
+            if (!name) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: error.message || 'Failed to add category'
+                    text: 'Category name is required',
                 });
-            });
-            
-            return false;
+                return false;
+            }
+            if (name.startsWith('$')) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Category name cannot start with "$"',
+                });
+                return false;
+            }
+            if (!['listed', 'unlisted'].includes(status)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Invalid status',
+                });
+                return false;
+            }
+            return true;
         }
+
+        // Attach event listener to form
+        document.addEventListener('DOMContentLoaded', () => {
+            const addCategoryForm = document.querySelector('#addCategoryForm'); // Adjust ID if needed
+            if (addCategoryForm) {
+                addCategoryForm.addEventListener('submit', handleAddFormSubmit);
+            }
+        });
        // Handle Edit Form Submission
         function handleEditFormSubmit(event) {
             event.preventDefault();
@@ -604,7 +647,7 @@
 
             console.log('Sending edit category request:', { id, name, description, isListed: status });
 
-            fetch('/admin/category/edit', {
+            fetch('/admin/editCategory', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

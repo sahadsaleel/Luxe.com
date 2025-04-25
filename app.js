@@ -16,6 +16,7 @@ db().catch(error => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 app.use(session({
     secret: process.env.SESSION_SECRET || 'default-secret',
@@ -23,19 +24,13 @@ app.use(session({
     saveUninitialized: true,
     cookie: {
         secure: false, 
-        httpOnly: true,
+        httpOnly: true, 
         maxAge: 72 * 60 * 60 * 1000
     }
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-// logging for debugging
-app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-    next();
-});
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

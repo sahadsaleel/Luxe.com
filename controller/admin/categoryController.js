@@ -26,17 +26,34 @@ const categoryInfo = async (req, res) => {
         res.redirect('/admin/pageerror');
     }
 };
+
 const addCategory = async (req, res) => {
     try {
         const { name, description, isListed } = req.body;
-        // console.log('Received add request:', req.body); // Debug
-        const existingCategory = await Category.findOne({ name } , {$regex : `^{$name}$` , $options : "i"});
+        console.log('Received add request:', req.body); // Debug
+
+        // Validate input
+        if (!name || typeof name !== 'string') {
+            return res.status(400).json({ error: 'Category name is required' });
+        }
+        if (name.startsWith('$')) {
+            return res.status(400).json({ error: 'Category name cannot start with "$"' });
+        }
+
+        // Check for existing category (case-insensitive)
+        const existingCategory = await Category.findOne({
+            name: { $regex: `^${name}$`, $options: 'i' }
+        });
+
         if (existingCategory) {
             return res.status(400).json({ error: 'Category already exists' });
         }
+
+        // Create new category
         const newCategory = new Category({ name, description, isListed });
         await newCategory.save();
-        return res.json({ message: 'Category added successfully' });
+
+        return res.json({ message: 'Category added successfully', category: newCategory });
     } catch (error) {
         console.error('Error in addCategory:', error);
         return res.status(500).json({ error: 'Internal server error' });

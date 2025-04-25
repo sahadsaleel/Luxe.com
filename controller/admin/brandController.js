@@ -1,89 +1,79 @@
 const Brand = require('../../models/brandSchema');
-const path = require('path');
-const fs = require('fs').promises;
 const mongoose = require('mongoose');
-const cloudinary = require('../../config/cloudinary'); 
-
-
+const cloudinary = require('../../config/cloudinary');
+const fs = require('fs').promises;
 
 const getBrandPage = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 4;
-    const skip = (page - 1) * limit;
-
-    
-    const brandData = await Brand.find({})
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean();
-
-    const totalBrands = await Brand.countDocuments();
-    const totalPages = Math.ceil(totalBrands / limit);
-
-    res.render('admin/brands', {
-      data: brandData,
-      currentPage: page,
-      totalPages: totalPages,
-      totalBrands: totalBrands,
-    });
+    const brands = await Brand.find().sort({ createdAt: -1 });
+    res.render('admin/brands', { data: brands });
   } catch (error) {
-    console.error('Error fetching brand page:', error);
+    console.error('Error fetching brands:', error);
     res.redirect('/admin/pageerror');
   }
 };
 
-
-
 const addBrand = async (req, res) => {
   try {
+    // console.log('Received request add brand:', req.body, req.file);
     const { brandName, status } = req.body;
     const file = req.file;
 
-    // console.log('ekjh:', { brandName, status, file });
-
-    // Validate inputs
     if (!brandName || !status || !file) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
     }
 
-    // Check for duplicate brand
     const existingBrand = await Brand.findOne({ brandName });
     if (existingBrand) {
-      await fs.unlink(file.path); // Clean up temporary file
       return res.status(400).json({ success: false, message: 'Brand name already exists' });
     }
 
-    // Validate status
     if (!['active', 'inactive'].includes(status)) {
-      await fs.unlink(file.path); // Clean up temporary file
       return res.status(400).json({ success: false, message: 'Invalid status value' });
     }
 
-    // Upload image to Cloudinary
-    const result = await cloudinary.uploader.upload(file.path, {
-      folder: 'brands', // Optional: Organize images in a folder
-      transformation: [{ width: 200, height: 200, crop: 'limit' }], // Optional: Resize image
-    });
+    //Wrap the stream in a Promise
+    const streamUpload = (buffer) => {
+      return new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            unique_filename: true,
+            folder: 'brands',
+            transformation: [{ width: 200, height: 200, crop: 'limit' }],
+            resource_type: 'image',
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          }
+        ).end(buffer);
+      });
+    };
 
-    // Clean up temporary file
-    await fs.unlink(file.path);
+    //Await the result
+    let result;
+    try {
+      result = await streamUpload(file.buffer);
+    } catch (uploadError) {
+      console.error('Cloudinary upload error:', uploadError);
+      return res.status(500).json({ success: false, message: 'Failed to upload image to Cloudinary' });
+    }
 
-    // Create new brand
+    //Now safely use result
     const newBrand = new Brand({
       brandName,
-      brandImage: result.secure_url, // Store Cloudinary URL
-      cloudinaryPublicId: result.public_id, // Store public_id for deletion
+      brandImage: result.secure_url,
+      cloudinaryPublicId: result.public_id,
       isBlocked: status === 'inactive',
     });
     await newBrand.save();
 
-    // console.log('Brand added:', newBrand)
     res.status(201).json({ success: true, message: 'Brand added successfully' });
   } catch (error) {
     console.error('Error adding brand:', error);
-    if (req.file) await fs.unlink(req.file.path); // Clean up on error
     if (error.name === 'ValidationError') {
       return res.status(400).json({ success: false, message: `Validation error: ${error.message}` });
     }
@@ -98,80 +88,99 @@ const addBrand = async (req, res) => {
 
 const editBrand = async (req, res) => {
   try {
+    // console.log('Received request edit brand:', req.body, req.file);
     const { id, brandName, status } = req.body;
     const file = req.file;
 
-
-    // Validate inputs
     if (!id || !brandName || !status) {
-      if (file) await fs.unlink(file.path); // Clean up temporary file
       return res.status(400).json({ success: false, message: 'ID, brand name, and status are required' });
     }
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      if (file) await fs.unlink(file.path);
       return res.status(400).json({ success: false, message: 'Invalid brand ID' });
     }
 
-    // Find brand
+    // Check brand is exists
     const brand = await Brand.findById(id);
     if (!brand) {
-      if (file) await fs.unlink(file.path); 
       return res.status(404).json({ success: false, message: 'Brand not found' });
     }
 
     // Check for duplicate brand name
     const existingBrand = await Brand.findOne({ brandName, _id: { $ne: id } });
     if (existingBrand) {
-      if (file) await fs.unlink(file.path);
       return res.status(400).json({ success: false, message: 'Brand name already exists' });
     }
 
     // Validate status
     if (!['active', 'inactive'].includes(status)) {
-      if (file) await fs.unlink(file.path);
       return res.status(400).json({ success: false, message: 'Invalid status value' });
     }
 
     let imageUrl = brand.brandImage;
     let cloudinaryPublicId = brand.cloudinaryPublicId;
 
-    // Handle image update
+    // Handle new image upload
     if (file) {
-      // Delete old image from Cloudinary if it exists
-      if (brand.cloudinaryPublicId) {
+      // Delete old image from Cloudinary 
+      // if exists
+      if (cloudinaryPublicId) {
         try {
-          await cloudinary.uploader.destroy(brand.cloudinaryPublicId);
+          await cloudinary.uploader.destroy(cloudinaryPublicId);
         } catch (err) {
           console.warn('Failed to delete old Cloudinary image:', err.message);
         }
       }
 
       // Upload new image to Cloudinary
-      const result = await cloudinary.uploader.upload(file.path, {
-        folder: 'brands',
-        transformation: [{ width: 200, height: 200, crop: 'limit' }],
-      });
+      const streamUpload = (buffer) => {
+        return new Promise((resolve, reject) => {
+          cloudinary.uploader.upload_stream(
+            {
+              folder: 'brands',
+              transformation: [{ width: 200, height: 200, crop: 'limit' }],
+              resource_type: 'image'
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          ).end(buffer);
+        });
+      };
 
-      imageUrl = result.secure_url;
-      cloudinaryPublicId = result.public_id;
-
-      // Clean up temporary file
-      await fs.unlink(file.path);
+      try {
+        const result = await streamUpload(file.buffer);
+        imageUrl = result.secure_url;
+        cloudinaryPublicId = result.public_id;
+      } catch (uploadError) {
+        console.error('Cloudinary upload error:', uploadError);
+        return res.status(500).json({ success: false, message: 'Failed to upload image to Cloudinary' });
+      }
     }
 
-    // Update brand
-    brand.brandName = brandName;
-    brand.brandImage = imageUrl;
-    brand.cloudinaryPublicId = cloudinaryPublicId;
-    brand.isBlocked = status === 'inactive';
+    // Update the brand
+    const updatedBrand = await Brand.findOneAndUpdate(
+      { _id: id, __v: brand.__v },
+      {
+        brandName,
+        brandImage: imageUrl,
+        cloudinaryPublicId,
+        isBlocked: status === 'inactive',
+        updatedAt: new Date(),
+        $inc: { __v: 1 }
+      },
+      { new: true, runValidators: true }
+    );
 
-    await brand.save();
-    // console.log('Brand updated:', brand)
+    if (!updatedBrand) {
+      return res.status(409).json({ success: false, message: 'Concurrent update detected. Please refresh and try again.' });
+    }
 
     res.status(200).json({ success: true, message: 'Brand updated successfully' });
+
   } catch (error) {
     console.error('Error updating brand:', error);
-    if (req.file) await fs.unlink(req.file.path); // Clean up on error
     if (error.name === 'ValidationError') {
       return res.status(400).json({ success: false, message: `Validation error: ${error.message}` });
     }
@@ -186,29 +195,20 @@ const editBrand = async (req, res) => {
 };
 
 
-
-
 const deleteBrand = async (req, res) => {
   try {
+    console.log('Received request to delete brand:', req.body);
     const { id } = req.body;
 
-    // console.log('Delete request:', { id });
-
-    // Validate input
-    if (!id) {
-      return res.status(400).json({ success: false, message: 'Brand ID is required' });
-    }
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: 'Invalid brand ID' });
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: 'Valid brand ID is required' });
     }
 
-    // Find brand
     const brand = await Brand.findById(id);
     if (!brand) {
       return res.status(404).json({ success: false, message: 'Brand not found' });
     }
 
-    // Delete image from Cloudinary if it exists
     if (brand.cloudinaryPublicId) {
       try {
         await cloudinary.uploader.destroy(brand.cloudinaryPublicId);
@@ -217,10 +217,7 @@ const deleteBrand = async (req, res) => {
       }
     }
 
-    // Delete brand
     await Brand.findByIdAndDelete(id);
-    // console.log('Brand deleted:', id)
-
     res.status(200).json({ success: true, message: 'Brand deleted successfully' });
   } catch (error) {
     console.error('Error deleting brand:', error);

@@ -24,6 +24,10 @@ const loadHomepage = async (req, res) => {
     }
 };
 
+// const loadShopPage = async (req.res)=>{
+
+// }
+
 
 
 const loadSignup = async (req, res) => {
