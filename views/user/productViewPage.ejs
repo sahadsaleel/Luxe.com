@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Page</title>
+  <link rel="stylesheet" href="/css/home.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --gucci-purple: #8a6a94;
+      --gucci-gold: #d4af37;
+      --gucci-dark: #212121;
+      --gucci-light: #f9f9f9;
+      --gucci-accent: #e6c9e1;
+    }
+    
+    body {
+      background-color: var(--gucci-light);
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    .breadcrumb-item a {
+      color: var(--gucci-dark);
+      text-decoration: none;
+    }
+    
+    .product-image-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 700px;
+      background-color: #fff;
+    }
+    
+    .product-image {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    
+    .product-image img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    
+    /* Zoom lens and result container */
+    .img-zoom-lens {
+      position: absolute;
+      border: 1px solid #d4d4d4;
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.4);
+      cursor: none;
+      display: none;
+    }
+    
+    .img-zoom-result {
+      position: absolute;
+      right: -300px;
+      border: 1px solid #d4d4d4;
+      width: 300px;
+      height: 300px;
+      background-color: white;
+      display: none;
+      overflow: hidden;
+      z-index: 100;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .thumbnail-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 700px;
+      overflow-y: auto;
+    }
+    
+    .thumbnail {
+      width: 80px;
+      height: 80px;
+      border: 1px solid #ddd;
+      padding: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .thumbnail:hover, .thumbnail.active {
+      border-color: var(--gucci-purple);
+    }
+    
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .product-details-card {
+      border: none;
+      border-radius: 0;
+      padding: 20px;
+      background-color: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .similar-product-card {
+      background-color: #eee;
+      border: none;
+      border-radius: 0;
+      height: 100%;
+      transition: all 0.3s ease;
+    }
+    
+    .similar-product-card:hover {
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transform: translateY(-5px);
+    }
+    
+    .product-price {
+      margin: 15px 0;
+      color: var(--gucci-dark);
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    
+    .size-dropdown {
+      width: 120px;
+      margin: 10px 0;
+      border-radius: 0;
+      border-color: var(--gucci-dark);
+    }
+    
+    .custom-select {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      max-width: 200px;
+    }
+    
+    .custom-select select {
+      appearance: none;
+      -webkit-appearance: none;
+      padding: 10px 35px 10px 15px;
+      background-color: white;
+      border: 1px solid var(--gucci-dark);
+      border-radius: 0;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+    }
+    
+    .custom-select::after {
+      content: '\f107';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    
+    /* Split button styles */
+    .purchase-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .btn-add-to-bag {
+      flex: 1;
+      background-color: white;
+      color: var(--gucci-dark);
+      border: 1px solid var(--gucci-dark);
+      border-radius: 0;
+      padding: 12px 0;
+      text-transform: uppercase;
+      font-weight: 500;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-add-to-bag:hover {
+      background-color: #f0f0f0;
+      color: var(--gucci-dark);
+    }
+    
+    .btn-buy-now {
+      flex: 1;
+      background-color: var(--gucci-purple);
+      color: white;
+      border: none;
+      border-radius: 0;
+      padding: 12px 0;
+      text-transform: uppercase;
+      font-weight: 500;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-buy-now:hover {
+      background-color: var(--gucci-dark);
+      color: white;
+    }
+    
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+      margin: 40px 0 20px;
+      color: var(--gucci-dark);
+      letter-spacing: 2px;
+    }
+    
+    .accordion-button {
+      background-color: transparent;
+      padding: 15px 0;
+      border-bottom: 1px solid #ddd;
+      color: var(--gucci-dark);
+    }
+    
+    .accordion-button:not(.collapsed) {
+      background-color: transparent;
+      box-shadow: none;
+      color: var(--gucci-purple);
+    }
+    
+    .accordion-body {
+      padding: 15px 0;
+    }
+    
+    .info-badge {
+      background-color: transparent;
+      border: 1px solid #ddd;
+      border-radius: 0;
+      color: var(--gucci-dark);
+      margin-right: 10px;
+      margin-bottom: 10px;
+      padding: 8px 15px;
+    }
+    
+    .wishlist-icon {
+      border: none;
+      background: transparent;
+      font-size: 1.5rem;
+      color: var(--gucci-purple);
+      transition: all 0.3s ease;
+    }
+    
+    .wishlist-icon:hover {
+      color: var(--gucci-gold);
+    }
+    
+    .product-specs .row {
+      border-bottom: 1px solid #eee;
+      padding: 8px 0;
+    }
+    
+    .product-specs .col-6:first-child {
+      font-weight: 500;
+      color: var(--gucci-dark);
+    }
+    
+    .product-specs .col-6:last-child {
+      color: #666;
+    }
+    
+    .fragrance-note {
+      display: inline-block;
+      background-color: var(--gucci-accent);
+      color: var(--gucci-dark);
+      padding: 5px 15px;
+      margin: 5px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+    
+    .size-option {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .size-option label {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .size-option input[type="radio"] {
+      display: none;
+    }
+    
+    .size-option input[type="radio"]:checked + label {
+      border-color: var(--gucci-purple);
+      background-color: var(--gucci-accent);
+    }
+    
+    .size-option label span:first-child {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    
+    .size-option label span:last-child {
+      font-size: 0.9rem;
+      color: var(--gucci-dark);
+      font-weight: bold;
+    }
+    
+    .gift-option {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+    }
+    
+    .gift-option-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+    
+    .gift-option-title i {
+      color: var(--gucci-gold);
+    }
+    
+    .similar-product-price {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--gucci-dark);
+    }
+    
+    /* Image Zoom Modal for mobile */
+    .zoom-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      padding-top: 50px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+    
+    .zoom-modal-content {
+      margin: auto;
+      display: block;
+      max-width: 90%;
+      max-height: 90%;
+    }
+    
+    .zoom-close {
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+    
+    .zoom-close:hover {
+      color: #bbb;
+    }
+    
+    @media (max-width: 992px) {
+      .img-zoom-result {
+        display: none !important;
+      }
+      
+      .product-image img {
+        cursor: zoom-in;
+      }
+    }
+    
+    @media (max-width: 767px) {
+      .product-image-container {
+        height: 500px;
+      } 
+      .thumbnail-container {
+        flex-direction: row;
+        height: auto;
+        overflow-x: auto;
+        overflow-y: hidden;
+        margin-top: 15px;
+      }
+    }
+    .img-zoom-lens {
+        position: absolute;
+        border: 2px solid var(--gucci-purple);
+        width: 120px;
+        height: 120px;
+        background: rgba(255, 255, 255, 0.3);
+        cursor: none;
+        display: none;
+        border-radius: 50%; /* Circular lens for Amazon-like effect */
+        pointer-events: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .img-zoom-result {
+        position: absolute;
+        right: -350px; /* Adjusted for better spacing */
+        top: 0;
+        border: 1px solid var(--gucci-dark);
+        width: 400px; /* Larger for better detail */
+        height: 400px;
+        background-color: white;
+        display: none;
+        overflow: hidden;
+        z-index: 100;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        background-repeat: no-repeat;
+        }
+
+        .zoom-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.9);
+        justify-content: center;
+        align-items: center;
+        }
+
+        .zoom-modal-content {
+        margin: auto;
+        display: block;
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        }
+
+        .zoom-close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: #fff;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+        cursor: pointer;
+        }
+
+        .zoom-close:hover {
+        color: var(--gucci-gold);
+        }
+
+        @media (max-width: 1200px) {
+        .img-zoom-result {
+            right: -320px;
+            width: 350px;
+            height: 350px;
+        }
+        }
+
+        @media (max-width: 992px) {
+        .img-zoom-lens,
+        .img-zoom-result {
+            display: none !important;
+        }
+        .product-image img {
+            cursor: zoom-in;
+        }
+        }
+  </style>
+</head>
+<body>
+<%- include('../../views/partials/user/header') %>
+
+<div class="container py-4">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Product</li>
+    </ol>
+  </nav>
+
+  <!-- Product Section -->
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="row">
+        <div class="col-md-10 order-md-2">
+          <div class="product-image-container">
+            <div class="product-image">
+              <div class="img-zoom-lens" id="zoomLens"></div>
+              <img src="<%=product.productImage[0]%>" alt="product image" class="img-fluid" id="productImg">
+            </div>
+            <div class="img-zoom-result" id="zoomResult"></div>
+          </div>
+        </div>
+        <div class="col-md-2 order-md-1">
+          <div class="thumbnail-gallery d-none d-md-block">                
+            <%for(let i = 0 ; i < product.productImage.length ; i++){%>
+            <div class="thumbnail <%=i===0 ? 'active' : ''%>">
+              <img src="<%=product.productImage[i]%>" alt="product image">
+            </div>
+            <%}%>
+          </div>
+        </div>
+      </div> 
+    </div>
+  
+    <div class="col-md-6">
+      <div class="product-details-card">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 class="h3"><%=product.productName%></h1>
+          <button class="wishlist-icon"><i class="fa-regular fa-heart"></i></button>
+        </div>
+      
+        <div class="product-price">
+            ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
+        </div>
+        
+        <!-- Enhanced Size Options -->
+        <div class="mt-4 mb-3">
+          <p class="mb-2 fw-bold">Select Size:</p>
+          <div class="size-option">
+            <input type="radio" name="size" id="size-30" value="30">
+            <label for="size-30">
+              <span>30ml</span>
+              <span>9,500 ₹</span>
+            </label>
+            
+            <input type="radio" name="size" id="size-50" value="50" checked>
+            <label for="size-50">
+              <span>50ml</span>
+              <span>12,850 ₹</span>
+            </label>
+            
+            <input type="radio" name="size" id="size-90" value="90">
+            <label for="size-90">
+              <span>90ml</span>
+              <span>15,990 ₹</span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- Gift Options -->
+        <div class="gift-option">
+          <div class="gift-option-title">
+            <i class="fas fa-gift"></i> Make it special
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="giftWrap">
+            <label class="form-check-label" for="giftWrap">
+              Add luxury gift wrapping (+450 ₹)
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="giftCard">
+            <label class="form-check-label" for="giftCard">
+              Include a personalized message card
+            </label>
+          </div>
+        </div>
+        
+        <div class="availability my-3">
+          <span class="text-success"><i class="fas fa-check-circle"></i> Available</span>
+          <p class="small mt-2">Enjoy complimentary delivery or Collect In Store</p>
+        </div>
+        
+        <!-- Split Purchase Buttons -->
+        <div class="purchase-buttons">
+          <button class="btn btn-add-to-bag">Add to bag</button>
+          <button class="btn btn-buy-now">Buy now</button>
+        </div>
+      </div>
+
+      <div class="product-info mt-4">
+        <div class="accordion" id="productAccordion">
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#shippingInfo">
+                SHIPPING & RETURNS INFO
+              </button>
+            </h2>
+            <div id="shippingInfo" class="accordion-collapse collapse" data-bs-parent="#productAccordion">
+              <div class="accordion-body">
+                <p><i class="fas fa-truck"></i> Free express shipping on all orders above 10,000 ₹</p>
+                <p><i class="fas fa-undo"></i> Easy returns within 30 days</p>
+                <p><i class="fas fa-map-marker-alt"></i> Store pickup available at select locations</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#paymentOptions">
+                Payment Options
+              </button>
+            </h2>
+            <div id="paymentOptions" class="accordion-collapse collapse" data-bs-parent="#productAccordion">
+              <div class="accordion-body">
+                <p><i class="fab fa-cc-visa"></i> <i class="fab fa-cc-mastercard"></i> <i class="fab fa-cc-amex"></i> All major credit cards accepted</p>
+                <p><i class="fab fa-paypal"></i> PayPal available</p>
+                <p><i class="fas fa-wallet"></i> Digital wallets: Google Pay, Apple Pay</p>
+                <p><i class="fas fa-money-bill-wave"></i> EMI available on select banks</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#packaging">
+                Luxe.com Packaging
+              </button>
+            </h2>
+            <div id="packaging" class="accordion-collapse collapse" data-bs-parent="#productAccordion">
+              <div class="accordion-body">
+                <p><i class="fas fa-box-open"></i> Premium gift packaging with signature ribbon</p>
+                <p><i class="fas fa-certificate"></i> Authenticity certificate included</p>
+                <p><i class="fas fa-leaf"></i> Eco-friendly packaging materials</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="service-info mt-4">
+        <div class="d-flex flex-wrap">
+          <span class="info-badge"><i class="fas fa-lock"></i> Secure payment</span>
+          <span class="info-badge"><i class="fas fa-truck"></i> Free Shipping & Returns</span>
+          <span class="info-badge"><i class="fas fa-box"></i> Free shipping</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Details Section -->
+  <div class="row mt-5">
+    <div class="col-md-6">
+      <img src="/api/placeholder/600/750" alt="Gucci Guilty Love Edition Pour Femme" class="img-fluid">
+    </div>
+    <div class="col-md-6">
+        <h3 class="mb-3">Product Details</h3>
+        <p class="small text-muted">Product ID: <%= product._id %></p>
+       
+
+        
+      <div class="product-specs mt-4">
+        <div class="row mb-2">
+          <div class="col-6">Brand:</div>
+          <div class="col-6"><%= brand.brandName || 'N/A' %></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-6">Product Category:</div>
+          <div class="col-6"><%= category.name || 'N/A' %></div>
+        </div>
+        <!-- <div class="row mb-2">
+          <div class="col-6">Product Type:</div>
+          <div class="col-6"><%= product.productDescription.includes('Eau De Parfum') ? 'Eau De Parfum (EDP)' : 'N/A' %></div>
+        </div> -->
+        <!-- <div class="row mb-2">
+          <div class="col-6">Gender:</div>
+          <div class="col-6"><%= product.productDescription.includes('Pour Femme') ? 'Women' : 'Unisex' %></div>
+        </div> -->
+        <div class="row mb-2">
+          <div class="col-6">Longevity:</div>
+          <div class="col-6">Long-lasting</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-6">Size:</div>
+          <div class="col-6">
+            <% if (variants && variants.length > 0) { %>
+              <%= variants.map(v => v.size).join(' / ') %>
+            <% } else { %>
+              N/A
+            <% } %>
+          </div>
+        </div>
+        <!-- <div class="row mb-2">
+          <div class="col-6">Usage:</div>
+          <div class="col-6">Luxury, Premium, Daily Wear, Special Occasions</div>
+        </div> -->
+      </div>
+
+      <div class="product-description mt-5">
+        <h3 class="mb-3">Product Description</h3>
+        <p><%=product.productDescription%></p>
+        
+        <div class="mt-4">
+          <p class="mb-2"><strong>Fragrance Notes:</strong></p>
+          <div>
+            <span class="fragrance-note">Lilac Accord</span>
+            <span class="fragrance-note">Patchouli Oil</span>
+            <span class="fragrance-note">Musky Ambery Accord</span>
+            <span class="fragrance-note">Violet</span>
+            <span class="fragrance-note">Raspberry</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Similar Products Section -->
+  <h2 class="section-title">DISCOVER SIMILAR PRODUCTS</h2>
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="similar-product-card p-3">
+        <img src="/api/placeholder/300/300" alt="Gucci Guilty Eau de Parfum" class="img-fluid mb-3">
+        <h5 class="text-center">Gucci Guilty Eau de Parfum Intense Pour Femme, 90ml, eau de parfum</h5>
+        <div class="similar-product-price">
+          13,050 ₹
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="similar-product-card p-3">
+        <img src="/api/placeholder/300/300" alt="Gucci Guilty Absolute" class="img-fluid mb-3">
+        <h5 class="text-center">Gucci Guilty Absolute Pour Femme 90ml eau de parfum</h5>
+        <div class="similar-product-price">
+          12,850 ₹
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="similar-product-card p-3">
+        <img src="/api/placeholder/300/300" alt="Gucci Guilty Love Edition" class="img-fluid mb-3">
+        <h5 class="text-center">Gucci Guilty Love Edition Pour Homme, Eau de Parfum 90ml</h5>
+        <div class="similar-product-price">
+          15,100 ₹
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Image Zoom Modal for mobile -->
+<div id="imageZoomModal" class="zoom-modal">
+  <span class="zoom-close">&times;</span>
+  <img class="zoom-modal-content" id="zoomedImage">
+</div>
+
+<%-include("../../views/partials/user/footer")%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Thumbnail functionality
+  const thumbnails = document.querySelectorAll('.thumbnail');
+  const mainImage = document.querySelector('.product-image img');
+  const lens = document.getElementById('zoomLens');
+  const result = document.getElementById('zoomResult');
+  const modal = document.getElementById('imageZoomModal');
+  const modalImg = document.getElementById('zoomedImage');
+
+  let cx, cy;
+
+  // Calculate zoom ratio
+  function calculateRatio() {
+    cx = result.offsetWidth / lens.offsetWidth;
+    cy = result.offsetHeight / lens.offsetHeight;
+  }
+
+  // Get cursor position relative to image
+  function getCursorPos(e) {
+    const rect = mainImage.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    return { x, y };
+  }
+
+  // Move lens and update zoomed image
+  function moveLens(e) {
+    e.preventDefault();
+    const pos = getCursorPos(e);
+    let x = pos.x - lens.offsetWidth / 2;
+    let y = pos.y - lens.offsetHeight / 2;
+
+    // Keep lens within image bounds
+    x = Math.max(0, Math.min(x, mainImage.width - lens.offsetWidth));
+    y = Math.max(0, Math.min(y, mainImage.height - lens.offsetHeight));
+
+    // Position lens
+    lens.style.left = x + 'px';
+    lens.style.top = y + 'px';
+
+    // Update zoomed image
+    result.style.backgroundImage = `url('${mainImage.src}')`;
+    result.style.backgroundSize = `${mainImage.width * cx}px ${mainImage.height * cy}px`;
+    result.style.backgroundPosition = `-${x * cx}px -${y * cy}px`;
+  }
+
+  // Initialize zoom functionality
+  function initZoom() {
+    // Hide elements initially
+    lens.style.display = 'none';
+    result.style.display = 'none';
+
+    // Show lens and result on hover (desktop only)
+    mainImage.addEventListener('mouseenter', (e) => {
+      if (window.innerWidth > 992) {
+        lens.style.display = 'block';
+        result.style.display = 'block';
+        calculateRatio();
+        moveLens(e);
+      }
+    });
+
+    mainImage.addEventListener('mouseleave', () => {
+      lens.style.display = 'none';
+      result.style.display = 'none';
+    });
+
+    mainImage.addEventListener('mousemove', moveLens);
+    lens.addEventListener('mousemove', moveLens);
+
+    // Recalculate ratio on resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 992) {
+        calculateRatio();
+      }
+    });
+  }
+
+  // Thumbnail click handler
+  thumbnails.forEach(thumbnail => {
+    thumbnail.addEventListener('click', function() {
+      thumbnails.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      const newSrc = this.querySelector('img').src;
+      mainImage.src = newSrc;
+
+      // Reinitialize zoom for new image
+      if (window.innerWidth > 992) {
+        initZoom();
+      }
+    });
+  });
+
+  // Mobile zoom modal
+  mainImage.addEventListener('click', () => {
+    if (window.innerWidth <= 992) {
+      modal.style.display = 'flex';
+      modalImg.src = mainImage.src;
+    }
+  });
+
+  // Close modal
+  document.querySelector('.zoom-close').addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  // Initialize zoom for desktop
+  if (window.innerWidth > 992) {
+    initZoom();
+  }
+});
+</script>
+</body>
+</html>

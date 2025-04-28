@@ -293,6 +293,19 @@
             opacity: 0.7;
             cursor: not-allowed;
         }
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            margin: 0 5px;
+            color: #333; 
+            transition: color 0.3s ease;
+        }
+
+        .edit-btn svg, .delete-btn svg {
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -344,8 +357,20 @@
                     <td><%= product.variants.map(v => v.size).join(', ') %></td>
                     <td><%= product.status %></td>
                     <td>
-                        <button class="action-btn edit-btn" data-id="<%= product._id %>">✏️</button>
-                        <button class="action-btn delete-btn" data-id="<%= product._id %>">🗑️</button>
+                        <button class="action-btn edit-btn" data-id="<%= product._id %>">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+                        <button class="action-btn delete-btn" data-id="<%= product._id %>">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                        </button>
                     </td>
                 </tr>
             <% }) %>
@@ -411,7 +436,7 @@
                             <label>Variants</label>
                             <div id="addVariantsContainer">
                                 <div class="variant">
-                                    <input type="text" name="variantSize" placeholder="Size (e.g., 50 ML)" class="variant-size">
+                                    <input type="text" name="variantSize" placeholder="Size" class="variant-size">
                                     <input type="number" name="variantRegularPrice" placeholder="Regular Price" class="variant-regular-price">
                                     <input type="number" name="variantSalePrice" placeholder="Sale Price (optional)" class="variant-sale-price">
                                     <input type="number" name="variantQuantity" placeholder="Quantity" class="variant-quantity">
@@ -679,6 +704,7 @@
                 try {
                     const response = await fetch(`/admin/editProduct?id=${productId}`);
                     const product = await response.json();
+                    console.log('Response:', product);
 
                     if (product.success) {
                         document.getElementById('editProductId').value = product._id;
@@ -723,6 +749,7 @@
                         });
                     }
                 } catch (error) {
+                    console.error('Fetch error:', error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -944,51 +971,46 @@
         });
 
         document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', async () => {
-                const productId = button.getAttribute('data-id');
+                button.addEventListener('click', async () => {
+                    const productId = button.getAttribute('data-id');
+                    await deleteProduct(productId);
+                });
+            });
 
-                const confirm = await Swal.fire({
-                    icon: 'warning',
+            async function deleteProduct(productId) {
+                const confirmDelete = await Swal.fire({
                     title: 'Are you sure?',
-                    text: 'This will delete the product!',
+                    text: 'Do you want to delete this product?',
+                    icon: 'warning',
                     showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
                     confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'No, cancel'
+                    cancelButtonText: 'Cancel'
                 });
 
-                if (confirm.isConfirmed) {
+                if (confirmDelete.isConfirmed) {
                     try {
-                        const response = await fetch(`/admin/deleteProduct?id=${productId}`,{method : 'GET'})
+                        const response = await fetch(`/admin/deleteProduct/${productId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('adminToken')}` // Adjust based on your auth setup
+                            }
+                        });
                         const result = await response.json();
 
                         if (result.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Deleted',
-                                text: result.message,
-                                timer: 1500
-                            }).then(() => {
-                                window.location.reload();
-                            });
+                            await Swal.fire('Deleted!', 'The product was deleted successfully.', 'success');
+                            location.reload();
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: result.message
-                            }).then(() => {
-                                window.location.reload();
-                            });
+                            Swal.fire('Error!', result.message || 'Something went wrong.', 'error');
                         }
                     } catch (error) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Failed to delete product'
-                        });
+                        console.error('Fetch error:', error);
+                        Swal.fire('Error!', 'Failed to delete product', 'error');
                     }
                 }
-            });
-        });
+            }
 
         const searchInput = document.getElementById('searchInput');
         const sortSelect = document.getElementById('sortSelect');

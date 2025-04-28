@@ -1,8 +1,11 @@
 const User = require('../../models/userSchema');
-require('dotenv').config();
+const Category = require('../../models/categorySchema');
+const Product = require('../../models/productSchema');
+const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const path = require('path');
+
 
 const pageNotFound = async (req, res) => {
     try {
@@ -15,18 +18,28 @@ const pageNotFound = async (req, res) => {
 const loadHomepage = async (req, res) => {
     try {
         const userId = req.session.user;
-        const userData = await User.findById(userId)    
-        res.render('user/home', { user: userData });
-            
-    }catch(error) {
-        console.log('Home page error:', error);
+        const category = await Category.find({ isListed: true });
+        const productData = await Product.find({
+            isDeleted: false,
+            productCategory: { $in: category.map(category => category._id) },
+            'variants.quantity': { $gt: 0 } 
+        })
+            .sort({ createdAt: -1 }) 
+            .limit(6);
+
+        if (userId) {
+            const userData = await User.findById(userId);
+            res.render('user/home', { user: userData, products: productData });
+        } else {
+            res.render('user/home', { products: productData });
+        }
+    } catch (error) {
+        console.error('Home page error:', error);
         res.status(500).send('Server error');
     }
 };
 
-// const loadShopPage = async (req.res)=>{
 
-// }
 
 
 
@@ -42,6 +55,9 @@ const loadSignup = async (req, res) => {
 
 const loadLogin = (req, res) => {
     try {
+        if(req.session.user){
+            return res.redirect('/')
+        }
         res.render('user/login', { message: '' }); 
     } catch (error) {
         console.log('loadLogin error', error);
@@ -87,7 +103,7 @@ const signup = async (req, res) => {
         }
 
         const findUser = await User.findOne({ email });
-        if (findUser) {
+        if (findUser){
             return res.render('user/signup', { message: 'User with this email already exists' });
         }
 
@@ -124,7 +140,7 @@ const verifyOtp = async (req, res) => {
         console.log('Received OTP:', otp);
 
         if (!req.session.userOtp || !req.session.userData) {
-            return res.status(400).json({
+            return res.status(400).json({ 
                 success: false,
                 message: 'Session data is missing. Please request a new OTP.'
             });
@@ -154,7 +170,7 @@ const verifyOtp = async (req, res) => {
 
             return res.json({
                 success: true,
-                message: 'OTP verified successfully. Redirecting to login.',
+                message: 'OTP verified successfully.',
                 redirectUrl: '/login'
             });
         } else {
@@ -177,7 +193,7 @@ const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const findUser = await User.findOne({ isAdmin: 0, email: email });
-
+        
         if (!findUser) {
             return res.render("user/login", { message: "User not found" }); 
         }
@@ -191,10 +207,10 @@ const login = async (req, res) => {
             return res.render("user/login", { message: "Incorrect password" }); 
         }
 
-        req.session.user = findUser._id;
+        req.session.user = findUser.id;
         res.redirect('/');
     } catch (error) {
-        console.log("login error", error);
+        // console.log("login error", error);
         res.render("user/login", { message: "login failed, please try again" }); 
     }
 };
@@ -203,17 +219,147 @@ const logout = async (req,res)=>{
     try {
         req.session.destroy((err)=>{
             if(err){
-                console.log("Session destruction error", err.message);
-                return res.render('/pageNotFound')
+                return res.redirect('/pageNotFound');
             }
-            return res.render('user/home')
+            res.redirect('/');
         })
     } catch (error) {
-        
-        console.log("Logout error",error);
-        res.redirect('/pageNotFound')
+        res.redirect('/pageNotFound');
     }
 }
+
+const loadShopPage = async (req, res) => {
+    try {
+        // Query parameters
+        let { search, sort, categoryf, brandf, minValue, maxValue, page } = req.query;
+        const perPage = 6;
+        page = parseInt(page) || 1;
+
+        // Default price range
+        minValue = parseFloat(minValue) || 0;
+        maxValue = parseFloat(maxValue) || Infinity;
+
+        // Fetch listed categories
+        const listedCategories = await Category.find({ isListed: true }).select('_id name');
+
+        // Build filter
+        let filter = {
+            isDeleted: false,
+            productCategory: { $in: listedCategories.map(cat => cat._id) },
+            'variants.quantity': { $gt: 0 }
+        };
+
+        // Search filter
+        if (search) {
+            filter.productName = { $regex: search, $options: 'i' };
+        }
+
+        // Category filter
+        if (categoryf) {
+            const categories = Array.isArray(categoryf) ? categoryf : [categoryf];
+            const categoryIds = listedCategories
+                .filter(cat => categories.includes(cat.name))
+                .map(cat => cat._id);
+            if (categoryIds.length) {
+                filter.productCategory = { $in: categoryIds };
+            }
+        }
+
+        // Brand filter
+        if (brandf) {
+            const listedBrands = await Brand.find({ isListed: true }).select('_id name');
+            const brands = Array.isArray(brandf) ? brandf : [brandf];
+            const brandIds = listedBrands
+                .filter(brand => brands.includes(brand.name))
+                .map(brand => brand._id);
+            if (brandIds.length) {
+                filter.brand = { $in: brandIds };
+            }
+        }
+
+        // Price filter
+        if (minValue || maxValue < Infinity) {
+            filter['variants.salePrice'] = {
+                $gte: minValue,
+                $lte: maxValue
+            };
+        }
+
+        // Sort options
+        let sortOptions = {};
+        switch (sort) {
+            case 'A-Z':
+                sortOptions = { productName: 1 };
+                break;
+            case 'Z-A':
+                sortOptions = { productName: -1 };
+                break;
+            case 'price-low-high':
+                sortOptions = { 'variants.salePrice': 1 };
+                break;
+            case 'price-high-low':
+                sortOptions = { 'variants.salePrice': -1 };
+                break;
+            default:
+                sortOptions = { createdAt: -1 };
+        }
+
+        // Pagination
+        const totalProducts = await Product.countDocuments(filter);
+        const totalPages = Math.ceil(totalProducts / perPage);
+        const currentPage = Math.max(1, Math.min(page, totalPages));
+
+        // Fetch products
+        const products = await Product.find(filter)
+            .sort(sortOptions)
+            .skip((currentPage - 1) * perPage)
+            .limit(perPage)
+            .populate('productCategory')
+            .lean();
+
+        // Fetch user
+        const user = req.session.user;
+        let userData = null;
+        if (user) {
+            userData = await User.findById(user._id).lean();
+        }
+
+        // JSON for AJAX
+        if (req.xhr || req.headers.accept.includes('application/json')) {
+            return res.json({
+                products: products.map(product => ({
+                    _id: product._id,
+                    productName: product.productName,
+                    salePrice: product.variants[0]?.salePrice || 0,
+                    image: product.image || '/img/placeholder.png',
+                    category: product.productCategory || {},
+                    variants: product.variants
+                })),
+                totalPages,
+                currentPage,
+                totalProducts
+            });
+        }
+
+        // Render page
+        res.render('user/shop', {
+            user: userData,
+            products,
+            totalPages,
+            currentPage,
+            categories: listedCategories
+        });
+    } catch (error) {
+        console.error('Shop page error:', error);
+        if (req.xhr) {
+            return res.status(500).json({ error: 'Failed to load products' });
+        }
+        res.redirect('/pageNotFound');
+    }
+};
+
+
+
 module.exports = {
     loadHomepage,
     pageNotFound,
@@ -223,4 +369,5 @@ module.exports = {
     login,
     logout,
     verifyOtp,
+    loadShopPage,
 };

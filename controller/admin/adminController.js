@@ -38,7 +38,7 @@ const login = async (req, res) => {
         }
 
         req.session.adminId = admin._id;
-        req.session.admin = true; // Set admin flag
+        req.session.admin = true; 
         res.setHeader('Cache-Control', 'no-store');
 
         return res.status(200).json({
@@ -71,13 +71,13 @@ const logout = async (req,res)=>{
     try {
         req.session.destroy(err=>{
             if(err){
-                console.log("Error destroying sesstion",err);
+                // console.log("Error destroying sesstion",err);
                 return res,redirect('/pageerror')
             }
             res.redirect('/admin/login')
         })
     } catch (error) {
-        console.log("Unexpected error during logout",error);
+        // console.log("Unexpected error during logout",error);
         res.redirect('/admin/pageerror')
         
     }

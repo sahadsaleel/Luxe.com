@@ -151,7 +151,6 @@
                 !confirmPassword ||
                 !signForm
             ) {
-                console.log("One or more elements not found");
                 return;
             }
     
@@ -168,11 +167,11 @@
                     error4.innerHTML ||
                     error5.innerHTML
                 ) {
-                    e.preventDefault(); // block form submit if any error exists
+                    e.preventDefault(); // prevent form submit any error exists
                 }
             });
     
-            // Add real-time validation on input
+            // Add real-time validation on input 
             firstName.addEventListener("input", firstNameValidateChecking);
             lastName.addEventListener("input", lastNameValidateChecking);
             email.addEventListener("input", emailValidateChecking);

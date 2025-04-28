@@ -18,7 +18,7 @@ const getProductPage = async (req, res) => {
         if (sort === 'z-a') sortOption = { productName: -1 };
 
         const products = await Product.find({
-            productName: { $regex: search, $options: 'i' }
+            productName: { $regex: search, $options: 'i' },isDeleted:false
         })
             .populate('productBrand')
             .populate('productCategory')
@@ -37,7 +37,7 @@ const getProductPage = async (req, res) => {
 
 const addProduct = async (req, res) => {
   try {
-    console.log('Received request to add product:', req.body, req.files?.map(f => f.originalname));
+    
     const { productName, productBrand, productCategory, productDescription, status, variants } = req.body;
 
     const productExists = await Product.findOne({ productName, isDeleted: false });
@@ -136,7 +136,7 @@ const addProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
   try {
-    console.log('Received request to edit product:', req.body, req.files?.map(f => f.originalname));
+    
     const { productId, productName, productBrand, productCategory, productDescription, status, variants, existingImages, removedImages } = req.body;
 
     if (!productId || !productName || !productBrand || !productCategory || !productDescription || !status) {
@@ -258,32 +258,34 @@ const editProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   try {
-    console.log('Received request to delete product:', req.query);
-    const { id } = req.query;
+      console.log('Received delete request for product ID:', req.params.id);
+      const productId = req.params.id;
 
-    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: 'Valid product ID is required' });
-    }
-
-    const product = await Product.findById(id);
-    if (!product) {
-      return res.status(404).json({ success: false, message: 'Product not found' });
-    }
-
-    for (const img of product.productImage) {
-      try {
-        const publicId = img.split('/').pop().split('.')[0];
-        await cloudinary.uploader.destroy(`product-images/${publicId}`);
-      } catch (err) {
-        console.warn('Failed to delete Cloudinary image:', err.message);
+      if (!mongoose.Types.ObjectId.isValid(productId)) {
+          return res.status(400).json({ success: false, message: 'Valid product ID is required' });
       }
-    }
 
-    await Product.findByIdAndUpdate(id, { isDeleted: true });
-    res.status(200).json({ success: true, message: 'Product deleted successfully' });
+      const product = await Product.findById(productId);
+      if (!product) {
+          return res.status(404).json({ success: false, message: 'Product not found' });
+      }
+
+      if (product.productImage && Array.isArray(product.productImage)) {
+          for (const img of product.productImage) {
+              try {
+                  const publicId = img.split('/').pop().split('.')[0];
+                  await cloudinary.uploader.destroy(`product-images/${publicId}`);
+              } catch (err) {
+                  console.warn('Failed to delete Cloudinary image:', err.message);
+              }
+          }
+      }
+
+      await Product.findByIdAndUpdate(productId,{isDeleted : true});
+      return res.status(200).json({ success: true, message: 'Product deleted successfully' });
   } catch (error) {
-    console.error('Error deleting product:', error);
-    res.status(500).json({ success: false, message: `Server error: ${error.message}` });
+      console.error('Error deleting product:', error.message);
+      return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -294,14 +296,15 @@ const getProductById = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Valid product ID is required' });
     }
 
-    const product = await Product.findById(id)
-      .populate('productBrand', '_id brandName')
-      .populate('productCategory', '_id name');
-    if (!product || product.isDeleted) {
+    const product = await Product.findOne({ _id: id, isDeleted: false })
+      .populate('productBrand')
+      .populate('productCategory');
+
+    if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
-    res.status(200).json({ success: true, ...product.toObject() });
+    res.status(200).json({ success: true, data: product.toObject() });
   } catch (error) {
     console.error('Error fetching product:', error);
     res.status(500).json({ success: false, message: `Server error: ${error.message}` });

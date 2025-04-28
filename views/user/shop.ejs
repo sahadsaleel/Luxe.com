@@ -1,217 +1,47 @@
+
+<link rel="stylesheet" href="/css/home.css">
+<%- include('../../views/partials/user/header') %>
+
 <div class="hero">
     <div class="hero-image">
-        <img src="/img/Screenshot 2025-03-27 131800.png" alt="">
-    </div>
-    <div class="hero-content">
-        <h2>Experience Luxury in Every Bottle</h2>
-        <p>The House of Scent is an authentic perfume house dedicated to the creation of highly original, artistic fragrances for men and women, made from the finest ingredients the world has to offer.</p>
+        <img src="/img/image13.png" alt="banner_image">
     </div>
 </div>
 
 <div class="main-content">
     <h2 class="section-title">Exclusive To You</h2>
 
-    <div class="features">
-        <div class="feature">
-            <img src="/img/Screenshot 2025-03-27 131910.png" alt="Complimentary Delivery">
-            <h3>COMPLIMENTARY DELIVERY</h3>
-            <p>Enjoy your premium orders with our complimentary delivery.</p>
-            <a href="#" class="shop-now-btn">Shop Now</a>
-        </div>
-        <div class="feature">
-            <img src="/img/Screenshot 2025-03-27 131826.png" alt="Elegant Personalization">
-            <h3>ELEGANT PERSONALIZATION</h3>
-            <p>Personalize your fragrance experience with complimentary laser engraving.</p>
-            <a href="#" class="shop-now-btn">Learn More</a>
-        </div>
-        <div class="feature">
-            <img src="/img/Screenshot 2025-03-27 131848.png" alt="Complimentary Treats">
-            <h3>COMPLIMENTARY TREATS</h3>
-            <p>Add your selection to the best experience with complimentary treats of your choice.</p>
-            <a href="#" class="shop-now-btn">Shop Now</a>
-        </div>
-    </div>
-
-    <div class="hero">
-        <div class="hero-image">
-            <img src="/img/banner_image.png" alt="">
-        </div>
-    </div>
 
     <div class="celebrity-products">
-        <div class="product-card">
-            <button class="wishlist-btn">
+        <% products.forEach(product => { %>
+          <% if (product.status === 'listed') { %>
+            <div class="product-card">
+              <button class="wishlist-btn">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                 </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image7 (1).png" alt="CR7 GALLANT">
+              </button>
+      
+              <div class="product-image">
+                <a href="/productViewPage?id=<%= product._id %>">
+                  <img src="<%= product.productImage[0] %>" alt="<%= product.productName %>">
+                </a>
+              </div>
+              <div class="product-info">
+                <h3 class="product-title"><%= product.productName %></h3>
+                <p class="product-description"><%= product.productDescription %></p>
+                <p class="product-price">
+                  ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
+                </p>
+                <button href="/addToCart?id=<%= product._id %>" class="add-to-cart">ADD TO BAG</button>
+              </div>
             </div>
-            <div class="product-info">
-                <h3 class="product-title">N°5</h3>
-                <p class="product-description">EAU DE PARFUM SPRAY</p>
-                <p class="product-price">₹11,900</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image9  (3).png" alt="CR7 TWENTY">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">N°5</h3>
-                <p class="product-description">EAU PREMIERE SPRAY</p>
-                <p class="product-price">₹12,000</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image8 (2).png" alt="CR7 WOODY">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">N°5</h3>
-                <p class="product-description">EXTRAIT BOTTLE</p>
-                <p class="product-price">₹15,500</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-    </div>
+          <% } %>
+        <% }) %>
+      </div>
 
-    <div class="flash-sale">
-        <h2>Flash Sale On Products</h2>
-        <p>Limited time offer on selected premium fragrances. Don't miss out!</p>
-        <div class="timer">
-            <div>
-                <div class="timer-box" id="hours">23</div>
-                <div class="timer-label">Hours</div>
-            </div>
-            <div>
-                <div class="timer-box" id="minutes">58</div>
-                <div class="timer-label">Minutes</div>
-            </div>
-            <div>
-                <div class="timer-box" id="seconds">00</div>
-                <div class="timer-label">Seconds</div>
-            </div>
-        </div>
-        <button class="add-to-cart">SHOP THE SALE</button>
-    </div>
+   
+      
 
-    <h2 class="section-title">Our Premium Collection</h2>
 
-    <div class="product-grid">
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image4.webp" alt="Gucci Guilty Love Edition">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">Gucci Guilty Love Edition</h3>
-                <p class="product-description">Pour Homme, Eau de Parfum</p>
-                <p class="product-price">₹9,500</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image6.webp" alt="Gucci Guilty Love Edition">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">Gucci Guilty Love Edition</h3>
-                <p class="product-description">Pour Femme, Eau de Parfum</p>
-                <p class="product-price">₹9,500</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image5.webp" alt="Gucci Guilty Pour Homme">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">Gucci Guilty Pour Homme</h3>
-                <p class="product-description">Eau de Parfum, 90ml</p>
-                <p class="product-price">₹8,900</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image1.webp" alt="ALTHAÏR">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">ALTHAÏR</h3>
-                <p class="product-description">Eau de Parfum, 100ml</p>
-                <p class="product-price">₹12,500</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image3.webp" alt="LAYTON">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">LAYTON</h3>
-                <p class="product-description">Eau de Parfum, 125ml</p>
-                <p class="product-price">₹14,200</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image2.webp" alt="Product 6">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">Product 6</h3>
-                <p class="product-description">Eau de Parfum, 100ml</p>
-                <p class="product-price">₹10,800</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-    </div>
-</div>
+<%-include("../../views/partials/user/footer")%>

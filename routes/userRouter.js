@@ -1,26 +1,43 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controller/user/userController');
+const profileControllers = require('../controller/user/profileControllers');
+const productController = require('../controller/user/productController');
+const cartController = require('../controller/user/cartController'); // New controller
 const passport = require('passport');
-
-router.get('/pageNotFound', userController.pageNotFound);
+const { userAuth } = require('../middleware/auth');
 
 router.get('/', userController.loadHomepage);
 router.get('/signup', userController.loadSignup);
 router.get('/login', userController.loadLogin);
 router.get('/logout', userController.logout);
-router.get('/verifyotp', userController.verifyOtp); 
-router.post('/verifyotp', userController.verifyOtp); 
+router.get('/verifyotp', userController.verifyOtp);
+router.get('/pageNotFound', userController.pageNotFound);
 
 router.post('/signup', userController.signup);
 router.post('/login', userController.login);
+router.post('/verifyotp', userController.verifyOtp);
 
-router.get('/shop',userController.loadShopPage)
+router.get('/forgot-password', profileControllers.getForgotPassword);
+router.post('/forgot-email-validatid', profileControllers.forgotEmailValid);
+router.post('/verifyOtp', profileControllers.verifyOtp);
 
+router.post('/reset-password', profileControllers.resetPassword);
+router.post('/resend-otp', profileControllers.resendOtp);
+
+router.get('/shop', userAuth, userController.loadShopPage);
+
+// Product management
+router.get('/productViewPage', userAuth, productController.productViewPage);
+
+
+// // Cart and Wishlist routes
+// router.post('/addToCart', userAuth, cartController.addToCart);
+// router.post('/addToWishlist', userAuth, cartController.addToWishlist);
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }), (req, res) => {
-    req.session.user = req.user._id
+    req.session.user = req.user._id;
     res.redirect('/');
 });
 

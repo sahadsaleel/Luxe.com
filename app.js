@@ -7,6 +7,9 @@ const passport = require('./config/passport');
 const db = require('./config/db');
 const userRouter = require('./routes/userRouter');
 const adminRouter = require('./routes/adminRouter');
+const nocache = require('nocache');
+// const { translateAliases } = require('./models/userSchema');
+
  
 dotenv.config();
 
@@ -18,10 +21,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+
 app.use(session({
     secret: process.env.SESSION_SECRET || 'default-secret',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: true, 
     cookie: {
         secure: false, 
         httpOnly: true, 
@@ -35,6 +39,8 @@ app.use(passport.session());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+app.use(nocache());
+
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'Uploads')));
@@ -46,12 +52,18 @@ app.use('/admin', adminRouter);
 
 // Global error handler
 app.use((err, req, res, next) => {
-    console.error('Error:', err.stack);
+    console.error('Global error handler triggered:', {
+        stack: err.stack,
+        url: req.url,
+        method: req.method,
+        body: req.body
+    });
     if (req.xhr || req.headers.accept?.includes('application/json')) {
         return res.status(500).json({ error: 'Something went wrong!' });
     }
     res.status(500).send('Something went wrong!');
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

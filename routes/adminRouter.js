@@ -60,7 +60,7 @@ router.post('/deleteBrand', adminAuth, brandController.deleteBrand);
 router.get('/products', adminAuth, productController.getProductPage);
 router.post('/addProduct', adminAuth, uploadMultipleImages, productController.addProduct);
 router.post('/editProduct', adminAuth, uploadMultipleImages,  productController.editProduct);
-router.get('/deleteProduct', adminAuth, productController.deleteProduct);
+router.get('/deleteProduct/:id', adminAuth, productController.deleteProduct);
 router.get('/editProduct', adminAuth, productController.getProductById)
 
 
