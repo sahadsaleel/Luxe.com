@@ -5,6 +5,9 @@ const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
 const Brand = require('../../models/brandSchema');
 
+
+
+
 const getProductPage = async (req, res) => {
   try {
     const search = req.query.search || '';
@@ -23,7 +26,7 @@ const getProductPage = async (req, res) => {
             .populate('productBrand')
             .populate('productCategory')
             .sort(sortOption);
-
+            
         res.render('admin/products', {
             cat: categories,
             brand: brands,
@@ -35,24 +38,28 @@ const getProductPage = async (req, res) => {
   }
 };
 
+
 const addProduct = async (req, res) => {
   try {
-    
     const { productName, productBrand, productCategory, productDescription, status, variants } = req.body;
 
+    // Check for existing product
     const productExists = await Product.findOne({ productName, isDeleted: false });
     if (productExists) {
       return res.status(400).json({ success: false, message: 'Product already exists' });
     }
 
+    // Validate required fields
     if (!productName || !productBrand || !productCategory || !productDescription || !status) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
     }
 
+    // Validate ObjectIds
     if (!mongoose.Types.ObjectId.isValid(productCategory) || !mongoose.Types.ObjectId.isValid(productBrand)) {
       return res.status(400).json({ success: false, message: 'Invalid category or brand' });
     }
 
+    // Parse and validate variants
     let parsedVariants;
     try {
       parsedVariants = typeof variants === 'string' ? JSON.parse(variants) : variants;
@@ -60,8 +67,8 @@ const addProduct = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid variants format' });
     }
 
-    if (!Array.isArray(parsedVariants) || parsedVariants.length === 0) {
-      return res.status(400).json({ success: false, message: 'At least one variant is required' });
+    if (!Array.isArray(parsedVariants) || parsedVariants.length > 5) {
+      return res.status(400).json({ success: false, message: 'Maximum 5 variants are allowed' });
     }
 
     const processedVariants = parsedVariants.map((variant, index) => {
@@ -87,6 +94,7 @@ const addProduct = async (req, res) => {
       return { size, regularPrice: regularPriceNum, salePrice: salePriceNum, quantity: quantityNum };
     });
 
+    // Handle image uploads
     const images = [];
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
@@ -111,10 +119,12 @@ const addProduct = async (req, res) => {
       }
     }
 
-    if (images.length === 0) {
-      return res.status(400).json({ success: false, message: 'At least one image is required' });
+    // Validate image count
+    if (images.length < 3 || images.length > 4) {
+      return res.status(400).json({ success: false, message: 'Exactly 3 to 4 images are required' });
     }
 
+    // Create new product
     const newProduct = new Product({
       productName,
       productBrand,
@@ -136,22 +146,25 @@ const addProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
   try {
-    
+    // console.log('dsafdasojf')
     const { productId, productName, productBrand, productCategory, productDescription, status, variants, existingImages, removedImages } = req.body;
-
+    // Validate required fields
     if (!productId || !productName || !productBrand || !productCategory || !productDescription || !status) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
     }
 
+    // Validate product ID
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({ success: false, message: 'Invalid product ID' });
     }
 
+    // Check if product exists
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
+    // Parse and validate variants
     let parsedVariants;
     try {
       parsedVariants = typeof variants === 'string' ? JSON.parse(variants) : variants;
@@ -159,8 +172,8 @@ const editProduct = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid variants format' });
     }
 
-    if (!Array.isArray(parsedVariants) || parsedVariants.length === 0) {
-      return res.status(400).json({ success: false, message: 'At least one variant is required' });
+    if (!Array.isArray(parsedVariants) || parsedVariants.length > 5) {
+      return res.status(400).json({ success: false, message: 'Maximum 5 variants are allowed' });
     }
 
     const processedVariants = parsedVariants.map((variant, index) => {
@@ -186,11 +199,13 @@ const editProduct = async (req, res) => {
       return { size, regularPrice: regularPriceNum, salePrice: salePriceNum, quantity: quantityNum };
     });
 
+    // Handle images
     let images = [];
     const existingImagesArray = Array.isArray(existingImages) ? [...new Set(existingImages)] : existingImages ? [existingImages] : [];
     const removedImagesArray = removedImages ? removedImages.split(',').filter(img => img.trim()) : [];
     images = existingImagesArray.filter(img => img && !removedImagesArray.includes(img));
 
+    // Delete removed images from Cloudinary
     for (const img of removedImagesArray) {
       if (img && img.trim()) {
         try {
@@ -202,6 +217,7 @@ const editProduct = async (req, res) => {
       }
     }
 
+    // Upload new images
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
         try {
@@ -225,10 +241,12 @@ const editProduct = async (req, res) => {
       }
     }
 
-    if (images.length === 0) {
-      return res.status(400).json({ success: false, message: 'At least one image is required' });
+    // Validate image count
+    if (images.length < 3 || images.length > 4) {
+      return res.status(400).json({ success: false, message: 'Exactly 3 to 4 images are required' });
     }
 
+    // Update product
     const updatedProduct = await Product.findOneAndUpdate(
       { _id: productId, __v: product.__v },
       {
@@ -255,6 +273,7 @@ const editProduct = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message || 'Failed to update product' });
   }
 };
+
 
 const deleteProduct = async (req, res) => {
   try {
@@ -291,7 +310,7 @@ const deleteProduct = async (req, res) => {
 
 const getProductById = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id } = req.params; 
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ success: false, message: 'Valid product ID is required' });
     }

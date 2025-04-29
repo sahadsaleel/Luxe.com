@@ -55,25 +55,30 @@
     /* Zoom lens and result container */
     .img-zoom-lens {
       position: absolute;
-      border: 1px solid #d4d4d4;
-      width: 100px;
-      height: 100px;
-      background: rgba(255, 255, 255, 0.4);
+      border: 2px solid var(--gucci-purple);
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.3);
       cursor: none;
       display: none;
+      border-radius: 50%;
+      pointer-events: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
     
     .img-zoom-result {
       position: absolute;
-      right: -300px;
-      border: 1px solid #d4d4d4;
-      width: 300px;
-      height: 300px;
+      right: -350px;
+      top: 0;
+      border: 1px solid var(--gucci-dark);
+      width: 400px;
+      height: 400px;
       background-color: white;
       display: none;
       overflow: hidden;
       z-index: 100;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      background-repeat: no-repeat;
     }
     
     .thumbnail-container {
@@ -219,6 +224,9 @@
       color: var(--gucci-dark);
       letter-spacing: 2px;
     }
+    h2.section-title {
+      margin-bottom: 60px;
+    }
     
     .accordion-button {
       background-color: transparent;
@@ -346,18 +354,18 @@
       color: var(--gucci-dark);
     }
     
-    /* Image Zoom Modal for mobile */
     .zoom-modal {
       display: none;
       position: fixed;
       z-index: 1000;
-      padding-top: 50px;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
       overflow: auto;
       background-color: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
     }
     
     .zoom-modal-content {
@@ -365,13 +373,14 @@
       display: block;
       max-width: 90%;
       max-height: 90%;
+      object-fit: contain;
     }
     
     .zoom-close {
       position: absolute;
-      top: 15px;
-      right: 25px;
-      color: #f1f1f1;
+      top: 20px;
+      right: 30px;
+      color: #fff;
       font-size: 40px;
       font-weight: bold;
       transition: 0.3s;
@@ -379,14 +388,22 @@
     }
     
     .zoom-close:hover {
-      color: #bbb;
+      color: var(--gucci-gold);
+    }
+    
+    @media (max-width: 1200px) {
+      .img-zoom-result {
+        right: -320px;
+        width: 350px;
+        height: 350px;
+      }
     }
     
     @media (max-width: 992px) {
+      .img-zoom-lens,
       .img-zoom-result {
         display: none !important;
       }
-      
       .product-image img {
         cursor: zoom-in;
       }
@@ -404,88 +421,33 @@
         margin-top: 15px;
       }
     }
-    .img-zoom-lens {
-        position: absolute;
-        border: 2px solid var(--gucci-purple);
-        width: 120px;
-        height: 120px;
-        background: rgba(255, 255, 255, 0.3);
-        cursor: none;
-        display: none;
-        border-radius: 50%; /* Circular lens for Amazon-like effect */
-        pointer-events: none;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
+    .product-card {
+      background-color: #f18989;
+      border: 1px solid #ddd;
+      border-radius: 0;
+      padding: 15px;
+      height: 100%;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
 
-        .img-zoom-result {
-        position: absolute;
-        right: -350px; /* Adjusted for better spacing */
-        top: 0;
-        border: 1px solid var(--gucci-dark);
-        width: 400px; /* Larger for better detail */
-        height: 400px;
-        background-color: white;
-        display: none;
-        overflow: hidden;
-        z-index: 100;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        background-repeat: no-repeat;
-        }
+    .product-card:hover {
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transform: translateY(-5px);
+    }
 
-        .zoom-modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.9);
-        justify-content: center;
-        align-items: center;
-        }
+    .product-card img {
+      max-width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
 
-        .zoom-modal-content {
-        margin: auto;
-        display: block;
-        max-width: 90%;
-        max-height: 90%;
-        object-fit: contain;
-        }
-
-        .zoom-close {
-        position: absolute;
-        top: 20px;
-        right: 30px;
-        color: #fff;
-        font-size: 40px;
-        font-weight: bold;
-        transition: 0.3s;
-        cursor: pointer;
-        }
-
-        .zoom-close:hover {
-        color: var(--gucci-gold);
-        }
-
-        @media (max-width: 1200px) {
-        .img-zoom-result {
-            right: -320px;
-            width: 350px;
-            height: 350px;
-        }
-        }
-
-        @media (max-width: 992px) {
-        .img-zoom-lens,
-        .img-zoom-result {
-            display: none !important;
-        }
-        .product-image img {
-            cursor: zoom-in;
-        }
-        }
+    .product-price {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--gucci-dark);
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -533,31 +495,21 @@
           <button class="wishlist-icon"><i class="fa-regular fa-heart"></i></button>
         </div>
       
-        <div class="product-price">
-            ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
+        <div class="product-price" id="productPrice">
+          ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
         </div>
         
-        <!-- Enhanced Size Options -->
+        <!--Size Options -->
         <div class="mt-4 mb-3">
           <p class="mb-2 fw-bold">Select Size:</p>
           <div class="size-option">
-            <input type="radio" name="size" id="size-30" value="30">
-            <label for="size-30">
-              <span>30ml</span>
-              <span>9,500 ₹</span>
-            </label>
-            
-            <input type="radio" name="size" id="size-50" value="50" checked>
-            <label for="size-50">
-              <span>50ml</span>
-              <span>12,850 ₹</span>
-            </label>
-            
-            <input type="radio" name="size" id="size-90" value="90">
-            <label for="size-90">
-              <span>90ml</span>
-              <span>15,990 ₹</span>
-            </label>
+            <% product.variants.forEach((variant, index) => { %>
+              <input type="radio" name="size" id="size-<%= variant.size %>" value="<%= variant.size %>" <%= index === 0 ? 'checked' : '' %>>
+              <label for="size-<%= variant.size %>">
+                <span><%= variant.size %>ml</span>
+                <span>₹<%= variant.salePrice > 0 ? variant.salePrice : variant.regularPrice %></span>
+              </label>
+            <% }) %>
           </div>
         </div>
         
@@ -580,12 +532,18 @@
           </div>
         </div>
         
+        <!--Availability -->
         <div class="availability my-3">
-          <span class="text-success"><i class="fas fa-check-circle"></i> Available</span>
-          <p class="small mt-2">Enjoy complimentary delivery or Collect In Store</p>
+          <% if (product.variants.some(variant => variant.quantity > 0)) { %>
+            <span class="text-success"><i class="fas fa-check-circle"></i> Available</span>
+            <p class="small mt-2">Enjoy complimentary delivery or Collect In Store</p>
+          <% } else { %>
+            <span class="text-danger"><i class="fas fa-times-circle"></i> Out of Stock</span>
+            <p class="small mt-2">Check back soon for restock updates</p>
+          <% } %>
         </div>
         
-        <!-- Split Purchase Buttons -->
+        <!-- Purchase Buttons -->
         <div class="purchase-buttons">
           <button class="btn btn-add-to-bag">Add to bag</button>
           <button class="btn btn-buy-now">Buy now</button>
@@ -658,11 +616,9 @@
       <img src="/api/placeholder/600/750" alt="Gucci Guilty Love Edition Pour Femme" class="img-fluid">
     </div>
     <div class="col-md-6">
-        <h3 class="mb-3">Product Details</h3>
-        <p class="small text-muted">Product ID: <%= product._id %></p>
-       
-
-        
+      <h3 class="mb-3">Product Details</h3>
+      <p class="small text-muted">Product ID: <%= product._id %></p>
+      
       <div class="product-specs mt-4">
         <div class="row mb-2">
           <div class="col-6">Brand:</div>
@@ -672,14 +628,6 @@
           <div class="col-6">Product Category:</div>
           <div class="col-6"><%= category.name || 'N/A' %></div>
         </div>
-        <!-- <div class="row mb-2">
-          <div class="col-6">Product Type:</div>
-          <div class="col-6"><%= product.productDescription.includes('Eau De Parfum') ? 'Eau De Parfum (EDP)' : 'N/A' %></div>
-        </div> -->
-        <!-- <div class="row mb-2">
-          <div class="col-6">Gender:</div>
-          <div class="col-6"><%= product.productDescription.includes('Pour Femme') ? 'Women' : 'Unisex' %></div>
-        </div> -->
         <div class="row mb-2">
           <div class="col-6">Longevity:</div>
           <div class="col-6">Long-lasting</div>
@@ -687,22 +635,14 @@
         <div class="row mb-2">
           <div class="col-6">Size:</div>
           <div class="col-6">
-            <% if (variants && variants.length > 0) { %>
-              <%= variants.map(v => v.size).join(' / ') %>
-            <% } else { %>
-              N/A
-            <% } %>
+            <%= product.variants.map(v => v.size + 'ml').join(' / ') %>
           </div>
         </div>
-        <!-- <div class="row mb-2">
-          <div class="col-6">Usage:</div>
-          <div class="col-6">Luxury, Premium, Daily Wear, Special Occasions</div>
-        </div> -->
       </div>
 
       <div class="product-description mt-5">
         <h3 class="mb-3">Product Description</h3>
-        <p><%=product.productDescription%></p>
+        <p><%= product.productDescription %></p>
         
         <div class="mt-4">
           <p class="mb-2"><strong>Fragrance Notes:</strong></p>
@@ -718,46 +658,37 @@
     </div>
   </div>
 
+
+
   <!-- Similar Products Section -->
   <h2 class="section-title">DISCOVER SIMILAR PRODUCTS</h2>
   <div class="row">
-    <div class="col-md-4 mb-4">
-      <div class="similar-product-card p-3">
-        <img src="/api/placeholder/300/300" alt="Gucci Guilty Eau de Parfum" class="img-fluid mb-3">
-        <h5 class="text-center">Gucci Guilty Eau de Parfum Intense Pour Femme, 90ml, eau de parfum</h5>
-        <div class="similar-product-price">
-          13,050 ₹
+    <% if (similarProducts.length === 0) { %>
+      <p class="text-center">No similar products available.</p>
+    <% } else { %>
+      <% similarProducts.forEach(product => { %>
+        <div class="col-md-4 mb-4">
+          <div class="product-card p-3"> <!-- Reusing homepage product-card class -->
+            <a href="/productViewPage?id=<%= product._id %>">
+              <img src="<%= product.productImage[0] || '/images/placeholder.jpg' %>" alt="<%= product.productName %>" class="img-fluid mb-3">
+            </a>
+            <h5 class="text-center"><%= product.productName %></h5>
+            <div class="product-price">
+              ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="col-md-4 mb-4">
-      <div class="similar-product-card p-3">
-        <img src="/api/placeholder/300/300" alt="Gucci Guilty Absolute" class="img-fluid mb-3">
-        <h5 class="text-center">Gucci Guilty Absolute Pour Femme 90ml eau de parfum</h5>
-        <div class="similar-product-price">
-          12,850 ₹
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4 mb-4">
-      <div class="similar-product-card p-3">
-        <img src="/api/placeholder/300/300" alt="Gucci Guilty Love Edition" class="img-fluid mb-3">
-        <h5 class="text-center">Gucci Guilty Love Edition Pour Homme, Eau de Parfum 90ml</h5>
-        <div class="similar-product-price">
-          15,100 ₹
-        </div>
-      </div>
-    </div>
+      <% }) %>
+    <% } %>
   </div>
-</div>
 
 <!-- Image Zoom Modal for mobile -->
 <div id="imageZoomModal" class="zoom-modal">
-  <span class="zoom-close">&times;</span>
+  <span class="zoom-close">×</span>
   <img class="zoom-modal-content" id="zoomedImage">
 </div>
 
-<%-include("../../views/partials/user/footer")%>
+<%- include("../../views/partials/user/footer") %>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
 <script>
@@ -769,6 +700,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const result = document.getElementById('zoomResult');
   const modal = document.getElementById('imageZoomModal');
   const modalImg = document.getElementById('zoomedImage');
+  const priceElement = document.getElementById('productPrice');
+  const sizeRadios = document.querySelectorAll('input[name="size"]');
 
   let cx, cy;
 
@@ -871,6 +804,19 @@ document.addEventListener('DOMContentLoaded', function() {
   if (window.innerWidth > 992) {
     initZoom();
   }
+
+  //price update based on selected size
+  const variants = <%- JSON.stringify(product.variants) %>;
+  sizeRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      const selectedSize = this.value;
+      const selectedVariant = variants.find(v => v.size.toString() === selectedSize);
+      if (selectedVariant) {
+        const price = selectedVariant.salePrice > 0 ? selectedVariant.salePrice : selectedVariant.regularPrice;
+        priceElement.textContent = `₹${price}`;
+      }
+    });
+  });
 });
 </script>
 </body>

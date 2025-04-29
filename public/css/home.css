@@ -16,7 +16,7 @@ body {
 
 /* Header Styles */
 header {
-    background-color: #e0e0e0;
+    background-color: #8a6a94;
 }
 
 .header-container {
@@ -184,7 +184,7 @@ header {
 
 .auth-links a {
     text-decoration: none;
-    color: #555;
+    color: #000000;
     padding: 5px 8px;
     transition: all 0.3s ease;
 }
@@ -197,7 +197,7 @@ header {
 
 .auth-links a.login::after {
     content: "|";
-    color: #ccc;
+    color: #000000;
     margin-left: 8px;
     font-weight: 300;
 }

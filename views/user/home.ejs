@@ -137,9 +137,9 @@
                       <img src="<%= product.productImage[0] %>" alt="<%= product.productName %>">
                     </a>
                   </div>
-                  <div class="product-info">
+                  <div class="product-info"> 
                     <h3 class="product-title"><%= product.productName %></h3>
-                    <p class="product-description"><%= product.productDescription %></p>
+                    <!-- <p class="product-description"><%= product.productDescription %></p> -->
                     <p class="product-price">
                       ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
                     </p>
@@ -150,7 +150,7 @@
             <% }) %>
           </div>
 
-        <!-- <div class="flash-sale">
+        <div class="flash-sale">
             <h2>Flash Sale On Products</h2>
             <p>Limited time offer on selected premium fragrances. Don't miss out!</p>
             <div class="timer">
@@ -275,7 +275,7 @@
                 </div>
             </div>
         </div>
-    </div> -->
+    </div>
 
     
     <script>

@@ -7,10 +7,10 @@ cloudinary.config({
   secure : true
 });
 
-console.log('Cloudinary Config:', {
-  cloud_name: cloudinary.config().cloud_name,
-  api_key: cloudinary.config().api_key,
-  api_secret: cloudinary.config().api_secret ? '****' : undefined
-});
+// console.log('Cloudinary Config:', {
+//   cloud_name: cloudinary.config().cloud_name,
+//   api_key: cloudinary.config().api_key,
+//   api_secret: cloudinary.config().api_secret ? '****' : undefined
+// });
 
 module.exports = cloudinary;

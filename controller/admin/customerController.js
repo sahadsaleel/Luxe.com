@@ -26,7 +26,6 @@ const customerInfo = async (req, res) => {
             return res.json({ data: userData });
         }
 
-        // Render EJS for full page load
         res.render('admin/customers', {
             data: userData,
             currentPage: page,

@@ -401,7 +401,7 @@
                         confirmButtonText: 'Yes, delete it!'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            console.log('Sending delete category request:', { id: categoryId });
+                            console.log('delete category request:', { id: categoryId });
                             fetch('/admin/deleteCategory', {
                                 method: 'POST',
                                 headers: {
@@ -560,7 +560,7 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Success:', data);
+                    console.log('gfjhkhj:', data);
                     document.getElementById('addCategoryModal').style.display = 'none';
                     Swal.fire({
                         icon: 'success',
@@ -630,7 +630,6 @@
             }
 
             const id = form.dataset.categoryId;
-            console.log('Form dataset before edit:', form.dataset); 
             if (!id || id === 'null' || id === '') {
                 console.error('Invalid category ID found in form dataset:', form.dataset);
                 Swal.fire({
@@ -645,7 +644,6 @@
             const description = form.querySelector('.category-description').value.trim();
             const status = form.querySelector('.category-status').value.trim() === 'listed';
 
-            console.log('Sending edit category request:', { id, name, description, isListed: status });
 
             fetch('/admin/editCategory', {
                 method: 'POST',

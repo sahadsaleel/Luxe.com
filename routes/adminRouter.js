@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controller/admin/adminController');
@@ -8,11 +7,6 @@ const brandController = require('../controller/admin/brandController');
 const productController = require('../controller/admin/productController');
 const { uploadSingleImage, uploadMultipleImages } = require('../helpers/multer');
 const { userAuth, adminAuth } = require('../middleware/auth');
-const multer = require('multer'); 
-const upload = require('../helpers/multer');
-const cloudinary = require('../config/cloudinary');
-const fs = require('fs').promises;
-
 
 // Test route for Cloudinary uploads
 router.post('/test-cloudinary', adminAuth, uploadSingleImage, async (req, res) => {
@@ -59,9 +53,10 @@ router.post('/deleteBrand', adminAuth, brandController.deleteBrand);
 // Product management
 router.get('/products', adminAuth, productController.getProductPage);
 router.post('/addProduct', adminAuth, uploadMultipleImages, productController.addProduct);
-router.post('/editProduct', adminAuth, uploadMultipleImages,  productController.editProduct);
+router.post('/editProduct', adminAuth, uploadMultipleImages, productController.editProduct);
 router.get('/deleteProduct/:id', adminAuth, productController.deleteProduct);
-router.get('/editProduct', adminAuth, productController.getProductById)
+router.get('/getProduct/:id', adminAuth, productController.getProductById); 
+
 
 
 

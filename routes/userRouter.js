@@ -25,10 +25,10 @@ router.post('/verifyOtp', profileControllers.verifyOtp);
 router.post('/reset-password', profileControllers.resetPassword);
 router.post('/resend-otp', profileControllers.resendOtp);
 
-router.get('/shop', userAuth, userController.loadShopPage);
+router.get('/shop', userController.loadShopPage);
 
 // Product management
-router.get('/productViewPage', userAuth, productController.productViewPage);
+router.get('/productViewPage', productController.productViewPage);
 
 
 // // Cart and Wishlist routes

@@ -330,7 +330,68 @@
                 background-size: 10px;
             }
         }
-
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 0;
+            font-family: Arial, sans-serif;
+        }
+        .pagination a {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 36px;
+            height: 36px;
+            text-decoration: none;
+            color: #333;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .pagination a:hover:not(.active) {
+            background-color: #f1f1f1;
+            border-color: #bbb;
+            color: #222;
+        }
+        .pagination a.active {
+            background-color: #7db87d;
+            border-color: #7db87d;
+            color: #000000;
+            font-weight: 600;
+            cursor: default;
+        }
+        .pagination span.disabled {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 36px;
+            height: 36px;
+            color: #000000;
+            background-color: #979797;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: not-allowed;
+        }
+        .pagination a[href*="page="]:not(.active) {
+            font-size: 16px;
+        }
+        @media (max-width: 576px) {
+            .pagination {
+                gap: 6px;
+            }
+            .pagination a,
+            .pagination span.disabled {
+                width: 32px;
+                height: 32px;
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -350,7 +411,7 @@
             </select>
         </div>
     </div>
-    <!-- Main Content -->
+
     <div class="container">
         <table>
             <thead>
@@ -363,34 +424,38 @@
                 </tr>
             </thead>
             <tbody>
-                <% for(let i = 0; i < data.length; i++) { %>
-                <tr>
-                    <td class="user-image"><img src="<%= data[i].image %>" alt="IMAGE"></td>
-                    <td><%= data[i].firstName %></td>
-                    <td><%= data[i].email %></td>
-                    <td><%= data[i].phone  || "N/A" %></td>
-                    <td>
-                        <% if (data[i].isBlocked) { %>
-                            <button class="btn btn-success" style="width: 80px;">
-                                <a href="/admin/unblockCustomer?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">
-                                    <i class="bi bi-unlock"></i> Unblock
-                                </a>
-                            </button>
-                        <% } else { %>
-                            <button class="btn btn-danger" style="width: 80px;">
-                                <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">
-                                    <i class="bi bi-lock"></i> Block
-                                </a>
-                            </button>
-                        <% } %>
-                    </td>
-                </tr>
+                <% if (data.length === 0) { %>
+                    <tr><td colspan="5">No users found</td></tr>
+                <% } else { %>
+                    <% for(let i = 0; i < data.length; i++) { %>
+                        <tr>
+                            <td class="user-image"><img src="<%= data[i].image%>" alt="IMAGE"></td>
+                            <td><%= data[i].firstName || 'N/A' %></td>
+                            <td><%= data[i].email || 'N/A' %></td>
+                            <td><%= data[i].phone || 'N/A' %></td>
+                            <td>
+                                <% if (data[i].isBlocked) { %>
+                                    <button class="btn btn-success" style="width: 80px;">
+                                        <a href="/admin/unblockCustomer?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">
+                                            <i class="bi bi-unlock"></i> Unblock
+                                        </a>
+                                    </button>
+                                <% } else { %>
+                                    <button class="btn btn-danger" style="width: 80px;">
+                                        <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">
+                                            <i class="bi bi-lock"></i> Block
+                                        </a>
+                                    </button>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% } %>
                 <% } %>
             </tbody>
         </table>
     </div>
-    <%- include('../../views/partials/admin/footer') %>
 
+    <%- include('../../views/partials/admin/footer') %>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -398,7 +463,10 @@
             const sortSelect = document.querySelector('.dropdown select');
             const tbody = document.querySelector('table tbody');
 
-            // Debounce function to limit API calls
+            let currentSearchTerm = '';
+            let currentSortOption = 'a-z';
+            let currentPage = new URLSearchParams(window.location.search).get('page') || 1;
+
             function debounce(func, delay) {
                 let timeoutId;
                 return (...args) => {
@@ -407,26 +475,17 @@
                 };
             }
 
-            // Function to fetch and update table
-            async function updateTable(searchTerm = '', sortOption = 'a-z') {
+            async function updateTable(searchTerm = '', sortOption = 'a-z', page = 1) {
                 try {
-                    // Construct URL with search query
-                    const url = `/admin/customers?search=${encodeURIComponent(searchTerm)}`;
+                    const url = `/admin/customers?search=${encodeURIComponent(searchTerm)}&page=${page}`;
                     const response = await fetch(url, {
-                        headers: {
-                            'Accept': 'application/json' 
-                            // Request JSON for easier parsing
-                        }
+                        headers: { 'Accept': 'application/json' }
                     });
-
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error(`HTTP error! Status: ${response.status}`);
                     }
-
-                    const { data } = await response.json(); 
-                    // Expect JSON response with data array
-
-                    // Sort data client-side
+                    const { data, totalPages, currentPage: serverPage } = await response.json();
+                    console.log('AJAX Response:', { data, totalPages, serverPage });
                     const sortedData = [...data].sort((a, b) => {
                         const nameA = a.firstName.toLowerCase();
                         const nameB = b.firstName.toLowerCase();
@@ -436,51 +495,51 @@
                             case 'z-a':
                                 return nameB.localeCompare(nameA);
                             case 'newest':
-                                return new Date(b.createdAt) - new Date(a.createdAt); // Assuming createdAt field
+                                return new Date(b.createdAt) - new Date(a.createdAt);
                             case 'oldest':
                                 return new Date(a.createdAt) - new Date(b.createdAt);
                             default:
                                 return 0;
                         }
                     });
-
-                    // Update table body
-                    tbody.innerHTML = sortedData.map(user => `
-                        <tr>
-                            <td class="user-image"><img src="${user.image}" alt="IMAGE"></td>
-                            <td>${user.firstName}</td>
-                            <td>${user.email}</td>
-                            <td>${user.phone || 'N/A'}</td>
-                            <td>
-                                ${user.isBlocked ? 
-                                    `<button class="btn btn-success" style="width: 80px;">
-                                        <a href="/admin/unblockCustomer?id=${user._id}" class="text-white" style="text-decoration: none;">
-                                            <i class="bi bi-unlock"></i> Unblock
-                                        </a>
-                                    </button>` : 
-                                    `<button class="btn btn-danger" style="width: 80px;">
-                                        <a href="/admin/blockCustomer?id=${user._id}" class="text-white" style="text-decoration: none;">
-                                            <i class="bi bi-lock"></i> Block
-                                        </a>
-                                    </button>`
-                                }
-                            </td>
-                        </tr>
-                    `).join('');
+                    tbody.innerHTML = sortedData.length === 0
+                        ? '<tr><td colspan="5">No users found</td></tr>'
+                        : sortedData.map(user => `
+                            <tr>
+                                <td class="user-image"><img src="${user.image || '/default.jpg'}" alt="IMAGE"></td>
+                                <td>${user.firstName || 'N/A'}</td>
+                                <td>${user.email || 'N/A'}</td>
+                                <td>${user.phone || 'N/A'}</td>
+                                <td>
+                                    ${user.isBlocked ?
+                                        `<button class="btn btn-success" style="width: 80px;">
+                                            <a href="/admin/unblockCustomer?id=${user._id}" class="text-white" style="text-decoration: none;">
+                                                <i class="bi bi-unlock"></i> Unblock
+                                            </a>
+                                        </button>` :
+                                        `<button class="btn btn-danger" style="width: 80px;">
+                                            <a href="/admin/blockCustomer?id=${user._id}" class="text-white" style="text-decoration: none;">
+                                                <i class="bi bi-lock"></i> Block
+                                            </a>
+                                        </button>`
+                                    }
+                                </td>
+                            </tr>
+                        `).join('');
+                    window.history.pushState({}, '', `?search=${encodeURIComponent(searchTerm)}&page=${page}`);
                 } catch (error) {
                     console.error('Error fetching data:', error);
                     tbody.innerHTML = '<tr><td colspan="5">Error loading data</td></tr>';
                 }
             }
 
-            // Debounced search handler
             const debouncedSearch = debounce(() => {
-                const searchTerm = searchInput.value.trim();
-                const sortOption = sortSelect.value.toLowerCase();
-                updateTable(searchTerm, sortOption);
+                currentSearchTerm = searchInput.value.trim();
+                currentSortOption = sortSelect.value.toLowerCase();
+                currentPage = 1; // Reset to first page on search/sort change
+                updateTable(currentSearchTerm, currentSortOption, currentPage);
             }, 300);
 
-            // Event listeners
             if (searchInput) {
                 searchInput.addEventListener('input', debouncedSearch);
             }
@@ -488,8 +547,7 @@
                 sortSelect.addEventListener('change', debouncedSearch);
             }
 
-            // Initial load
-            updateTable();
+            updateTable(currentSearchTerm, currentSortOption, currentPage);
         });
     </script>
 

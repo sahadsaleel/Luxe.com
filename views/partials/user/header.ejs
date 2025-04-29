@@ -22,7 +22,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px;
-            background-color:#8a6a94;
+            background-color: #8a6a94;
             border-bottom: 1px solid #e0e0e0;
         }
 
@@ -55,7 +55,6 @@
             max-width: 500px;
             margin: 0 20px;
             display: flex;
-            
         }
 
         .search-input {
@@ -97,148 +96,6 @@
             font-size: 16px;
         }
 
-        /* Navigation Styles */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 30px 20px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #000;
-            font-weight: 700;
-        }
-
-        .filter-button, .sort-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            font-weight: 700;
-        }
-
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 90px;
-            background-color: white;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            max-width: 450px;
-            width: 90%;
-            padding: 20px;
-            z-index: 100;
-            display: none;
-        }
-
-        .filter-modal {
-            left: 20px;
-        }
-
-        .sort-modal {
-            right: 20px;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .close-button {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .filter-section {
-            margin-bottom: 20px;
-        }
-
-        .filter-title {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px;
-            border: 1px solid #e0e0e0;
-            margin-bottom: 15px;
-            cursor: pointer;
-        }
-
-        .filter-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .filter-options.show {
-            max-height: 500px;
-        }
-
-        .filter-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-        }
-
-        .price-range {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .price-input {
-            width: 120px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: center;
-        }
-
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-top: 30px;
-        }
-
-        .clear-button {
-            flex: 1;
-            padding: 12px;
-            background: white;
-            border: 1px solid #000;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .show-button {
-            flex: 1;
-            padding: 12px;
-            background: #000;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
         /* Menu Dropdown */
         .menu-dropdown {
             position: absolute;
@@ -270,21 +127,13 @@
             color: #000;
             display: block;
         }
-
-        .arrow-icon {
-            transition: transform 0.3s ease;
-        }
-
-        .arrow-icon.rotate {
-            transform: rotate(180deg);
-        }
     </style>
 </head>
 <body>
     <header>
         <div class="logo-container">
             <img src="/img/logo.png" alt="Luxe Logo" class="logo">
-            <a href="#" class="contact-link">conact us</a>
+            <a href="#" class="contact-link">contact us</a>
         </div>
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Search">
@@ -303,11 +152,11 @@
             </button>
             <button class="icon-button">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="9" cy="21" r="1"></circle>
-                  <circle cx="20" cy="21" r="1"></circle>
-                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
-              </button>
+            </button>
             <button class="icon-button">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -327,172 +176,12 @@
         </ul>
     </div>
 
-    <nav>
-        <button class="filter-button" id="filterBtn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-                <line x1="4" y1="21" x2="4" y2="14"></line>
-                <line x1="4" y1="10" x2="4" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12" y2="3"></line>
-                <line x1="20" y1="21" x2="20" y2="16"></line>
-                <line x1="20" y1="12" x2="20" y2="3"></line>
-                <line x1="1" y1="14" x2="7" y2="14"></line>
-                <line x1="9" y1="8" x2="15" y2="8"></line>
-                <line x1="17" y1="16" x2="23" y2="16"></line>
-            </svg>
-            FILTER
-        </button>
-
-        <div class="nav-links">
-            <a href="/">HOME</a>
-            <a href="#">SHOP</a>
-            <a href="#">BEST DEALS</a>
-            <a href="#">ABOUT</a> 
-        </div>
-
-        <button class="sort-button" id="sortBtn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-                <path d="M11 5h10"></path>
-                <path d="M11 9h7"></path>
-                <path d="M11 13h4"></path>
-                <path d="M3 17l3 3 3-3"></path>
-                <path d="M6 18V5"></path>
-            </svg>
-            SORT
-        </button>
-    </nav>
-
-    <!-- Filter Modal -->
-    <div class="modal filter-modal" id="filterModal">
-        <div class="modal-header">
-            <h2>Show filter</h2>
-            <button class="close-button" id="closeFilterBtn">×</button>
-        </div>
-
-        <div class="filter-section">
-            <div class="filter-title" data-target="brandOptions">
-                <span>BRANDS</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-                    <polyline points="18 15 12 9 6 15"></polyline>
-                </svg>
-            </div>
-            <div class="filter-options" id="brandOptions">
-                <label class="filter-option">
-                    <input type="checkbox">
-                    GUCCI
-                </label>
-                <label class="filter-option">
-                    <input type="checkbox">
-                    CREED
-                </label>
-                <label class="filter-option">
-                    <input type="checkbox">
-                    CHANNEL
-                </label>
-                <label class="filter-option">
-                    <input type="checkbox">
-                    Parfums de Marly
-                </label>
-                <label class="filter-option">
-                    <input type="checkbox">
-                    LOUIS VUITTON
-                </label>
-            </div>
-        </div>
-
-        <div class="filter-section">
-            <div class="filter-title" data-target="categoryOptions">
-                <span>CATEGORY</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-                    <polyline points="18 15 12 9 6 15"></polyline>
-                </svg>
-            </div>
-            <div class="filter-options" id="categoryOptions">
-                <label class="filter-option">
-                    <input type="checkbox">
-                    SPRAY
-                </label>
-                <label class="filter-option">
-                    <input type="checkbox">
-                    BOTTLE
-                </label>
-                <label class="filter-option">
-                    <input type="checkbox">
-                    TWIST AND SPRAY
-                </label>
-                <label class="filter-option">
-                    <input type="checkbox">
-                    REFILL
-                </label>
-                <label class="filter-option">
-                    <input type="checkbox">
-                    OTHER
-                </label>
-            </div>
-        </div>
-
-        <div class="button-container">
-            <button class="clear-button">CLEAR ALL</button>
-            <button class="show-button">SHOW PRODUCTS</button>
-        </div>
-    </div>
-
-    <!-- Sort Modal -->
-    <div class="modal sort-modal" id="sortModal">
-        <div class="modal-header">
-            <h2>SORT</h2>
-            <button class="close-button" id="closeSortBtn">×</button>
-        </div>
-
-        <div class="filter-options show" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
-            <label class="filter-option">
-                <input type="checkbox" name="sort" value="best-selling">
-                BEST SELLING
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" name="sort" value="a-z">
-                A-Z Order
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" name="sort" value="z-a">
-                Z-A Order
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" name="sort" value="price-low-high">
-                Price: Low → High
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" name="sort" value="price-high-low">
-                Price: High → Low
-            </label>
-        </div>
-
-        <h3 style="margin-bottom: 15px;">PRICE</h3>
-        <div style="display: flex; align-items: center; gap: 5px;">
-            <div>From</div>
-            <input type="text" class="price-input" value="5000">
-            <div>To</div>
-            <input type="text" class="price-input" value="30000">
-        </div>
-
-        <div class="button-container">
-            <button class="clear-button">CLEAR ALL</button>
-            <button class="show-button">SHOW PRODUCTS</button>
-        </div>
-    </div>
-
     <script>
         // Get modal elements
-        const filterModal = document.getElementById('filterModal');
-        const sortModal = document.getElementById('sortModal');
         const menuDropdown = document.getElementById('menuDropdown');
         const menuOptions = document.getElementById('menuOptions');
         
         // Get button elements
-        const filterBtn = document.getElementById('filterBtn');
-        const sortBtn = document.getElementById('sortBtn');
-        const closeFilterBtn = document.getElementById('closeFilterBtn');
-        const closeSortBtn = document.getElementById('closeSortBtn');
         const menuBtn = document.getElementById('menuBtn');
         
         // Set up a flag for login status (for demo purposes)
@@ -540,86 +229,23 @@
         // Initialize menu options
         updateMenuOptions();
         
-        // Open filter modal
-        filterBtn.addEventListener('click', () => {
-            filterModal.style.display = 'block';
-            sortModal.style.display = 'none';
-            menuDropdown.style.display = 'none';
-        });
-        
-        // Open sort modal
-        sortBtn.addEventListener('click', () => {
-            sortModal.style.display = 'block';
-            filterModal.style.display = 'none';
-            menuDropdown.style.display = 'none';
-        });
-        
         // Toggle menu dropdown
         menuBtn.addEventListener('click', () => {
             if (menuDropdown.style.display === 'block') {
                 menuDropdown.style.display = 'none';
             } else {
                 menuDropdown.style.display = 'block';
-                filterModal.style.display = 'none';
-                sortModal.style.display = 'none';
             }
         });
         
-        // Close filter modal
-        closeFilterBtn.addEventListener('click', () => {
-            filterModal.style.display = 'none';
-        });
-        
-        // Close sort modal
-        closeSortBtn.addEventListener('click', () => {
-            sortModal.style.display = 'none';
-        });
-        
-        // Handle filter section dropdowns
-        const filterTitles = document.querySelectorAll('.filter-title');
-        filterTitles.forEach(title => {
-            title.addEventListener('click', () => {
-                const targetId = title.getAttribute('data-target');
-                const targetSection = document.getElementById(targetId);
-                const arrow = title.querySelector('.arrow-icon');
-                
-                // Toggle the section
-                targetSection.classList.toggle('show');
-                arrow.classList.toggle('rotate');
-            });
-        });
-        
-        // Close modals when clicking outside
+        // Close menu dropdown when clicking outside
         window.addEventListener('click', (event) => {
-            if (event.target !== filterModal && 
-                !filterModal.contains(event.target) && 
-                event.target !== filterBtn &&
-                event.target !== sortModal && 
-                !sortModal.contains(event.target) && 
-                event.target !== sortBtn &&
-                event.target !== menuDropdown &&
+            if (event.target !== menuDropdown &&
                 !menuDropdown.contains(event.target) &&
                 event.target !== menuBtn) {
-                filterModal.style.display = 'none';
-                sortModal.style.display = 'none';
                 menuDropdown.style.display = 'none';
             }
         });
-
-        // Handle sort option selection (only one can be selected)
-        const sortOptions = document.querySelectorAll('input[name="sort"]');
-        sortOptions.forEach(option => {
-            option.addEventListener('change', () => {
-                sortOptions.forEach(opt => {
-                    if (opt !== option) {
-                        opt.checked = false;
-                    }
-                });
-            });
-        });
-        
-        // Auto-show sort options
-        document.querySelector('.sort-modal .filter-options').classList.add('show');
     </script>
 </body>
 </html>
