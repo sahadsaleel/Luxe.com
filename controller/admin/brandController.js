@@ -3,10 +3,28 @@ const mongoose = require('mongoose');
 const cloudinary = require('../../config/cloudinary');
 const fs = require('fs').promises;
 
+
+
 const getBrandPage = async (req, res) => {
   try {
-    const brands = await Brand.find().sort({ createdAt: -1 });
-    res.render('admin/brands', { data: brands });
+    const page = parseInt(req.query.page) || 1;
+    const limit = 4;
+    const skip = (page - 1) * limit;
+
+    const brandData = await Brand.find({})
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalBrands = await Brand.countDocuments();
+    const totalPages = Math.ceil(totalBrands / limit);
+
+    res.render('admin/brands', {
+      data: brandData,
+      currentPage: page,
+      totalPages: totalPages,
+      totalBrands: totalBrands
+    });
   } catch (error) {
     console.error('Error fetching brands:', error);
     res.redirect('/admin/pageerror');

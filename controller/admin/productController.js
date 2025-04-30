@@ -4,34 +4,55 @@ const mongoose = require('mongoose');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
 const Brand = require('../../models/brandSchema');
+const { queue } = require('sharp');
 
 
 
 
 const getProductPage = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 4;
+    const skip = (page - 1) * limit;
+
     const search = req.query.search || '';
-        const sort = req.query.sort || 'newest';
-        const categories = await Category.find({ isListed: true });
-        const brands = await Brand.find({ isBlocked: false });
+    const sort = req.query.sort || 'newest';
 
-        let sortOption = { createdAt: -1 }; 
-        if (sort === 'oldest') sortOption = { createdAt: 1 };
-        if (sort === 'a-z') sortOption = { productName: 1 };
-        if (sort === 'z-a') sortOption = { productName: -1 };
 
-        const products = await Product.find({
-            productName: { $regex: search, $options: 'i' },isDeleted:false
-        })
-            .populate('productBrand')
-            .populate('productCategory')
-            .sort(sortOption);
-            
-        res.render('admin/products', {
-            cat: categories,
-            brand: brands,
-            products
-        });
+    let sortOption = { createdAt: -1 };
+    if (sort === 'oldest') sortOption = { createdAt: 1 };
+    if (sort === 'a-z') sortOption = { productName: 1 };
+    if (sort === 'z-a') sortOption = { productName: -1 };
+
+    const productData = await Product.find({
+      productName: { $regex: search, $options: 'i' },
+      isDeleted: false
+    })
+      .populate('productBrand')
+      .populate('productCategory')
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limit);
+
+    const totalProduct = await Product.countDocuments({
+      productName: { $regex: search, $options: 'i' },
+      isDeleted: false
+    });
+    const totalPages = Math.ceil(totalProduct / limit);
+
+    const categories = await Category.find({ isListed: true });
+    const brands = await Brand.find({ isBlocked: false });
+
+    res.render('admin/products', {
+      cat: categories,
+      brand: brands,
+      products: productData,
+      currentPage: page,
+      totalPages: totalPages,
+      totalProduct: totalProduct,
+      search,
+      sort
+    });
   } catch (error) {
     console.error('Error fetching products:', error);
     res.redirect('/admin/pageerror');

@@ -1,6 +1,7 @@
 const Product = require('../../models/productSchema');
 const User = require('../../models/userSchema');
 const Category = require('../../models/categorySchema')
+const Brand = require('../../models/brandSchema')
 
 
 const productViewPage = async (req, res) => {
@@ -54,6 +55,51 @@ const productViewPage = async (req, res) => {
   }
 };
 
+
+const searchProduct = async (req,res)=>{
+      try {
+        const { query } = req.query;
+
+        if (!query) {
+            return res.json([]);
+        }
+
+        const products = await Product.find({
+            $and: [
+                { status: 'listed' },
+                { isDeleted: false },
+                {
+                    $or: [
+                        { productName: { $regex: query, $options: 'i' } },{ 
+                            productCategory: {
+                                $in: await Category.find({ 
+                                    name: { $regex: query, $options: 'i' } 
+                                }).distinct('_id')
+                            }},
+                        { 
+                            productBrand: {
+                                $in: await Brand.find({ 
+                                    brandName: { $regex: query, $options: 'i' } 
+                                }).distinct('_id')
+                            }
+                        }
+                    ]
+                }
+            ]
+        })
+        .populate('productCategory', 'name')
+        .populate('productBrand', 'brandName')
+        .select('productName productImage productCategory productBrand variants')
+        .limit(10);
+
+        res.json(products);
+    } catch (error) {
+        console.error('Search error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
 module.exports = { 
-  productViewPage
+    productViewPage, 
+    searchProduct
  };

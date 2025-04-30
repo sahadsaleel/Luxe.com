@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="/css/adminDashboard.css">
     <style>
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -410,11 +411,6 @@
                                 body: JSON.stringify({ id: categoryId })
                             })
                                 .then(response => {
-                                    console.log('Delete category response:', {
-                                        status: response.status,
-                                        statusText: response.statusText,
-                                        headers: Object.fromEntries(response.headers)
-                                    });
                                     if (!response.ok) {
                                         return response.text().then(text => {
                                             try {
@@ -550,7 +546,6 @@
                 body: JSON.stringify({ name, description, isListed: status }),
             })
                 .then(response => {
-                    console.log('Response status:', response.status);
                     if (!response.ok) {
                         return response.json().then(data => {
                             console.error('Error response:', data);
@@ -653,11 +648,6 @@
                 body: JSON.stringify({ id, name, description, isListed: status })
             })
                 .then(response => {
-                    console.log('Edit category response:', {
-                        status: response.status,
-                        statusText: response.statusText,
-                        headers: Object.fromEntries(response.headers)
-                    });
                     if (!response.ok) {
                         return response.text().then(text => {
                             try {
@@ -671,7 +661,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Edit category success:', data);
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',

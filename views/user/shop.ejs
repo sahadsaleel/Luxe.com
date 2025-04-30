@@ -1,4 +1,3 @@
-
 <link rel="stylesheet" href="/css/home.css">
 <style>
     * {
@@ -8,24 +7,12 @@
         font-family: Arial, sans-serif;
     }
 
-    /* Navigation Styles */
     nav {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 30px 20px;
         border-bottom: 1px solid #e0e0e0;
-    }
-
-    .nav-links {
-        display: flex;
-        gap: 30px;
-    }
-
-    .nav-links a {
-        text-decoration: none;
-        color: #000;
-        font-weight: 700;
     }
 
     .filter-button, .sort-button {
@@ -37,7 +24,6 @@
         font-weight: 700;
     }
 
-    /* Modal Styles */
     .modal {
         position: fixed;
         top: 90px;
@@ -105,7 +91,7 @@
         gap: 10px;
     }
 
-    input[type="checkbox"] {
+    input[type="checkbox"], input[type="radio"] {
         width: 18px;
         height: 18px;
     }
@@ -157,8 +143,34 @@
     .arrow-icon.rotate {
         transform: rotate(180deg);
     }
+
     .product-title {
         margin-top: 25px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        padding: 8px 12px;
+        border: 1px solid #e0e0e0;
+        text-decoration: none;
+        color: #000;
+        font-weight: 500;
+    }
+
+    .pagination a.active {
+        background: #000;
+        color: white;
+    }
+
+    .pagination a:hover {
+        background: #f0f0f0;
     }
 </style>
 
@@ -180,13 +192,7 @@
         FILTER
     </button>
 
-    <div class="nav-links">
-        <a href="/">HOME</a>
-        <a href="#">SHOP</a>
-        <a href="#">BEST DEALS</a>
-        <a href="#">ABOUT</a> 
-    </div>
-
+    
     <button class="sort-button" id="sortBtn">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
             <path d="M11 5h10"></path>
@@ -202,7 +208,7 @@
 <!-- Filter Modal -->
 <div class="modal filter-modal" id="filterModal">
     <div class="modal-header">
-        <h2>Show filter</h2>
+        <h2>SHOW FILTERS</h2>
         <button class="close-button" id="closeFilterBtn">×</button>
     </div>
 
@@ -214,26 +220,16 @@
             </svg>
         </div>
         <div class="filter-options" id="brandOptions">
-            <label class="filter-option">
-                <input type="checkbox">
-                GUCCI
-            </label>
-            <label class="filter-option">
-                <input type="checkbox">
-                CREED
-            </label>
-            <label class="filter-option">
-                <input type="checkbox">
-                CHANNEL
-            </label>
-            <label class="filter-option">
-                <input type="checkbox">
-                Parfums de Marly
-            </label>
-            <label class="filter-option">
-                <input type="checkbox">
-                LOUIS VUITTON
-            </label>
+            <% if (brands && Array.isArray(brands) && brands.length > 0) { %>
+                <% brands.forEach(brand => { %>
+                    <label class="filter-option">
+                        <input type="checkbox" name="brandf" value="<%= brand.brandName %>" <%= currentFilters.brandf.includes(brand.brandName) ? 'checked' : '' %>>
+                        <%= brand.brandName %>
+                    </label>
+                <% }) %>
+            <% } else { %>
+                <p>No listed brands available</p>
+            <% } %>
         </div>
     </div>
 
@@ -245,32 +241,18 @@
             </svg>
         </div>
         <div class="filter-options" id="categoryOptions">
-            <label class="filter-option">
-                <input type="checkbox">
-                SPRAY
-            </label>
-            <label class="filter-option">
-                <input type="checkbox">
-                BOTTLE
-            </label>
-            <label class="filter-option">
-                <input type="checkbox">
-                TWIST AND SPRAY
-            </label>
-            <label class="filter-option">
-                <input type="checkbox">
-                REFILL
-            </label>
-            <label class="filter-option">
-                <input type="checkbox">
-                OTHER
-            </label>
+            <% categories.forEach(category => { %>
+                <label class="filter-option">
+                    <input type="checkbox" name="categoryf" value="<%= category.name %>" <%= currentFilters.categoryf.includes(category.name) ? 'checked' : '' %>>
+                    <%= category.name %>
+                </label>
+            <% }) %>
         </div>
     </div>
 
     <div class="button-container">
-        <button class="clear-button">CLEAR ALL</button>
-        <button class="show-button">SHOW PRODUCTS</button>
+        <button class="clear-button" id="clearFilters">CLEAR ALL</button>
+        <button class="show-button" id="applyFilters">SHOW PRODUCTS</button>
     </div>
 </div>
 
@@ -283,23 +265,19 @@
 
     <div class="filter-options show" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
         <label class="filter-option">
-            <input type="checkbox" name="sort" value="best-selling">
-            BEST SELLING
-        </label>
-        <label class="filter-option">
-            <input type="checkbox" name="sort" value="a-z">
+            <input type="radio" name="sort" value="A-Z" <%= currentFilters.sort === 'A-Z' || !currentFilters.sort ? 'checked' : '' %>>
             A-Z Order
         </label>
         <label class="filter-option">
-            <input type="checkbox" name="sort" value="z-a">
+            <input type="radio" name="sort" value="Z-A" <%= currentFilters.sort === 'Z-A' ? 'checked' : '' %>>
             Z-A Order
         </label>
         <label class="filter-option">
-            <input type="checkbox" name="sort" value="price-low-high">
+            <input type="radio" name="sort" value="price-low-high" <%= currentFilters.sort === 'price-low-high' ? 'checked' : '' %>>
             Price: Low → High
         </label>
         <label class="filter-option">
-            <input type="checkbox" name="sort" value="price-high-low">
+            <input type="radio" name="sort" value="price-high-low" <%= currentFilters.sort === 'price-high-low' ? 'checked' : '' %>>
             Price: High → Low
         </label>
     </div>
@@ -307,14 +285,14 @@
     <h3 style="margin-bottom: 15px;">PRICE</h3>
     <div style="display: flex; align-items: center; gap: 5px;">
         <div>From</div>
-        <input type="text" class="price-input" value="5000">
+        <input type="text" class="price-input" id="minPrice" value="<%= currentFilters.minValue || '' %>">
         <div>To</div>
-        <input type="text" class="price-input" value="30000">
+        <input type="text" class="price-input" id="maxPrice" value="<%= currentFilters.maxValue || '' %>">
     </div>
 
     <div class="button-container">
-        <button class="clear-button">CLEAR ALL</button>
-        <button class="show-button">SHOW PRODUCTS</button>
+        <button class="clear-button" id="clearSort">CLEAR ALL</button>
+        <button class="show-button" id="applySort">SHOW PRODUCTS</button>
     </div>
 </div>
 
@@ -327,145 +305,35 @@
 <div class="main-content">
     <h2 class="section-title">Exclusive To You</h2>
 
-
     <div class="celebrity-products">
         <% products.forEach(product => { %>
-          <% if (product.status === 'listed') { %>
-            <div class="product-card">
-              <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-              </button>
-      
-              <div class="product-image">
-                <a href="/productViewPage?id=<%= product._id %>">
-                  <img src="<%= product.productImage[0] %>" alt="<%= product.productName %>">
-                </a>
-              </div>
-              <div class="product-info">
-                <h3 class="product-title"><%= product.productName %></h3>
-                <!-- <p class="product-description"><%= product.productDescription %></p> -->
-                <p class="product-price">
-                  ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
-                </p>
-                <button href="/addToCart?id=<%= product._id %>" class="add-to-cart">ADD TO BAG</button>
-              </div>
-            </div>
-          <% } %>
+            <% if (product.status === 'listed') { %>
+                <div class="product-card">
+                    <button class="wishlist-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </button>
+    
+                    <div class="product-image">
+                        <a href="/productViewPage?id=<%= product._id %>">
+                            <img src="<%= product.productImage[0] %>" alt="<%= product.productName %>">
+                        </a>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title"><%= product.productName %></h3>
+                        <p class="product-price">
+                            ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
+                        </p>
+                        <button onclick="window.location.href='/addToCart?id=<%= product._id %>'" class="add-to-cart">ADD TO BAG</button>
+                    </div>
+                </div>
+            <% } %>
         <% }) %>
-      </div>
-
-   
-      <div class="product-grid">
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image4.webp" alt="Gucci Guilty Love Edition">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">Gucci Guilty Love Edition</h3>
-                <p class="product-description">Pour Homme, Eau de Parfum</p>
-                <p class="product-price">₹9,500</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image6.webp" alt="Gucci Guilty Love Edition">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">Gucci Guilty Love Edition</h3>
-                <p class="product-description">Pour Femme, Eau de Parfum</p>
-                <p class="product-price">₹9,500</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image5.webp" alt="Gucci Guilty Pour Homme">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">Gucci Guilty Pour Homme</h3>
-                <p class="product-description">Eau de Parfum, 90ml</p>
-                <p class="product-price">₹8,900</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image1.webp" alt="ALTHAÏR">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">ALTHAÏR</h3>
-                <p class="product-description">Eau de Parfum, 100ml</p>
-                <p class="product-price">₹12,500</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image3.webp" alt="LAYTON">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">LAYTON</h3>
-                <p class="product-description">Eau de Parfum, 125ml</p>
-                <p class="product-price">₹14,200</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <button class="wishlist-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-            </button>
-            <div class="product-image">
-                <img src="/img/image2.webp" alt="Product 6">
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">Product 6</h3>
-                <p class="product-description">Eau de Parfum, 100ml</p>
-                <p class="product-price">₹10,800</p>
-                <button class="add-to-cart">ADD TO BAG</button>
-            </div>
-        </div>
     </div>
 </div>
 
-
-<%-include("../../views/partials/user/footer")%>
-
-
+<%- include("../../views/partials/user/footer") %>
 
 <script>
     // Get modal elements
@@ -477,6 +345,10 @@
     const sortBtn = document.getElementById('sortBtn');
     const closeFilterBtn = document.getElementById('closeFilterBtn');
     const closeSortBtn = document.getElementById('closeSortBtn');
+    const applyFiltersBtn = document.getElementById('applyFilters');
+    const applySortBtn = document.getElementById('applySort');
+    const clearFiltersBtn = document.getElementById('clearFilters');
+    const clearSortBtn = document.getElementById('clearSort');
     
     // Open filter modal
     filterBtn.addEventListener('click', () => {
@@ -508,7 +380,6 @@
             const targetSection = document.getElementById(targetId);
             const arrow = title.querySelector('.arrow-icon');
             
-            // Toggle the section
             targetSection.classList.toggle('show');
             arrow.classList.toggle('rotate');
         });
@@ -527,18 +398,80 @@
         }
     });
 
-    // Handle sort option selection (only one can be selected)
-    const sortOptions = document.querySelectorAll('input[name="sort"]');
-    sortOptions.forEach(option => {
-        option.addEventListener('change', () => {
-            sortOptions.forEach(opt => {
-                if (opt !== option) {
-                    opt.checked = false;
-                }
-            });
+    // Apply filters
+    applyFiltersBtn.addEventListener('click', () => {
+        const params = new URLSearchParams();
+        
+        // Collect brand filters
+        const brandCheckboxes = document.querySelectorAll('input[name="brandf"]:checked');
+        brandCheckboxes.forEach(checkbox => {
+            params.append('brandf', checkbox.value);
+        }); 
+
+        // Collect category filters
+        const categoryCheckboxes = document.querySelectorAll('input[name="categoryf"]:checked');
+        categoryCheckboxes.forEach(checkbox => {
+            params.append('categoryf', checkbox.value);
         });
+
+        // Preserve sort and price parameters
+        const currentParams = new URLSearchParams(window.location.search);
+        ['sort', 'minValue', 'maxValue', 'search'].forEach(key => {
+            if (currentParams.has(key)) {
+                params.set(key, currentParams.get(key));
+            }
+        });
+
+        // Ensure a sort parameter is always included
+        if (!params.has('sort')) {
+            params.set('sort', 'A-Z');
+        }
+
+        window.location.href = `/shop?${params.toString()}`;
     });
-    
-    // Auto-show sort options
-    document.querySelector('.sort-modal .filter-options').classList.add('show');
+
+    // Apply sort and price range
+    applySortBtn.addEventListener('click', () => {
+        const params = new URLSearchParams();
+
+        // Collect sort option (default to A-Z if none selected)
+        const sortCheckbox = document.querySelector('input[name="sort"]:checked');
+        params.set('sort', sortCheckbox ? sortCheckbox.value : 'A-Z');
+
+        // Collect price range
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        if (minPrice) params.set('minValue', minPrice);
+        if (maxPrice) params.set('maxValue', maxPrice);
+
+        // Preserve other query parameters
+        const currentParams = new URLSearchParams(window.location.search);
+        ['brandf', 'categoryf', 'search'].forEach(key => {
+            if (currentParams.has(key)) {
+                currentParams.getAll(key).forEach(value => {
+                    params.append(key, value);
+                });
+            }
+        });
+
+        window.location.href = `/shop?${params.toString()}`;
+    });
+
+    // Clear filters
+    clearFiltersBtn.addEventListener('click', () => {
+        const params = new URLSearchParams(window.location.search);
+        ['brandf', 'categoryf'].forEach(key => params.delete(key));
+        if (!params.has('sort')) {
+            params.set('sort', 'A-Z');
+        }
+        window.location.href = `/shop?${params.toString()}`;
+    });
+
+    // Clear sort and price
+    clearSortBtn.addEventListener('click', () => {
+        const params = new URLSearchParams(window.location.search);
+        ['sort', 'minValue', 'maxValue'].forEach(key => params.delete(key));
+        params.set('sort', 'A-Z');
+        window.location.href = `/shop?${params.toString()}`;
+    });
 </script>

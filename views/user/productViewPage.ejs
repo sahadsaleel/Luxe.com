@@ -806,7 +806,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   //price update based on selected size
-  const variants = <%- JSON.stringify(product.variants) %>;
+  const variants = <%-JSON.stringify(product.variants)%>
   sizeRadios.forEach(radio => {
     radio.addEventListener('change', function() {
       const selectedSize = this.value;

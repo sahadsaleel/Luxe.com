@@ -47,8 +47,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'Uploads')));
 app.use('/uploads', express.static('public/uploads/products'));
 
 // Routes
-app.use('/', userRouter);
-app.use('/admin', adminRouter);
+app.use('/', nocache(), userRouter);
+app.use('/admin', nocache(), adminRouter);
 
 // Global error handler
 app.use((err, req, res, next) => {

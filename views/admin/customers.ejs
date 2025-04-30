@@ -485,7 +485,6 @@
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
                     const { data, totalPages, currentPage: serverPage } = await response.json();
-                    console.log('AJAX Response:', { data, totalPages, serverPage });
                     const sortedData = [...data].sort((a, b) => {
                         const nameA = a.firstName.toLowerCase();
                         const nameB = b.firstName.toLowerCase();

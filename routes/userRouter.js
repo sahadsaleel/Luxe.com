@@ -30,6 +30,9 @@ router.get('/shop', userController.loadShopPage);
 // Product management
 router.get('/productViewPage', productController.productViewPage);
 
+//Search functionality
+router.get('/search' ,productController.searchProduct)
+
 
 // // Cart and Wishlist routes
 // router.post('/addToCart', userAuth, cartController.addToCart);

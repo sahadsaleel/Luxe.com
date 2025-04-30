@@ -722,11 +722,11 @@
                     confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        console.log('Sending delete brand request:', { id: brandId });
+                        // console.log('Sending delete brand request:', { id: brandId });
                         fetch('/admin/deleteBrand', {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json'
+                             'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({ id: brandId })
                         })
