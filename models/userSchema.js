@@ -24,6 +24,18 @@ const userSchema = new Schema({
     type: String,
     required: false
   },
+  phone : {
+    type : Number,
+    require : false
+  },
+  profileImage: {
+    type: String,
+    required: false
+  },
+  gender : {
+    type : String,
+    require : false
+  },
   isBlocked: {
     type: Boolean,
     default: false

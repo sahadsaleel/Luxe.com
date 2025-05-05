@@ -12,7 +12,7 @@ const brandSchema = new Schema({
         type: String,
         required: true,
       },
-      cloudinaryPublicId: {
+      cloudinaryPublicId: { 
         type: String,
       },
       isBlocked: {

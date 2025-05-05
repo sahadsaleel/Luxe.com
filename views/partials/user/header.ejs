@@ -31,6 +31,8 @@
             height: auto;
         }
 
+        
+
         .nav-links {
             list-style: none;
             display: flex;
@@ -171,7 +173,7 @@
             <ul class="nav-links">
                 <li><a href="/">HOME</a></li>
                 <li><a href="/shop">SHOP</a></li>
-                <li><a href="#">BEST DEALS</a></li>
+                <li><a href="#">+ CONTACT US</a></li>
                 <li><a href="#">ABOUT</a></li>
             </ul>
             <div class="header-icons">
@@ -209,8 +211,8 @@
                         </div>
                         <div class="dropdown-content">
                             <span class="user-name"><%= locals.user.firstName %></span>
-                            <a href="/userProfile">Profile</a>
-                            <a href="/logout">Logout</a>
+                            <a href="/Profile">Profile</a>
+                            <a href="/logout">Logout</a>    
                         </div>
                     </div>
                 <% } else { %>
@@ -233,7 +235,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             try {
-                // Profile dropdown toggle
                 const profileIcons = document.querySelectorAll('.icon.profile');
                 profileIcons.forEach(icon => {
                     icon.addEventListener('click', (e) => {
@@ -245,7 +246,6 @@
                     });
                 });
 
-                // Close dropdowns when clicking outside
                 document.addEventListener('click', (e) => {
                     const dropdowns = document.querySelectorAll('.dropdown');
                     dropdowns.forEach(dropdown => {
@@ -255,7 +255,6 @@
                     });
                 });
 
-                // Search functionality
                 const searchInput = document.getElementById('searchInput');
                 const searchResults = document.getElementById('searchResults');
 
@@ -263,32 +262,28 @@
                     try {
                         const query = searchInput.value.trim();
 
-                        // Clear results if no query
                         if (!query) {
                             searchResults.innerHTML = '';
                             searchResults.classList.remove('active');
                             return;
                         }
 
-                        // Fetch search results from /search
                         const response = await fetch(`/search?query=${encodeURIComponent(query)}`);
                         const products = await response.json();
 
-                        // Show "No results" if empty
                         if (!products || products.length === 0) {
                             searchResults.innerHTML = '<p class="no-results">No products found</p>';
                             searchResults.classList.add('active');
                             return;
                         }
 
-                        // Render product results
                         const resultsHtml = products.map(product => {
                             const price = product.variants[0]?.salePrice || product.variants[0]?.regularPrice;
                             return `
                                 <a href="/productViewPage?id=${product._id}" class="result-item">
                                     <span>${product.productName}</span>
                                     <span>${product.productBrand.brandName}</span>
-                                    <span>$${price}</span>
+                                    <span>${price}₹</span>
                                 </a>
                             `;
                         }).join('');

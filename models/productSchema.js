@@ -35,6 +35,10 @@ const productSchema = new mongoose.Schema({
         type: String 
     }],
     variants: [variantSchema],
+    minSalePrice: {
+        type: Number,
+        default: 0
+    },
     status: {
         type: String,
         enum: ['listed', 'unlisted'],

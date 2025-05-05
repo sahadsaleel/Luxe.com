@@ -58,6 +58,9 @@ passport.use(new googleStrategy({
     try {
         let user = await User.findOne({ googleId: profile.id });
         if (user) {
+            if(user.isBlocked){
+                return done(null,false , {message : "User is blocked"})
+            }
             return done(null, user);
         } else {
             // Split displayName into firstName and lastName

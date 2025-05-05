@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <style>
+        :root {
+            --primary-color: #8a6a94;
+            --secondary-color: #7a5a84;
+            --accent-color: #9a7aa4;
+            --text-color: #333;
+            --light-text: #777;
+            --background: #f8f9fa;
+            --card-bg: #fff;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 12px 16px;
+            margin: 0;
+            list-style: none;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .breadcrumb-item {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '/';
+            color: #6c757d;
+            margin: 0 8px;
+            font-size: 12px;
+        }
+
+        .breadcrumb-item a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        .breadcrumb-item.active {
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px minmax(0, 1fr);
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .sidebar {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            height: fit-content;
+        }
+
+        .profile-brief {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-color: #e9e9e9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .profile-email {
+            font-size: 14px;
+            color: var(--light-text);
+            margin-bottom: 15px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-menu h3 {
+            font-size: 16px;
+            margin: 20px 0 15px;
+            color: var(--light-text);
+        }
+
+        .nav-menu li {
+            margin-bottom: 12px;
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 15px;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .nav-menu a:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+        }
+
+        .nav-menu a.active {
+            background-color: rgba(67, 97, 238, 0.15);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .nav-menu i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .edit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .edit-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header i {
+            font-size: 20px;
+            color: var(--primary-color);
+            margin-right: 12px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: var(--light-text);
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid #eaeaea;
+            position: sticky;
+            top: 0;
+            background-color: var(--card-bg);
+            z-index: 1;
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--light-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-color);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-section-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .required-note {
+            font-size: 13px;
+            color: var(--light-text);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .image-upload-container {
+            width: 160px;
+            height: 160px;
+            border: 2px dashed #e1e1e1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .image-upload-container:hover {
+            border-color: var(--accent-color);
+        }
+
+        .image-upload-container.has-image {
+            border: none;
+            padding: 0;
+        }
+
+        .image-upload-container.has-image .upload-icon,
+        .image-upload-container.has-image .upload-text {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 30px;
+            color: var(--light-text);
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            font-size: 13px;
+            color: var(--light-text);
+            text-align: center;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .image-upload-container.has-image .image-preview {
+            display: block;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .email-display {
+            background-color: #f5f5f5;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 15px;
+            color: var(--light-text);
+        }
+
+        .action-button {
+            display: inline-block;
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-button:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+
+        .save-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: var(--transition);
+        }
+
+        .save-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .crop-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .crop-container {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .crop-image {
+            max-width: 100%;
+            max-height: 400px;
+        }
+
+        .crop-buttons {
+            margin-top: 15px;
+        }
+
+        .crop-btn, .cancel-crop-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0 10px;
+        }
+
+        .crop-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .crop-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .cancel-crop-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .cancel-crop-btn:hover {
+            background: #c82333;
+        }
+
+        /* Modal active state */
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-brief {
+                flex-direction: row;
+                align-items: center;
+                text-align: left;
+                padding-bottom: 15px;
+            }
+
+            .profile-image {
+                width: 80px;
+                height: 80px;
+                margin-right: 15px;
+                margin-bottom: 0;
+            }
+
+            .profile-info {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .breadcrumb {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .breadcrumb-item + .breadcrumb-item::before {
+                margin: 0 6px;
+            }
+        }
+        .form-group.invalid .form-control {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+        }
+
+        .form-group.invalid .error-message {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../../views/partials/user/header') %>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">Luxe.com</div>
+        </div>
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Account</a></li>
+                <li class="breadcrumb-item active" aria-current="/profile">Profile</li>
+            </ol>
+        </nav>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="profile-brief">
+                    <div class="profile-image">
+                        <img src="<%= user && user.profileImage ? user.profileImage : '/api/placeholder/120/120' %>" alt="Profile Image">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : '' %></div>
+                        <div class="profile-email"><%= user && user.email ? user.email : 'N/A' %></div>
+                    </div>
+                </div>
+
+                <ul class="nav-menu">
+                    <h3>Manage My Account</h3>
+                    <li><a href="/profile" class="active"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li><a href="#" id="openChangePasswordNav"><i class="fas fa-lock"></i> Change Password</a></li>
+                    <li><a href="/address"><i class="fas fa-address-book"></i> Address Book</a></li>
+
+                    <h3>Orders & Wishlist</h3>
+                    <li><a href="/orders"><i class="fas fa-shopping-bag"></i> My Orders</a></li>
+                    <li><a href="/wishlist"><i class="fas fa-heart"></i> My Wishlist</a></li>
+
+                    <h3>Payments</h3>
+                    <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
+                    <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
+                </ul>
+            </div>
+
+            <div class="content">
+                <div class="profile-header">
+                    <h1>My Profile</h1>
+                    <button id="editProfileBtn" class="edit-btn">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-user-circle"></i>
+                        <h2>Personal Information</h2>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Name</div>
+                            <div class="info-value"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : 'N/A' %></div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label">Phone Number</div>
+                            <div class="info-value"><%= user && user.phone ? user.phone : 'N/A' %></div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label">Gender</div>
+                            <div class="info-value"><%= user && user.gender ? user.gender : 'N/A' %></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-lock"></i>
+                        <h2>Login Information</h2>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Email</div>
+                            <div class="info-value"><%= user && user.email ? user.email : 'N/A' %></div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label">Password</div>
+                            <div class="info-value">••••••••</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editProfileModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Edit Profile</div>
+                <button class="close-btn" id="closeModalBtn">×</button>
+            </div>
+
+            <div class="modal-body">
+                <form id="editProfileForm" action="/profile/update" method="POST" enctype="multipart/form-data">
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <div class="form-section-title">Personal Information</div>
+                            <div class="required-note">Required Fields*</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="firstName">First Name *</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" value="<%= user && user.firstName ? user.firstName : '' %>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="lastName">Last Name *</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" value="<%= user && user.lastName ? user.lastName : '' %>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="phone">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" value="<%= user && user.phone ? user.phone : '' %>">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="image">Profile Image</label>
+                                <label for="image">
+                                    <div class="image-upload-container">
+                                        <div class="upload-icon">
+                                            <i class="fas fa-camera"></i>
+                                        </div>
+                                        <div class="upload-text">Click to upload</div>
+                                        <img class="image-preview" src="#" alt="Image Preview">
+                                    </div>
+                                </label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*" style="display: none;">
+                                <div class="error-message" id="imageError">Please select an image file (e.g., PNG, JPG).</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="gender">Gender</label>
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="" <%= !user || !user.gender ? 'selected' : '' %>>Select Gender</option>
+                                    <option value="male" <%= user && user.gender === 'male' ? 'selected' : '' %>>Male</option>
+                                    <option value="female" <%= user && user.gender === 'female' ? 'selected' : '' %>>Female</option>
+                                    <option value="other" <%= user && user.gender === 'other' ? 'selected' : '' %>>Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="save-btn">Save your information</button>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <div class="form-section-title">Login Information</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email</label>
+                            <div class="email-display"><%= user && user.email ? user.email : 'N/A' %></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="password">Password</label>
+                            <button type="button" class="action-button" id="openChangePasswordModal">Change Password</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="changePasswordModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Change Password</div>
+                <button class="close-btn" id="closePasswordModalBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="passwordChangeForm">
+                    <div id="oldPasswordError" class="error-message"></div>
+                    <div class="form-group">
+                        <label class="form-label" for="oldPassword">Old Password</label>
+                        <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
+                    </div>
+                    <div id="newPasswordError" class="error-message"></div>
+                    <div class="form-group">
+                        <label class="form-label" for="newPassword">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div id="confirmPasswordError" class="error-message"></div>
+                    <div class="form-group">
+                        <label class="form-label" for="confirmPassword">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="save-btn">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="crop-modal" id="cropModal">
+        <div class="crop-container">
+            <img class="crop-image" id="cropImage" src="#" alt="Crop Image">
+            <div class="crop-buttons">
+                <button class="crop-btn" id="cropButton">Crop & Save</button>
+                <button class="cancel-crop-btn" id="cancelCropButton">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+
+    <%- include('../../views/partials/user/footer') %>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const editProfileModal = document.getElementById('editProfileModal');
+
+        editProfileBtn.addEventListener('click', function() {
+            editProfileModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeModalBtn.addEventListener('click', function() {
+            editProfileModal.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === editProfileModal) {
+                editProfileModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        const openChangePasswordModal = document.getElementById('openChangePasswordModal');
+        const closePasswordModalBtn = document.getElementById('closePasswordModalBtn');
+        const changePasswordModal = document.getElementById('changePasswordModal');
+
+        openChangePasswordModal.addEventListener('click', function() {
+            changePasswordModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        closePasswordModalBtn.addEventListener('click', function() {
+            changePasswordModal.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === changePasswordModal) {
+                changePasswordModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        const imageInput = document.getElementById('image');
+        const imagePreview = document.querySelector('.image-preview');
+        const imageUploadContainer = document.querySelector('.image-upload-container');
+        const imageError = document.getElementById('imageError');
+        const cropModal = document.getElementById('cropModal');
+        const cropImage = document.getElementById('cropImage');
+        const cropButton = document.getElementById('cropButton');
+        const cancelCropButton = document.getElementById('cancelCropButton');
+        let cropper;
+
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            imageError.style.display = 'none';
+            imageUploadContainer.classList.remove('has-image');
+            imagePreview.style.display = 'none';
+
+            if (file) {
+                if (!file.type.startsWith('image/')) {
+                    imageError.style.display = 'block';
+                    this.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    cropImage.src = e.target.result;
+                    cropModal.style.display = 'flex';
+                    if (cropper) cropper.destroy();
+                    cropper = new Cropper(cropImage, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        autoCropArea: 0.8
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        cropButton.addEventListener('click', function() {
+            const canvas = cropper.getCroppedCanvas({
+                width: 200,
+                height: 200
+            });
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                imagePreview.src = url;
+                imageUploadContainer.classList.add('has-image');
+                imagePreview.style.display = 'block';
+                cropModal.style.display = 'none';
+                cropper.destroy();
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'croppedImage';
+                    hiddenInput.value = e.target.result;
+                    document.getElementById('editProfileForm').appendChild(hiddenInput);
+                };
+                reader.readAsDataURL(blob);
+            });
+        });
+
+        cancelCropButton.addEventListener('click', function() {
+            cropModal.style.display = 'none';
+            if (cropper) cropper.destroy();
+            imageInput.value = '';
+            imageUploadContainer.classList.remove('has-image');
+            imagePreview.style.display = 'none';
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+        const oldPassword = document.getElementById("oldPassword");
+        const newPassword = document.getElementById("newPassword");
+        const confirmPassword = document.getElementById("confirmPassword");
+        const oldPasswordError = document.getElementById("oldPasswordError");
+        const newPasswordError = document.getElementById("newPasswordError");
+        const confirmPasswordError = document.getElementById("confirmPasswordError");
+        const passwordChangeForm = document.getElementById("passwordChangeForm");
+        const editProfileModal = document.getElementById("editProfileModal");
+        const changePasswordModal = document.getElementById("changePasswordModal");
+
+        if (
+            !oldPassword ||
+            !newPassword ||
+            !confirmPassword ||
+            !oldPasswordError ||
+            !newPasswordError ||
+            !confirmPasswordError ||
+            !passwordChangeForm ||
+            !editProfileModal ||
+            !changePasswordModal
+        ) {
+            return;
+        }
+
+        function oldPasswordValidateChecking() {
+            const oldPasswordVal = oldPassword.value.trim();
+            const formGroup = oldPassword.parentElement;
+
+            if (oldPasswordVal === "") {
+                oldPasswordError.innerHTML = "Please enter your current password";
+                formGroup.classList.add("invalid");
+                return false;
+            }
+            oldPasswordError.innerHTML = "";
+            formGroup.classList.remove("invalid");
+            return true;
+        }
+
+        function newPasswordValidateChecking() {
+            const newPasswordVal = newPassword.value;
+            const confirmPasswordVal = confirmPassword.value;
+            const alpha = /[A-Za-z]/;
+            const digit = /\d/;
+            const newPasswordGroup = newPassword.parentElement;
+            const confirmPasswordGroup = confirmPassword.parentElement;
+            let isValid = true;
+
+            if (newPasswordVal === "") {
+                newPasswordError.innerHTML = "Please enter a new password";
+                newPasswordGroup.classList.add("invalid");
+                isValid = false;
+            } else if (newPasswordVal.length < 8) {
+                newPasswordError.innerHTML = "New password must be at least 8 characters";
+                newPasswordGroup.classList.add("invalid");
+                isValid = false;
+            } else if (!alpha.test(newPasswordVal) || !digit.test(newPasswordVal)) {
+                newPasswordError.innerHTML = "New password must contain both letters and numbers";
+                newPasswordGroup.classList.add("invalid");
+                isValid = false;
+            } else {
+                newPasswordError.innerHTML = "";
+                newPasswordGroup.classList.remove("invalid");
+            }
+
+            if (confirmPasswordVal === "") {
+                confirmPasswordError.innerHTML = "Please confirm your new password";
+                confirmPasswordGroup.classList.add("invalid");
+                isValid = false;
+            } else if (newPasswordVal !== confirmPasswordVal) {
+                confirmPasswordError.innerHTML = "New passwords do not match";
+                confirmPasswordGroup.classList.add("invalid");
+                isValid = false;
+            } else {
+                confirmPasswordError.innerHTML = "";
+                confirmPasswordGroup.classList.remove("invalid");
+            }
+
+            return isValid;
+        }
+
+        passwordChangeForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            
+            const isOldPasswordValid = oldPasswordValidateChecking();
+            const isNewPasswordValid = newPasswordValidateChecking();
+
+            if (!isOldPasswordValid || !isNewPasswordValid) {
+                return;
+            }
+            const formData = {
+                oldPassword: oldPassword.value,
+                newPassword: newPassword.value,
+                confirmPassword: confirmPassword.value,
+            };
+
+            try {
+                const response = await fetch('/profile/changePassword', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                const result = await response.json();
+
+                changePasswordModal.classList.remove('active');
+
+                editProfileModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: result.message,
+                        confirmButtonColor: '#8a6a94',
+                    }).then(() => {
+                        passwordChangeForm.reset(); 
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.error,
+                        confirmButtonColor: '#8a6a94',
+                    });
+
+                    if (result.error.includes('current password')) {
+                        oldPasswordError.innerHTML = result.error;
+                        oldPassword.parentElement.classList.add("invalid");
+                    } else if (result.error.includes('New password must') || result.error.includes('same as the old')) {
+                        newPasswordError.innerHTML = result.error;
+                        newPassword.parentElement.classList.add("invalid");
+                    } else {
+                        confirmPasswordError.innerHTML = result.error;
+                        confirmPassword.parentElement.classList.add("invalid");
+                    }
+                    changePasswordModal.classList.add('active');
+                    editProfileModal.classList.remove('active');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                changePasswordModal.classList.remove('active');
+                editProfileModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred. Please try again.',
+                    confirmButtonColor: '#8a6a94',
+                });
+            }
+        });
+
+        oldPassword.addEventListener("input", oldPasswordValidateChecking);
+        newPassword.addEventListener("input", newPasswordValidateChecking);
+                confirmPassword.addEventListener("input", newPasswordValidateChecking);
+
+                const openChangePasswordModal = document.getElementById("openChangePasswordModal");
+                openChangePasswordModal.addEventListener("click", function () {
+                    changePasswordModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+
+                const closePasswordModalBtn = document.getElementById("closePasswordModalBtn");
+                closePasswordModalBtn.addEventListener("click", function () {
+                    changePasswordModal.classList.remove('active');
+                    editProfileModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+
+                changePasswordModal.addEventListener('click', function (event) {
+                    if (event.target === changePasswordModal) {
+                        changePasswordModal.classList.remove('active');
+                        editProfileModal.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
+                });
+            });
+
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+</body>
+</html>
