@@ -30,9 +30,7 @@ const categoryInfo = async (req, res) => {
 const addCategory = async (req, res) => {
     try {
         const { name, description, isListed } = req.body;
-        console.log('Received add request:', req.body); // Debug
 
-        // Validate input
         if (!name || typeof name !== 'string') {
             return res.status(400).json({ error: 'Category name is required' });
         }
@@ -40,7 +38,6 @@ const addCategory = async (req, res) => {
             return res.status(400).json({ error: 'Category name cannot start with "$"' });
         }
 
-        // Check for existing category (case-insensitive)
         const existingCategory = await Category.findOne({
             name: { $regex: `^${name}$`, $options: 'i' }
         });
@@ -49,7 +46,6 @@ const addCategory = async (req, res) => {
             return res.status(400).json({ error: 'Category already exists' });
         }
 
-        // Create new category
         const newCategory = new Category({ name, description, isListed });
         await newCategory.save();
 
@@ -64,9 +60,7 @@ const addCategory = async (req, res) => {
 const editCategory = async (req, res) => {
     try {
         const { id, name, description, isListed } = req.body;
-        // console.log('Received edit request:', req.body); // Debug
 
-        // Validate id
         if (!id || id === 'null' || id === '') {
             return res.status(400).json({ error: 'Invalid category ID' });
         }

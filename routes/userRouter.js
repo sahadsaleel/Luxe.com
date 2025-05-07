@@ -23,6 +23,7 @@ router.get('/shop', userController.loadShopPage);
 router.post('/signup', userController.signup);
 router.post('/login', userController.login);
 router.post('/verifyotp', userController.verifyOtp);
+router.post('/resend-otp', userController.resendOtp);
 
 
 router.get('/forgot-password', profileControllers.getForgotPassword);

@@ -4,7 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - luxe.com</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="/css/signUp.css">
+
+    <style>
+        
+        .loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3085d6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        .loader p {
+            color: #fff;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -18,7 +57,7 @@
             <h1>CREATE LUXE.COM ACCOUNT</h1>
             <a href="/login" class="login-link">Already have an account log in</a>
             <div class="form-container">
-              <form id="signForm" method="post" action="/signup">
+              <form id="signForm" onsubmit="return validateAndSubmitForm(event)">
                 <div class="form-group">
                   <div id="error1" class="error-message"></div>
                   <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
@@ -40,9 +79,6 @@
                   <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Your Password" autocomplete="new-password" required>
                 </div>
                 <p class="password-requirement">Use 8 or more characters with a mix of letters, numbers & symbols.</p>
-                <label class="checkbox-label">
-                  <input type="checkbox" id="showPassword"> Show your Password
-                </label>
                 <button type="submit" class="continue-btn">CREATE AN ACCOUNT</button>
               </form>
             </div>
@@ -54,7 +90,11 @@
               <a href="#">Privacy</a>
               <a href="#">Terms</a>
             </div>
-          </div>
+        </div>
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
     </main>
 
     <script>
@@ -63,57 +103,63 @@
         const email = document.getElementById("email");
         const password = document.getElementById("password");
         const confirmPassword = document.getElementById("confirmPassword");
-    
+
         const error1 = document.getElementById("error1");
         const error2 = document.getElementById("error2");
         const error3 = document.getElementById("error3");
         const error4 = document.getElementById("error4");
         const error5 = document.getElementById("error5");
-    
-        const signForm = document.getElementById("signForm");
-    
+
+        const loader = document.getElementById("loader");
+
         function firstNameValidateChecking() {
             const firstNameVal = firstName.value.trim();
             const namePattern = /^[A-Za-z\s]+$/;
             const formGroup = firstName.parentElement;
-    
+
             if (firstNameVal === "" || !namePattern.test(firstNameVal)) {
                 error1.innerHTML = "Please enter a valid first name";
                 formGroup.classList.add("invalid");
+                return false;
             } else {
                 error1.innerHTML = "";
                 formGroup.classList.remove("invalid");
+                return true;
             }
         }
-    
+
         function lastNameValidateChecking() {
             const lastNameVal = lastName.value.trim();
             const namePattern = /^[A-Za-z\s]+$/;
             const formGroup = lastName.parentElement;
-    
+
             if (lastNameVal === "" || !namePattern.test(lastNameVal)) {
                 error2.innerHTML = "Please enter a valid last name";
                 formGroup.classList.add("invalid");
+                return false;
             } else {
                 error2.innerHTML = "";
                 formGroup.classList.remove("invalid");
+                return true;
             }
         }
-    
+
         function emailValidateChecking() {
             const emailVal = email.value.trim();
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const formGroup = email.parentElement;
-    
+
             if (!emailPattern.test(emailVal)) {
                 error3.innerHTML = "Invalid email format";
                 formGroup.classList.add("invalid");
+                return false;
             } else {
                 error3.innerHTML = "";
                 formGroup.classList.remove("invalid");
+                return true;
             }
         }
-    
+
         function passwordValidateChecking() {
             const passwordVal = password.value;
             const confirmPasswordVal = confirmPassword.value;
@@ -121,57 +167,113 @@
             const digit = /\d/;
             const passwordGroup = password.parentElement;
             const confirmPasswordGroup = confirmPassword.parentElement;
-    
+
             if (passwordVal.length < 8) {
                 error4.innerHTML = "Should contain at least 8 characters";
                 passwordGroup.classList.add("invalid");
+                return false;
             } else if (!alpha.test(passwordVal) || !digit.test(passwordVal)) {
                 error4.innerHTML = "Should contain both letters and numbers";
                 passwordGroup.classList.add("invalid");
+                return false;
             } else {
                 error4.innerHTML = "";
                 passwordGroup.classList.remove("invalid");
             }
-    
+
             if (passwordVal !== confirmPasswordVal) {
                 error5.innerHTML = "Passwords do not match";
                 confirmPasswordGroup.classList.add("invalid");
+                return false;
             } else {
                 error5.innerHTML = "";
                 confirmPasswordGroup.classList.remove("invalid");
+                return true;
             }
         }
-    
-        document.addEventListener("DOMContentLoaded", function () {
-            if (
-                !firstName ||
-                !lastName ||
-                !email ||
-                !password ||
-                !confirmPassword ||
-                !signForm
-            ) {
-                return;
+
+        function validateAndSubmitForm(event) {
+            event.preventDefault();
+
+            // Perform all validations
+            const isFirstNameValid = firstNameValidateChecking();
+            const isLastNameValid = lastNameValidateChecking();
+            const isEmailValid = emailValidateChecking();
+            const isPasswordValid = passwordValidateChecking();
+
+            if (!isFirstNameValid || !isLastNameValid || !isEmailValid || !isPasswordValid) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please fix the errors in the form.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#d33'
+                });
+                return false;
             }
-    
-            signForm.addEventListener("submit", function (e) {
-                firstNameValidateChecking();
-                lastNameValidateChecking();
-                emailValidateChecking();
-                passwordValidateChecking();
-    
-                if (
-                    error1.innerHTML ||
-                    error2.innerHTML ||
-                    error3.innerHTML ||
-                    error4.innerHTML ||
-                    error5.innerHTML
-                ) {
-                    e.preventDefault(); // prevent form submit any error exists
+
+            // Show loader
+            loader.style.display = 'flex';
+
+            // Collect form data
+            const formData = {
+                firstName: firstName.value.trim(),
+                lastName: lastName.value.trim(),
+                email: email.value.trim(),
+                password: password.value,
+                confirmPassword: confirmPassword.value
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/signup',
+                data: formData,
+                dataType: 'html', 
+                success: function (response) {
+                    loader.style.display = 'none';
+
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'OTP has been sent to your email.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        timerProgressBar: true
+                    }).then(() => {
+                        document.open();
+                        document.write(response);
+                        document.close();
+                    });
+                },
+                error: function (xhr, status, error) {
+                    loader.style.display = 'none';
+
+                    let errorMessage = 'An error occurred. Please try again.';
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.message) {
+                            errorMessage = response.message;
+                        }
+                    } catch (e) {
+                    }
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#d33'
+                    });
                 }
             });
-    
-            // Add real-time validation on input 
+
+            return false;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            if (!firstName || !lastName || !email || !password || !confirmPassword) {
+                return;
+            }
+
             firstName.addEventListener("input", firstNameValidateChecking);
             lastName.addEventListener("input", lastNameValidateChecking);
             email.addEventListener("input", emailValidateChecking);

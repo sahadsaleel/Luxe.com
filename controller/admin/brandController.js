@@ -71,7 +71,6 @@ const addBrand = async (req, res) => {
       });
     };
 
-    //Await the result
     let result;
     try {
       result = await streamUpload(file.buffer);
@@ -80,7 +79,6 @@ const addBrand = async (req, res) => {
       return res.status(500).json({ success: false, message: 'Failed to upload image to Cloudinary' });
     }
 
-    //Now safely use result
     const newBrand = new Brand({
       brandName,
       brandImage: result.secure_url,

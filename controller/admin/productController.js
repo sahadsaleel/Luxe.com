@@ -169,7 +169,7 @@ const editProduct = async (req, res) => {
   try {
     // console.log('dsafdasojf')
     const { productId, productName, productBrand, productCategory, productDescription, status, variants, existingImages, removedImages } = req.body;
-    // Validate required fields
+    // Validate fields
     if (!productId || !productName || !productBrand || !productCategory || !productDescription || !status) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
     }
@@ -298,7 +298,6 @@ const editProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   try {
-      console.log('Received delete request for product ID:', req.params.id);
       const productId = req.params.id;
 
       if (!mongoose.Types.ObjectId.isValid(productId)) {

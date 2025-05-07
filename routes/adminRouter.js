@@ -37,6 +37,7 @@ router.get('/logout', adminController.logout);
 router.get('/customers', adminAuth, customerController.customerInfo);
 router.get('/blockCustomer', adminAuth, customerController.customerBlocked);
 router.get('/unblockCustomer', adminAuth, customerController.customerUnblocked);
+router.post('/upload-image',adminAuth, uploadSingleImage, customerController.uploadProfileImage);
 
 // Category management
 router.get('/category', adminAuth, categoryController.categoryInfo);

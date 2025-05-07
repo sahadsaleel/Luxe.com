@@ -91,7 +91,7 @@ const signup = async (req, res) => {
     try {
         const { firstName, lastName, email, password, confirmPassword } = req.body;
         if (password !== confirmPassword) {
-            return res.render('user/signup', { message: 'Password do not match' });
+            return res.render('user/signup', { message: 'Passwords do not match' });
         }
 
         const findUser = await User.findOne({ email });
@@ -108,6 +108,7 @@ const signup = async (req, res) => {
 
         req.session.userOtp = otp;
         req.session.userData = { firstName, lastName, email, password };
+        req.session.otpExpires = Date.now() + 60 * 1000; // Set OTP expiration to 1 minute
 
         res.render('user/verifyotp', { userData: req.session.userData });
         console.log('OTP sent:', otp);
@@ -131,10 +132,19 @@ const verifyOtp = async (req, res) => {
         const { otp } = req.body;
         console.log('Received OTP:', otp);
 
-        if (!req.session.userOtp || !req.session.userData) {
+        if (!req.session.userOtp || !req.session.userData || !req.session.otpExpires) {
             return res.status(400).json({
                 success: false,
-                message: 'Session data is missing. Please request a new OTP.'
+                message: 'Session data is missing or OTP has expired. Please request a new OTP.'
+            });
+        }
+
+        if (Date.now() > req.session.otpExpires) {
+            req.session.userOtp = null;
+            req.session.otpExpires = null;
+            return res.status(400).json({
+                success: false,
+                message: 'OTP has expired. Please request a new OTP.'
             });
         }
 
@@ -160,6 +170,9 @@ const verifyOtp = async (req, res) => {
             await saveUserData.save();
             req.session.user = saveUserData._id;
 
+            req.session.userOtp = null;
+            req.session.otpExpires = null;
+
             return res.json({
                 success: true,
                 message: 'OTP verified successfully.',
@@ -177,6 +190,31 @@ const verifyOtp = async (req, res) => {
             success: false,
             message: `An error occurred while verifying OTP. Please try again later. Details: ${error.message}`
         });
+    }
+};
+
+const resendOtp = async (req, res) => {
+    try {
+        const { email } = req.session.userData;
+        if (!email) {
+            return res.status(400).json({ success: false, message: "Email not found in session" });
+        }
+        const otp = generateOtp();
+        req.session.userOtp = otp;
+        console.log('OTP:', otp);
+        req.session.otpExpires = Date.now() + 60 * 1000; 
+        const emailSent = await sendVerificationEmail(email, otp);
+        console.log(emailSent);
+
+        if (emailSent) {
+            console.log("Resend OTP:", otp);
+            res.status(200).json({ success: true, message: "OTP Resent Successfully" });
+        } else {
+            res.status(500).json({ success: false, message: "Failed to resend OTP. Please try again" });
+        }
+    } catch (error) {
+        console.error("Error resending OTP", error);
+        res.status(500).json({ success: false, message: "Internal Server Error. Please try again" });
     }
 };
 
@@ -220,140 +258,85 @@ const logout = async (req, res) => {
 
 const loadShopPage = async (req, res) => {
     try {
-        // Query parameters
-        let { search, sort, categoryf, brandf, minValue, maxValue, page } = req.query;
-        const perPage = 6;
-        page = parseInt(page) || 1;
+        const { brands, category, priceFrom, priceTo, sort } = req.query;
 
-        // Price range
-        minValue = parseFloat(minValue) || 0;
-        maxValue = parseFloat(maxValue) || Infinity;
+        let query = { isDeleted: false, status: 'listed' };
 
-        // Fetch listed categories and brands
-        const listedCategories = await Category.find({ isListed: true }).select('_id name');
-        const listedBrands = await Brand.find({ isBlocked: false }).select('_id brandName');
-
-        // Build filter
-        let filter = {
-            isDeleted: false,
-            productCategory: { $in: listedCategories.map(cat => cat._id) },
-            'variants.quantity': { $gt: 0 }
-        };
-
-        // Search filter
-        if (search) {
-            filter.productName = { $regex: search, $options: 'i' };
-        }
-
-        // Category filter
-        if (categoryf) {
-            const categories = Array.isArray(categoryf) ? categoryf : [categoryf];
-            const categoryIds = listedCategories
-                .filter(cat => categories.includes(cat.name))
-                .map(cat => cat._id);
-            if (categoryIds.length) {
-                filter.productCategory = { $in: categoryIds };
-            }
-        }
-
-        // Brand filter
-        if (brandf) {
-            const brands = Array.isArray(brandf) ? brandf : [brandf];
-            const brandIds = listedBrands
-                .filter(brand => brands.includes(brand.brandName))
-                .map(brand => brand._id);
-            if (brandIds.length) {
-                filter.brand = { $in: brandIds };
-            }
-        }
-
-        // Price filter
-        if (minValue || maxValue < Infinity) {
-            filter['variants.salePrice'] = {
-                $gte: minValue,
-                $lte: maxValue
-            };
-        }
-
-        // Sort options
-        let sortOptions = {};
-        switch (sort) {
-            case 'A-Z':
-                sortOptions = { productName: 1 };
-                break;
-            case 'Z-A':
-                sortOptions = { productName: -1 };
-                break;
-            case 'price-low-high':
-                sortOptions = { 'variants.salePrice': 1 };
-                break;
-            case 'price-high-low':
-                sortOptions = { 'variants.salePrice': -1 };
-                break;
-            default:
-                sortOptions = { createdAt: -1 };
-        }
-
-        // Pagination
-        const totalProducts = await Product.countDocuments(filter);
-        const totalPages = Math.ceil(totalProducts / perPage);
-        const currentPage = Math.max(1, Math.min(page, totalPages));
-
-        // Fetch products
-        const products = await Product.find(filter)
-            .sort(sortOptions)
-            .skip((currentPage - 1) * perPage)
-            .limit(perPage)
-            .populate('productCategory brand')
-            .lean();
-
-        // Fetch user
-        const user = req.session.user;
-        let userData = null;
-        if (user) {
-            userData = await User.findById(user).lean();
-        }
-
-        // Prepare current filters for frontend
         const currentFilters = {
-            search: search || '',
-            sort: sort || '',
-            categoryf: categoryf ? (Array.isArray(categoryf) ? categoryf : [categoryf]) : [],
-            brandf: brandf ? (Array.isArray(brandf) ? brandf : [brandf]) : [],
-            minValue: minValue || '',
-            maxValue: maxValue || ''
+            brandf: [],
+            categoryf: [],
+            sort: sort || 'A-Z',
+            minValue: priceFrom || '',
+            maxValue: priceTo || '',
         };
 
-        // Build pagination URLs
-        const buildQueryString = (pageNum) => {
-            const params = new URLSearchParams();
-            if (search) params.set('search', search);
-            if (sort) params.set('sort', sort);
-            if (categoryf) {
-                (Array.isArray(categoryf) ? categoryf : [categoryf]).forEach(cat => params.append('categoryf', cat));
-            }
-            if (brandf) {
-                (Array.isArray(brandf) ? brandf : [brandf]).forEach(brand => params.append('brandf', brand));
-            }
-            if (minValue) params.set('minValue', minValue);
-            if (maxValue) params.set('maxValue', maxValue);
-            params.set('page', pageNum);
-            return params.toString();
-        };
+        if (brands) {
+            const selectedBrands = brands.split(',').filter(id => id);
+            query.productBrand = { $in: selectedBrands };
+            currentFilters.brandf = selectedBrands;
+        }
 
-        // Render page
+        if (category) {
+            const selectedCategories = category.split(',').filter(id => id);
+            query.productCategory = { $in: selectedCategories };
+            currentFilters.categoryf = selectedCategories;
+        }
+
+        let products = await Product.find(query)
+            .populate('productBrand', 'brandName')
+            .populate('productCategory', 'name');
+
+        products = products.map(product => {
+            const price = product.variants && product.variants.length > 0
+                ? (product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice)
+                : 0;
+
+            if (!product.minSalePrice && price > 0) {
+                product.minSalePrice = price;
+                product.save();
+            }
+
+            return {
+                id: product._id,
+                name: product.productName,
+                brand: product.productBrand ? product.productBrand.brandName : 'Unknown Brand',
+                category: product.productCategory ? product.productCategory.name : 'Unknown Category',
+                price: price,
+                image: product.productImage && product.productImage.length > 0 ? product.productImage[0] : null,
+                status: product.status,
+            };
+        });
+
+        if (priceFrom || priceTo) {
+            const from = priceFrom ? parseFloat(priceFrom) : 0;
+            const to = priceTo ? parseFloat(priceTo) : Infinity;
+            products = products.filter(product => product.price >= from && product.price <= to);
+        }
+
+        if (sort) {
+            if (sort === 'A-Z') {
+                products.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sort === 'Z-A') {
+                products.sort((a, b) => b.name.localeCompare(a.name));
+            } else if (sort === 'price-low-high') {
+                products.sort((a, b) => a.price - b.price);
+            } else if (sort === 'price-high-low') {
+                products.sort((a, b) => b.price - a.price);
+            }
+        }
+
+        const brandsList = await Brand.find({ isBlocked: false }).select('brandName');
+        const categoriesList = await Category.find({ isListed: true }).select('name');
+
         res.render('user/shop', {
-            user: userData,
             products,
-            totalPages,
-            currentPage,
-            categories: listedCategories,
-            brands: listedBrands,
+            brands: brandsList,
+            categories: categoriesList,
+            user: req.session.user || null,
             currentFilters,
-            buildQueryString
         });
     } catch (error) {
-        console.error('Shop page error:', error);
+        console.error('Error in loadShopPage:', error);
         res.redirect('/pageNotFound');
     }
 };
@@ -367,5 +350,6 @@ module.exports = {
     login,
     logout,
     verifyOtp,
+    resendOtp,
     loadShopPage
 };

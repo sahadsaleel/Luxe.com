@@ -7,9 +7,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/adminDashboard.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> <!-- Added Bootstrap Icons -->
 
     <style>
+        /* Existing styles remain unchanged */
         * { 
             margin: 0;
             padding: 0;
@@ -23,7 +24,6 @@
             min-height: 100vh;
         }
 
-        /* Container and table styles */
         .container {
             padding: 20px;
         }
@@ -45,7 +45,7 @@
             font-size: 14px;
         }
         th {
-            padding: 16px ;
+            padding: 16px;
         }
 
          td {
@@ -96,7 +96,6 @@
             background-color: #40b954;
         }
 
-        /* Responsive styles */
         @media (max-width: 1100px) {
             .search-input {
                 width: 200px;
@@ -214,7 +213,6 @@
             color: black;
         }
 
-        /* Dropdown styles */
         .dropdown {
             padding: 8px 12px;
             border-radius: 4px;
@@ -233,7 +231,6 @@
             outline: none;
         }
 
-        /* Custom button styling */
         .custom-btn {
             display: flex;
             align-items: center;
@@ -246,46 +243,39 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        /* Success button (Unblock) */
         .btn-success.custom-btn {
             background-color: #28a745;
             border-color: #28a745;
         }
 
-        /* Danger button (Block) */
         .btn-danger.custom-btn {
             background-color: #dc3545;
             border-color: #dc3545;
         }
 
-        /* Hover effects */
         .custom-btn:hover {
             opacity: 0.9;
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        /* Link styling */
         .custom-link {
             text-decoration: none;
             color: #fff;
             display: flex;
             align-items: center;
-            gap: 5px; /* Space between icon and text */
+            gap: 5px;
         }
 
-        /* Icon styling */
         .custom-link i {
             font-size: 16px;
         }
 
-        /* Ensure the link takes up the full button area */
         .custom-btn a {
             width: 100%;
             text-align: center;
         }
 
-        /* Dropdown container */
         .dropdown {
             display: inline-block;
             margin: 10px 0;
@@ -302,13 +292,12 @@
             color: #333;
             cursor: pointer;
             transition: all 0.2s ease;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M8 12l-6-6h12l-6 6z"/></svg>'); /* Custom arrow */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M8 12l-6-6h12l-6 6z"/></svg>');
             background-repeat: no-repeat;
             background-position: right 10px center;
             background-size: 12px;
         }
 
-        /* Hover and focus effects */
         .custom-select:hover,
         .custom-select:focus {
             border-color: #007bff;
@@ -316,13 +305,11 @@
             box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
         }
 
-        /* Ensure consistency with Bootstrap */
         .custom-select option {
             background-color: #fff;
             color: #333;
         }
 
-        /* Responsive adjustments */
         @media (max-width: 576px) {
             .custom-select {
                 font-size: 13px;
@@ -330,6 +317,7 @@
                 background-size: 10px;
             }
         }
+
         .pagination {
             display: flex;
             justify-content: center;
@@ -429,7 +417,9 @@
                 <% } else { %>
                     <% for(let i = 0; i < data.length; i++) { %>
                         <tr>
-                            <td class="user-image"><img src="<%= data[i].profileImage%>" alt="IMAGE"></td>
+                            <td class="user-image">
+                                <img src="<%= data[i].profileImage || '/images/default.jpg' %>" alt="User Image">
+                            </td>
                             <td><%= data[i].firstName || 'N/A' %></td>
                             <td><%= data[i].email || 'N/A' %></td>
                             <td><%= data[i].phone || 'N/A' %></td>
@@ -453,7 +443,6 @@
                 <% } %>
             </tbody>
         </table>
-    </div>
 
     <%- include('../../views/partials/admin/footer') %>
 
@@ -505,7 +494,7 @@
                         ? '<tr><td colspan="5">No users found</td></tr>'
                         : sortedData.map(user => `
                             <tr>
-                                <td class="user-image"><img src="${user.image || '/default.jpg'}" alt="IMAGE"></td>
+                                <td class="user-image"><img src="${user.profileImage || '/img/profile images.png'}" alt="User Image"></td>
                                 <td>${user.firstName || 'N/A'}</td>
                                 <td>${user.email || 'N/A'}</td>
                                 <td>${user.phone || 'N/A'}</td>
@@ -535,7 +524,7 @@
             const debouncedSearch = debounce(() => {
                 currentSearchTerm = searchInput.value.trim();
                 currentSortOption = sortSelect.value.toLowerCase();
-                currentPage = 1; // Reset to first page on search/sort change
+                currentPage = 1; 
                 updateTable(currentSearchTerm, currentSortOption, currentPage);
             }, 300);
 
@@ -549,6 +538,5 @@
             updateTable(currentSearchTerm, currentSortOption, currentPage);
         });
     </script>
-
 </body>
 </html>

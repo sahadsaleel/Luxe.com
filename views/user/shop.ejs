@@ -172,36 +172,88 @@
     .pagination a:hover {
         background: #f0f0f0;
     }
+    .celebrity-products {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .product-card {
+        position: relative;
+        width: 250px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .wishlist-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: auto;
+    }
+
+    .product-info {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .product-title {
+        font-size: 16px;
+        margin: 0 0 5px;
+    }
+
+    .product-price {
+        font-size: 14px;
+        margin: 0 0 10px;
+    }
+
+    .add-to-cart {
+        width: 100%;
+        padding: 10px;
+        background: #fff;
+        border: 1px solid #000;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 </style>
 
 <%- include('../../views/partials/user/header') %>
 
 <nav>
     <button class="filter-button" id="filterBtn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-            <line x1="4" y1="21" x2="4" y2="14"></line>
-            <line x1="4" y1="10" x2="4" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12" y2="3"></line>
-            <line x1="20" y1="21" x2="20" y2="16"></line>
-            <line x1="20" y1="12" x2="20" y2="3"></line>
-            <line x1="1" y1="14" x2="7" y2="14"></line>
-            <line x1="9" y1="8" x2="15" y2="8"></line>
-            <line x1="17" y1="16" x2="23" y2="16"></line>
-        </svg>
-        FILTER
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+        <line x1="4" y1="21" x2="4" y2="14"></line>
+        <line x1="4" y1="10" x2="4" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12" y2="3"></line>
+        <line x1="20" y1="21" x2="20" y2="16"></line>
+        <line x1="20" y1="12" x2="20" y2="3"></line>
+        <line x1="1" y1="14" x2="7" y2="14"></line>
+        <line x1="9" y1="8" x2="15" y2="8"></line>
+        <line x1="17" y1="16" x2="23" y2="16"></line>
+      </svg>
+      FILTER
     </button>
 
-    
     <button class="sort-button" id="sortBtn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-            <path d="M11 5h10"></path>
-            <path d="M11 9h7"></path>
-            <path d="M11 13h4"></path>
-            <path d="M3 17l3 3 3-3"></path>
-            <path d="M6 18V5"></path>
-        </svg>
-        SORT
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+        <path d="M11 5h10"></path>
+        <path d="M11 9h7"></path>
+        <path d="M11 13h4"></path>
+        <path d="M3 17l3 3 3-3"></path>
+        <path d="M6 18V5"></path>
+      </svg>
+      SORT
     </button>
 </nav>
 
@@ -223,7 +275,7 @@
             <% if (brands && Array.isArray(brands) && brands.length > 0) { %>
                 <% brands.forEach(brand => { %>
                     <label class="filter-option">
-                        <input type="checkbox" name="brandf" value="<%= brand.brandName %>" <%= currentFilters.brandf.includes(brand.brandName) ? 'checked' : '' %>>
+                        <input type="checkbox" name="brandf" value="<%= brand._id %>" <%= currentFilters.brandf.includes(brand._id.toString()) ? 'checked' : '' %>>
                         <%= brand.brandName %>
                     </label>
                 <% }) %>
@@ -241,12 +293,16 @@
             </svg>
         </div>
         <div class="filter-options" id="categoryOptions">
-            <% categories.forEach(category => { %>
-                <label class="filter-option">
-                    <input type="checkbox" name="categoryf" value="<%= category.name %>" <%= currentFilters.categoryf.includes(category.name) ? 'checked' : '' %>>
-                    <%= category.name %>
-                </label>
-            <% }) %>
+            <% if (categories && Array.isArray(categories) && categories.length > 0) { %>
+                <% categories.forEach(category => { %>
+                    <label class="filter-option">
+                        <input type="checkbox" name="categoryf" value="<%= category._id %>" <%= currentFilters.categoryf.includes(category._id.toString()) ? 'checked' : '' %>>
+                        <%= category.name %>
+                    </label>
+                <% }) %>
+            <% } else { %>
+                <p>No listed categories available</p>
+            <% } %>
         </div>
     </div>
 
@@ -285,9 +341,9 @@
     <h3 style="margin-bottom: 15px;">PRICE</h3>
     <div style="display: flex; align-items: center; gap: 5px;">
         <div>From</div>
-        <input type="text" class="price-input" id="minPrice" value="<%= currentFilters.minValue || '' %>">
+        <input type="number" class="price-input" id="minPrice" name="priceFrom" value="<%= currentFilters.minValue || '' %>">
         <div>To</div>
-        <input type="text" class="price-input" id="maxPrice" value="<%= currentFilters.maxValue || '' %>">
+        <input type="number" class="price-input" id="maxPrice" name="priceTo" value="<%= currentFilters.maxValue || '' %>">
     </div>
 
     <div class="button-container">
@@ -306,172 +362,118 @@
     <h2 class="section-title">Exclusive To You</h2>
 
     <div class="celebrity-products">
-        <% products.forEach(product => { %>
-            <% if (product.status === 'listed') { %>
-                <div class="product-card">
-                    <button class="wishlist-btn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                    </button>
-    
-                    <div class="product-image">
-                        <a href="/productViewPage?id=<%= product._id %>">
-                            <img src="<%= product.productImage[0] %>" alt="<%= product.productName %>">
-                        </a>
+        <% if (products && products.length > 0) { %>
+            <% products.forEach(product => { %>
+                <% if (product.status === 'listed') { %>
+                    <div class="product-card">
+                        <button class="wishlist-btn" onclick="window.location.href='/addToWishlist?id=<%= product.id %>'">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                        </button>
+
+                        <div class="product-image">
+                            <a href="/productViewPage?id=<%= product.id %>">
+                                <img src="<%= product.image || '/img/placeholder.png' %>" alt="<%= product.name %>">
+                            </a>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title"><%= product.name %></h3>
+                            <p class="product-price">
+                                ₹<%= product.price %>
+                            </p>
+                            <button onclick="window.location.href='/addToCart?id=<%= product.id %>'" class="add-to-cart">ADD TO BAG</button>
+                        </div>
                     </div>
-                    <div class="product-info">
-                        <h3 class="product-title"><%= product.productName %></h3>
-                        <p class="product-price">
-                            ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
-                        </p>
-                        <button onclick="window.location.href='/addToCart?id=<%= product._id %>'" class="add-to-cart">ADD TO BAG</button>
-                    </div>
-                </div>
-            <% } %>
-        <% }) %>
+                <% } %>
+            <% }) %>
+        <% } else { %>
+            <div class="no-products">
+                <h3>No products found</h3>
+                <p>Try adjusting your filters or check back later.</p>
+            </div>
+        <% } %>
     </div>
 </div>
-
 <%- include("../../views/partials/user/footer") %>
-
 <script>
-    // Get modal elements
-    const filterModal = document.getElementById('filterModal');
-    const sortModal = document.getElementById('sortModal');
-    
-    // Get button elements
-    const filterBtn = document.getElementById('filterBtn');
-    const sortBtn = document.getElementById('sortBtn');
-    const closeFilterBtn = document.getElementById('closeFilterBtn');
-    const closeSortBtn = document.getElementById('closeSortBtn');
-    const applyFiltersBtn = document.getElementById('applyFilters');
-    const applySortBtn = document.getElementById('applySort');
-    const clearFiltersBtn = document.getElementById('clearFilters');
-    const clearSortBtn = document.getElementById('clearSort');
-    
-    // Open filter modal
-    filterBtn.addEventListener('click', () => {
-        filterModal.style.display = 'block';
-        sortModal.style.display = 'none';
+    async function fetchProducts() {
+        const brands = Array.from(document.querySelectorAll('#filterModal input[name="brandf"]:checked'))
+            .map(input => input.value);
+        const categories = Array.from(document.querySelectorAll('#filterModal input[name="categoryf"]:checked'))
+            .map(input => input.value);
+
+        let priceFrom = document.querySelector('#sortModal input[name="priceFrom"]').value;
+        let priceTo = document.querySelector('#sortModal input[name="priceTo"]').value;
+
+        const sortOption = document.querySelector('#sortModal input[name="sort"]:checked').value;
+
+        priceFrom = priceFrom ? parseFloat(priceFrom) : '';
+        priceTo = priceTo ? parseFloat(priceTo) : '';
+        if (priceFrom && isNaN(priceFrom)) priceFrom = '';
+        if (priceTo && isNaN(priceTo)) priceTo = '';
+
+        const query = new URLSearchParams();
+        if (brands.length > 0) query.append('brands', brands.join(','));
+        if (categories.length > 0) query.append('category', categories.join(','));
+        if (priceFrom !== '') query.append('priceFrom', priceFrom);
+        if (priceTo !== '') query.append('priceTo', priceTo);
+        if (sortOption) query.append('sort', sortOption);
+
+        window.location.href = `/shop?${query.toString()}`;
+    }
+
+    document.querySelector('#applyFilters').addEventListener('click', () => {
+        fetchProducts();
+        closeModal('#filterModal');
     });
-    
-    // Open sort modal
-    sortBtn.addEventListener('click', () => {
-        sortModal.style.display = 'block';
-        filterModal.style.display = 'none';
+
+    document.querySelector('#clearFilters').addEventListener('click', () => {
+        document.querySelectorAll('#filterModal input[type="checkbox"]').forEach(input => input.checked = false);
+        fetchProducts();
     });
-    
-    // Close filter modal
-    closeFilterBtn.addEventListener('click', () => {
-        filterModal.style.display = 'none';
+
+    document.querySelector('#applySort').addEventListener('click', () => {
+        fetchProducts();
+        closeModal('#sortModal');
     });
-    
-    // Close sort modal
-    closeSortBtn.addEventListener('click', () => {
-        sortModal.style.display = 'none';
+
+    document.querySelector('#clearSort').addEventListener('click', () => {
+        document.querySelector('#sortModal input[name="sort"][value="A-Z"]').checked = true;
+        document.querySelector('#sortModal input[name="priceFrom"]').value = '';
+        document.querySelector('#sortModal input[name="priceTo"]').value = '';
+        fetchProducts();
     });
-    
-    // Handle filter section dropdowns
-    const filterTitles = document.querySelectorAll('.filter-title');
-    filterTitles.forEach(title => {
+
+    document.querySelector('#filterBtn').addEventListener('click', () => {
+        document.querySelector('#filterModal').style.display = 'block';
+    });
+
+    document.querySelector('#sortBtn').addEventListener('click', () => {
+        document.querySelector('#sortModal').style.display = 'block';
+    });
+
+    document.querySelector('#closeFilterBtn').addEventListener('click', () => {
+        closeModal('#filterModal');
+    });
+
+    document.querySelector('#closeSortBtn').addEventListener('click', () => {
+        closeModal('#sortModal');
+    });
+
+    document.querySelectorAll('.filter-title').forEach(title => {
         title.addEventListener('click', () => {
             const targetId = title.getAttribute('data-target');
-            const targetSection = document.getElementById(targetId);
+            const target = document.querySelector(`#${targetId}`);
+            target.classList.toggle('show');
             const arrow = title.querySelector('.arrow-icon');
-            
-            targetSection.classList.toggle('show');
             arrow.classList.toggle('rotate');
         });
     });
-    
-    // Close modals when clicking outside
-    window.addEventListener('click', (event) => {
-        if (event.target !== filterModal && 
-            !filterModal.contains(event.target) && 
-            event.target !== filterBtn &&
-            event.target !== sortModal && 
-            !sortModal.contains(event.target) && 
-            event.target !== sortBtn) {
-            filterModal.style.display = 'none';
-            sortModal.style.display = 'none';
-        }
-    });
 
-    // Apply filters
-    applyFiltersBtn.addEventListener('click', () => {
-        const params = new URLSearchParams();
-        
-        // Collect brand filters
-        const brandCheckboxes = document.querySelectorAll('input[name="brandf"]:checked');
-        brandCheckboxes.forEach(checkbox => {
-            params.append('brandf', checkbox.value);
-        }); 
-
-        // Collect category filters
-        const categoryCheckboxes = document.querySelectorAll('input[name="categoryf"]:checked');
-        categoryCheckboxes.forEach(checkbox => {
-            params.append('categoryf', checkbox.value);
-        });
-
-        // Preserve sort and price parameters
-        const currentParams = new URLSearchParams(window.location.search);
-        ['sort', 'minValue', 'maxValue', 'search'].forEach(key => {
-            if (currentParams.has(key)) {
-                params.set(key, currentParams.get(key));
-            }
-        });
-
-        // Ensure a sort parameter is always included
-        if (!params.has('sort')) {
-            params.set('sort', 'A-Z');
-        }
-
-        window.location.href = `/shop?${params.toString()}`;
-    });
-
-    // Apply sort and price range
-    applySortBtn.addEventListener('click', () => {
-        const params = new URLSearchParams();
-
-        // Collect sort option (default to A-Z if none selected)
-        const sortCheckbox = document.querySelector('input[name="sort"]:checked');
-        params.set('sort', sortCheckbox ? sortCheckbox.value : 'A-Z');
-
-        // Collect price range
-        const minPrice = document.getElementById('minPrice').value;
-        const maxPrice = document.getElementById('maxPrice').value;
-        if (minPrice) params.set('minValue', minPrice);
-        if (maxPrice) params.set('maxValue', maxPrice);
-
-        // Preserve other query parameters
-        const currentParams = new URLSearchParams(window.location.search);
-        ['brandf', 'categoryf', 'search'].forEach(key => {
-            if (currentParams.has(key)) {
-                currentParams.getAll(key).forEach(value => {
-                    params.append(key, value);
-                });
-            }
-        });
-
-        window.location.href = `/shop?${params.toString()}`;
-    });
-
-    // Clear filters
-    clearFiltersBtn.addEventListener('click', () => {
-        const params = new URLSearchParams(window.location.search);
-        ['brandf', 'categoryf'].forEach(key => params.delete(key));
-        if (!params.has('sort')) {
-            params.set('sort', 'A-Z');
-        }
-        window.location.href = `/shop?${params.toString()}`;
-    });
-
-    // Clear sort and price
-    clearSortBtn.addEventListener('click', () => {
-        const params = new URLSearchParams(window.location.search);
-        ['sort', 'minValue', 'maxValue'].forEach(key => params.delete(key));
-        params.set('sort', 'A-Z');
-        window.location.href = `/shop?${params.toString()}`;
-    });
+    function closeModal(modalId) {
+        document.querySelector(modalId).style.display = 'none';
+    }
 </script>
+</body>
+</html>

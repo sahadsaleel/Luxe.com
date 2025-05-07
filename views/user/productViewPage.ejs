@@ -16,7 +16,7 @@
       --gucci-light: #f9f9f9;
       --gucci-accent: #e6c9e1;
     }
-    
+
     body {
       background-color: var(--gucci-light);
       font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -52,7 +52,6 @@
       object-fit: contain;
     }
     
-    /* Zoom lens and result container */
     .img-zoom-lens {
       position: absolute;
       border: 2px solid var(--gucci-purple);
@@ -116,19 +115,6 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
     
-    .similar-product-card {
-      background-color: #eee;
-      border: none;
-      border-radius: 0;
-      height: 100%;
-      transition: all 0.3s ease;
-    }
-    
-    .similar-product-card:hover {
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      transform: translateY(-5px);
-    }
-    
     .product-price {
       margin: 15px 0;
       color: var(--gucci-dark);
@@ -173,7 +159,6 @@
       pointer-events: none;
     }
     
-    /* Split button styles */
     .purchase-buttons {
       display: flex;
       gap: 10px;
@@ -185,7 +170,7 @@
       background-color: white;
       color: var(--gucci-dark);
       border: 1px solid var(--gucci-dark);
-      border-radius: 0;
+      border-radius: 5;
       padding: 12px 0;
       text-transform: uppercase;
       font-weight: 500;
@@ -194,8 +179,8 @@
     }
     
     .btn-add-to-bag:hover {
-      background-color: #f0f0f0;
-      color: var(--gucci-dark);
+      background-color: #000000;
+      color:white;
     }
     
     .btn-buy-now {
@@ -347,13 +332,6 @@
       color: var(--gucci-gold);
     }
     
-    .similar-product-price {
-      text-align: center;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: var(--gucci-dark);
-    }
-    
     .zoom-modal {
       display: none;
       position: fixed;
@@ -421,33 +399,7 @@
         margin-top: 15px;
       }
     }
-    .product-card {
-      background-color: #f18989;
-      border: 1px solid #ddd;
-      border-radius: 0;
-      padding: 15px;
-      height: 100%;
-      transition: all 0.3s ease;
-      text-align: center;
-    }
-
-    .product-card:hover {
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      transform: translateY(-5px);
-    }
-
-    .product-card img {
-      max-width: 100%;
-      height: auto;
-      object-fit: cover;
-    }
-
-    .product-price {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: var(--gucci-dark);
-      margin-top: 10px;
-    }
+    
     .breadcrumb {
       display: flex;
       flex-wrap: wrap;
@@ -487,15 +439,153 @@
       font-weight: 500;
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 576px) {
-      .breadcrumb {
-        padding: 8px 12px;
-        font-size: 12px;
+    /* New Similar Products Styling */
+    .similar-products-container {
+      background-color: var(--gucci-light);
+      padding: 40px 0;
+      position: relative;
+    }
+    
+    .product-carousel {
+      position: relative;
+      padding: 10px 40px;
+    }
+    
+    .similar-products-slider {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      padding: 15px 0;
+      margin: 0 -10px;
+    }
+    
+    .similar-product-card {
+      background-color: white;
+      border: none;
+      border-radius: 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      height: 100%;
+      margin: 0 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .similar-product-card:hover {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      transform: translateY(-5px);
+    }
+    
+    .similar-product-card .product-image-container {
+      position: relative;
+      overflow: hidden;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f5f5f5;
+    }
+    
+    .similar-product-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .similar-product-card:hover img {
+      transform: scale(1.05);
+    }
+    
+    .btn-wishlist {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .similar-product-card:hover .btn-wishlist {
+      opacity: 1;
+    }
+    
+    .product-title {
+      font-size: 1rem;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--gucci-dark);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      height: 48px;
+    }
+    
+    .similar-product-price {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--gucci-dark);
+    }
+    
+    .carousel-control {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border: none;
+      border-radius: 50%;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 5;
+      transition: all 0.3s ease;
+    }
+    
+    .carousel-control:hover {
+      background-color: var(--gucci-purple);
+      color: white;
+    }
+    
+    .carousel-control.prev {
+      left: 0;
+    }
+    
+    .carousel-control.next {
+      right: 0;
+    }
+    
+    @media (max-width: 768px) {
+      .similar-products-slider {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
       }
-
-      .breadcrumb-item + .breadcrumb-item::before {
-        margin: 0 6px;
+      
+      .similar-product-card {
+        flex: 0 0 auto;
+        width: 80%;
+        scroll-snap-align: center;
+      }
+      
+      .carousel-control {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
       }
     }
   </style>
@@ -625,10 +715,9 @@
             </h2>
             <div id="paymentOptions" class="accordion-collapse collapse" data-bs-parent="#productAccordion">
               <div class="accordion-body">
-                <p><i class="fab fa-cc-visa"></i> <i class="fab fa-cc-mastercard"></i> <i class="fab fa-cc-amex"></i> All major credit cards accepted</p>
-                <p><i class="fab fa-paypal"></i> PayPal available</p>
-                <p><i class="fas fa-wallet"></i> Digital wallets: Google Pay, Apple Pay</p>
-                <p><i class="fas fa-money-bill-wave"></i> EMI available on select banks</p>
+                <p><i class="fas fa-money-check-alt"></i> Razorpay</p>
+                <p><i class="fas fa-wallet"></i> Luxe Wallet</p>
+                <p><i class="fas fa-truck"></i> Cash on Delivery</p>
               </div>
             </div>
           </div>
@@ -708,29 +797,50 @@
     </div>
   </div>
 
-
-
-  <!-- Similar Products Section -->
-  <h2 class="section-title">DISCOVER SIMILAR PRODUCTS</h2>
-  <div class="row">
-    <% if (similarProducts.length === 0) { %>
-      <p class="text-center">No similar products available.</p>
-    <% } else { %>
-      <% similarProducts.forEach(product => { %>
-        <div class="col-md-4 mb-4">
-          <div class="product-card p-3"> <!-- Reusing homepage product-card class -->
-            <a href="/productViewPage?id=<%= product._id %>">
-              <img src="<%= product.productImage[0] || '/images/placeholder.jpg' %>" alt="<%= product.productName %>" class="img-fluid mb-3">
-            </a>
-            <h5 class="text-center"><%= product.productName %></h5>
-            <div class="product-price">
-              ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
-            </div>
+  <!-- Updated Similar Products Section with Carousel Design -->
+  <div class="similar-products-container my-5">
+    <h2 class="section-title">DISCOVER SIMILAR PRODUCTS</h2>
+    
+    <!-- Product Carousel -->
+    <div class="product-carousel position-relative px-4">
+      <div class="row similar-products-slider">
+        <% if (similarProducts.length === 0) { %>
+          <div class="col-12 text-center">
+            <p>No similar products available.</p>
           </div>
-        </div>
-      <% }) %>
-    <% } %>
+        <% } else { %>
+          <% similarProducts.forEach(product => { %>
+            <div class="col-md-3 mb-4">
+              <div class="similar-product-card h-100">
+                <div class="product-image-container">
+                  <a href="/productViewPage?id=<%= product._id %>">
+                    <img src="<%= product.productImage[0] || '/images/placeholder.jpg' %>" alt="<%= product.productName %>" class="img-fluid">
+                  </a>
+                  <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                </div>
+                <div class="product-info p-3">
+                  <h5 class="product-title"><%= product.productName %></h5>
+                  <div class="similar-product-price mb-2">
+                    ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
+                  </div>
+                  <button class="btn btn-add-to-bag w-100">Add to bag</button>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        <% } %>
+      </div>
+      
+      <!-- Navigation Arrows -->
+      <button class="carousel-control prev" id="prevBtn">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="carousel-control next" id="nextBtn">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
   </div>
+</div>
 
 <!-- Image Zoom Modal for mobile -->
 <div id="imageZoomModal" class="zoom-modal">
@@ -742,132 +852,155 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Thumbnail functionality
-  const thumbnails = document.querySelectorAll('.thumbnail');
-  const mainImage = document.querySelector('.product-image img');
-  const lens = document.getElementById('zoomLens');
-  const result = document.getElementById('zoomResult');
-  const modal = document.getElementById('imageZoomModal');
-  const modalImg = document.getElementById('zoomedImage');
-  const priceElement = document.getElementById('productPrice');
-  const sizeRadios = document.querySelectorAll('input[name="size"]');
+    document.addEventListener('DOMContentLoaded', function() {
+      const thumbnails = document.querySelectorAll('.thumbnail');
+      const mainImage = document.querySelector('.product-image img');
+      const lens = document.getElementById('zoomLens');
+      const result = document.getElementById('zoomResult');
+      const modal = document.getElementById('imageZoomModal');
+      const modalImg = document.getElementById('zoomedImage');
+      const priceElement = document.getElementById('productPrice');
+      const sizeRadios = document.querySelectorAll('input[name="size"]');
 
-  let cx, cy;
+      let cx, cy;
 
-  // Calculate zoom ratio
-  function calculateRatio() {
-    cx = result.offsetWidth / lens.offsetWidth;
-    cy = result.offsetHeight / lens.offsetHeight;
-  }
-
-  // Get cursor position relative to image
-  function getCursorPos(e) {
-    const rect = mainImage.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    return { x, y };
-  }
-
-  // Move lens and update zoomed image
-  function moveLens(e) {
-    e.preventDefault();
-    const pos = getCursorPos(e);
-    let x = pos.x - lens.offsetWidth / 2;
-    let y = pos.y - lens.offsetHeight / 2;
-
-    // Keep lens within image bounds
-    x = Math.max(0, Math.min(x, mainImage.width - lens.offsetWidth));
-    y = Math.max(0, Math.min(y, mainImage.height - lens.offsetHeight));
-
-    // Position lens
-    lens.style.left = x + 'px';
-    lens.style.top = y + 'px';
-
-    // Update zoomed image
-    result.style.backgroundImage = `url('${mainImage.src}')`;
-    result.style.backgroundSize = `${mainImage.width * cx}px ${mainImage.height * cy}px`;
-    result.style.backgroundPosition = `-${x * cx}px -${y * cy}px`;
-  }
-
-  // Initialize zoom functionality
-  function initZoom() {
-    // Hide elements initially
-    lens.style.display = 'none';
-    result.style.display = 'none';
-
-    // Show lens and result on hover (desktop only)
-    mainImage.addEventListener('mouseenter', (e) => {
-      if (window.innerWidth > 992) {
-        lens.style.display = 'block';
-        result.style.display = 'block';
-        calculateRatio();
-        moveLens(e);
+      function calculateRatio() {
+        cx = result.offsetWidth / lens.offsetWidth;
+        cy = result.offsetHeight / lens.offsetHeight;
       }
-    });
 
-    mainImage.addEventListener('mouseleave', () => {
-      lens.style.display = 'none';
-      result.style.display = 'none';
-    });
-
-    mainImage.addEventListener('mousemove', moveLens);
-    lens.addEventListener('mousemove', moveLens);
-
-    // Recalculate ratio on resize
-    window.addEventListener('resize', () => {
-      if (window.innerWidth > 992) {
-        calculateRatio();
+      function getCursorPos(e) {
+        const rect = mainImage.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        return { x, y };
       }
-    });
-  }
 
-  // Thumbnail click handler
-  thumbnails.forEach(thumbnail => {
-    thumbnail.addEventListener('click', function() {
-      thumbnails.forEach(t => t.classList.remove('active'));
-      this.classList.add('active');
-      const newSrc = this.querySelector('img').src;
-      mainImage.src = newSrc;
+      function moveLens(e) {
+        e.preventDefault();
+        const pos = getCursorPos(e);
+        let x = pos.x - lens.offsetWidth / 2;
+        let y = pos.y - lens.offsetHeight / 2;
 
-      // Reinitialize zoom for new image
+        x = Math.max(0, Math.min(x, mainImage.width - lens.offsetWidth));
+        y = Math.max(0, Math.min(y, mainImage.height - lens.offsetHeight));
+
+        lens.style.left = x + 'px';
+        lens.style.top = y + 'px';
+
+        result.style.backgroundImage = `url('${mainImage.src}')`;
+        result.style.backgroundSize = `${mainImage.width * cx}px ${mainImage.height * cy}px`;
+        result.style.backgroundPosition = `-${x * cx}px -${y * cy}px`;
+      }
+
+      function initZoom() {
+        lens.style.display = 'none';
+        result.style.display = 'none';
+
+        mainImage.addEventListener('mouseenter', (e) => {
+          if (window.innerWidth > 992) {
+            lens.style.display = 'block';
+            result.style.display = 'block';
+            calculateRatio();
+            moveLens(e);
+          }
+        });
+
+        mainImage.addEventListener('mouseleave', () => {
+          lens.style.display = 'none';
+          result.style.display = 'none';
+        });
+
+        mainImage.addEventListener('mousemove', moveLens);
+        lens.addEventListener('mousemove', moveLens);
+
+        window.addEventListener('resize', () => {
+          if (window.innerWidth > 992) {
+            calculateRatio();
+          }
+        });
+      }
+
+      thumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener('click', function() {
+          thumbnails.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          const newSrc = this.querySelector('img').src;
+          mainImage.src = newSrc;
+
+          if (window.innerWidth > 992) {
+            initZoom();
+          }
+        });
+      });
+
+      mainImage.addEventListener('click', () => {
+        if (window.innerWidth <= 992) {
+          modal.style.display = 'flex';
+          modalImg.src = mainImage.src;
+        }
+      });
+
+      document.querySelector('.zoom-close').addEventListener('click', () => {
+        modal.style.display = 'none';
+      });
+
       if (window.innerWidth > 992) {
         initZoom();
       }
-    });
-  });
 
-  // Mobile zoom modal
-  mainImage.addEventListener('click', () => {
-    if (window.innerWidth <= 992) {
-      modal.style.display = 'flex';
-      modalImg.src = mainImage.src;
-    }
-  });
+      const variants = <%-JSON.stringify(product.variants)%>
+      sizeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+          const selectedSize = this.value;
+          const selectedVariant = variants.find(v => v.size.toString() === selectedSize);
+          if (selectedVariant) {
+            const price = selectedVariant.salePrice > 0 ? selectedVariant.salePrice : selectedVariant.regularPrice;
+            priceElement.textContent = `₹${price}`;
+          }
+        });
+      });
 
-  // Close modal
-  document.querySelector('.zoom-close').addEventListener('click', () => {
-    modal.style.display = 'none';
-  });
-
-  // Initialize zoom for desktop
-  if (window.innerWidth > 992) {
-    initZoom();
-  }
-
-  //price update based on selected size
-  const variants = <%-JSON.stringify(product.variants)%>
-  sizeRadios.forEach(radio => {
-    radio.addEventListener('change', function() {
-      const selectedSize = this.value;
-      const selectedVariant = variants.find(v => v.size.toString() === selectedSize);
-      if (selectedVariant) {
-        const price = selectedVariant.salePrice > 0 ? selectedVariant.salePrice : selectedVariant.regularPrice;
-        priceElement.textContent = `₹${price}`;
+      const slider = document.querySelector('.similar-products-slider');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      
+      let scrollPosition = 0;
+      
+      function getScrollAmount() {
+        const cardWidth = document.querySelector('.similar-product-card').offsetWidth;
+        return cardWidth * 2 + 40;
       }
+      
+      nextBtn.addEventListener('click', function() {
+        scrollPosition += getScrollAmount();
+        if (scrollPosition > slider.scrollWidth - slider.clientWidth) {
+          scrollPosition = slider.scrollWidth - slider.clientWidth;
+        }
+        slider.scrollTo({
+          left: scrollPosition,
+          behavior: 'smooth'
+        });
+      });
+      
+      prevBtn.addEventListener('click', function() {
+        scrollPosition -= getScrollAmount();
+        if (scrollPosition < 0) {
+          scrollPosition = 0;
+        }
+        slider.scrollTo({
+          left: scrollPosition,
+          behavior: 'smooth'
+        });
+      });
+      
+      window.addEventListener('resize', function() {
+        if (scrollPosition > slider.scrollWidth - slider.clientWidth) {
+          scrollPosition = Math.max(0, slider.scrollWidth - slider.clientWidth);
+          slider.scrollLeft = scrollPosition;
+        }
+      });
     });
-  });
-});
 </script>
 </body>
 </html>
