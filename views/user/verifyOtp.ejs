@@ -30,7 +30,9 @@
     </div>
 
     <script>
-        function otpValidateForm(event) {
+
+
+        async function otpValidateForm(event) {
             event.preventDefault();
 
             const otpInput = document.getElementById('otp').value.trim();
@@ -56,46 +58,91 @@
                 });
                 return false;
             }
+            
+            try {
 
-            $.ajax({
-                type: "POST",
-                url: "/verifyOtp",
-                data: { otp: otpInput },
-                dataType: 'json',
-                success: function (response) {
-                    if (response && response.success) {
-                        Swal.fire({
-                            title: 'OTP Verified!',
-                            text: 'Your OTP has been verified successfully...',
-                            icon: 'success',
-                            showConfirmButton: false, 
-                            timer: 1500, 
-                            timerProgressBar: true 
-                        }).then(() => {
-                            window.location.href = '/login';
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: response.message || 'Invalid OTP. Please try again.',
-                            icon: 'error',
-                            confirmButtonText: 'Try Again',
-                            confirmButtonColor: '#d33'
-                        });
-                    }
-                },
-                error: function (xhr, status, error) {
+                const response = await fetch('/verifyOtp',{
+                    method:"POST",
+                    headers:{
+                        'content-Type' : 'application/json'
+                    },
+                    body:JSON.stringify({ otp: otpInput})
+
+                })
+
+                const data = await response.json();
+
+                if(data.success) {
                     Swal.fire({
-                        title: 'Server Error',
-                        text: 'An error occurred while verifying the OTP. Please try again later.',
-                        icon: 'error',
+                        title: 'Success!',
+                        text: data.message || 'OTP verified successfully.',
+                        icon: 'success',
                         confirmButtonText: 'OK',
+                        confirmButtonColor: '#3085d6'
+                    }).then(() => {
+                        window.location.href = '/login';
+                    });
+                }else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.message || 'Invalid OTP. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'Try Again',
                         confirmButtonColor: '#d33'
                     });
                 }
-            });
 
-            return false;
+                } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Server Error',
+                    text: error.message || 'An error occurred while verifying OTP.',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#d33'
+                });
+                }
+
+
+
+            // $.ajax({
+            //     type: "POST",
+            //     url: "/verifyOtp",
+            //     data: { otp: otpInput },
+            //     dataType: 'json',
+            //     success: function (response) {
+            //         if (response && response.success) {
+            //             Swal.fire({
+            //                 title: 'OTP Verified!',
+            //                 text: 'Your OTP has been verified successfully...',
+            //                 icon: 'success',
+            //                 showConfirmButton: false, 
+            //                 timer: 1500, 
+            //                 timerProgressBar: true 
+            //             }).then(() => {
+            //                 window.location.href = '/login';
+            //             });
+            //         } else {
+            //             Swal.fire({
+            //                 title: 'Error!',
+            //                 text: response.message || 'Invalid OTP. Please try again.',
+            //                 icon: 'error',
+            //                 confirmButtonText: 'Try Again',
+            //                 confirmButtonColor: '#d33'
+            //             });
+            //         }
+            //     },
+            //     error: function (xhr, status, error) {
+            //         Swal.fire({
+            //             title: 'Server Error',
+            //             text: 'An error occurred while verifying the OTP. Please try again later.',
+            //             icon: 'error',
+            //             confirmButtonText: 'OK',
+            //             confirmButtonColor: '#d33'
+            //         });
+            //     }
+            // });
+
+            // return false;
         }   
 
         let timeLeft = 60;

@@ -30,11 +30,10 @@ router.get('/forgot-password', profileControllers.getForgotPassword);
 router.get('/profile',profileControllers.userProfile);
 router.get('/address',profileControllers.userAddress);
 
-
-router.post('/forgot-email-validatid', profileControllers.forgotEmailValid);
-router.post('/verifyOtp', profileControllers.verifyOtp);
+router.post('/forgot-email-validation', profileControllers.forgotEmailValid);
+router.post('/vrifyProfileOtp', profileControllers.verifyOtp);
 router.post('/reset-password', profileControllers.resetPassword);
-router.post('/resend-otp', profileControllers.resendOtp);
+router.post('/resend-reset-otp', profileControllers.resendOtp);
 router.post('/profile/update',uploadSingleImage,profileControllers.updateProfile);
 router.post('/profile/changePassword', userAuth,profileControllers.changePassword);
 

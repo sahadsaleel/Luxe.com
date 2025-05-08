@@ -128,9 +128,14 @@ const securePassword = async (password) => {
 };
 
 const verifyOtp = async (req, res) => {
+
     try {
+   
         const { otp } = req.body;
+
         console.log('Received OTP:', otp);
+        console.log('session OTP',req.session.userOtp);
+        
 
         if (!req.session.userOtp || !req.session.userData || !req.session.otpExpires) {
             return res.status(400).json({
@@ -147,43 +152,47 @@ const verifyOtp = async (req, res) => {
                 message: 'OTP has expired. Please request a new OTP.'
             });
         }
+        
 
-        if (otp === req.session.userOtp) {
-            const userData = req.session.userData;
-
-            if (!userData.firstName || !userData.lastName || !userData.email || !userData.password) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Incomplete user data. Please try again.'
-                });
-            }
-
-            const passwordHash = await securePassword(userData.password);
-
-            const saveUserData = new User({
-                firstName: userData.firstName,
-                lastName: userData.lastName,
-                email: userData.email,
-                password: passwordHash
-            });
-
-            await saveUserData.save();
-            req.session.user = saveUserData._id;
-
-            req.session.userOtp = null;
-            req.session.otpExpires = null;
-
-            return res.json({
-                success: true,
-                message: 'OTP verified successfully.',
-                redirectUrl: '/login'
-            });
-        } else {
+        if (otp !== req.session.userOtp) {
             return res.status(400).json({
                 success: false,
                 message: 'Invalid OTP. Please try again.'
             });
         }
+
+
+        const userData = req.session.userData;
+
+        console.log('somthing wrong')
+        if (!userData.firstName || !userData.lastName || !userData.email || !userData.password) {
+            return res.json({
+                success: false,
+                message: 'Incomplete user data. Please try again.'
+            });
+        }
+
+        const passwordHash = await securePassword(userData.password);
+
+        const saveUserData = new User({
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+            password: passwordHash
+        });
+
+        await saveUserData.save();
+        // req.session.user = saveUserData._id;
+
+        req.session.userOtp = null;
+        req.session.otpExpires = null;
+
+        return res.json({
+            success: true,
+            message: 'OTP verified successfully.',
+            redirectUrl: '/login'
+        });
+    
     } catch (error) {
         console.error('Error verifying OTP:', error);
         return res.status(500).json({
@@ -196,7 +205,7 @@ const verifyOtp = async (req, res) => {
 const resendOtp = async (req, res) => {
     try {
         const { email } = req.session.userData;
-        if (!email) {
+        if (!email){
             return res.status(400).json({ success: false, message: "Email not found in session" });
         }
         const otp = generateOtp();
@@ -208,13 +217,13 @@ const resendOtp = async (req, res) => {
 
         if (emailSent) {
             console.log("Resend OTP:", otp);
-            res.status(200).json({ success: true, message: "OTP Resent Successfully" });
+            res.status(200).json({ success: true, message: "OTP Resent Successfully"});
         } else {
-            res.status(500).json({ success: false, message: "Failed to resend OTP. Please try again" });
+            res.status(500).json({success: false, message: "Failed to resend OTP. Please try again"});
         }
-    } catch (error) {
+    } catch (error){
         console.error("Error resending OTP", error);
-        res.status(500).json({ success: false, message: "Internal Server Error. Please try again" });
+        res.status(500).json({ success: false, message: "Internal Server Error. Please try again"});
     }
 };
 
