@@ -35,10 +35,9 @@ const forgotEmailValid = async (req, res) => {
             return res.json({ success: false, message: 'User not found.' });
         }
 
-        // Check if an OTP was recently sent to prevent multiple OTPs
         if (req.session.otp && req.session.otpTimestamp) {
             const timeSinceLastOtp = Date.now() - req.session.otpTimestamp;
-            if (timeSinceLastOtp < 30 * 1000) { // 30 seconds cooldown
+            if (timeSinceLastOtp < 30 * 1000) { 
                 console.log(`Cooldown active for email: ${email}. Time since last OTP: ${timeSinceLastOtp}ms`);
                 return res.json({ success: false, message: 'Please wait 30 seconds before requesting a new OTP.' });
             }
@@ -57,7 +56,7 @@ const forgotEmailValid = async (req, res) => {
         req.session.otpTimestamp = Date.now();
 
         console.log('Generated OTP:', generatedOtp);
-        console.log('Stored OTP in session:', req.session.otp);
+        console.log('Stored OTP session:', req.session.otp);
 
         return res.json({ success: true, message: 'OTP sent to email.' });
     } catch (err) {
@@ -73,14 +72,14 @@ const verifyOtp = async (req, res) => {
         console.log('Received OTP :', otp);
 
         if (!req.session.otp || !req.session.otpTimestamp) {
-            console.log('OTP session expired or not found.');
+            console.log('====OTP session expired or not found====');
             return res.json({ success: false, message: 'OTP session expired. Please request a new OTP.' });
         }
 
         const currentTime = Date.now();
         const otpAge = currentTime - req.session.otpTimestamp;
         if (otpAge > 60 * 1000) {
-            console.log('OTP has expired.');
+            console.log('===OTP has expired====');
             req.session.otp = null;
             req.session.otpTimestamp = null;
             return res.json({ success: false, message: 'OTP has expired. Please request a new OTP.' });
@@ -91,14 +90,14 @@ const verifyOtp = async (req, res) => {
             return res.json({ success: false, message: 'Please enter a valid 6-digit OTP.' });
         }
 
-        if (otp.toString() === req.session.otp.toString()) {
+        if (otp.toString() === req.session.otp.toString()){
             console.log('OTP verification successful.');
             req.session.otpVerified = true;
             req.session.otp = null;
             req.session.otpTimestamp = null;
             return res.json({ success: true, message: 'OTP verified successfully.' });
         } else {
-            console.log('Invalid OTP entered.');
+            console.log('Invalid OTP entered');
             return res.json({ success: false, message: 'Invalid OTP. Please try again.' });
         }
     } catch (err) {
@@ -161,7 +160,6 @@ const resetPassword = async (req, res) => {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await User.updateOne({ email }, { $set: { password: hashedPassword } });
 
-        // Clear session data after successful reset
         req.session.resetEmail = null;
         req.session.otpVerified = null;
 
@@ -450,6 +448,7 @@ const deleteAddress = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
 
 module.exports = {
     getForgotPassword,

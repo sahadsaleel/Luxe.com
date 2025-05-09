@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUCCI - Shopping Bag</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/userCart.css">
+</head>
+<body>
+    
+    <%- include('../../views/partials/user/header') %>
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="/address">Cart</li>
+            </ol>
+        </nav>
+
+    <main class="container cart-section">
+        <h1 class="section-title">Shopping Bag</h1>
+        
+        <div class="cart-container">
+            <div class="cart-items">
+                <div class="cart-item">
+                    <div class="item-image">
+                        <img src="/api/placeholder/120/120" alt="Gucci Flora Gorgeous Gardenia Eau de Parfum" />
+                    </div>
+                    <div class="item-details">
+                        <h3 class="item-title">Flora Gorgeous Gardenia</h3>
+                        <p class="item-subtitle">Eau de Parfum, 100ml</p>
+                        <p class="item-price">$138.00</p>
+                        <div class="item-actions">
+                            <div class="quantity-selector">
+                                <button class="quantity-btn">-</button>
+                                <input type="text" class="quantity-input" value="1" readonly>
+                                <button class="quantity-btn">+</button>
+                            </div>
+                            <button class="remove-btn">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cart-item">
+                    <div class="item-image">
+                        <img src="/api/placeholder/120/120" alt="Gucci Guilty Pour Homme Eau de Parfum" />
+                    </div>
+                    <div class="item-details">
+                        <h3 class="item-title">Guilty Pour Homme</h3>
+                        <p class="item-subtitle">Eau de Parfum, 90ml</p>
+                        <p class="item-price">$155.00</p>
+                        <div class="item-actions">
+                            <div class="quantity-selector">
+                                <button class="quantity-btn">-</button>
+                                <input type="text" class="quantity-input" value="1" readonly>
+                                <button class="quantity-btn">+</button>
+                            </div>
+                            <button class="remove-btn">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="/shop" class="continue-shopping">Continue Shopping</a>
+            </div>
+            
+            <div class="cart-summary">
+                <h2 class="summary-title">Order Summary</h2>
+                
+                <div class="summary-row">
+                    <span class="summary-title">Subtotal (1 items):</span>
+                    <span class="summary-value">₹16999.15</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span class="summary-title">Shipping:</span>
+                    <span class="summary-value">₹40.00</span>
+                </div>
+                
+                <div class="total-row">
+                    <span class="total-title">Order Total:</span>
+                    <span class="total-value">₹17039.15</span>
+                </div>
+                
+                <button class="checkout-btn">Proceed to Checkout</button>
+                
+                <div class="promo-code">
+                    <h3 class="promo-title">Apply Coupon</h3>
+                    <div class="promo-input">
+                        <input type="text" class="promo-field" placeholder="Enter coupon code">
+                        <button class="promo-btn">Apply</button>
+                    </div>
+                    
+                    <div class="coupon-applied">
+                        <span class="coupon-code">CP2005</span>
+                        <button class="coupon-apply-btn">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+     <%- include('../../views/partials/user/footer') %>
+</body>
+</html>

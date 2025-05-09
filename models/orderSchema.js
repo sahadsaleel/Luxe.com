@@ -1,12 +1,11 @@
 const mongoose = require('mongoose') ;
 const {Schema} = mongoose ;
-const {V4 : uuidv4} = require('uuid')
 
 
 
 const orderSchema = new Schema ({
 
-    orderedItems: [{
+    orderedItems: [{  
         price: {
           type: Number
         }

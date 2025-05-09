@@ -46,6 +46,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'Uploads')));
 app.use('/uploads', express.static('public/uploads/products'));
 
+app.use((req, res, next) => {
+    res.locals.currentRoute = req.path;
+    next();
+});
+
 // Routes
 app.use('/', nocache(), userRouter);
 app.use('/admin', nocache(), adminRouter);

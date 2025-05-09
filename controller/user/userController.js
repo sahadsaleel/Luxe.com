@@ -52,7 +52,8 @@ const loadLogin = (req, res) => {
         if (req.session.user) {
             return res.redirect('/');
         }
-        res.render('user/login', { message: '' });
+        const message = req.query.message === 'blocked' ? 'User is blocked by admin' : null;
+        res.render('user/login', { message });
     } catch (error) {
         res.render('user/login', { message: 'An error occurred while loading the login page' });
     }
@@ -108,7 +109,7 @@ const signup = async (req, res) => {
 
         req.session.userOtp = otp;
         req.session.userData = { firstName, lastName, email, password };
-        req.session.otpExpires = Date.now() + 60 * 1000; // Set OTP expiration to 1 minute
+        req.session.otpExpires = Date.now() + 60 * 1000; 
 
         res.render('user/verifyotp', { userData: req.session.userData });
         console.log('OTP sent:', otp);
@@ -134,7 +135,6 @@ const verifyOtp = async (req, res) => {
         const { otp } = req.body;
 
         console.log('Received OTP:', otp);
-        console.log('session OTP',req.session.userOtp);
         
 
         if (!req.session.userOtp || !req.session.userData || !req.session.otpExpires) {
@@ -164,7 +164,6 @@ const verifyOtp = async (req, res) => {
 
         const userData = req.session.userData;
 
-        console.log('somthing wrong')
         if (!userData.firstName || !userData.lastName || !userData.email || !userData.password) {
             return res.json({
                 success: false,

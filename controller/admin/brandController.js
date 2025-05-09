@@ -116,19 +116,16 @@ const editBrand = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid brand ID' });
     }
 
-    // Check brand is exists
     const brand = await Brand.findById(id);
     if (!brand) {
       return res.status(404).json({ success: false, message: 'Brand not found' });
     }
 
-    // Check for duplicate brand name
     const existingBrand = await Brand.findOne({ brandName, _id: { $ne: id } });
     if (existingBrand) {
       return res.status(400).json({ success: false, message: 'Brand name already exists' });
     }
 
-    // Validate status
     if (!['active', 'inactive'].includes(status)) {
       return res.status(400).json({ success: false, message: 'Invalid status value' });
     }
@@ -136,10 +133,8 @@ const editBrand = async (req, res) => {
     let imageUrl = brand.brandImage;
     let cloudinaryPublicId = brand.cloudinaryPublicId;
 
-    // Handle new image upload
     if (file) {
-      // Delete old image from Cloudinary 
-      // if exists
+      
       if (cloudinaryPublicId) {
         try {
           await cloudinary.uploader.destroy(cloudinaryPublicId);
@@ -148,7 +143,6 @@ const editBrand = async (req, res) => {
         }
       }
 
-      // Upload new image to Cloudinary
       const streamUpload = (buffer) => {
         return new Promise((resolve, reject) => {
           cloudinary.uploader.upload_stream(
@@ -175,7 +169,6 @@ const editBrand = async (req, res) => {
       }
     }
 
-    // Update the brand
     const updatedBrand = await Brand.findOneAndUpdate(
       { _id: id, __v: brand.__v },
       {

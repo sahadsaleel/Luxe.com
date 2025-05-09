@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Admin Order Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .search-filter {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-top: 40px;
+        }
+        .search-bar {
+            padding: 8px 10px;
+            width: 250px;
+            background-color: #7db87d;
+            border: none;
+            color: rgb(0, 0, 0);
+            font-size: 14px;
+        }
+        .search-bar::placeholder {
+            color: rgb(0, 0, 0);
+            opacity: 0.8;
+        }
+        .dropdown {
+            padding: 8px 15px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            width: 120px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dropdown::after {
+            content: "▼";
+            font-size: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background-color: #7db87d;
+            color: rgb(0, 0, 0);
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        tbody tr {
+            background-color: #d3d3d3;
+        }
+        .status-badge {
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            text-align: center;
+            display: inline-block;
+            min-width: 80px;
+        }
+        .out-for-delivery {
+            background-color: #FF9800;
+        }
+        .cancelled {
+            background-color: #F44336;
+        }
+        .delivered {
+            background-color: #4CAF50;
+        }
+        .action-icon {
+            text-align: center;
+            cursor: pointer;
+            color: black;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../../views/partials/admin/header') %>
+    <div class="container">
+        <div class="search-filter">
+            <input type="text" class="search-bar" placeholder="Search for product...">
+            <div class="dropdown">
+                Newest
+            </div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>USER NAME</th>
+                    <th>ORDER ID</th>
+                    <th>AMOUNT</th>
+                    <th>ORDER DATE</th>
+                    <th>STATUS</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% orders.forEach(order => { %>
+                    <tr>
+                    <td><%= order._id %></td>
+                    <td><%= order.totalPrice %></td>
+                    <td><%= order.invoiceDate ? order.invoiceDate.toDateString() : 'N/A' %></td>
+                    <td>
+                        <span class="status-badge <%= order.status.toLowerCase().replace(' ', '-') %>">
+                        <%= order.status %>
+                        </span>
+                    </td>
+                    <td class="action-icon">&#128065;&#xFE0E;</td>
+                    </tr>
+                <% }); %>
+        </tbody>
+
+        </table>
+    </div>
+    <%- include('../../views/partials/admin/footer') %>
+</body>
+</html>
