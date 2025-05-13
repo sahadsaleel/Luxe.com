@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,13 +16,14 @@
             <div class="logo">Luxe.com</div>
         </div>
 
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Account</a></li>
-                <li class="breadcrumb-item active" aria-current="/profile">Profile</li>
-            </ol>
-        </nav>
+        <div class="breadcrumb-container">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active">Profile</li>
+                </ol>
+            </div>
+        </div>
 
         <div class="main-content">
             <div class="sidebar">
@@ -41,7 +40,6 @@
                 <ul class="nav-menu">
                     <h3>Manage My Account</h3>
                     <li><a href="/profile" class="active"><i class="fas fa-user"></i> My Profile</a></li>
-                    <li><a href="#" id="openChangePasswordNav"><i class="fas fa-lock"></i> Change Password</a></li>
                     <li><a href="/address"><i class="fas fa-address-book"></i> Address Book</a></li>
 
                     <h3>Orders & Wishlist</h3>
@@ -79,10 +77,6 @@
                             <div class="info-value"><%= user && user.phone ? user.phone : 'N/A' %></div>
                         </div>
 
-                        <div class="info-item">
-                            <div class="info-label">Gender</div>
-                            <div class="info-value"><%= user && user.gender ? user.gender : 'N/A' %></div>
-                        </div>
                     </div>
                 </div>
 
@@ -96,11 +90,19 @@
                         <div class="info-item">
                             <div class="info-label">Email</div>
                             <div class="info-value"><%= user && user.email ? user.email : 'N/A' %></div>
+                            <% if (user && !user.googleId) { %>
+                            <button type="button" class="action-button" id="openChangeEmailModal">Change Email</button>
+                            <% } %>
                         </div>
 
                         <div class="info-item">
                             <div class="info-label">Password</div>
                             <div class="info-value">••••••••</div>
+                            <% if (user && !user.googleId) { %>
+                            <button type="button" class="action-button" id="openChangePasswordModal">Change Password</button>
+                            <% } else { %>
+                            <div class="google-login-note">Google account login</div>
+                            <% } %>
                         </div>
                     </div>
                 </div>
@@ -134,8 +136,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="phone">Phone Number</label>
-                            <input type="tel" class="form-control" id="phone" name="phone" value="<%= user && user.phone ? user.phone : '' %>">
+                            <label class="form-label" for="phone">Phone Number *</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" value="<%= user && user.phone ? user.phone : '' %>" required>
                         </div>
 
                         <div class="form-row">
@@ -153,41 +155,16 @@
                                 <input type="file" class="form-control" id="image" name="image" accept="image/*" style="display: none;">
                                 <div class="error-message" id="imageError">Please select an image file (e.g., PNG, JPG).</div>
                             </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="gender">Gender</label>
-                                <select class="form-control" id="gender" name="gender">
-                                    <option value="" <%= !user || !user.gender ? 'selected' : '' %>>Select Gender</option>
-                                    <option value="male" <%= user && user.gender === 'male' ? 'selected' : '' %>>Male</option>
-                                    <option value="female" <%= user && user.gender === 'female' ? 'selected' : '' %>>Female</option>
-                                    <option value="other" <%= user && user.gender === 'other' ? 'selected' : '' %>>Other</option>
-                                </select>
-                            </div>
                         </div>
 
                         <button type="submit" class="save-btn">Save your information</button>
-                    </div>
-
-                    <div class="form-section">
-                        <div class="form-section-header">
-                            <div class="form-section-title">Login Information</div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="email">Email</label>
-                            <div class="email-display"><%= user && user.email ? user.email : 'N/A' %></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="password">Password</label>
-                            <button type="button" class="action-button" id="openChangePasswordModal">Change Password</button>
-                        </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
+    <!-- Change Password Modal -->
     <div class="modal-overlay" id="changePasswordModal">
         <div class="modal">
             <div class="modal-header">
@@ -217,6 +194,36 @@
         </div>
     </div>
 
+    <!-- Change Email Modal -->
+    <div class="modal-overlay" id="changeEmailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Change Email</div>
+                <button class="close-btn" id="closeEmailModalBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="emailChangeForm">
+                    <div id="currentPasswordError" class="error-message"></div>
+                    <div class="form-group">
+                        <label class="form-label" for="currentPassword">Current Password</label>
+                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                    </div>
+                    <div id="newEmailError" class="error-message"></div>
+                    <div class="form-group">
+                        <label class="form-label" for="newEmail">New Email</label>
+                        <input type="email" class="form-control" id="newEmail" name="newEmail" required>
+                    </div>
+                    <div id="confirmEmailError" class="error-message"></div>
+                    <div class="form-group">
+                        <label class="form-label" for="confirmEmail">Confirm New Email</label>
+                        <input type="email" class="form-control" id="confirmEmail" name="confirmEmail" required>
+                    </div>
+                    <button type="submit" class="save-btn">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
     <div class="crop-modal" id="cropModal">
         <div class="crop-container">
             <img class="crop-image" id="cropImage" src="#" alt="Crop Image">
@@ -227,308 +234,542 @@
         </div>
     </div>
 
-
     <%- include('../../views/partials/user/footer') %>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+        <script>
+            const editProfileBtn = document.getElementById('editProfileBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const editProfileModal = document.getElementById('editProfileModal');
 
-        const editProfileBtn = document.getElementById('editProfileBtn');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const editProfileModal = document.getElementById('editProfileModal');
+            editProfileBtn.addEventListener('click', function() {
+                editProfileModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
 
-        editProfileBtn.addEventListener('click', function() {
-            editProfileModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-
-        closeModalBtn.addEventListener('click', function() {
-            editProfileModal.classList.remove('active');
-            document.body.style.overflow = '';
-        });
-
-        window.addEventListener('click', function(event) {
-            if (event.target === editProfileModal) {
+            closeModalBtn.addEventListener('click', function() {
                 editProfileModal.classList.remove('active');
                 document.body.style.overflow = '';
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target === editProfileModal) {
+                    editProfileModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Change Password modal functionality
+            const openChangePasswordModal = document.getElementById('openChangePasswordModal');
+            const closePasswordModalBtn = document.getElementById('closePasswordModalBtn');
+            const changePasswordModal = document.getElementById('changePasswordModal');
+
+            if (openChangePasswordModal) {
+                openChangePasswordModal.addEventListener('click', function() {
+                    changePasswordModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
             }
-        });
 
-        const openChangePasswordModal = document.getElementById('openChangePasswordModal');
-        const closePasswordModalBtn = document.getElementById('closePasswordModalBtn');
-        const changePasswordModal = document.getElementById('changePasswordModal');
-
-        openChangePasswordModal.addEventListener('click', function() {
-            changePasswordModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-
-        closePasswordModalBtn.addEventListener('click', function() {
-            changePasswordModal.classList.remove('active');
-            document.body.style.overflow = '';
-        });
-
-        window.addEventListener('click', function(event) {
-            if (event.target === changePasswordModal) {
+            closePasswordModalBtn.addEventListener('click', function() {
                 changePasswordModal.classList.remove('active');
                 document.body.style.overflow = '';
-            }
-        });
-
-        const imageInput = document.getElementById('image');
-        const imagePreview = document.querySelector('.image-preview');
-        const imageUploadContainer = document.querySelector('.image-upload-container');
-        const imageError = document.getElementById('imageError');
-        const cropModal = document.getElementById('cropModal');
-        const cropImage = document.getElementById('cropImage');
-        const cropButton = document.getElementById('cropButton');
-        const cancelCropButton = document.getElementById('cancelCropButton');
-        let cropper;
-
-        imageInput.addEventListener('change', function() {
-            const file = this.files[0];
-            imageError.style.display = 'none';
-            imageUploadContainer.classList.remove('has-image');
-            imagePreview.style.display = 'none';
-
-            if (file) {
-                if (!file.type.startsWith('image/')) {
-                    imageError.style.display = 'block';
-                    this.value = '';
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    cropImage.src = e.target.result;
-                    cropModal.style.display = 'flex';
-                    if (cropper) cropper.destroy();
-                    cropper = new Cropper(cropImage, {
-                        aspectRatio: 1,
-                        viewMode: 1,
-                        autoCropArea: 0.8
-                    });
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        cropButton.addEventListener('click', function() {
-            const canvas = cropper.getCroppedCanvas({
-                width: 200,
-                height: 200
             });
-            canvas.toBlob(function(blob) {
-                const url = URL.createObjectURL(blob);
-                imagePreview.src = url;
-                imageUploadContainer.classList.add('has-image');
-                imagePreview.style.display = 'block';
-                cropModal.style.display = 'none';
-                cropper.destroy();
 
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'croppedImage';
-                    hiddenInput.value = e.target.result;
-                    document.getElementById('editProfileForm').appendChild(hiddenInput);
-                };
-                reader.readAsDataURL(blob);
-            });
-        });
-
-        cancelCropButton.addEventListener('click', function() {
-            cropModal.style.display = 'none';
-            if (cropper) cropper.destroy();
-            imageInput.value = '';
-            imageUploadContainer.classList.remove('has-image');
-            imagePreview.style.display = 'none';
-        });
-
-
-        document.addEventListener("DOMContentLoaded", function () {
-        const oldPassword = document.getElementById("oldPassword");
-        const newPassword = document.getElementById("newPassword");
-        const confirmPassword = document.getElementById("confirmPassword");
-        const oldPasswordError = document.getElementById("oldPasswordError");
-        const newPasswordError = document.getElementById("newPasswordError");
-        const confirmPasswordError = document.getElementById("confirmPasswordError");
-        const passwordChangeForm = document.getElementById("passwordChangeForm");
-        const editProfileModal = document.getElementById("editProfileModal");
-        const changePasswordModal = document.getElementById("changePasswordModal");
-
-        if (
-            !oldPassword ||
-            !newPassword ||
-            !confirmPassword ||
-            !oldPasswordError ||
-            !newPasswordError ||
-            !confirmPasswordError ||
-            !passwordChangeForm ||
-            !editProfileModal ||
-            !changePasswordModal
-        ) {
-            return;
-        }
-
-        function oldPasswordValidateChecking() {
-            const oldPasswordVal = oldPassword.value.trim();
-            const formGroup = oldPassword.parentElement;
-
-            if (oldPasswordVal === "") {
-                oldPasswordError.innerHTML = "Please enter your current password";
-                formGroup.classList.add("invalid");
-                return false;
-            }
-            oldPasswordError.innerHTML = "";
-            formGroup.classList.remove("invalid");
-            return true;
-        }
-
-        function newPasswordValidateChecking() {
-            const newPasswordVal = newPassword.value;
-            const confirmPasswordVal = confirmPassword.value;
-            const alpha = /[A-Za-z]/;
-            const digit = /\d/;
-            const newPasswordGroup = newPassword.parentElement;
-            const confirmPasswordGroup = confirmPassword.parentElement;
-            let isValid = true;
-
-            if (newPasswordVal === "") {
-                newPasswordError.innerHTML = "Please enter a new password";
-                newPasswordGroup.classList.add("invalid");
-                isValid = false;
-            } else if (newPasswordVal.length < 8) {
-                newPasswordError.innerHTML = "New password must be at least 8 characters";
-                newPasswordGroup.classList.add("invalid");
-                isValid = false;
-            } else if (!alpha.test(newPasswordVal) || !digit.test(newPasswordVal)) {
-                newPasswordError.innerHTML = "New password must contain both letters and numbers";
-                newPasswordGroup.classList.add("invalid");
-                isValid = false;
-            } else {
-                newPasswordError.innerHTML = "";
-                newPasswordGroup.classList.remove("invalid");
-            }
-
-            if (confirmPasswordVal === "") {
-                confirmPasswordError.innerHTML = "Please confirm your new password";
-                confirmPasswordGroup.classList.add("invalid");
-                isValid = false;
-            } else if (newPasswordVal !== confirmPasswordVal) {
-                confirmPasswordError.innerHTML = "New passwords do not match";
-                confirmPasswordGroup.classList.add("invalid");
-                isValid = false;
-            } else {
-                confirmPasswordError.innerHTML = "";
-                confirmPasswordGroup.classList.remove("invalid");
-            }
-
-            return isValid;
-        }
-
-        passwordChangeForm.addEventListener("submit", async function (e) {
-            e.preventDefault();
-            
-            const isOldPasswordValid = oldPasswordValidateChecking();
-            const isNewPasswordValid = newPasswordValidateChecking();
-
-            if (!isOldPasswordValid || !isNewPasswordValid) {
-                return;
-            }
-            const formData = {
-                oldPassword: oldPassword.value,
-                newPassword: newPassword.value,
-                confirmPassword: confirmPassword.value,
-            };
-
-            try {
-                const response = await fetch('/profile/changePassword', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                });
-
-                const result = await response.json();
-
-                changePasswordModal.classList.remove('active');
-
-                editProfileModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-
-                if (response.ok) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: result.message,
-                        confirmButtonColor: '#8a6a94',
-                    }).then(() => {
-                        passwordChangeForm.reset(); 
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: result.error,
-                        confirmButtonColor: '#8a6a94',
-                    });
-
-                    if (result.error.includes('current password')) {
-                        oldPasswordError.innerHTML = result.error;
-                        oldPassword.parentElement.classList.add("invalid");
-                    } else if (result.error.includes('New password must') || result.error.includes('same as the old')) {
-                        newPasswordError.innerHTML = result.error;
-                        newPassword.parentElement.classList.add("invalid");
-                    } else {
-                        confirmPasswordError.innerHTML = result.error;
-                        confirmPassword.parentElement.classList.add("invalid");
-                    }
-                    changePasswordModal.classList.add('active');
-                    editProfileModal.classList.remove('active');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                changePasswordModal.classList.remove('active');
-                editProfileModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'An error occurred. Please try again.',
-                    confirmButtonColor: '#8a6a94',
-                });
-            }
-        });
-
-        oldPassword.addEventListener("input", oldPasswordValidateChecking);
-        newPassword.addEventListener("input", newPasswordValidateChecking);
-                confirmPassword.addEventListener("input", newPasswordValidateChecking);
-
-                const openChangePasswordModal = document.getElementById("openChangePasswordModal");
-                openChangePasswordModal.addEventListener("click", function () {
-                    changePasswordModal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                });
-
-                const closePasswordModalBtn = document.getElementById("closePasswordModalBtn");
-                closePasswordModalBtn.addEventListener("click", function () {
+            window.addEventListener('click', function(event) {
+                if (event.target === changePasswordModal) {
                     changePasswordModal.classList.remove('active');
-                    editProfileModal.classList.add('active');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Change Email modal functionality
+            const openChangeEmailModal = document.getElementById('openChangeEmailModal');
+            const closeEmailModalBtn = document.getElementById('closeEmailModalBtn');
+            const changeEmailModal = document.getElementById('changeEmailModal');
+
+            if (openChangeEmailModal) {
+                openChangeEmailModal.addEventListener('click', function() {
+                    changeEmailModal.classList.add('active');
                     document.body.style.overflow = 'hidden';
                 });
+            }
 
-                changePasswordModal.addEventListener('click', function (event) {
-                    if (event.target === changePasswordModal) {
-                        changePasswordModal.classList.remove('active');
-                        editProfileModal.classList.add('active');
-                        document.body.style.overflow = 'hidden';
+            closeEmailModalBtn.addEventListener('click', function() {
+                changeEmailModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target === changeEmailModal) {
+                    changeEmailModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Image cropper functionality
+            const imageInput = document.getElementById('image');
+            const imagePreview = document.querySelector('.image-preview');
+            const imageUploadContainer = document.querySelector('.image-upload-container');
+            const imageError = document.getElementById('imageError');
+            const cropModal = document.getElementById('cropModal');
+            const cropImage = document.getElementById('cropImage');
+            const cropButton = document.getElementById('cropButton');
+            const cancelCropButton = document.getElementById('cancelCropButton');
+            let cropper;
+
+            imageInput.addEventListener('change', function() {
+                const file = this.files[0];
+                imageError.style.display = 'none';
+                imageUploadContainer.classList.remove('has-image');
+                imagePreview.style.display = 'none';
+
+                if (file) {
+                    if (!file.type.startsWith('image/')) {
+                        imageError.style.display = 'block';
+                        this.value = '';
+                        return;
                     }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        cropImage.src = e.target.result;
+                        cropModal.style.display = 'flex';
+                        if (cropper) cropper.destroy();
+                        cropper = new Cropper(cropImage, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            autoCropArea: 0.8
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            cropButton.addEventListener('click', function() {
+                const canvas = cropper.getCroppedCanvas({
+                    width: 200,
+                    height: 200
+                });
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    imagePreview.src = url;
+                    imageUploadContainer.classList.add('has-image');
+                    imagePreview.style.display = 'block';
+                    cropModal.style.display = 'none';
+                    cropper.destroy();
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'croppedImage';
+                        hiddenInput.value = e.target.result;
+                        document.getElementById('editProfileForm').appendChild(hiddenInput);
+                    };
+                    reader.readAsDataURL(blob);
                 });
             });
 
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+            cancelCropButton.addEventListener('click', function() {
+                cropModal.style.display = 'none';
+                if (cropper) cropper.destroy();
+                imageInput.value = '';
+                imageUploadContainer.classList.remove('has-image');
+                imagePreview.style.display = 'none';
+            });
+
+            // Password change form validation and submission
+            document.addEventListener("DOMContentLoaded", function () {
+                const oldPassword = document.getElementById("oldPassword");
+                const newPassword = document.getElementById("newPassword");
+                const confirmPassword = document.getElementById("confirmPassword");
+                const oldPasswordError = document.getElementById("oldPasswordError");
+                const newPasswordError = document.getElementById("newPasswordError");
+                const confirmPasswordError = document.getElementById("confirmPasswordError");
+                const passwordChangeForm = document.getElementById("passwordChangeForm");
+
+                if (passwordChangeForm) {
+                    function oldPasswordValidateChecking() {
+                        const oldPasswordVal = oldPassword.value.trim();
+                        const formGroup = oldPassword.parentElement;
+
+                        if (oldPasswordVal === "") {
+                            oldPasswordError.innerHTML = "Please enter your current password";
+                            formGroup.classList.add("invalid");
+                            return false;
+                        }
+                        oldPasswordError.innerHTML = "";
+                        formGroup.classList.remove("invalid");
+                        return true;
+                    }
+
+                    function newPasswordValidateChecking() {
+                        const newPasswordVal = newPassword.value;
+                        const confirmPasswordVal = confirmPassword.value;
+                        const alpha = /[A-Za-z]/;
+                        const digit = /\d/;
+                        const newPasswordGroup = newPassword.parentElement;
+                        const confirmPasswordGroup = confirmPassword.parentElement;
+                        let isValid = true;
+
+                        if (newPasswordVal === "") {
+                            newPasswordError.innerHTML = "Please enter a new password";
+                            newPasswordGroup.classList.add("invalid");
+                            isValid = false;
+                        } else if (newPasswordVal.length < 8) {
+                            newPasswordError.innerHTML = "New password must be at least 8 characters";
+                            newPasswordGroup.classList.add("invalid");
+                            isValid = false;
+                        } else if (!alpha.test(newPasswordVal) || !digit.test(newPasswordVal)) {
+                            newPasswordError.innerHTML = "New password must contain both letters and numbers";
+                            newPasswordGroup.classList.add("invalid");
+                            isValid = false;
+                        } else {
+                            newPasswordError.innerHTML = "";
+                            newPasswordGroup.classList.remove("invalid");
+                        }
+
+                        if (confirmPasswordVal === "") {
+                            confirmPasswordError.innerHTML = "Please confirm your new password";
+                            confirmPasswordGroup.classList.add("invalid");
+                            isValid = false;
+                        } else if (newPasswordVal !== confirmPasswordVal) {
+                            confirmPasswordError.innerHTML = "New passwords do not match";
+                            confirmPasswordGroup.classList.add("invalid");
+                            isValid = false;
+                        } else {
+                            confirmPasswordError.innerHTML = "";
+                            confirmPasswordGroup.classList.remove("invalid");
+                        }
+
+                        return isValid;
+                    }
+
+                    passwordChangeForm.addEventListener("submit", async function (e) {
+                        e.preventDefault();
+                        
+                        const isOldPasswordValid = oldPasswordValidateChecking();
+                        const isNewPasswordValid = newPasswordValidateChecking();
+
+                        if (!isOldPasswordValid || !isNewPasswordValid) {
+                            return;
+                        }
+                        const formData = {
+                            oldPassword: oldPassword.value,
+                            newPassword: newPassword.value,
+                            confirmPassword: confirmPassword.value,
+                        };
+
+                        try {
+                            const response = await fetch('/profile/changePassword', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(formData),
+                            });
+
+                            const contentType = response.headers.get('content-type');
+                            if (!contentType || !contentType.includes('application/json')) {
+                                throw new Error('Expected JSON response, but received: ' + contentType);
+                            }
+
+                            const result = await response.json();
+                            changePasswordModal.classList.remove('active');
+                            document.body.style.overflow = '';
+
+                            if (response.ok) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: result.message,
+                                    confirmButtonColor: '#8a6a94',
+                                }).then(() => {
+                                    passwordChangeForm.reset(); 
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: result.error,
+                                    confirmButtonColor: '#8a6a94',
+                                });
+
+                                if (result.error.includes('current password')) {
+                                    oldPasswordError.innerHTML = result.error;
+                                    oldPassword.parentElement.classList.add("invalid");
+                                } else if (result.error.includes('New password must') || result.error.includes('same as the old')) {
+                                    newPasswordError.innerHTML = result.error;
+                                    newPassword.parentElement.classList.add("invalid");
+                                } else {
+                                    confirmPasswordError.innerHTML = result.error;
+                                    confirmPassword.parentElement.classList.add("invalid");
+                                }
+                                changePasswordModal.classList.add('active');
+                                document.body.style.overflow = 'hidden';
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            changePasswordModal.classList.remove('active');
+                            document.body.style.overflow = '';
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An error occurred. Please try again.',
+                                confirmButtonColor: '#8a6a94',
+                            });
+                        }
+                    });
+
+                    oldPassword.addEventListener("input", oldPasswordValidateChecking);
+                    newPassword.addEventListener("input", newPasswordValidateChecking);
+                    confirmPassword.addEventListener("input", newPasswordValidateChecking);
+                }
+
+                // Email change form validation and submission
+                const currentPassword = document.getElementById("currentPassword");
+                const newEmail = document.getElementById("newEmail");
+                const confirmEmail = document.getElementById("confirmEmail");
+                const currentPasswordError = document.getElementById("currentPasswordError");
+                const newEmailError = document.getElementById("newEmailError");
+                const confirmEmailError = document.getElementById("confirmEmailError");
+                const emailChangeForm = document.getElementById("emailChangeForm");
+
+                if (emailChangeForm) {
+                    function validateCurrentPassword() {
+                        const passwordVal = currentPassword.value.trim();
+                        const formGroup = currentPassword.parentElement;
+
+                        if (passwordVal === "") {
+                            currentPasswordError.innerHTML = "Please enter your current password";
+                            formGroup.classList.add("invalid");
+                            return false;
+                        }
+                        currentPasswordError.innerHTML = "";
+                        formGroup.classList.remove("invalid");
+                        return true;
+                    }
+
+                    function validateEmail() {
+                        const newEmailVal = newEmail.value.trim();
+                        const confirmEmailVal = confirmEmail.value.trim();
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        const newEmailGroup = newEmail.parentElement;
+                        const confirmEmailGroup = confirmEmail.parentElement;
+                        let isValid = true;
+
+                        if (newEmailVal === "") {
+                            newEmailError.innerHTML = "Please enter a new email";
+                            newEmailGroup.classList.add("invalid");
+                            isValid = false;
+                        } else if (!emailRegex.test(newEmailVal)) {
+                            newEmailError.innerHTML = "Please enter a valid email address";
+                            newEmailGroup.classList.add("invalid");
+                            isValid = false;
+                        } else {
+                            newEmailError.innerHTML = "";
+                            newEmailGroup.classList.remove("invalid");
+                        }
+
+                        if (confirmEmailVal === "") {
+                            confirmEmailError.innerHTML = "Please confirm your new email";
+                            confirmEmailGroup.classList.add("invalid");
+                            isValid = false;
+                        } else if (newEmailVal !== confirmEmailVal) {
+                            confirmEmailError.innerHTML = "Email addresses do not match";
+                            confirmEmailGroup.classList.add("invalid");
+                            isValid = false;
+                        } else {
+                            confirmEmailError.innerHTML = "";
+                            confirmEmailGroup.classList.remove("invalid");
+                        }
+
+                        return isValid;
+                    }
+
+                    emailChangeForm.addEventListener("submit", async function (e) {
+                        e.preventDefault();
+                        
+                        const isPasswordValid = validateCurrentPassword();
+                        const isEmailValid = validateEmail();
+
+                        if (!isPasswordValid || !isEmailValid) {
+                            return;
+                        }
+
+                        const formData = {
+                            currentPassword: currentPassword.value,
+                            newEmail: newEmail.value,
+                            confirmEmail: confirmEmail.value,
+                        };
+
+                        try {
+                            const response = await fetch('/profile/changeEmail', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(formData),
+                            });
+
+                            const contentType = response.headers.get('content-type');
+                            if (!contentType || !contentType.includes('application/json')) {
+                                throw new Error('Expected JSON response, but received: ' + contentType);
+                            }
+
+                            const result = await response.json();
+                            changeEmailModal.classList.remove('active');
+                            document.body.style.overflow = '';
+
+                            if (response.ok) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: result.message,
+                                    confirmButtonColor: '#8a6a94',
+                                }).then(() => {
+                                    emailChangeForm.reset();
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: result.error,
+                                    confirmButtonColor: '#8a6a94',
+                                });
+
+                                if (result.error.includes('password')) {
+                                    currentPasswordError.innerHTML = result.error;
+                                    currentPassword.parentElement.classList.add("invalid");
+                                } else if (result.error.includes('email')) {
+                                    newEmailError.innerHTML = result.error;
+                                    newEmail.parentElement.classList.add("invalid");
+                                }
+                                changeEmailModal.classList.add('active');
+                                document.body.style.overflow = 'hidden';
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            changeEmailModal.classList.remove('active');
+                            document.body.style.overflow = '';
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An error occurred. Please try again.',
+                                confirmButtonColor: '#8a6a94',
+                            });
+                        }
+                    });
+
+                    currentPassword.addEventListener("input", validateCurrentPassword);
+                    newEmail.addEventListener("input", validateEmail);
+                    confirmEmail.addEventListener("input", validateEmail);
+                }
+
+                const editProfileForm = document.getElementById('editProfileForm');
+                const firstName = document.getElementById('firstName');
+                const lastName = document.getElementById('lastName');
+                const phone = document.getElementById('phone');
+
+                function validateEditProfileForm() {
+                    let isValid = true;
+
+                    // First Name validation
+                    if (firstName.value.trim() === "") {
+                        firstName.parentElement.classList.add("invalid");
+                        isValid = false;
+                    } else {
+                        firstName.parentElement.classList.remove("invalid");
+                    }
+
+                    // Last Name validation
+                    if (lastName.value.trim() === "") {
+                        lastName.parentElement.classList.add("invalid");
+                        isValid = false;
+                    } else {
+                        lastName.parentElement.classList.remove("invalid");
+                    }
+
+                    // Phone validation
+                    const phoneRegex = /^\d{10}$/;
+                    if (phone.value.trim() === "") {
+                        phone.parentElement.classList.add("invalid");
+                        isValid = false;
+                    } else if (!phoneRegex.test(phone.value.trim())) {
+                        phone.parentElement.classList.add("invalid");
+                        isValid = false;
+                    } else {
+                        phone.parentElement.classList.remove("invalid");
+                    }
+
+                    return isValid;
+                }
+
+                editProfileForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
+                    const isFormValid = validateEditProfileForm();
+                    if (!isFormValid) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Please fill out all required fields correctly',
+                            confirmButtonColor: '#8a6a94',
+                        });
+                        return;
+                    }
+
+                    const formData = new FormData(this);
+
+                    try {
+                        const response = await fetch('/profile/update', {
+                            method: 'POST',
+                            body: formData,
+                        });
+
+                        const contentType = response.headers.get('content-type');
+                        if (!contentType || !contentType.includes('application/json')) {
+                            throw new Error('Expected JSON response, but received: ' + contentType);
+                        }
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: result.message || 'Profile updated successfully',
+                                confirmButtonColor: '#8a6a94',
+                            }).then(() => {
+                                editProfileModal.classList.remove('active');
+                                document.body.style.overflow = '';
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: result.message || 'An error occurred while updating the profile',
+                                confirmButtonColor: '#8a6a94',
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred. Please try again.',
+                            confirmButtonColor: '#8a6a94',
+                        });
+                    }
+                });
+
+                firstName.addEventListener('input', validateEditProfileForm);
+                lastName.addEventListener('input', validateEditProfileForm);
+                phone.addEventListener('input', validateEditProfileForm);
+            });
+        </script>
 </body>
 </html>

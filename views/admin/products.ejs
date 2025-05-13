@@ -610,65 +610,73 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
     <script>
-    // Modal and form elements
-    const addProductBtn = document.getElementById('addProductBtn');
-    const addProductModal = document.getElementById('addProductModal');
-    const closeAddModal = document.getElementById('closeAddModal');
-    const addImageUpload = document.getElementById('addImageUpload');
-    const addProductImage = document.getElementById('addProductImage');
-    const addImagePreview = document.getElementById('addImagePreview');
-    const addProductForm = document.getElementById('addProductForm');
-    const addVariantBtn = document.getElementById('addVariant');
-    const addVariantsContainer = document.getElementById('addVariantsContainer');
-    
-    const editProductModal = document.getElementById('editProductModal');
-    const closeEditModal = document.getElementById('closeEditModal');
-    const editImageUpload = document.getElementById('editImageUpload');
-    const editProductImage = document.getElementById('editProductImage');
-    const editImagePreview = document.getElementById('editImagePreview');
-    const editProductForm = document.getElementById('editProductForm');
-    const editVariantBtn = document.getElementById('editAddVariant');
-    const editVariantsContainer = document.getElementById('editVariantsContainer');
-    const removedImagesInput = document.getElementById('removedImages');
-    
-    // Crop modal elements
-    const cropModal = document.getElementById('cropModal');
-    const cropImage = document.getElementById('cropImage');
-    const cropConfirm = document.getElementById('cropConfirm');
-    const cropCancel = document.getElementById('cropCancel');
-    const closeCropModal = document.getElementById('closeCropModal');
-    
-    let cropper = null;
-    let currentFiles = [];
-    let croppedBlobs = [];
-    let currentInput = null;
-    let currentPreview = null;
-    
-    // Open add product modal
-    addProductBtn.addEventListener('click', () => {
-        addProductModal.style.display = 'block';
-    });
-    
-    // Close add product modal
-    closeAddModal.addEventListener('click', () => {
-        addProductModal.style.display = 'none';
-        addProductForm.reset();
-        clearProductErrorMessages(addProductForm);
-        addImagePreview.innerHTML = '';
-        resetVariants(addVariantsContainer);
-        croppedBlobs = [];
-    });
-    
-    // Close modals on outside click
-    window.addEventListener('click', (event) => {
-        if (event.target === addProductModal) {
+        const addProductBtn = document.getElementById('addProductBtn');
+        const addProductModal = document.getElementById('addProductModal');
+        const closeAddModal = document.getElementById('closeAddModal');
+        const addImageUpload = document.getElementById('addImageUpload');
+        const addProductImage = document.getElementById('addProductImage');
+        const addImagePreview = document.getElementById('addImagePreview');
+        const addProductForm = document.getElementById('addProductForm');
+        const addVariantBtn = document.getElementById('addVariant');
+        const addVariantsContainer = document.getElementById('addVariantsContainer');
+        
+        const editProductModal = document.getElementById('editProductModal');
+        const closeEditModal = document.getElementById('closeEditModal');
+        const editImageUpload = document.getElementById('editImageUpload');
+        const editProductImage = document.getElementById('editProductImage');
+        const editImagePreview = document.getElementById('editImagePreview');
+        const editProductForm = document.getElementById('editProductForm');
+        const editVariantBtn = document.getElementById('editAddVariant');
+        const editVariantsContainer = document.getElementById('editVariantsContainer');
+        const removedImagesInput = document.getElementById('removedImages');
+        
+        const cropModal = document.getElementById('cropModal');
+        const cropImage = document.getElementById('cropImage');
+        const cropConfirm = document.getElementById('cropConfirm');
+        const cropCancel = document.getElementById('cropCancel');
+        const closeCropModal = document.getElementById('closeCropModal');
+        
+        let cropper = null;
+        let currentFiles = [];
+        let croppedBlobs = [];
+        let currentInput = null;
+        let currentPreview = null;
+        
+        addProductBtn.addEventListener('click', () => {
+            addProductModal.style.display = 'block';
+        });
+        
+        closeAddModal.addEventListener('click', () => {
             addProductModal.style.display = 'none';
             addProductForm.reset();
             clearProductErrorMessages(addProductForm);
             addImagePreview.innerHTML = '';
             resetVariants(addVariantsContainer);
             croppedBlobs = [];
-        } else if (event.target === editProductModal) {
+        });
+        
+        window.addEventListener('click', (event) => {
+            if (event.target === addProductModal) {
+                addProductModal.style.display = 'none';
+                addProductForm.reset();
+                clearProductErrorMessages(addProductForm);
+                addImagePreview.innerHTML = '';
+                resetVariants(addVariantsContainer);
+                croppedBlobs = [];
+            } else if (event.target === editProductModal) {
+                editProductModal.style.display = 'none';
+                editProductForm.reset();
+                clearProductErrorMessages(editProductForm);
+                editImagePreview.innerHTML = '';
+                resetVariants(editVariantsContainer);
+                removedImagesInput.value = '';
+                croppedBlobs = [];
+            } else if (event.target === cropModal) {
+                closeCropModalFunction();
+            }
+        });
+
+        closeEditModal.addEventListener('click', () => {
             editProductModal.style.display = 'none';
             editProductForm.reset();
             clearProductErrorMessages(editProductForm);
@@ -676,632 +684,598 @@
             resetVariants(editVariantsContainer);
             removedImagesInput.value = '';
             croppedBlobs = [];
-        } else if (event.target === cropModal) {
-            closeCropModalFunction();
+        });
+        
+        closeCropModal.addEventListener('click', closeCropModalFunction);
+        
+        function closeCropModalFunction() {
+            cropModal.style.display = 'none';
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            cropImage.src = '';
+            currentFiles = [];
+            currentInput = null;
+            currentPreview = null;
         }
-    });
-    
-    // Close edit product modal
-    closeEditModal.addEventListener('click', () => {
-        editProductModal.style.display = 'none';
-        editProductForm.reset();
-        clearProductErrorMessages(editProductForm);
-        editImagePreview.innerHTML = '';
-        resetVariants(editVariantsContainer);
-        removedImagesInput.value = '';
-        croppedBlobs = [];
-    });
-    
-    // Close crop modal
-    closeCropModal.addEventListener('click', closeCropModalFunction);
-    
-    function closeCropModalFunction() {
-        cropModal.style.display = 'none';
-        if (cropper) {
-            cropper.destroy();
-            cropper = null;
+        
+        function resetVariants(container) {
+            container.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const variantDiv = document.createElement('div');
+                variantDiv.className = 'variant';
+                variantDiv.innerHTML = `
+                    <input type="text" name="variantSize" placeholder="Size (e.g., 50 ML)" class="variant-size">
+                    <input type="number" name="variantRegularPrice" placeholder="Regular Price" class="variant-regular-price">
+                    <input type="number" name="variantSalePrice" placeholder="Sale Price (optional)" class="variant-sale-price">
+                    <input type="number" name="variantQuantity" placeholder="Quantity" class="variant-quantity">
+                    ${i === 0 ? '' : '<button type="button" class="remove-variant">Remove</button>'}
+                `;
+                container.appendChild(variantDiv);
+            }
         }
-        cropImage.src = '';
-        currentFiles = [];
-        currentInput = null;
-        currentPreview = null;
-    }
-    
-    // Reset variants to 5 empty fields
-    function resetVariants(container) {
-        container.innerHTML = '';
-        for (let i = 0; i < 5; i++) {
-            const variantDiv = document.createElement('div');
-            variantDiv.className = 'variant';
-            variantDiv.innerHTML = `
-                <input type="text" name="variantSize" placeholder="Size (e.g., 50 ML)" class="variant-size">
-                <input type="number" name="variantRegularPrice" placeholder="Regular Price" class="variant-regular-price">
-                <input type="number" name="variantSalePrice" placeholder="Sale Price (optional)" class="variant-sale-price">
-                <input type="number" name="variantQuantity" placeholder="Quantity" class="variant-quantity">
-                ${i === 0 ? '' : '<button type="button" class="remove-variant">Remove</button>'}
-            `;
-            container.appendChild(variantDiv);
+        
+        addImageUpload.addEventListener('click', () => {
+            addProductImage.click();
+        });
+        
+        editImageUpload.addEventListener('click', () => {
+            editProductImage.click();
+        });
+        
+        function handleImageChange(input, preview) {
+            input.addEventListener('change', async function(event) {
+                const files = Array.from(event.target.files);
+                const currentImages = preview.querySelectorAll('.thumbnail').length;
+                const newImagesCount = files.length;
+                if (currentImages + newImagesCount > 4) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Image Limit Exceeded',
+                        text: 'You can upload a maximum of 4 images.'
+                    });
+                    return;
+                }
+        
+                currentFiles = files;
+                currentInput = input;
+                currentPreview = preview;
+        
+                if (files.length > 0) {
+                    await processNextImage(0);
+                }
+            });
         }
-    }
-    
-    // Trigger file input for image upload
-    addImageUpload.addEventListener('click', () => {
-        addProductImage.click();
-    });
-    
-    editImageUpload.addEventListener('click', () => {
-        editProductImage.click();
-    });
-    
-    // Handle image selection and initiate cropping
-    function handleImageChange(input, preview) {
-        input.addEventListener('change', async function(event) {
-            const files = Array.from(event.target.files);
-            const currentImages = preview.querySelectorAll('.thumbnail').length;
-            const newImagesCount = files.length;
-            if (currentImages + newImagesCount > 4) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Image Limit Exceeded',
-                    text: 'You can upload a maximum of 4 images.'
-                });
+        
+        async function processNextImage(index) {
+            if (index >= currentFiles.length) {
+                currentFiles = [];
                 return;
             }
-    
-            currentFiles = files;
-            currentInput = input;
-            currentPreview = preview;
-    
-            if (files.length > 0) {
-                await processNextImage(0);
-            }
-        });
-    }
-    
-    // Process each image for cropping
-    async function processNextImage(index) {
-        if (index >= currentFiles.length) {
-            currentFiles = [];
-            return;
-        }
-    
-        const file = currentFiles[index];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            cropImage.src = e.target.result;
-            cropModal.style.display = 'block';
-    
-            // Initialize Cropper.js
-            cropper = new Cropper(cropImage, {
-                aspectRatio: 1, // Square crop
-                viewMode: 1,
-                autoCropArea: 0.8,
-                responsive: true,
-                zoomable: true,
-                scalable: true,
-                movable: true,
-                background: false,
-                guides: true
-            });
-    
-            // Handle crop confirm
-            cropConfirm.onclick = async () => {
-                const canvas = cropper.getCroppedCanvas({
-                    width: 300,
-                    height: 300,
-                    imageSmoothingQuality: 'high'
+        
+            const file = currentFiles[index];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                cropImage.src = e.target.result;
+                cropModal.style.display = 'block';
+        
+                cropper = new Cropper(cropImage, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    autoCropArea: 0.8,
+                    responsive: true,
+                    zoomable: true,
+                    scalable: true,
+                    movable: true,
+                    background: false,
+                    guides: true
                 });
-    
-                canvas.toBlob(blob => {
-                    const url = URL.createObjectURL(blob);
-                    const div = document.createElement('div');
-                    div.className = 'thumbnail';
-                    div.innerHTML = `
-                        <img src="${url}" alt="Product Image">
-                        <button type="button" class="remove-image">×</button>
-                    `;
-                    currentPreview.appendChild(div);
-    
-                    // Add cropped blob to array
-                    croppedBlobs.push({ blob, name: file.name });
-    
-                    // Update file input with cropped images
+        
+                cropConfirm.onclick = async () => {
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 300,
+                        height: 300,
+                        imageSmoothingQuality: 'high'
+                    });
+        
+                    canvas.toBlob(blob => {
+                        const url = URL.createObjectURL(blob);
+                        const div = document.createElement('div');
+                        div.className = 'thumbnail';
+                        div.innerHTML = `
+                            <img src="${url}" alt="Product Image">
+                            <button type="button" class="remove-image">×</button>
+                        `;
+                        currentPreview.appendChild(div);
+        
+                        croppedBlobs.push({ blob, name: file.name });
+        
+                        const dataTransfer = new DataTransfer();
+                        croppedBlobs.forEach(item => dataTransfer.items.add(new File([item.blob], item.name, { type: item.blob.type })));
+                        currentInput.files = dataTransfer.files;
+        
+                        cropper.destroy();
+                        cropper = null;
+                        cropImage.src = '';
+                        cropModal.style.display = 'none';
+        
+                        processNextImage(index + 1);
+                    }, 'image/jpeg', 0.8);
+                };
+        
+                cropCancel.onclick = () => {
+                    closeCropModalFunction();
+                    processNextImage(index + 1);
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        handleImageChange(addProductImage, addImagePreview);
+        handleImageChange(editProductImage, editImagePreview);
+        
+        function handleImageRemoval(preview, removedImagesInput) {
+            preview.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-image')) {
+                    const thumbnail = e.target.parentElement;
+                    const url = thumbnail.querySelector('img').getAttribute('data-url');
+                    if (url) {
+                        const currentRemoved = removedImagesInput.value ? removedImagesInput.value.split(',') : [];
+                        currentRemoved.push(url);
+                        removedImagesInput.value = currentRemoved.join(',');
+                    }
+                    const src = thumbnail.querySelector('img').src;
+                    croppedBlobs = croppedBlobs.filter(blob => URL.createObjectURL(blob.blob) !== src);
+                    thumbnail.remove();
+        
                     const dataTransfer = new DataTransfer();
                     croppedBlobs.forEach(item => dataTransfer.items.add(new File([item.blob], item.name, { type: item.blob.type })));
                     currentInput.files = dataTransfer.files;
-    
-                    // Destroy cropper and proceed to next image
-                    cropper.destroy();
-                    cropper = null;
-                    cropImage.src = '';
-                    cropModal.style.display = 'none';
-    
-                    processNextImage(index + 1);
-                }, 'image/jpeg', 0.8);
-            };
-    
-            // Handle crop cancel
-            cropCancel.onclick = () => {
-                closeCropModalFunction();
-                processNextImage(index + 1);
-            };
-        };
-        reader.readAsDataURL(file);
-    }
-    
-    handleImageChange(addProductImage, addImagePreview);
-    handleImageChange(editProductImage, editImagePreview);
-    
-    // Handle image removal
-    function handleImageRemoval(preview, removedImagesInput) {
-        preview.addEventListener('click', (e) => {
-            if (e.target.classList.contains('remove-image')) {
-                const thumbnail = e.target.parentElement;
-                const url = thumbnail.querySelector('img').getAttribute('data-url');
-                if (url) {
-                    const currentRemoved = removedImagesInput.value ? removedImagesInput.value.split(',') : [];
-                    currentRemoved.push(url);
-                    removedImagesInput.value = currentRemoved.join(',');
                 }
-                // Remove from croppedBlobs if it's a newly added image
-                const src = thumbnail.querySelector('img').src;
-                croppedBlobs = croppedBlobs.filter(blob => URL.createObjectURL(blob.blob) !== src);
-                thumbnail.remove();
-    
-                // Update file input
-                const dataTransfer = new DataTransfer();
-                croppedBlobs.forEach(item => dataTransfer.items.add(new File([item.blob], item.name, { type: item.blob.type })));
-                currentInput.files = dataTransfer.files;
-            }
-        });
-    }
-    
-    handleImageRemoval(addImagePreview, { value: '' });
-    handleImageRemoval(editImagePreview, removedImagesInput);
-    
-    // Add new variant
-    function addVariantHandler(btn, container) {
-        btn.addEventListener('click', () => {
-            const variants = container.querySelectorAll('.variant').length;
-            if (variants >= 5) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Variant Limit',
-                    text: 'You can only add exactly 5 variants.'
-                });
-                return;
-            }
-            const variantDiv = document.createElement('div');
-            variantDiv.className = 'variant';
-            variantDiv.innerHTML = `
-                <input type="text" name="variantSize" placeholder="Size (e.g., 50 ML)" class="variant-size">
-                <input type="number" name="variantRegularPrice" placeholder="Regular Price" class="variant-regular-price">
-                <input type="number" name="variantSalePrice" placeholder="Sale Price (optional)" class="variant-sale-price">
-                <input type="number" name="variantQuantity" placeholder="Quantity" class="variant-quantity">
-                <button type="button" class="remove-variant">Remove</button>
-            `;
-            container.appendChild(variantDiv);
-        });
-    }
-    
-    addVariantHandler(addVariantBtn, addVariantsContainer);
-    addVariantHandler(editVariantBtn, editVariantsContainer);
-    
-    // Remove variant
-    function removeVariantHandler(container) {
-        container.addEventListener('click', (e) => {
-            if (e.target.classList.contains('remove-variant')) {
-                const variants = container.querySelectorAll('.variant');
-                if (variants.length > 1) {
-                    e.target.parentElement.remove();
-                } else {
+            });
+        }
+        
+        handleImageRemoval(addImagePreview, { value: '' });
+        handleImageRemoval(editImagePreview, removedImagesInput);
+        
+        function addVariantHandler(btn, container) {
+            btn.addEventListener('click', () => {
+                const variants = container.querySelectorAll('.variant').length;
+                if (variants >= 5) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Cannot Remove',
-                        text: 'At least one variant is required.'
+                        title: 'Variant Limit',
+                        text: 'You can only add exactly 5 variants.'
                     });
+                    return;
                 }
-            }
-        });
-    }
-    
-    removeVariantHandler(addVariantsContainer);
-    removeVariantHandler(editVariantsContainer);
-    
-    // Handle edit button click
-    document.querySelectorAll('.edit-btn').forEach(button => {
-        button.addEventListener('click', async () => {
-            const productId = button.dataset.id;
-            try {
-                const response = await fetch(`/admin/getProduct/${productId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                    }
-                });
-                const product = await response.json();
-    
-                if (product.success) {
-                    // Populate form fields
-                    document.getElementById('editProductId').value = product.data._id;
-                    document.getElementById('editProductName').value = product.data.productName;
-                    document.getElementById('editProductDescription').value = product.data.productDescription;
-                    document.getElementById('editStatus').value = product.data.status;
-                    document.getElementById('editProductBrand').value = product.data.productBrand._id;
-                    document.getElementById('editProductCategory').value = product.data.productCategory._id;
-    
-                    // Populate images
-                    editImagePreview.innerHTML = '';
-                    if (product.data.productImage && product.data.productImage.length) {
-                        product.data.productImage.forEach(img => {
-                            const div = document.createElement('div');
-                            div.className = 'thumbnail';
-                            div.innerHTML = `
-                                <img src="${img}" alt="Product Image" data-url="${img}">
-                                <button type="button" class="remove-image">×</button>
-                                <input type="hidden" name="existingImages" value="${img}">
-                            `;
-                            editImagePreview.appendChild(div);
+                const variantDiv = document.createElement('div');
+                variantDiv.className = 'variant';
+                variantDiv.innerHTML = `
+                    <input type="text" name="variantSize" placeholder="Size (e.g., 50 ML)" class="variant-size">
+                    <input type="number" name="variantRegularPrice" placeholder="Regular Price" class="variant-regular-price">
+                    <input type="number" name="variantSalePrice" placeholder="Sale Price (optional)" class="variant-sale-price">
+                    <input type="number" name="variantQuantity" placeholder="Quantity" class="variant-quantity">
+                    <button type="button" class="remove-variant">Remove</button>
+                `;
+                container.appendChild(variantDiv);
+            });
+        }
+        
+        addVariantHandler(addVariantBtn, addVariantsContainer);
+        addVariantHandler(editVariantBtn, editVariantsContainer);
+        
+        function removeVariantHandler(container) {
+            container.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-variant')) {
+                    const variants = container.querySelectorAll('.variant');
+                    if (variants.length > 1) {
+                        e.target.parentElement.remove();
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Cannot Remove',
+                            text: 'At least one variant is required.'
                         });
                     }
-    
-                    // Populate variants (ensure exactly 5 variants)
-                    editVariantsContainer.innerHTML = '';
-                    const variants = product.data.variants || [];
-                    for (let i = 0; i < 5; i++) {
-                        const variant = variants[i] || {};
-                        const variantDiv = document.createElement('div');
-                        variantDiv.className = 'variant';
-                        variantDiv.innerHTML = `
-                            <input type="text" name="variantSize" placeholder="Size (e.g., 50 ML)" class="variant-size" value="${variant.size || ''}">
-                            <input type="number" name="variantRegularPrice" placeholder="Regular Price" class="variant-regular-price" value="${variant.regularPrice || ''}">
-                            <input type="number" name="variantSalePrice" placeholder="Sale Price (optional)" class="variant-sale-price" value="${variant.salePrice || ''}">
-                            <input type="number" name="variantQuantity" placeholder="Quantity" class="variant-quantity" value="${variant.quantity || ''}">
-                            ${i === 0 ? '' : '<button type="button" class="remove-variant">Remove</button>'}
-                        `;
-                        editVariantsContainer.appendChild(variantDiv);
+                }
+            });
+        }
+        
+        removeVariantHandler(addVariantsContainer);
+        removeVariantHandler(editVariantsContainer);
+        
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const productId = button.dataset.id;
+                try {
+                    const response = await fetch(`/admin/getProduct/${productId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                        }
+                    });
+                    const product = await response.json();
+        
+                    if (product.success) {
+                        document.getElementById('editProductId').value = product.data._id;
+                        document.getElementById('editProductName').value = product.data.productName;
+                        document.getElementById('editProductDescription').value = product.data.productDescription;
+                        document.getElementById('editStatus').value = product.data.status;
+                        document.getElementById('editProductBrand').value = product.data.productBrand._id;
+                        document.getElementById('editProductCategory').value = product.data.productCategory._id;
+        
+                        editImagePreview.innerHTML = '';
+                        if (product.data.productImage && product.data.productImage.length) {
+                            product.data.productImage.forEach(img => {
+                                const div = document.createElement('div');
+                                div.className = 'thumbnail';
+                                div.innerHTML = `
+                                    <img src="${img}" alt="Product Image" data-url="${img}">
+                                    <button type="button" class="remove-image">×</button>
+                                    <input type="hidden" name="existingImages" value="${img}">
+                                `;
+                                editImagePreview.appendChild(div);
+                            });
+                        }
+        
+                        editVariantsContainer.innerHTML = '';
+                        const variants = product.data.variants || [];
+                        for (let i = 0; i < variants.length; i++) {
+                            const variant = variants[i] || {};
+                            const variantDiv = document.createElement('div');
+                            variantDiv.className = 'variant';
+                            variantDiv.innerHTML = `
+                                <input type="text" name="variantSize" placeholder="Size (e.g., 50 ML)" class="variant-size" value="${variant.size || ''}">
+                                <input type="number" name="variantRegularPrice" placeholder="Regular Price" class="variant-regular-price" value="${variant.regularPrice || ''}">
+                                <input type="number" name="variantSalePrice" placeholder="Sale Price (optional)" class="variant-sale-price" value="${variant.salePrice || ''}">
+                                <input type="number" name="variantQuantity" placeholder="Quantity" class="variant-quantity" value="${variant.quantity || ''}">
+                                ${i === 0 ? '' : '<button type="button" class="remove-variant">Remove</button>'}
+                            `;
+                            editVariantsContainer.appendChild(variantDiv);
+                        }
+        
+                        editProductModal.style.display = 'block';
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: product.message || 'Failed to load product data'
+                        });
                     }
-    
-                    editProductModal.style.display = 'block';
-                } else {
+                } catch (error) {
+                    console.error('Fetch error:', error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: product.message || 'Failed to load product data'
+                        text: 'Failed to load product data'
                     });
                 }
-            } catch (error) {
-                console.error('Fetch error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to load product data'
-                });
-            }
-        });
-    });
-    
-    // Validate product form
-    function validateProductForm(form, isEdit = false) {
-        clearProductErrorMessages(form);
-    
-        const name = form.querySelector(isEdit ? '#editProductName' : '#productName').value.trim();
-        const brand = form.querySelector(isEdit ? '#editProductBrand' : '#productBrand').value.trim();
-        const category = form.querySelector(isEdit ? '#editProductCategory' : '#productCategory').value.trim();
-        const description = form.querySelector(isEdit ? '#editProductDescription' : '#productDescription').value.trim();
-        const status = form.querySelector(isEdit ? '#editStatus' : '#status').value.trim();
-        const variants = Array.from(form.querySelectorAll('.variant')).map(variant => ({
-            size: variant.querySelector('.variant-size').value.trim(),
-            regularPrice: variant.querySelector('.variant-regular-price').value.trim(),
-            salePrice: variant.querySelector('.variant-sale-price').value.trim(),
-            quantity: variant.querySelector('.variant-quantity').value.trim()
-        }));
-        const images = form.querySelectorAll(isEdit ? '#editImagePreview .thumbnail' : '#addImagePreview .thumbnail').length;
-    
-        let isValid = true;
-    
-        // Field validations
-        if (!name) {
-            displayProductErrorMessage(form, isEdit ? 'editNameError' : 'nameError', 'Product name is required');
-            isValid = false;
-        }
-        if (!brand) {
-            displayProductErrorMessage(form, isEdit ? 'editBrandError' : 'brandError', 'Brand is required');
-            isValid = false;
-        }
-        if (!category) {
-            displayProductErrorMessage(form, isEdit ? 'editCategoryError' : 'categoryError', 'Category is required');
-            isValid = false;
-        }
-        if (!description) {
-            displayProductErrorMessage(form, isEdit ? 'editDescriptionError' : 'descriptionError', 'Description is required');
-            isValid = false;
-        }
-        if (!status) {
-            displayProductErrorMessage(form, isEdit ? 'editStatusError' : 'statusError', 'Status is required');
-            isValid = false;
-        }
-    
-        // Image validation: 3 to 4 images
-        if (images < 3) {
-            displayProductErrorMessage(form, isEdit ? 'editImageError' : 'addImageError', 'At least 3 images are required');
-            isValid = false;
-        }
-        if (images > 4) {
-            displayProductErrorMessage(form, isEdit ? 'editImageError' : 'addImageError', 'Maximum of 4 images allowed');
-            isValid = false;
-        }
-    
-        // Variant validation
-        if (variants.length > 5) {
-            displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', 'Maximum 5 variants are allowed');
-            isValid = false;
-        }
-        variants.forEach((variant, index) => {
-            if (!variant.size) {
-                displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Size is required`);
-                isValid = false;
-            }
-            if (!variant.regularPrice) {
-                displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Regular price is required`);
-                isValid = false;
-            } else if (isNaN(variant.regularPrice) || parseFloat(variant.regularPrice) <= 0) {
-                displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Regular price must be positive`);
-                isValid = false;
-            }
-            if (variant.salePrice && (isNaN(variant.salePrice) || parseFloat(variant.salePrice) < 0)) {
-                displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Sale price must be non-negative`);
-                isValid = false;
-            }
-            if (variant.salePrice && parseFloat(variant.salePrice) >= parseFloat(variant.regularPrice)) {
-                displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Sale price must be less than regular price`);
-                isValid = false;
-            }
-            if (!variant.quantity) {
-                displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Quantity is required`);
-                isValid = false;
-            } else if (isNaN(variant.quantity) || parseInt(variant.quantity) < 0) {
-                displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Quantity must be non-negative`);
-                isValid = false;
-            }
-        });
-    
-        if (!isValid) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validation Error',
-                text: 'Please fill all fields correctly'
             });
-        }
-    
-        return isValid;
-    }
-    
-    // Add product form submission
-    let isAddProductSubmitting = false;
-    addProductForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (isAddProductSubmitting) return;
-        isAddProductSubmitting = true;
-        const submitButton = document.getElementById('addProductSubmitBtn');
-        const loadingOverlay = document.getElementById('addProductLoadingOverlay');
-        submitButton.disabled = true;
-        loadingOverlay.classList.remove('d-none');
-    
-        if (validateProductForm(addProductForm)) {
-            const formData = new FormData(addProductForm);
-            const variants = Array.from(addVariantsContainer.querySelectorAll('.variant')).map(variant => ({
+        });
+        
+        // Validate product form
+        function validateProductForm(form, isEdit = false) {
+            clearProductErrorMessages(form);
+        
+            const name = form.querySelector(isEdit ? '#editProductName' : '#productName').value.trim();
+            const brand = form.querySelector(isEdit ? '#editProductBrand' : '#productBrand').value.trim();
+            const category = form.querySelector(isEdit ? '#editProductCategory' : '#productCategory').value.trim();
+            const description = form.querySelector(isEdit ? '#editProductDescription' : '#productDescription').value.trim();
+            const status = form.querySelector(isEdit ? '#editStatus' : '#status').value.trim();
+            const variants = Array.from(form.querySelectorAll('.variant')).map(variant => ({
                 size: variant.querySelector('.variant-size').value.trim(),
                 regularPrice: variant.querySelector('.variant-regular-price').value.trim(),
                 salePrice: variant.querySelector('.variant-sale-price').value.trim(),
                 quantity: variant.querySelector('.variant-quantity').value.trim()
             }));
-            formData.append('variants', JSON.stringify(variants));
-    
-            try {
-                const response = await fetch('/admin/addProduct', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                    }
+            const images = form.querySelectorAll(isEdit ? '#editImagePreview .thumbnail' : '#addImagePreview .thumbnail').length;
+        
+            let isValid = true;
+        
+            // Field validations
+            if (!name) {
+                displayProductErrorMessage(form, isEdit ? 'editNameError' : 'nameError', 'Product name is required');
+                isValid = false;
+            }
+            if (!brand) {
+                displayProductErrorMessage(form, isEdit ? 'editBrandError' : 'brandError', 'Brand is required');
+                isValid = false;
+            }
+            if (!category) {
+                displayProductErrorMessage(form, isEdit ? 'editCategoryError' : 'categoryError', 'Category is required');
+                isValid = false;
+            }
+            if (!description) {
+                displayProductErrorMessage(form, isEdit ? 'editDescriptionError' : 'descriptionError', 'Description is required');
+                isValid = false;
+            }
+            if (!status) {
+                displayProductErrorMessage(form, isEdit ? 'editStatusError' : 'statusError', 'Status is required');
+                isValid = false;
+            }
+        
+            // Image validation: 3 to 4 images
+            if (images < 3) {
+                displayProductErrorMessage(form, isEdit ? 'editImageError' : 'addImageError', 'At least 3 images are required');
+                isValid = false;
+            }
+            if (images > 4) {
+                displayProductErrorMessage(form, isEdit ? 'editImageError' : 'addImageError', 'Maximum of 4 images allowed');
+                isValid = false;
+            }
+        
+            // Variant validation
+            if (variants.length > 5) {
+                displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', 'Maximum 5 variants are allowed');
+                isValid = false;
+            }
+            variants.forEach((variant, index) => {
+                if (!variant.size) {
+                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Size is required`);
+                    isValid = false;
+                }
+                if (!variant.regularPrice) {
+                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Regular price is required`);
+                    isValid = false;
+                } else if (isNaN(variant.regularPrice) || parseFloat(variant.regularPrice) <= 0) {
+                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Regular price must be positive`);
+                    isValid = false;
+                }
+                if (variant.salePrice && (isNaN(variant.salePrice) || parseFloat(variant.salePrice) < 0)) {
+                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Sale price must be non-negative`);
+                    isValid = false;
+                }
+                if (variant.salePrice && parseFloat(variant.salePrice) >= parseFloat(variant.regularPrice)) {
+                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Sale price must be less than regular price`);
+                    isValid = false;
+                }
+                if (!variant.quantity) {
+                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Quantity is required`);
+                    isValid = false;
+                } else if (isNaN(variant.quantity) || parseInt(variant.quantity) < 0) {
+                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Quantity must be non-negative`);
+                    isValid = false;
+                }
+            });
+        
+            if (!isValid) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Please fill all fields correctly'
                 });
-                const result = await response.json();
-                if (result.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: result.message,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.reload();
+            }
+        
+            return isValid;
+        }
+        
+        // Add product form submission
+        let isAddProductSubmitting = false;
+        addProductForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (isAddProductSubmitting) return;
+            isAddProductSubmitting = true;
+            const submitButton = document.getElementById('addProductSubmitBtn');
+            const loadingOverlay = document.getElementById('addProductLoadingOverlay');
+            submitButton.disabled = true;
+            loadingOverlay.classList.remove('d-none');
+        
+            if (validateProductForm(addProductForm)) {
+                const formData = new FormData(addProductForm);
+                const variants = Array.from(addVariantsContainer.querySelectorAll('.variant')).map(variant => ({
+                    size: variant.querySelector('.variant-size').value.trim(),
+                    regularPrice: variant.querySelector('.variant-regular-price').value.trim(),
+                    salePrice: variant.querySelector('.variant-sale-price').value.trim(),
+                    quantity: variant.querySelector('.variant-quantity').value.trim()
+                }));
+                formData.append('variants', JSON.stringify(variants));
+        
+                try {
+                    const response = await fetch('/admin/addProduct', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                        }
                     });
-                } else {
+                    const result = await response.json();
+                    if (result.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: result.message,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: result.message
+                        });
+                    }
+                } catch (error) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: result.message
+                        text: 'Failed to add product'
                     });
+                } finally {
+                    isAddProductSubmitting = false;
+                    submitButton.disabled = false;
+                    loadingOverlay.classList.add('d-none');
                 }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to add product'
-                });
-            } finally {
+            } else {
                 isAddProductSubmitting = false;
                 submitButton.disabled = false;
                 loadingOverlay.classList.add('d-none');
             }
-        } else {
-            isAddProductSubmitting = false;
-            submitButton.disabled = false;
-            loadingOverlay.classList.add('d-none');
-        }
-    });
-    
-    // Edit product form submission
-    let isEditProductSubmitting = false;
-    editProductForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (isEditProductSubmitting) return;
-        isEditProductSubmitting = true;
-        const submitButton = document.getElementById('editProductSubmitBtn');
-        const loadingOverlay = document.getElementById('editProductLoadingOverlay');
-        submitButton.disabled = true;
-        loadingOverlay.classList.remove('d-none');
-    
-        if (validateProductForm(editProductForm, true)) {
-            const formData = new FormData(editProductForm);
-            const variants = Array.from(editVariantsContainer.querySelectorAll('.variant')).map(variant => ({
-                size: variant.querySelector('.variant-size').value.trim(),
-                regularPrice: variant.querySelector('.variant-regular-price').value.trim(),
-                salePrice: variant.querySelector('.variant-sale-price').value.trim(),
-                quantity: variant.querySelector('.variant-quantity').value.trim()
-            }));
-            formData.append('variants', JSON.stringify(variants));
-    
-            try {
-                const response = await fetch('/admin/editProduct', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                    }
-                });
-                const result = await response.json();
-                if (result.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: result.message,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.reload();
+        });
+        
+        // Edit product form submission
+        let isEditProductSubmitting = false;
+        editProductForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (isEditProductSubmitting) return;
+            isEditProductSubmitting = true;
+            const submitButton = document.getElementById('editProductSubmitBtn');
+            const loadingOverlay = document.getElementById('editProductLoadingOverlay');
+            submitButton.disabled = true;
+            loadingOverlay.classList.remove('d-none');
+        
+            if (validateProductForm(editProductForm, true)) {
+                const formData = new FormData(editProductForm);
+                const variants = Array.from(editVariantsContainer.querySelectorAll('.variant')).map(variant => ({
+                    size: variant.querySelector('.variant-size').value.trim(),
+                    regularPrice: variant.querySelector('.variant-regular-price').value.trim(),
+                    salePrice: variant.querySelector('.variant-sale-price').value.trim(),
+                    quantity: variant.querySelector('.variant-quantity').value.trim()
+                }));
+                formData.append('variants', JSON.stringify(variants));
+        
+                try {
+                    const response = await fetch('/admin/editProduct', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                        }
                     });
-                } else {
+                    const result = await response.json();
+                    if (result.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: result.message,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: result.message
+                        });
+                    }
+                } catch (error) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: result.message
+                        text: 'Failed to update product'
                     });
+                } finally {
+                    isEditProductSubmitting = false;
+                    submitButton.disabled = false;
+                    loadingOverlay.classList.add('d-none');
                 }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to update product'
-                });
-            } finally {
+            } else {
                 isEditProductSubmitting = false;
                 submitButton.disabled = false;
                 loadingOverlay.classList.add('d-none');
             }
-        } else {
-            isEditProductSubmitting = false;
-            submitButton.disabled = false;
-            loadingOverlay.classList.add('d-none');
+        });
+        
+        // Delete product
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const productId = button.getAttribute('data-id');
+                await deleteProduct(productId);
+            });
+        });
+        
+        async function deleteProduct(productId) {
+            const confirmDelete = await Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you want to delete this product?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            });
+        
+            if (confirmDelete.isConfirmed) {
+                try {
+                    const response = await fetch(`/admin/deleteProduct/${productId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                        }
+                    });
+                    const result = await response.json();
+        
+                    if (result.success) {
+                        await Swal.fire('Deleted!', 'The product was deleted successfully.', 'success');
+                        location.reload();
+                    } else {
+                        Swal.fire('Error!', result.message || 'Something went wrong.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    Swal.fire('Error!', 'Failed to delete product', 'error');
+                }
+            }
         }
-    });
-    
-    // Delete product
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', async () => {
-            const productId = button.getAttribute('data-id');
-            await deleteProduct(productId);
-        });
-    });
-    
-    async function deleteProduct(productId) {
-        const confirmDelete = await Swal.fire({
-            title: 'Are you sure?',
-            text: 'Do you want to delete this product?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel'
-        });
-    
-        if (confirmDelete.isConfirmed) {
+        
+        // Search and sort products
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
+        
+        async function fetchProducts(search = '', sort = 'newest') {
             try {
-                const response = await fetch(`/admin/deleteProduct/${productId}`, {
-                    method: 'GET',
+                const response = await fetch(`/admin/products?search=${encodeURIComponent(search)}&sort=${sort}`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
                     }
                 });
-                const result = await response.json();
-    
-                if (result.success) {
-                    await Swal.fire('Deleted!', 'The product was deleted successfully.', 'success');
-                    location.reload();
-                } else {
-                    Swal.fire('Error!', result.message || 'Something went wrong.', 'error');
-                }
+                const data = await response.text();
+                document.querySelector('tbody').innerHTML = new DOMParser()
+                    .parseFromString(data, 'text/html')
+                    .querySelector('tbody').innerHTML;
             } catch (error) {
-                console.error('Fetch error:', error);
-                Swal.fire('Error!', 'Failed to delete product', 'error');
+                console.error('Error fetching products:', error);
             }
         }
-    }
-    
-    // Search and sort products
-    const searchInput = document.getElementById('searchInput');
-    const sortSelect = document.getElementById('sortSelect');
-    
-    async function fetchProducts(search = '', sort = 'newest') {
-        try {
-            const response = await fetch(`/admin/products?search=${encodeURIComponent(search)}&sort=${sort}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                }
-            });
-            const data = await response.text();
-            document.querySelector('tbody').innerHTML = new DOMParser()
-                .parseFromString(data, 'text/html')
-                .querySelector('tbody').innerHTML;
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        }
-    }
-    
-    searchInput.addEventListener('input', () => {
-        fetchProducts(searchInput.value, sortSelect.value);
-    });
-    
-    sortSelect.addEventListener('change', () => {
-        fetchProducts(searchInput.value, sortSelect.value);
-    });
-    
-    // Error handling utilities
-    function displayProductErrorMessage(form, elementId, message) {
-        let errorElement = form.querySelector(`#${elementId}`);
-        if (!errorElement) {
-            errorElement = document.createElement('div');
-            errorElement.id = elementId;
-            errorElement.className = 'error-message';
-            const parent = form.querySelector(`#${elementId.replace('Error', '')}`)?.parentNode;
-            if (parent) {
-                parent.appendChild(errorElement);
-            } else {
-                form.querySelector('.form-group').appendChild(errorElement);
-            }
-        }
-        errorElement.innerHTML = message;
-        errorElement.style.display = 'block';
-    }
-    
-    function clearProductErrorMessages(form) {
-        const errorElements = form.querySelectorAll('.error-message');
-        errorElements.forEach(element => {
-            element.innerHTML = '';
-            element.style.display = 'none';
+        
+        searchInput.addEventListener('input', () => {
+            fetchProducts(searchInput.value, sortSelect.value);
         });
-    }
+        
+        sortSelect.addEventListener('change', () => {
+            fetchProducts(searchInput.value, sortSelect.value);
+        });
+        
+        // Error handling utilities
+        function displayProductErrorMessage(form, elementId, message) {
+            let errorElement = form.querySelector(`#${elementId}`);
+            if (!errorElement) {
+                errorElement = document.createElement('div');
+                errorElement.id = elementId;
+                errorElement.className = 'error-message';
+                const parent = form.querySelector(`#${elementId.replace('Error', '')}`)?.parentNode;
+                if (parent) {
+                    parent.appendChild(errorElement);
+                } else {
+                    form.querySelector('.form-group').appendChild(errorElement);
+                }
+            }
+            errorElement.innerHTML = message;
+            errorElement.style.display = 'block';
+        }
+        
+        function clearProductErrorMessages(form) {
+            const errorElements = form.querySelectorAll('.error-message');
+            errorElements.forEach(element => {
+                element.innerHTML = '';
+                element.style.display = 'none';
+            });
+        }
     </script>
 </body>
 </html>

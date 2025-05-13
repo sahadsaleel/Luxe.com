@@ -1,0 +1,329 @@
+ :root {
+      --gucci-purple: #8a6a94;
+      --gucci-gold: #d4af37;
+      --gucci-dark: #212121;
+      --gucci-light: #f9f9f9;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+      background: #fff;
+    }
+    .filter-button, .sort-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      color: var(--gucci-dark);
+    }
+    .filter-button svg, .sort-button svg {
+      margin-right: 8px;
+    }
+    .modal {
+      position: fixed;
+      top: 90px;
+      background-color: white;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      max-width: 450px;
+      width: 90%;
+      padding: 20px;
+      z-index: 100;
+      display: none;
+    }
+    .filter-modal {
+      left: 20px;
+    }
+    .sort-modal {
+        position: absolute;
+        right: 20px !important;
+        left: auto !important;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--gucci-dark);
+    }
+    .filter-section {
+      margin-bottom: 20px;
+    }
+    .filter-title {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      margin-bottom: 15px;
+      cursor: pointer;
+      color: var(--gucci-dark);
+    }
+    .filter-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .filter-options.show {
+      max-height: 500px;
+    }
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--gucci-dark);
+    }
+    input[type="checkbox"], input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gucci-purple);
+    }
+    .price-range {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .price-input {
+      width: 120px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+      color: var(--gucci-dark);
+    }
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .clear-button {
+      flex: 1;
+      padding: 12px;
+      background: white;
+      border: 1px solid var(--gucci-dark);
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--gucci-dark);
+    }
+    .show-button {
+      flex: 1;
+      padding: 12px;
+      background: var(--gucci-purple);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .arrow-icon {
+      transition: transform 0.3s ease;
+    }
+    .arrow-icon.rotate {
+      transform: rotate(180deg);
+    }
+    .hero {
+      margin: 20px 0;
+    }
+    .hero-image img {
+      width: 100%;
+      height: auto;
+    }
+    .section-title {
+      font-size: 2rem;
+      text-align: center;
+      margin: 40px 0;
+      color: var(--gucci-dark);
+      letter-spacing: 2px;
+    }
+    .celebrity-products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 0 20px;
+    }
+    .product-card {
+      position: relative;
+      width: 250px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+    .product-card:hover {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      transform: translateY(-5px);
+    }
+    .wishlist-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .wishlist-btn i {
+      color: var(--gucci-purple);
+    }
+    .wishlist-btn i.fa-solid {
+      color: var(--gucci-gold);
+    }
+    .product-image img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .product-info {
+      padding: 10px;
+      text-align: center;
+    }
+    .product-title {
+      font-size: 16px;
+      margin: 0 0 5px;
+      color: var(--gucci-dark);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .product-price {
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--gucci-dark);
+      margin: 0 0 10px;
+    }
+    .add-to-cart {
+      width: 100%;
+      padding: 10px;
+      background: white;
+      border: 1px solid var(--gucci-dark);
+      border-radius: 5px;
+      cursor: pointer;
+      color: var(--gucci-dark);
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .add-to-cart:hover {
+      background: var(--gucci-purple);
+      color: white;
+    }
+    .no-products {
+      text-align: center;
+      padding: 40px;
+      color: var(--gucci-dark);
+    }
+    @media (max-width: 768px) {
+        .sort-modal {
+            right: 10px;
+            width: 200px; 
+        }
+    }
+
+    /* public/css/shop.css */
+.toast {
+  min-width: 250px;
+  margin-bottom: 1rem;
+}
+
+.bg-success {
+  background-color: #28a745 !important;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.btn-close-white {
+  filter: invert(1);
+}
+
+.wishlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #333;
+}
+
+.wishlist-btn:hover i {
+  color: #ff0000;
+}
+
+.product-card {
+  position: relative;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 15px;
+  transition: box-shadow 0.3s;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.product-info {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.product-title {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+.product-price {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.add-to-cart {
+  width: 100%;
+  padding: 10px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-to-cart:hover {
+  background-color: #333;
+}

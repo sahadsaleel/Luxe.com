@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Wishlist | Luxury Fragrances</title>
+  <link rel="stylesheet" href="/css/userWishlist.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+  <%- include('../../views/partials/user/header') %>
+  <div class="breadcrumb-container">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/profile">My Account</a></li>
+      <li class="breadcrumb-item active">Wishlist</li>
+    </ol>
+  </div>
+
+  <div class="page-title">
+    <h1>My Wishlist</h1>
+  </div>
+
+  <div class="wishlist-container">
+    <div class="wishlist-header">
+      <div>Product</div>
+      <div>Price</div>
+      <div>Availability</div>
+      <div>Options</div>
+      <div></div>
+    </div>
+    <div class="wishlist-items">
+      <% if (wishlist && wishlist.products.length > 0) { %>
+        <% wishlist.products.forEach(item => { %>
+          <% if (item.productId) { %>
+            <div class="wishlist-item">
+              <div class="product-info">
+                <img src="<%= item.productId.productImage[0] || '/img/placeholder.png' %>" alt="<%= item.productId.productName %>" class="product-image">
+                <div class="product-details">
+                  <h3><%= item.productId.productName %></h3>
+                  <p>Added on: <%= new Date(item.addedOn).toLocaleDateString() %></p>
+                </div>
+              </div>
+              <div class="product-price">
+                ₹<%= item.productId.variants[0].salePrice > 0 ? item.productId.variants[0].salePrice : item.productId.variants[0].regularPrice %>
+              </div>
+              <div class="availability <%= item.productId.variants[0].quantity > 0 ? '' : 'out-of-stock' %>">
+                <%= item.productId.variants[0].quantity > 0 ? 'In Stock' : 'Out of Stock' %>
+              </div>
+              <div class="actions">
+                <button class="btn" onclick="addToCart('<%= item.productId._id %>')" <%= item.productId.variants[0].quantity > 0 ? '' : 'disabled style="opacity: 0.6; cursor: not-allowed;"' %>>Add to Cart</button>
+              </div>
+              <button class="wishlist-btn" data-product-id="<%= item.productId._id %>" aria-label="Remove from wishlist">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          <% } %>
+        <% }) %>
+      <% } else { %>
+        <p>Your wishlist is empty.</p>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="toast-container">
+  </div>
+  <%- include("../../views/partials/user/footer") %>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/wishlist.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initialize wishlist buttons
+      document.querySelectorAll('.wishlist-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          toggleWishlist(button.dataset.productId, button).then(() => {
+            // Remove the item from the DOM with animation
+            const itemElement = button.closest('.wishlist-item');
+            itemElement.style.transition = 'all 0.3s ease';
+            itemElement.style.opacity = '0';
+            itemElement.style.transform = 'translateX(20px)';
+            setTimeout(() => {
+              itemElement.remove();
+              if (!document.querySelector('.wishlist-item')) {
+                document.querySelector('.wishlist-items').innerHTML = '<p>Your wishlist is empty.</p>';
+              }
+            }, 300);
+          });
+        });
+      });
+
+      async function addToCart(productId) {
+        try {
+          const response = await fetch('/addToCart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId }),
+          });
+          const result = await response.json();
+          showToast(result.message || 'Added to cart', 'success');
+        } catch (error) {
+          console.error('Error adding to cart:', error);
+          showToast('Failed to add to cart. Please try again.', 'error');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -3,186 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Page</title>
+  <title><%= product.productName %></title>
   <link rel="stylesheet" href="/css/home.css">
+  <link rel="stylesheet" href="/css/productViewPage.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
   <style>
     :root {
+      --gucci-dark: #1a1a1a;
       --gucci-purple: #8a6a94;
-      --gucci-gold: #d4af37;
-      --gucci-dark: #212121;
-      --gucci-light: #f9f9f9;
-      --gucci-accent: #e6c9e1;
     }
 
-    body {
-      background-color: var(--gucci-light);
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-    }
-    
-    .breadcrumb-item a {
-      color: var(--gucci-dark);
-      text-decoration: none;
-    }
-    
-    .product-image-container {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 700px;
-      background-color: #fff;
-    }
-    
-    .product-image {
-      position: relative;
-      height: 100%;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-    
-    .product-image img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
-    
-    .img-zoom-lens {
-      position: absolute;
-      border: 2px solid var(--gucci-purple);
-      width: 120px;
-      height: 120px;
-      background: rgba(255, 255, 255, 0.3);
-      cursor: none;
-      display: none;
-      border-radius: 50%;
-      pointer-events: none;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-    
-    .img-zoom-result {
-      position: absolute;
-      right: -350px;
-      top: 0;
-      border: 1px solid var(--gucci-dark);
-      width: 400px;
-      height: 400px;
-      background-color: white;
-      display: none;
-      overflow: hidden;
-      z-index: 100;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      background-repeat: no-repeat;
-    }
-    
-    .thumbnail-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      height: 700px;
-      overflow-y: auto;
-    }
-    
-    .thumbnail {
-      width: 80px;
-      height: 80px;
-      border: 1px solid #ddd;
-      padding: 5px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .thumbnail:hover, .thumbnail.active {
-      border-color: var(--gucci-purple);
-    }
-    
-    .thumbnail img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .product-details-card {
-      border: none;
-      border-radius: 0;
-      padding: 20px;
-      background-color: white;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    
-    .product-price {
-      margin: 15px 0;
-      color: var(--gucci-dark);
-      font-size: 1.8rem;
-      font-weight: bold;
-    }
-    
-    .size-dropdown {
-      width: 120px;
-      margin: 10px 0;
-      border-radius: 0;
-      border-color: var(--gucci-dark);
-    }
-    
-    .custom-select {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-      max-width: 200px;
-    }
-    
-    .custom-select select {
-      appearance: none;
-      -webkit-appearance: none;
-      padding: 10px 35px 10px 15px;
-      background-color: white;
-      border: 1px solid var(--gucci-dark);
-      border-radius: 0;
-      font-size: 14px;
-      cursor: pointer;
-      width: 100%;
-    }
-    
-    .custom-select::after {
-      content: '\f107';
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-    }
-    
     .purchase-buttons {
       display: flex;
       gap: 10px;
       margin-top: 15px;
     }
-    
+
     .btn-add-to-bag {
       flex: 1;
       background-color: white;
       color: var(--gucci-dark);
       border: 1px solid var(--gucci-dark);
-      border-radius: 5;
+      border-radius: 5px;
       padding: 12px 0;
       text-transform: uppercase;
       font-weight: 500;
       letter-spacing: 1px;
       transition: all 0.3s ease;
     }
-    
+
     .btn-add-to-bag:hover {
       background-color: #000000;
-      color:white;
+      color: white;
     }
-    
+
     .btn-buy-now {
       flex: 1;
       background-color: var(--gucci-purple);
@@ -195,415 +50,248 @@
       letter-spacing: 1px;
       transition: all 0.3s ease;
     }
-    
+
     .btn-buy-now:hover {
       background-color: var(--gucci-dark);
       color: white;
     }
-    
-    .section-title {
-      font-size: 1.8rem;
-      font-weight: bold;
-      text-align: center;
-      margin: 40px 0 20px;
-      color: var(--gucci-dark);
-      letter-spacing: 2px;
+
+    .btn-add-to-bag:disabled,
+    .btn-buy-now:disabled,
+    .wishlist-icon:disabled,
+    .btn-wishlist:disabled {
+      background-color: #cccccc;
+      color: #666666;
+      border-color: #cccccc;
+      cursor: not-allowed;
+      opacity: 0.6;
     }
-    h2.section-title {
-      margin-bottom: 60px;
-    }
-    
-    .accordion-button {
-      background-color: transparent;
-      padding: 15px 0;
-      border-bottom: 1px solid #ddd;
-      color: var(--gucci-dark);
-    }
-    
-    .accordion-button:not(.collapsed) {
-      background-color: transparent;
-      box-shadow: none;
-      color: var(--gucci-purple);
-    }
-    
-    .accordion-body {
-      padding: 15px 0;
-    }
-    
-    .info-badge {
-      background-color: transparent;
-      border: 1px solid #ddd;
-      border-radius: 0;
-      color: var(--gucci-dark);
-      margin-right: 10px;
-      margin-bottom: 10px;
-      padding: 8px 15px;
-    }
-    
-    .wishlist-icon {
-      border: none;
-      background: transparent;
-      font-size: 1.5rem;
-      color: var(--gucci-purple);
-      transition: all 0.3s ease;
-    }
-    
-    .wishlist-icon:hover {
-      color: var(--gucci-gold);
-    }
-    
-    .product-specs .row {
-      border-bottom: 1px solid #eee;
-      padding: 8px 0;
-    }
-    
-    .product-specs .col-6:first-child {
-      font-weight: 500;
-      color: var(--gucci-dark);
-    }
-    
-    .product-specs .col-6:last-child {
-      color: #666;
-    }
-    
-    .fragrance-note {
-      display: inline-block;
-      background-color: var(--gucci-accent);
-      color: var(--gucci-dark);
-      padding: 5px 15px;
-      margin: 5px;
-      border-radius: 20px;
+
+    .purchase-buttons .btn {
       font-size: 0.85rem;
-    }
-    
-    .size-option {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    
-    .size-option label {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px;
-      border: 1px solid #ddd;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .size-option input[type="radio"] {
-      display: none;
-    }
-    
-    .size-option input[type="radio"]:checked + label {
-      border-color: var(--gucci-purple);
-      background-color: var(--gucci-accent);
-    }
-    
-    .size-option label span:first-child {
-      font-weight: bold;
-      font-size: 1.1rem;
-    }
-    
-    .size-option label span:last-child {
-      font-size: 0.9rem;
-      color: var(--gucci-dark);
-      font-weight: bold;
-    }
-    
-    .gift-option {
-      margin-top: 20px;
-      padding: 15px;
-      border: 1px solid #ddd;
-      background-color: #f9f9f9;
-    }
-    
-    .gift-option-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 500;
-      margin-bottom: 10px;
-    }
-    
-    .gift-option-title i {
-      color: var(--gucci-gold);
-    }
-    
-    .zoom-modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.9);
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .zoom-modal-content {
-      margin: auto;
-      display: block;
-      max-width: 90%;
-      max-height: 90%;
-      object-fit: contain;
-    }
-    
-    .zoom-close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      color: #fff;
-      font-size: 40px;
-      font-weight: bold;
-      transition: 0.3s;
-      cursor: pointer;
-    }
-    
-    .zoom-close:hover {
-      color: var(--gucci-gold);
-    }
-    
-    @media (max-width: 1200px) {
-      .img-zoom-result {
-        right: -320px;
-        width: 350px;
-        height: 350px;
-      }
-    }
-    
-    @media (max-width: 992px) {
-      .img-zoom-lens,
-      .img-zoom-result {
-        display: none !important;
-      }
-      .product-image img {
-        cursor: zoom-in;
-      }
-    }
-    
-    @media (max-width: 767px) {
-      .product-image-container {
-        height: 500px;
-      } 
-      .thumbnail-container {
-        flex-direction: row;
-        height: auto;
-        overflow-x: auto;
-        overflow-y: hidden;
-        margin-top: 15px;
-      }
-    }
-    
-    .breadcrumb {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 12px 16px;
-      margin: 0;
-      list-style: none;
-      background-color: #f8f9fa;
-      border-radius: 8px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+摄像头
     }
 
-    .breadcrumb-item {
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .breadcrumb-item + .breadcrumb-item::before {
-      content: '/';
-      color: #6c757d;
-      margin: 0 8px;
-      font-size: 12px;
-    }
-
-    .breadcrumb-item a {
-      color: #007bff;
-      text-decoration: none;
-      transition: color 0.2s ease-in-out;
-    }
-
-    .breadcrumb-item a:hover {
-      color: #0056b3;
-      text-decoration: underline;
-    }
-
-    .breadcrumb-item.active {
-      color: #495057;
-      font-weight: 500;
-    }
-
-    /* New Similar Products Styling */
-    .similar-products-container {
-      background-color: var(--gucci-light);
-      padding: 40px 0;
-      position: relative;
-    }
-    
-    .product-carousel {
-      position: relative;
-      padding: 10px 40px;
-    }
-    
-    .similar-products-slider {
-      display: flex;
-      flex-wrap: nowrap;
-      overflow-x: hidden;
-      scroll-behavior: smooth;
-      padding: 15px 0;
-      margin: 0 -10px;
-    }
-    
-    .similar-product-card {
-      background-color: white;
+    .wishlist-icon, .btn-wishlist {
+      background: transparent;
       border: none;
-      border-radius: 0;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-      transition: all 0.3s ease;
-      height: 100%;
-      margin: 0 10px;
-      position: relative;
-      overflow: hidden;
+      font-size: 1.2rem;
+      color: #8a6a94;
+      transition: color 0.3s ease;
     }
-    
-    .similar-product-card:hover {
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-      transform: translateY(-5px);
+
+    .wishlist-icon:hover, .btn-wishlist:hover {
+      color: #1a1a1a;
     }
-    
-    .similar-product-card .product-image-container {
-      position: relative;
-      overflow: hidden;
-      height: 250px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #f5f5f5;
-    }
-    
-    .similar-product-card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    
-    .similar-product-card:hover img {
-      transform: scale(1.05);
-    }
-    
+
     .btn-wishlist {
       position: absolute;
       top: 10px;
       right: 10px;
-      background: rgba(255, 255, 255, 0.8);
-      border: none;
-      width: 30px;
-      height: 30px;
+    }
+
+    .breadcrumb-container {
+      padding: 15px 0;
+      background-color: #f8f8f8;
+    }
+
+    .product-image-container {
+      position: relative;
+    }
+
+    .img-zoom-lens {
+      position: absolute;
+      border: 1px solid #8a6a94;
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.3);
+      cursor: none;
+      display: none;
       border-radius: 50%;
+    }
+
+    .img-zoom-result {
+      position: absolute;
+      right: -450px;
+      top: 0;
+      border: 1px solid #666666;
+      width: 400px;
+      height: 400px;
+      background-color: #ffffff;
+      display: none;
+      overflow: hidden;
+      z-index: 10;
+      background-repeat: no-repeat;
+    }
+
+    .thumbnail-gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .thumbnail {
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.3s ease;
+      opacity: 0.7;
+    }
+
+    .thumbnail img {
+      width: 100%;
+      height: 80px;
+      object-fit: cover;
+    }
+
+    .thumbnail.active, .thumbnail:hover {
+      border-color: #8a6a94;
+      opacity: 1;
+    }
+
+    .product-details-card {
+      padding: 1rem;
+    }
+
+    .product-price {
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: #8a6a94;
+      margin-bottom: 1.5rem;
+    }
+
+    .size-option {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .size-option input[type="radio"] {
+      display: none;
+    }
+
+    .size-option label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 90px;
+      height: 90px;
+      border: 1px solid #e5e5e5;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 10px;
+      border-radius: 4px;
+    }
+
+    .size-option input[type="radio"]:checked + label {
+      border-color: #8a6a94;
+      background-color: rgba(138, 106, 148, 0.05);
+    }
+
+    .gift-option {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background-color: #f8f8f8;
+      border-radius: 4px;
+    }
+
+    .zoom-modal {
+      display: none;
+      position: fixed;
+      z-index: 1050;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .zoom-modal-content {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+
+    .zoom-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #ffffff;
+      font-size: 2.5rem;
+      font-weight: 300;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .zoom-close:hover {
+      color: #8a6a94;
+    }
+
+    .similar-product-card {
+      background-color: #ffffff;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .similar-product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .carousel-control {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      border: none;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    
-    .similar-product-card:hover .btn-wishlist {
-      opacity: 1;
-    }
-    
-    .product-title {
-      font-size: 1rem;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: var(--gucci-dark);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      height: 48px;
-    }
-    
-    .similar-product-price {
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: var(--gucci-dark);
-    }
-    
-    .carousel-control {
+      transition: all 0.3s ease;
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
-      background-color: white;
-      border: none;
-      border-radius: 50%;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 5;
-      transition: all 0.3s ease;
     }
-    
-    .carousel-control:hover {
-      background-color: var(--gucci-purple);
-      color: white;
-    }
-    
+
     .carousel-control.prev {
       left: 0;
     }
-    
+
     .carousel-control.next {
       right: 0;
     }
-    
-    @media (max-width: 768px) {
-      .similar-products-slider {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x mandatory;
-      }
-      
-      .similar-product-card {
-        flex: 0 0 auto;
-        width: 80%;
-        scroll-snap-align: center;
-      }
-      
-      .carousel-control {
-        width: 30px;
-        height: 30px;
-        font-size: 0.8rem;
-      }
+
+    .carousel-control:hover {
+      background-color: #8a6a94;
+      color: #ffffff;
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1055;
     }
   </style>
 </head>
 <body>
 <%- include('../../views/partials/user/header') %>
-
 <div class="container py-4">
-  <!-- Breadcrumb -->
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/">Home</a></li>
-      <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Product</li>
-    </ol>
-  </nav>
-
-  <!-- Product Section -->
+  <div class="breadcrumb-container">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
+        <li class="breadcrumb-item active">Product</li>
+      </ol>
+    </div>
+  </div>
   <div class="row">
     <div class="col-md-6 mb-4">
       <div class="row">
@@ -611,35 +299,33 @@
           <div class="product-image-container">
             <div class="product-image">
               <div class="img-zoom-lens" id="zoomLens"></div>
-              <img src="<%=product.productImage[0]%>" alt="product image" class="img-fluid" id="productImg">
+              <img src="<%= product.productImage[0] %>" alt="product image" class="img-fluid" id="productImg">
             </div>
             <div class="img-zoom-result" id="zoomResult"></div>
           </div>
         </div>
         <div class="col-md-2 order-md-1">
-          <div class="thumbnail-gallery d-none d-md-block">                
-            <%for(let i = 0 ; i < product.productImage.length ; i++){%>
-            <div class="thumbnail <%=i===0 ? 'active' : ''%>">
-              <img src="<%=product.productImage[i]%>" alt="product image">
-            </div>
-            <%}%>
+          <div class="thumbnail-gallery d-none d-md-block">
+            <% for(let i = 0; i < product.productImage.length; i++) { %>
+              <div class="thumbnail <%= i === 0 ? 'active' : '' %>">
+                <img src="<%= product.productImage[i] %>" alt="product image">
+              </div>
+            <% } %>
           </div>
         </div>
-      </div> 
+      </div>
     </div>
-  
     <div class="col-md-6">
       <div class="product-details-card">
         <div class="d-flex justify-content-between align-items-center">
-          <h1 class="h3"><%=product.productName%></h1>
-          <button class="wishlist-icon"><i class="fa-regular fa-heart"></i></button>
+          <h1 class="h3"><%= product.productName %></h1>
+          <button class="wishlist-icon" data-product-id="<%= product._id %>" onclick="toggleWishlist('<%= product._id %>', this)" <%= product.variants.every(variant => variant.quantity === 0) ? 'disabled' : '' %>>
+            <i class="<%= isInWishlist ? 'fa-solid fa-heart' : 'fa-regular fa-heart' %>" style="<%= isInWishlist ? 'color: red;' : '' %>"></i>
+          </button>
         </div>
-      
         <div class="product-price" id="productPrice">
           ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
         </div>
-        
-        <!--Size Options -->
         <div class="mt-4 mb-3">
           <p class="mb-2 fw-bold">Select Size:</p>
           <div class="size-option">
@@ -652,8 +338,6 @@
             <% }) %>
           </div>
         </div>
-        
-        <!-- Gift Options -->
         <div class="gift-option">
           <div class="gift-option-title">
             <i class="fas fa-gift"></i> Make it special
@@ -671,8 +355,6 @@
             </label>
           </div>
         </div>
-        
-        <!--Availability -->
         <div class="availability my-3">
           <% if (product.variants.some(variant => variant.quantity > 0)) { %>
             <span class="text-success"><i class="fas fa-check-circle"></i> Available</span>
@@ -682,14 +364,19 @@
             <p class="small mt-2">Check back soon for restock updates</p>
           <% } %>
         </div>
-        
-        <!-- Purchase Buttons -->
         <div class="purchase-buttons">
-          <button class="btn btn-add-to-bag">Add to bag</button>
-          <button class="btn btn-buy-now">Buy now</button>
+            <button class="btn btn-add-to-bag" 
+                    data-product-id="<%= product._id %>" 
+                    onclick="addToCart('<%= product._id %>')"
+                    <%= product.variants.every(variant => variant.quantity === 0) ? 'disabled' : '' %>>
+              Add to bag
+          </button>
+          <button class="btn btn-buy-now" 
+                    <%= product.variants.every(variant => variant.quantity === 0) ? 'disabled' : '' %>>
+              Buy now
+          </button>
         </div>
       </div>
-
       <div class="product-info mt-4">
         <div class="accordion" id="productAccordion">
           <div class="accordion-item border-0">
@@ -706,7 +393,6 @@
               </div>
             </div>
           </div>
-          
           <div class="accordion-item border-0">
             <h2 class="accordion-header">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#paymentOptions">
@@ -721,7 +407,6 @@
               </div>
             </div>
           </div>
-          
           <div class="accordion-item border-0">
             <h2 class="accordion-header">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#packaging">
@@ -738,7 +423,6 @@
           </div>
         </div>
       </div>
-      
       <div class="service-info mt-4">
         <div class="d-flex flex-wrap">
           <span class="info-badge"><i class="fas fa-lock"></i> Secure payment</span>
@@ -748,16 +432,13 @@
       </div>
     </div>
   </div>
-
-  <!-- Product Details Section -->
   <div class="row mt-5">
     <div class="col-md-6">
-      <img src="/api/placeholder/600/750" alt="Gucci Guilty Love Edition Pour Femme" class="img-fluid">
+      <img src="/api/placeholder/600/750" alt="Product Image" class="img-fluid">
     </div>
     <div class="col-md-6">
       <h3 class="mb-3">Product Details</h3>
       <p class="small text-muted">Product ID: <%= product._id %></p>
-      
       <div class="product-specs mt-4">
         <div class="row mb-2">
           <div class="col-6">Brand:</div>
@@ -778,11 +459,9 @@
           </div>
         </div>
       </div>
-
       <div class="product-description mt-5">
         <h3 class="mb-3">Product Description</h3>
-        <p><%= product.productDescription %></p>
-        
+        <p><%= product.productDescription || 'No description available' %></p>
         <div class="mt-4">
           <p class="mb-2"><strong>Fragrance Notes:</strong></p>
           <div>
@@ -796,10 +475,8 @@
       </div>
     </div>
   </div>
-
   <div class="similar-products-container my-5">
     <h2 class="section-title">DISCOVER SIMILAR PRODUCTS</h2>
-    
     <div class="product-carousel position-relative px-4">
       <div class="row similar-products-slider">
         <% if (similarProducts.length === 0) { %>
@@ -814,7 +491,9 @@
                   <a href="/productViewPage?id=<%= product._id %>">
                     <img src="<%= product.productImage[0] || '/images/placeholder.jpg' %>" alt="<%= product.productName %>" class="img-fluid">
                   </a>
-                  <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                  <button class="btn-wishlist" onclick="toggleWishlist('<%= product._id %>', this)" <%= product.variants.every(variant => variant.quantity === 0) ? 'disabled' : '' %>>
+                    <i class="<%= wishlist.products.some(item => item.productId.toString() === product._id.toString()) ? 'fa-solid fa-heart' : 'fa-regular fa-heart' %>" style="<%= wishlist.products.some(item => item.productId.toString() === product._id.toString()) ? 'color: red;' : '' %>"></i>
+                  </button>
                 </div>
                 <div class="product-info p-3">
                   <h5 class="product-title"><%= product.productName %></h5>
@@ -828,7 +507,6 @@
           <% }) %>
         <% } %>
       </div>
-      
       <button class="carousel-control prev" id="prevBtn">
         <i class="fas fa-chevron-left"></i>
       </button>
@@ -838,165 +516,258 @@
     </div>
   </div>
 </div>
-
 <div id="imageZoomModal" class="zoom-modal">
   <span class="zoom-close">×</span>
   <img class="zoom-modal-content" id="zoomedImage">
 </div>
-
 <%- include("../../views/partials/user/footer") %>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const thumbnails = document.querySelectorAll('.thumbnail');
-      const mainImage = document.querySelector('.product-image img');
-      const lens = document.getElementById('zoomLens');
-      const result = document.getElementById('zoomResult');
-      const modal = document.getElementById('imageZoomModal');
-      const modalImg = document.getElementById('zoomedImage');
-      const priceElement = document.getElementById('productPrice');
-      const sizeRadios = document.querySelectorAll('input[name="size"]');
+  async function toggleWishlist(productId, button) {
+      try {
+        const icon = button.querySelector('i');
+        const isInWishlist = icon.classList.contains('fa-solid');
+        button.disabled = true;
 
-      let cx, cy;
+        const url = isInWishlist ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+        });
 
-      function calculateRatio() {
-        cx = result.offsetWidth / lens.offsetWidth;
-        cy = result.offsetHeight / lens.offsetHeight;
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+
+        if (result.success) {
+          if (isInWishlist) {
+            icon.classList.remove('fa-solid', 'fa-heart');
+            icon.classList.add('fa-regular', 'fa-heart');
+            icon.style.color = '';
+            showToast('Removed from wishlist', 'success');
+          } else {
+            icon.classList.remove('fa-regular', 'fa-heart');
+            icon.classList.add('fa-solid', 'fa-heart');
+            icon.style.color = 'red';
+            showToast('Added to wishlist', 'success');
+          }
+        } else {
+          if (result.message.includes('log in')) {
+            window.location.href = '/login';
+          } else {
+            showToast(result.message, 'error');
+          }
+        }
+      } catch (error) {
+        console.error('Error toggling wishlist:', error);
+        showToast('Failed to update wishlist. Please try again.', 'error');
+      } finally {
+        button.disabled = false;
       }
+    }
 
-      function getCursorPos(e) {
-        const rect = mainImage.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        return { x, y };
-      }
+    function showToast(message, icon = 'success') {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: icon,
+        title: message,
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
+    }
 
-      function moveLens(e) {
-        e.preventDefault();
-        const pos = getCursorPos(e);
-        let x = pos.x - lens.offsetWidth / 2;
-        let y = pos.y - lens.offsetHeight / 2;
+  document.addEventListener('DOMContentLoaded', function() {
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    const mainImage = document.querySelector('.product-image img');
+    const lens = document.getElementById('zoomLens');
+    const result = document.getElementById('zoomResult');
+    const modal = document.getElementById('imageZoomModal');
+    const modalImg = document.getElementById('zoomedImage');
+    const priceElement = document.getElementById('productPrice');
+    const sizeRadios = document.querySelectorAll('input[name="size"]');
+    let cx, cy;
 
-        x = Math.max(0, Math.min(x, mainImage.width - lens.offsetWidth));
-        y = Math.max(0, Math.min(y, mainImage.height - lens.offsetHeight));
+    function calculateRatio() {
+      cx = result.offsetWidth / lens.offsetWidth;
+      cy = result.offsetHeight / lens.offsetHeight;
+    }
 
-        lens.style.left = x + 'px';
-        lens.style.top = y + 'px';
+    function getCursorPos(e) {
+      const rect = mainImage.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      return { x, y };
+    }
 
-        result.style.backgroundImage = `url('${mainImage.src}')`;
-        result.style.backgroundSize = `${mainImage.width * cx}px ${mainImage.height * cy}px`;
-        result.style.backgroundPosition = `-${x * cx}px -${y * cy}px`;
-      }
+    function moveLens(e) {
+      e.preventDefault();
+      const pos = getCursorPos(e);
+      let x = pos.x - lens.offsetWidth / 2;
+      let y = pos.y - lens.offsetHeight / 2;
+      x = Math.max(0, Math.min(x, mainImage.width - lens.offsetWidth));
+      y = Math.max(0, Math.min(y, mainImage.height - lens.offsetHeight));
+      lens.style.left = x + 'px';
+      lens.style.top = y + 'px';
+      result.style.backgroundImage = `url('${mainImage.src}')`;
+      result.style.backgroundSize = `${mainImage.width * cx}px ${mainImage.height * cy}px`;
+      result.style.backgroundPosition = `-${x * cx}px -${y * cy}px`;
+    }
 
-      function initZoom() {
+    function initZoom() {
+      lens.style.display = 'none';
+      result.style.display = 'none';
+      mainImage.addEventListener('mouseenter', (e) => {
+        if (window.innerWidth > 992) {
+          lens.style.display = 'block';
+          result.style.display = 'block';
+          calculateRatio();
+          moveLens(e);
+        }
+      });
+      mainImage.addEventListener('mouseleave', () => {
         lens.style.display = 'none';
         result.style.display = 'none';
-
-        mainImage.addEventListener('mouseenter', (e) => {
-          if (window.innerWidth > 992) {
-            lens.style.display = 'block';
-            result.style.display = 'block';
-            calculateRatio();
-            moveLens(e);
-          }
-        });
-
-        mainImage.addEventListener('mouseleave', () => {
-          lens.style.display = 'none';
-          result.style.display = 'none';
-        });
-
-        mainImage.addEventListener('mousemove', moveLens);
-        lens.addEventListener('mousemove', moveLens);
-
-        window.addEventListener('resize', () => {
-          if (window.innerWidth > 992) {
-            calculateRatio();
-          }
-        });
-      }
-
-      thumbnails.forEach(thumbnail => {
-        thumbnail.addEventListener('click', function() {
-          thumbnails.forEach(t => t.classList.remove('active'));
-          this.classList.add('active');
-          const newSrc = this.querySelector('img').src;
-          mainImage.src = newSrc;
-
-          if (window.innerWidth > 992) {
-            initZoom();
-          }
-        });
       });
-
-      mainImage.addEventListener('click', () => {
-        if (window.innerWidth <= 992) {
-          modal.style.display = 'flex';
-          modalImg.src = mainImage.src;
+      mainImage.addEventListener('mousemove', moveLens);
+      lens.addEventListener('mousemove', moveLens);
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 992) {
+          calculateRatio();
         }
       });
+    }
 
-      document.querySelector('.zoom-close').addEventListener('click', () => {
-        modal.style.display = 'none';
-      });
-
-      if (window.innerWidth > 992) {
-        initZoom();
-      }
-
-      const variants = <%-JSON.stringify(product.variants)%>
-      sizeRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-          const selectedSize = this.value;
-          const selectedVariant = variants.find(v => v.size.toString() === selectedSize);
-          if (selectedVariant) {
-            const price = selectedVariant.salePrice > 0 ? selectedVariant.salePrice : selectedVariant.regularPrice;
-            priceElement.textContent = `₹${price}`;
-          }
-        });
-      });
-
-      const slider = document.querySelector('.similar-products-slider');
-      const prevBtn = document.getElementById('prevBtn');
-      const nextBtn = document.getElementById('nextBtn');
-      
-      let scrollPosition = 0;
-      
-      function getScrollAmount() {
-        const cardWidth = document.querySelector('.similar-product-card').offsetWidth;
-        return cardWidth * 2 + 40;
-      }
-      
-      nextBtn.addEventListener('click', function() {
-        scrollPosition += getScrollAmount();
-        if (scrollPosition > slider.scrollWidth - slider.clientWidth) {
-          scrollPosition = slider.scrollWidth - slider.clientWidth;
-        }
-        slider.scrollTo({
-          left: scrollPosition,
-          behavior: 'smooth'
-        });
-      });
-      
-      prevBtn.addEventListener('click', function() {
-        scrollPosition -= getScrollAmount();
-        if (scrollPosition < 0) {
-          scrollPosition = 0;
-        }
-        slider.scrollTo({
-          left: scrollPosition,
-          behavior: 'smooth'
-        });
-      });
-      
-      window.addEventListener('resize', function() {
-        if (scrollPosition > slider.scrollWidth - slider.clientWidth) {
-          scrollPosition = Math.max(0, slider.scrollWidth - slider.clientWidth);
-          slider.scrollLeft = scrollPosition;
+    thumbnails.forEach(thumbnail => {
+      thumbnail.addEventListener('click', function() {
+        thumbnails.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        const newSrc = this.querySelector('img').src;
+        mainImage.src = newSrc;
+        if (window.innerWidth > 992) {
+          initZoom();
         }
       });
     });
+
+    mainImage.addEventListener('click', () => {
+      if (window.innerWidth <= 992) {
+        modal.style.display = 'flex';
+        modalImg.src = mainImage.src;
+      }
+    });
+
+    document.querySelector('.zoom-close').addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    if (window.innerWidth > 992) {
+      initZoom();
+    }
+
+    const variants = <%- JSON.stringify(product.variants) %>;
+    sizeRadios.forEach(radio => {
+      radio.addEventListener('change', function() {
+        const selectedSize = this.value;
+        const selectedVariant = variants.find(v => v.size.toString() === selectedSize);
+        if (selectedVariant) {
+          const price = selectedVariant.salePrice > 0 ? selectedVariant.salePrice : selectedVariant.regularPrice;
+          priceElement.textContent = `₹${price}`;
+        }
+      });
+    });
+
+    const slider = document.querySelector('.similar-products-slider');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let scrollPosition = 0;
+
+    function getScrollAmount() {
+      const cardWidth = document.querySelector('.similar-product-card')?.offsetWidth || 0;
+      return cardWidth * 2 + 40;
+    }
+
+    nextBtn.addEventListener('click', function() {
+      scrollPosition += getScrollAmount();
+      if (scrollPosition > slider.scrollWidth - slider.clientWidth) {
+        scrollPosition = slider.scrollWidth - slider.clientWidth;
+      }
+      slider.scrollTo({
+        left: scrollPosition,
+        behavior: 'smooth'
+      });
+    });
+
+    prevBtn.addEventListener('click', function() {
+      scrollPosition -= getScrollAmount();
+      if (scrollPosition < 0) {
+        scrollPosition = 0;
+      }
+      slider.scrollTo({
+        left: scrollPosition,
+        behavior: 'smooth'
+      });
+    });
+
+    window.addEventListener('resize', function() {
+      if (scrollPosition > slider.scrollWidth - slider.clientWidth) {
+        scrollPosition = Math.max(0, slider.scrollWidth - slider.clientWidth);
+        slider.scrollLeft = scrollPosition;
+      }
+    });
+  });
+
+    async function addToCart(productId) {
+        try {
+            const selectedSizeRadio = document.querySelector('input[name="size"]:checked');
+            if (!selectedSizeRadio) {
+                showToast('Please select a size.', 'error');
+                return;
+            }
+
+            const variants = <%- JSON.stringify(product.variants) %>;
+            const selectedSize = selectedSizeRadio.value;
+            const selectedVariant = variants.find(v => v.size.toString() === selectedSize);
+
+            if (!selectedVariant) {
+                showToast('Selected variant not found.', 'error');
+                return;
+            }
+
+            console.log('Adding to cart:', { productId, variantId: selectedVariant._id });
+
+            const addToBagBtn = document.querySelector(`.btn-add-to-bag[data-product-id="${productId}"]`);
+            addToBagBtn.disabled = true;
+
+            const response = await fetch('/cart/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId, variantId: selectedVariant._id }),
+                credentials: 'same-origin',
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('Product added to cart!', 'success');
+                window.location.href = '/cart';
+            } else {
+                if (result.message.includes('log in')) {
+                    window.location.href = '/login';
+                } else {
+                    showToast(result.message, 'error');
+                }
+            }
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            showToast('Failed to add to cart. Please try again.', 'error');
+        } finally {
+            const addToBagBtn = document.querySelector(`.btn-add-to-bag[data-product-id="${productId}"]`);
+            addToBagBtn.disabled = false;
+        }
+    }
 </script>
 </body>
 </html>

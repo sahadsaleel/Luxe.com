@@ -1,50 +1,57 @@
-const mongoose = require('mongoose') ;
-const {Schema} = mongoose ;
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-
-
-const orderSchema = new Schema ({
-
-    orderedItems: [{  
+const orderSchema = new Schema({
+    orderedItems: [{
         price: {
-          type: Number
+            type: Number
         }
-      }],
-      totalPrice: {
+    }],
+    totalPrice: {
         type: Number,
         required: true
-      },
-      discount: {
+    },
+    discount: {
         type: Number,
         default: 0
-      },
-      finalAmount: {
+    },
+    finalAmount: {
         type: Number,
         required: true
-      },
-      address: {
+    },
+    address: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Address', 
         required: true
-      },
-      invoiceDate: {
+    },
+    invoiceDate: {
         type: Date
-      },
-      status: {
+    },
+    status: {
         type: String,
         required: true,
         enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Canceled', 'Return Request', 'Returned']
-      },
-      createdOn: {
+    },
+    createdOn: {
         type: Date,
         default: Date.now,
         required: true
-      },
-      couponApplied: {
+    },
+    couponApplied: {
         type: Boolean,
         default: false
-      }
-})
+    },
+    deliveryMethod: {
+        type: String,
+        enum: ['standard', 'express'],
+        required: true,
+    },
+    paymentMethod: {
+        type: String,
+        enum: ['razorpay', 'luxewallet', 'cash'],
+        required: true,
+    },
+});
 
-const Order = mongoose.model("Order",orderSchema)
-module.exports = Order
+const Order = mongoose.model("Order", orderSchema);
+module.exports = Order;

@@ -36,19 +36,6 @@
             color: rgb(0, 0, 0);
             opacity: 0.8;
         }
-        .dropdown {
-            padding: 8px 15px;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            width: 120px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .dropdown::after {
-            content: "▼";
-            font-size: 10px;
-        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -89,6 +76,22 @@
             color: black;
             font-size: 16px;
         }
+        .dropdown {
+            padding: 8px 12px;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            width: 120px;
+            margin-left: 10px;
+        }
+        .dropdown select {
+            border: none;
+            background: transparent;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 500;
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -97,8 +100,13 @@
         <div class="search-filter">
             <input type="text" class="search-bar" placeholder="Search for product...">
             <div class="dropdown">
-                Newest
-            </div>
+            <select class="custom-select" id="sortSelect">
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="a-z">A-Z</option>
+                <option value="z-a">Z-A</option>
+            </select>
+        </div>
         </div>
         
         <table>

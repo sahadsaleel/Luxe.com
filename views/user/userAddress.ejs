@@ -15,13 +15,15 @@
             <div class="logo">Luxe.com</div>
         </div>
 
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Account</a></li>
-                <li class="breadcrumb-item active" aria-current="/address">Address Book</li>
-            </ol>
-        </nav>
+         <div class="breadcrumb-container">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/profile">profile</a></li>
+                    <li class="breadcrumb-item active">Address</li>
+                </ol>
+            </div>
+        </div>
 
         <div class="main-content">
             <div class="sidebar">
@@ -38,7 +40,6 @@
                 <ul class="nav-menu">
                     <h3>Manage My Account</h3>
                     <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
-                    <li><a href="#" id="openChangePasswordNav"><i class="fas fa-lock"></i> Change Password</a></li>
                     <li><a href="/address" class="active"><i class="fas fa-address-book"></i> Address Book</a></li>
 
                     <h3>Orders & Wishlist</h3>
@@ -212,42 +213,12 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="changePasswordModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">Change Password</div>
-                <button class="close-btn" id="closePasswordModalBtn">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="passwordChangeForm">
-                    <div id="oldPasswordError" class="error-message"></div>
-                    <div class="form-group">
-                        <label class="form-label" for="oldPassword">Old Password</label>
-                        <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
-                    </div>
-                    <div id="newPasswordError" class="error-message"></div>
-                    <div class="form-group">
-                        <label class="form-label" for="newPassword">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
-                    </div>
-                    <div id="confirmPasswordError" class="error-message"></div>
-                    <div class="form-group">
-                        <label class="form-label" for="confirmPassword">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                    </div>
-                    <button type="submit" class="save-btn">Submit</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <%- include('../../views/partials/user/footer') %>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const addressModal = document.getElementById('addressModal');
             const deleteModal = document.getElementById('deleteModal');
-            const changePasswordModal = document.getElementById('changePasswordModal');
             
             const addAddressBtn = document.getElementById('addAddressBtn');
             const addFirstAddressBtn = document.getElementById('addFirstAddressBtn');
@@ -257,11 +228,8 @@
             const closeDeleteModalBtn = document.getElementById('closeDeleteModalBtn');
             const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
             const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-            const openChangePasswordNav = document.getElementById('openChangePasswordNav');
-            const closePasswordModalBtn = document.getElementById('closePasswordModalBtn');
 
             const addressForm = document.getElementById('addressForm');
-            const passwordChangeForm = document.getElementById('passwordChangeForm');
 
             function openAddressModal() {
                 document.getElementById('modalTitle').textContent = 'Add New Address';
@@ -294,21 +262,6 @@
                 document.body.style.overflow = '';
             }
 
-            function openPasswordModal() {
-                passwordChangeForm.reset();
-                changePasswordModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                const formGroups = passwordChangeForm.querySelectorAll('.form-group');
-                formGroups.forEach(group => {
-                    group.classList.remove('invalid');
-                });
-            }
-
-            function closePasswordModal() {
-                changePasswordModal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-
             function validateAddressForm() {
                 let isValid = true;
                 const fields = [
@@ -338,50 +291,6 @@
                 return isValid;
             }
 
-            function validatePasswordForm() {
-                let isValid = true;
-                const oldPassword = document.getElementById('oldPassword');
-                const newPassword = document.getElementById('newPassword');
-                const confirmPassword = document.getElementById('confirmPassword');
-                
-                const validations = [
-                    {
-                        input: oldPassword,
-                        errorId: 'oldPasswordError',
-                        message: 'Please enter your current password.',
-                        condition: () => !oldPassword.value.trim()
-                    },
-                    {
-                        input: newPassword,
-                        errorId: 'newPasswordError',
-                        message: 'Password must be at least 8 characters long.',
-                        condition: () => newPassword.value.length < 8
-                    },
-                    {
-                        input: confirmPassword,
-                        errorId: 'confirmPasswordError',
-                        message: 'Passwords do not match.',
-                        condition: () => newPassword.value !== confirmPassword.value
-                    }
-                ];
-
-                validations.forEach(({ input, errorId, message, condition }) => {
-                    const formGroup = input.closest('.form-group');
-                    const errorElement = document.getElementById(errorId);
-
-                    if (condition()) {
-                        formGroup.classList.add('invalid');
-                        errorElement.textContent = message;
-                        isValid = false;
-                    } else {
-                        formGroup.classList.remove('invalid');
-                        errorElement.textContent = '';
-                    }
-                });
-
-                return isValid;
-            }
-
             if (addAddressBtn) {
                 addAddressBtn.addEventListener('click', openAddressModal);
             }
@@ -389,7 +298,7 @@
                 addFirstAddressBtn.addEventListener('click', openAddressModal);
             }
             if (closeModalBtn) {
-               closeModalBtn.addEventListener('click', closeAddressModal);
+            closeModalBtn.addEventListener('click', closeAddressModal);
             }
             if (cancelBtn) {
                 cancelBtn.addEventListener('click', closeAddressModal);
@@ -408,15 +317,7 @@
             if (cancelDeleteBtn) {
                 cancelDeleteBtn.addEventListener('click', closeDeleteModal);
             }
-            if (openChangePasswordNav) {
-                openChangePasswordNav.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    openPasswordModal();
-                });
-            }
-            if (closePasswordModalBtn) {
-                closePasswordModalBtn.addEventListener('click', closePasswordModal);
-            }
+
             addressForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
@@ -587,53 +488,7 @@
                 });
             }
 
-            passwordChangeForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                if (!validatePasswordForm()) {
-                    return;
-                }
-
-                try {
-                    const formData = new FormData(passwordChangeForm);
-                    const data = Object.fromEntries(formData);
-
-                    const response = await fetch('/change-password', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    });
-
-                    const result = await response.json();
-                    if (response.ok) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Password changed successfully!',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            closePasswordModal();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: result.message || 'Failed to change password.'
-                        });
-                    }
-                } catch (error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'An error occurred while changing the password.'
-                    });
-                }
-            });
-
-            [addressModal, deleteModal, changePasswordModal].forEach(modal => {
+            [addressModal, deleteModal].forEach(modal => {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
                         modal.classList.remove('active');

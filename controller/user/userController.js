@@ -2,6 +2,7 @@ const User = require('../../models/userSchema');
 const Category = require('../../models/categorySchema');
 const Product = require('../../models/productSchema');
 const Brand = require('../../models/brandSchema');
+const Wishlist = require('../../models/wishlistSchema')
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
@@ -181,7 +182,6 @@ const verifyOtp = async (req, res) => {
         });
 
         await saveUserData.save();
-        // req.session.user = saveUserData._id;
 
         req.session.userOtp = null;
         req.session.otpExpires = null;
@@ -265,89 +265,104 @@ const logout = async (req, res) => {
 };
 
 const loadShopPage = async (req, res) => {
-    try {
-        const { brands, category, priceFrom, priceTo, sort } = req.query;
+  try {
+    const { brands, category, priceFrom, priceTo, sort } = req.query;
 
-        let query = { isDeleted: false, status: 'listed' };
+    let query = {
+      isDeleted: false,
+      status: 'listed',
+      productImage: { $exists: true, $ne: [], $type: 'array' },
+      variants: { $exists: true, $ne: [], $type: 'array' },
+    };
 
-        const currentFilters = {
-            brandf: [],
-            categoryf: [],
-            sort: sort || 'A-Z',
-            minValue: priceFrom || '',
-            maxValue: priceTo || '',
-        };
+    const currentFilters = {
+      brandf: [],
+      categoryf: [],
+      sort: sort || 'A-Z',
+      minValue: priceFrom || '',
+      maxValue: priceTo || '',
+    };
 
-        if (brands) {
-            const selectedBrands = brands.split(',').filter(id => id);
-            query.productBrand = { $in: selectedBrands };
-            currentFilters.brandf = selectedBrands;
-        }
-
-        if (category) {
-            const selectedCategories = category.split(',').filter(id => id);
-            query.productCategory = { $in: selectedCategories };
-            currentFilters.categoryf = selectedCategories;
-        }
-
-        let products = await Product.find(query)
-            .populate('productBrand', 'brandName')
-            .populate('productCategory', 'name');
-
-        products = products.map(product => {
-            const price = product.variants && product.variants.length > 0
-                ? (product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice)
-                : 0;
-
-            if (!product.minSalePrice && price > 0) {
-                product.minSalePrice = price;
-                product.save();
-            }
-
-            return {
-                id: product._id,
-                name: product.productName,
-                brand: product.productBrand ? product.productBrand.brandName : 'Unknown Brand',
-                category: product.productCategory ? product.productCategory.name : 'Unknown Category',
-                price: price,
-                image: product.productImage && product.productImage.length > 0 ? product.productImage[0] : null,
-                status: product.status,
-            };
-        });
-
-        if (priceFrom || priceTo) {
-            const from = priceFrom ? parseFloat(priceFrom) : 0;
-            const to = priceTo ? parseFloat(priceTo) : Infinity;
-            products = products.filter(product => product.price >= from && product.price <= to);
-        }
-
-        if (sort) {
-            if (sort === 'A-Z') {
-                products.sort((a, b) => a.name.localeCompare(b.name));
-            } else if (sort === 'Z-A') {
-                products.sort((a, b) => b.name.localeCompare(a.name));
-            } else if (sort === 'price-low-high') {
-                products.sort((a, b) => a.price - b.price);
-            } else if (sort === 'price-high-low') {
-                products.sort((a, b) => b.price - a.price);
-            }
-        }
-
-        const brandsList = await Brand.find({ isBlocked: false }).select('brandName');
-        const categoriesList = await Category.find({ isListed: true }).select('name');
-
-        res.render('user/shop', {
-            products,
-            brands: brandsList,
-            categories: categoriesList,
-            user: req.session.user || null,
-            currentFilters,
-        });
-    } catch (error) {
-        console.error('Error in loadShopPage:', error);
-        res.redirect('/pageNotFound');
+    if (brands) {
+      const selectedBrands = brands.split(',').filter(id => id);
+      query.productBrand = { $in: selectedBrands };
+      currentFilters.brandf = selectedBrands;
     }
+
+    if (category) {
+      const selectedCategories = category.split(',').filter(id => id);
+      query.productCategory = { $in: selectedCategories };
+      currentFilters.categoryf = selectedCategories;
+    }
+
+    let products = await Product.find(query)
+      .populate('productBrand', 'brandName')
+      .populate('productCategory', 'name');
+
+    products = products.map(product => {
+      const price = product.variants && product.variants.length > 0
+        ? (product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice)
+        : 0;
+
+      if (!product.minSalePrice && price > 0) {
+        product.minSalePrice = price;
+        product.save().catch(err => console.error(`Error saving minSalePrice for product ${product._id}:`, err));
+      }
+
+      return {
+        id: product._id,
+        name: product.productName || 'Unnamed Product',
+        brand: product.productBrand ? product.productBrand.brandName : 'Unknown Brand',
+        category: product.productCategory ? product.productCategory.name : 'Unknown Category',
+        price: price || 0,
+        image: product.productImage && product.productImage.length > 0 ? product.productImage[0] : '/img/placeholder.png',
+        status: product.status,
+      };
+    });
+
+    if (priceFrom || priceTo) {
+      const from = priceFrom ? parseFloat(priceFrom) : 0;
+      const to = priceTo ? parseFloat(priceTo) : Infinity;
+      products = products.filter(product => product.price >= from && product.price <= to);
+    }
+
+    if (sort) {
+      if (sort === 'A-Z') {
+        products.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (sort === 'Z-A') {
+        products.sort((a, b) => b.name.localeCompare(a.name));
+      } else if (sort === 'price-low-high') {
+        products.sort((a, b) => a.price - b.price);
+      } else if (sort === 'price-high-low') {
+        products.sort((a, b) => b.price - a.price);
+      }
+    }
+
+    const brandsList = await Brand.find({ isBlocked: false }).select('brandName _id');
+    const categoriesList = await Category.find({ isListed: true }).select('name _id');
+
+    let wishlistProductIds = [];
+    if (req.session.user) {
+      const wishlist = await Wishlist.findOne({ userId: req.session.user });
+      if (wishlist) {
+        wishlistProductIds = wishlist.products.map(item => item.productId.toString());
+      }
+    }
+
+    res.render('user/shop', {
+      products,
+      brands: brandsList,
+      categories: categoriesList,
+      user: req.session.user ? await User.findById(req.session.user) : null,
+      currentFilters,
+      wishlistProductIds, 
+    });
+  } catch (error) {
+    console.error('Error in loadShopPage:', error);
+    res.redirect('/pageNotFound');
+  }
 };
+
 
 module.exports = {
     loadHomepage,

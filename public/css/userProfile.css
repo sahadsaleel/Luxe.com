@@ -43,44 +43,42 @@
             color: var(--primary-color);
         }
 
+         /* Breadcrumb */
+        .breadcrumb-container {
+            padding: 15px 0;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        
         .breadcrumb {
             display: flex;
-            flex-wrap: wrap;
-            padding: 12px 16px;
-            margin: 0;
             list-style: none;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        .breadcrumb-item {
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .breadcrumb-item + .breadcrumb-item::before {
-            content: '/';
-            color: #6c757d;
-            margin: 0 8px;
             font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-
+        
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '›';
+            margin: 0 10px;
+            color: #999;
+        }
+        
         .breadcrumb-item a {
-            color: #007bff;
+            color: #666;
             text-decoration: none;
-            transition: color 0.2s ease-in-out;
+            transition: color 0.2s ease;
         }
-
+        
         .breadcrumb-item a:hover {
-            color: #0056b3;
-            text-decoration: underline;
+            color: #b49761;
         }
-
+        
         .breadcrumb-item.active {
-            color: #495057;
+            color: #b49761;
             font-weight: 500;
         }
+        
 
         .main-content {
             display: grid;
@@ -595,5 +593,76 @@
         }
 
         .form-group.invalid .error-message {
+            display: block;
+        }
+
+        .info-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .action-button {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+            transition: all 0.3s;
+            align-self: flex-start;
+            margin-top: 8px;
+        }
+
+        .action-button:hover {
+            background-color: #8a6a94;
+            color: #000000;
+        }
+
+        /* Google login note */
+        .google-login-note {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+            margin-top: 8px;
+        }
+
+        /* Email Change Modal */
+        #changeEmailModal .modal-body {
+            padding: 20px;
+        }
+
+        #emailChangeForm .form-group {
+            margin-bottom: 15px;
+        }
+
+        #emailChangeForm .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        #emailChangeForm .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        #emailChangeForm .error-message {
+            color: #d9534f;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        #emailChangeForm .invalid .form-control {
+            border-color: #d9534f;
+        }
+
+        #emailChangeForm .invalid .error-message {
             display: block;
         }
