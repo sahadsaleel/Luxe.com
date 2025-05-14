@@ -6,6 +6,7 @@
     <title>Shopping Bag</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/userCart.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
     <%- include('../../views/partials/user/header') %>
@@ -28,71 +29,74 @@
                     <h2>Your Items (<%= cartItems.length %>)</h2>
                 </div>
                 
-                        <div class="cart-list">
-                            <% if (cartItems.length > 0) { %>
-                                <% cartItems.forEach(item => { %>
-                                    <% if (item.productId && item.variant) { %>
-                                        <div class="cart-item" data-item-id="<%= item._id %>">
-                                            <div class="item-image">
-                                                <img src="<%= item.productId.productImage && item.productId.productImage.length > 0 ? item.productId.productImage[0] : '/api/placeholder/100/100' %>" alt="<%= item.productId.productName || 'Product' %>" />
+                <div class="cart-list">
+                    <% if (cartItems.length > 0) { %>
+                        <% cartItems.forEach(item => { %>
+                            <% if (item.productId && item.variant) { %>
+                                <div class="cart-item" data-item-id="<%= item._id %>">
+                                    <div class="item-image">
+                                        <img src="<%= item.productId.productImage && item.productId.productImage.length > 0 ? item.productId.productImage[0] : '/api/placeholder/100/100' %>" alt="<%= item.productId.productName || 'Product' %>" />
+                                    </div>
+                                    <div class="item-details">
+                                        <div class="item-top">
+                                            <div class="item-info">
+                                                <h3 class="item-title"><%= item.productId.productName || 'Unknown Product' %></h3>
+                                                <div class="item-meta">
+                                                    <span>Size: <%= item.variant.size || 'N/A' %></span>
+                                                    <% if (item.isGiftWrapped) { %>
+                                                        <span> | Gift Wrapped (+450₹)</span>
+                                                    <% } %>
+                                                </div>
                                             </div>
-                                            <div class="item-details">
-                                                <div class="item-top">
-                                                    <div class="item-info">
-                                                        <h3 class="item-title"><%= item.productId.productName || 'Unknown Product' %></h3>
-                                                        <div class="item-meta">
-                                                            <span>Size: <%= item.variant.size || 'N/A' %></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="item-price-container">
-                                                        <p class="item-price">$<%= item.price.toFixed(2) %></p>
-                                                    </div>
-                                                </div>
-                                                <div class="item-actions">
-                                                    <div class="quantity-selector">
-                                                        <button class="quantity-btn" data-action="decrease" data-item-id="<%= item._id %>">−</button>
-                                                        <input type="text" class="quantity-input" value="<%= item.quantity %>" readonly>
-                                                        <button class="quantity-btn" data-action="increase" data-item-id="<%= item._id %>">+</button>
-                                                    </div>
-                                                    <div class="item-buttons">
-                                                        <button class="action-btn" onclick="removeFromCart('<%= item._id %>')"><i class="far fa-trash-alt"></i> Remove</button>
-                                                    </div>
-                                                </div>
+                                            <div class="item-price-container">
+                                                <p class="item-price">₹<%= item.price.toFixed(2) %></p>
                                             </div>
                                         </div>
-                                    <% } else { %>
-                                        <div class="cart-item" data-item-id="<%= item._id %>">
-                                            <div class="item-image">
-                                                <img src="/api/placeholder/100/100" alt="Invalid Product" />
+                                        <div class="item-actions">
+                                            <div class="quantity-selector">
+                                                <button class="quantity-btn" data-action="decrease" data-item-id="<%= item._id %>">−</button>
+                                                <input type="text" class="quantity-input" value="<%= item.quantity %>" readonly>
+                                                <button class="quantity-btn" data-action="increase" data-item-id="<%= item._id %>">+</button>
                                             </div>
-                                            <div class="item-details">
-                                                <div class="item-top">
-                                                    <div class="item-info">
-                                                        <h3 class="item-title">Invalid Product</h3>
-                                                        <p class="item-subtitle">This product is no longer available.</p>
-                                                    </div>
-                                                    <div class="item-price-container">
-                                                        <p class="item-price">$<%= item.price ? item.price.toFixed(2) : '0.00' %></p>
-                                                    </div>
-                                                </div>
-                                                <div class="item-actions">
-                                                    <div class="quantity-selector">
-                                                        <button class="quantity-btn" disabled>−</button>
-                                                        <input type="text" class="quantity-input" value="<%= item.quantity || 1 %>" readonly>
-                                                        <button class="quantity-btn" disabled>+</button>
-                                                    </div>
-                                                    <div class="item-buttons">
-                                                        <button class="action-btn" onclick="removeFromCart('<%= item._id %>')"><i class="far fa-trash-alt"></i> Remove</button>
-                                                    </div>
-                                                </div>
+                                            <div class="item-buttons">
+                                                <button class="action-btn" onclick="removeFromCart('<%= item._id %>')"><i class="far fa-trash-alt"></i> Remove</button>
                                             </div>
                                         </div>
-                                    <% } %>
-                                <% }) %>
+                                    </div>
+                                </div>
                             <% } else { %>
-                                <p>Your cart is empty.</p>
+                                <div class="cart-item" data-item-id="<%= item._id %>">
+                                    <div class="item-image">
+                                        <img src="/api/placeholder/100/100" alt="Invalid Product" />
+                                    </div>
+                                    <div class="item-details">
+                                        <div class="item-top">
+                                            <div class="item-info">
+                                                <h3 class="item-title">Invalid Product</h3>
+                                                <p class="item-subtitle">This product is no longer available.</p>
+                                            </div>
+                                            <div class="item-price-container">
+                                                <p class="item-price">$<%= item.price ? item.price.toFixed(2) : '0.00' %></p>
+                                            </div>
+                                        </div>
+                                        <div class="item-actions">
+                                            <div class="quantity-selector">
+                                                <button class="quantity-btn" disabled>−</button>
+                                                <input type="text" class="quantity-input" value="<%= item.quantity || 1 %>" readonly>
+                                                <button class="quantity-btn" disabled>+</button>
+                                            </div>
+                                            <div class="item-buttons">
+                                                <button class="action-btn" onclick="removeFromCart('<%= item._id %>')"><i class="far fa-trash-alt"></i> Remove</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             <% } %>
-                        </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p>Your cart is empty.</p>
+                    <% } %>
+                </div>
                 
                 <div class="cart-footer">
                     <a href="/shop" class="continue-shopping"><i class="fas fa-long-arrow-alt-left"></i> Continue Shopping</a>
@@ -104,32 +108,30 @@
                 
                 <div class="summary-row">
                     <span class="summary-label">Subtotal (<%= cartItems.length %> items)</span>
-                    <span class="summary-value"><%= subtotal %>₹</span>
+                    <span class="summary-value">₹<%= Number(subtotal).toFixed(2) %></span>
                 </div>
+                
+                <% if (giftWrapTotal > 0) { %>
+                    <div class="summary-row">
+                        <span class="summary-label">Gift Packaging</span>
+                        <span class="summary-value">₹<%= Number(giftWrapTotal).toFixed(2) %></span>
+                    </div>
+                <% } %>
                 
                 <div class="summary-row">
                     <span class="summary-label">Shipping</span>
                     <span class="summary-value">Free</span>
                 </div>
-           
-                <div class="gift-option">
-                    <div class="gift-checkbox">
-                        <div class="custom-checkbox"></div>
-                        <label>Add gift packaging</label>
-                    </div>
-                    <p class="gift-note">Elegant Gucci gift box with signature ribbon (450+)</p>
-                </div>
                 
                 <div class="total-row">
                     <span class="total-label">Total</span>
-                    <span class="total-value"><%= total %>₹</span>
+                    <span class="total-value">₹<%= Number(total).toFixed(2) %></span>
                 </div>
 
-                 <div class="promo-code">
+                <div class="promo-code">
                     <button class="promo-toggle">
                         Apply Promo Code <i class="fas fa-chevron-down"></i>
                     </button>
-                    
                     <div class="promo-content">
                         <div class="promo-input">
                             <input type="text" class="promo-field" placeholder="Enter promo code">
@@ -139,72 +141,74 @@
                 </div>
                 
                 <button class="checkout-btn" onclick="window.location.href='/checkout'">Proceed to Checkout</button>
-
                 
                 <div class="secure-checkout">
                     <i class="fas fa-lock"></i> Secure Checkout
                 </div>
-                
-               
-                
-                <!-- <div class="payment-options">
-                    <p class="payment-title">We Accept</p>
-                    <div class="payment-methods">
-                        <div class="payment-method">
-                            <i class="fas fa-money-bill-wave payment-icon"></i>
-                            <span>Cash on Delivery</span>
-                        </div>
-                        <div class="payment-method">
-                            <i class="fas fa-wallet payment-icon"></i>
-                            <span>LuxeWallet</span>
-                        </div>
-                        <div class="payment-method">
-                            <i class="fas fa-credit-card payment-icon"></i>
-                            <span>Razorpay</span>
-                        </div>
-                    </div>
-                </div> -->
             </div>
         </div>
     </main>
     <%- include('../../views/partials/user/footer') %>
 
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const promoToggle = document.querySelector('.promo-toggle');
             const promoContent = document.querySelector('.promo-content');
-            promoToggle.addEventListener('click', function() {
-                promoContent.classList.toggle('show');
-                promoToggle.classList.toggle('open');
-            });
 
-            const giftCheckbox = document.querySelector('.custom-checkbox');
-            giftCheckbox.addEventListener('click', function() {
-                this.classList.toggle('checked');
-                if (this.classList.contains('checked')) {
-                    const checkIcon = document.createElement('i');
-                    checkIcon.className = 'fas fa-check';
-                    this.appendChild(checkIcon);
-                } else {
-                    this.innerHTML = '';
-                }
-            });
+            if (promoToggle && promoContent) {
+                promoToggle.addEventListener('click', function() {
+                    promoContent.classList.toggle('show');
+                    promoToggle.classList.toggle('open');
+                });
+            } else {
+                console.warn('Promo toggle or content not found in the DOM');
+            }
 
             const quantityBtns = document.querySelectorAll('.quantity-btn');
+            console.log('Quantity buttons found:', quantityBtns.length);
+
             quantityBtns.forEach(btn => {
                 btn.addEventListener('click', async function() {
-                    const itemId = this.getAttribute('data-item-id');
-                    const action = this.getAttribute('data-action');
-                    const input = this.parentElement.querySelector('.quantity-input');
+                    if (btn.disabled) return;
+
+                    const itemId = btn.getAttribute('data-item-id');
+                    const action = btn.getAttribute('data-action');
+                    const input = btn.parentElement.querySelector('.quantity-input');
                     let quantity = parseInt(input.value);
+
+                    console.log('Button clicked:', { itemId, action, currentQuantity: quantity });
+
+                    if (!itemId) {
+                        Toastify({
+                            text: 'Error: Invalid item ID',
+                            duration: 3000,
+                            gravity: 'top',
+                            position: 'right',
+                            backgroundColor: '#dc3545',
+                            stopOnFocus: true
+                        }).showToast();
+                        return;
+                    }
 
                     if (action === 'increase' && quantity < 5) {
                         quantity++;
                     } else if (action === 'decrease' && quantity > 1) {
                         quantity--;
+                    } else {
+                        Toastify({
+                            text: action === 'increase' ? 'Maximum quantity reached (5)' : 'Minimum quantity is 1',
+                            duration: 3000,
+                            gravity: 'top',
+                            position: 'right',
+                            backgroundColor: '#dc3545',
+                            stopOnFocus: true
+                        }).showToast();
+                        return;
                     }
 
                     input.value = quantity;
+                    console.log('New quantity:', quantity);
 
                     try {
                         const response = await fetch('/cart/update-quantity', {
@@ -212,48 +216,101 @@
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ itemId, quantity }),
                         });
+
                         const data = await response.json();
+                        console.log('Server response:', data);
+
                         if (data.success) {
-                            window.location.reload(); 
+                            Toastify({
+                                text: 'Quantity updated successfully',
+                                duration: 3000,
+                                gravity: 'top',
+                                position: 'right',
+                                backgroundColor: '#28a745',
+                                stopOnFocus: true
+                            }).showToast();
+                            
+                        } else {
+                            Toastify({
+                                text: data.message || 'Failed to update quantity',
+                                duration: 3000,
+                                gravity: 'top',
+                                position: 'right',
+                                backgroundColor: '#dc3545',
+                                stopOnFocus: true
+                            }).showToast();
+                            input.value = quantity - (action === 'increase' ? 1 : -1);
                         }
                     } catch (error) {
                         console.error('Error updating quantity:', error);
+                        Toastify({
+                            text: 'An error occurred while updating the quantity',
+                            duration: 3000,
+                            gravity: 'top',
+                            position: 'right',
+                            backgroundColor: '#dc3545',
+                            stopOnFocus: true
+                        }).showToast();
+                        input.value = quantity - (action === 'increase' ? 1 : -1);
                     }
                 });
             });
         });
 
         async function removeFromCart(itemId) {
+            if (!itemId) {
+                Toastify({
+                    text: 'Error: Invalid item ID',
+                    duration: 3000,
+                    gravity: 'top',
+                    position: 'right',
+                    backgroundColor: '#dc3545',
+                    stopOnFocus: true
+                }).showToast();
+                return;
+            }
+
             try {
                 const response = await fetch('/cart/remove', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ itemId }),
                 });
+
                 const data = await response.json();
                 if (data.success) {
+                    Toastify({
+                        text: 'Item removed from cart',
+                        duration: 3000,
+                        gravity: 'top',
+                        position: 'right',
+                        backgroundColor: '#28a745',
+                        stopOnFocus: true
+                    }).showToast();
                     window.location.reload();
                 } else {
-                    alert(data.message);
+                    Toastify({
+                        text: data.message || 'Failed to remove item',
+                        duration: 3000,
+                        gravity: 'top',
+                        position: 'right',
+                        backgroundColor: '#dc3545',
+                        stopOnFocus: true
+                    }).showToast();
                 }
             } catch (error) {
                 console.error('Error removing item:', error);
-            }
-        }
-
-        async function addToWishlist(productId) {
-            try {
-                const response = await fetch('/wishlist/add', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ productId }),
-                });
-                const data = await response.json();
-                alert(data.message);
-            } catch (error) {
-                console.error('Error updating wishlist:', error);
+                Toastify({
+                    text: 'An error occurred while removing the item',
+                    duration: 3000,
+                    gravity: 'top',
+                    position: 'right',
+                    backgroundColor: '#dc3545',
+                    stopOnFocus: true
+                }).showToast();
             }
         }
     </script>
 </body>
 </html>
+```

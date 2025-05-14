@@ -727,6 +727,9 @@
                 return;
             }
 
+            const giftWrapCheckbox = document.getElementById('giftWrap');
+            const isGiftWrapped = giftWrapCheckbox.checked;
+
             const variants = <%- JSON.stringify(product.variants) %>;
             const selectedSize = selectedSizeRadio.value;
             const selectedVariant = variants.find(v => v.size.toString() === selectedSize);
@@ -736,7 +739,7 @@
                 return;
             }
 
-            console.log('Adding to cart:', { productId, variantId: selectedVariant._id });
+            console.log('Adding to cart:', { productId, variantId: selectedVariant._id, isGiftWrapped });
 
             const addToBagBtn = document.querySelector(`.btn-add-to-bag[data-product-id="${productId}"]`);
             addToBagBtn.disabled = true;
@@ -744,7 +747,7 @@
             const response = await fetch('/cart/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId, variantId: selectedVariant._id }),
+                body: JSON.stringify({ productId, variantId: selectedVariant._id, isGiftWrapped }),
                 credentials: 'same-origin',
             });
 

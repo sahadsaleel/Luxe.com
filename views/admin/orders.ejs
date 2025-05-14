@@ -70,11 +70,37 @@
         .delivered {
             background-color: #4CAF50;
         }
+        .pending {
+            background-color: #2196F3;
+        }
+        .processing {
+            background-color: #9C27B0;
+        }
+        .shipped {
+            background-color: #FFEB3B;
+            color: #000;
+        }
+        .return-request {
+            background-color: #FF5722;
+        }
+        .returned {
+            background-color: #795548;
+        }
         .action-icon {
             text-align: center;
-            cursor: pointer;
-            color: black;
-            font-size: 16px;
+        }
+        .view-button {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #7db87d;
+            color: #000;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+        .view-button:hover {
+            background-color: #6aa66a;
         }
         .dropdown {
             padding: 8px 12px;
@@ -100,13 +126,13 @@
         <div class="search-filter">
             <input type="text" class="search-bar" placeholder="Search for product...">
             <div class="dropdown">
-            <select class="custom-select" id="sortSelect">
-                <option value="newest">Newest</option>
-                <option value="oldest">Oldest</option>
-                <option value="a-z">A-Z</option>
-                <option value="z-a">Z-A</option>
-            </select>
-        </div>
+                <select class="custom-select" id="sortSelect">
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="a-z">A-Z</option>
+                    <option value="z-a">Z-A</option>
+                </select>
+            </div>
         </div>
         
         <table>
@@ -123,19 +149,21 @@
             <tbody>
                 <% orders.forEach(order => { %>
                     <tr>
-                    <td><%= order._id %></td>
-                    <td><%= order.totalPrice %></td>
-                    <td><%= order.invoiceDate ? order.invoiceDate.toDateString() : 'N/A' %></td>
-                    <td>
-                        <span class="status-badge <%= order.status.toLowerCase().replace(' ', '-') %>">
-                        <%= order.status %>
-                        </span>
-                    </td>
-                    <td class="action-icon">&#128065;&#xFE0E;</td>
+                        <td><%= order.user ? order.user.firstName + ' ' + order.user.lastName : 'N/A' %></td>
+                        <td><%= order.orderId %></td>
+                        <td>₹<%= (order.finalAmount || 0).toFixed(2) %></td>
+                        <td><%= (order.invoiceDate || order.createdOn).toISOString().slice(0, 10) %></td>
+                        <td>
+                            <span class="status-badge <%= order.status.toLowerCase().replace(' ', '-') %>">
+                                <%= order.status %>
+                            </span>
+                        </td>
+                        <td class="action-icon">
+                            <a href="/admin/orders/<%= order._id %>" class="view-button">View</a>
+                        </td>
                     </tr>
-                <% }); %>
-        </tbody>
-
+                <% }) %>
+            </tbody>
         </table>
     </div>
     <%- include('../../views/partials/admin/footer') %>

@@ -61,7 +61,9 @@ router.get('/getProduct/:id', adminAuth, productController.getProductById);
 
 
 // Order management
-router.get('/orders', adminAuth, orderController.orderInfo);
+router.get('/orders', adminAuth, orderController.loadOrderPage);
+router.get('/orders/:orderId', adminAuth, orderController.loadOrderDetailPage);
+router.post('/orders/:orderId/update-status', adminAuth, orderController.updateOrderStatus);
 
 
 

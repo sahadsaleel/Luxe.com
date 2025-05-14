@@ -36,6 +36,10 @@ const cartSchema = new Schema({
         cancellationReason: {
             type: String,
             default: 'none'
+        },
+        isGiftWrapped: {
+            type: Boolean,
+            default: false
         }
     }]
 });

@@ -12,17 +12,15 @@ const addressSchema = new Schema({
             addressType: {
                 type: String,
                 required: true,
+                enum: ['Home', 'Work', 'Other'],
             },
             name: {
                 type: String,
                 required: true,
             },
-            addressLine1: {
+            landMark: {
                 type: String,
                 required: true,
-            },
-            addressLine2: {
-                type: String,
             },
             city: {
                 type: String,
@@ -32,11 +30,7 @@ const addressSchema = new Schema({
                 type: String,
                 required: true,
             },
-            zipCode: {
-                type: String,
-                required: true,
-            },
-            country: {
+            pincode: {
                 type: String,
                 required: true,
             },

@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Successful - Luxe.com</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/orderSuccess.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #8a6a94;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo img {
+            width: 70px;
+            height: auto;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #000;
+            font-weight: 500;
+        }
+
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .search-container input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-right: none;
+            outline: none;
+            width: 300px;
+        }
+
+        .search-container button {
+            background-color: #000;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 40px;
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .result-item {
+            display: block;
+            padding: 8px;
+            text-decoration: none;
+            color: black;
+        }
+
+        .result-item:hover {
+            background: #f0f0f0;
+        }
+
+        .result-item span {
+            display: block;
+        }
+
+        .no-results {
+            padding: 8px;
+            color: #666;
+        }
+
+        .icon {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a, .dropdown-content span {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        .auth-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-links a {
+            text-decoration: none;
+            color: #000;
+            font-weight: 500;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #000000;
+            color: white;
+            padding: 40px 20px;
+            margin-top: auto;
+        }
+
+        .footer-logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .footer-logo img {
+            width: 100px;
+            height: auto;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 40px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-column h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: #fff;
+        }
+
+        .who-we-are p {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: #ccc;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #9c8164;
+        }
+
+        .menu ul,
+        .help ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .menu ul li,
+        .help ul li {
+            margin-bottom: 10px;
+        }
+
+        .menu ul li a,
+        .help ul li a {
+            text-decoration: none;
+            color: #ccc;
+            transition: color 0.3s;
+        }
+
+        .menu ul li a:hover,
+        .help ul li a:hover {
+            color: #9c8164;
+        }
+
+        .care-visit p {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+
+        .care-visit i {
+            margin-right: 10px;
+            min-width: 20px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #999;
+            font-size: 12px;
+            margin-top: 40px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                margin: 20px 0;
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .header-icons {
+                width: 100%;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+
+            .auth-links {
+                font-size: 13px;
+                gap: 5px;
+            }
+
+            .auth-links a {
+                padding: 3px 5px;
+            }
+
+            .dropdown-content {
+                min-width: 120px;
+            }
+
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .care-visit p {
+                text-align: left;
+            }
+
+            .footer-logo img {
+                width: 80px;
+            }
+        }
+
+        /* Ensure body takes full height */
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        main {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="/img/logo.png" alt="Luxe.com Logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">HOME</a></li>
+                <li><a href="/shop">SHOP</a></li>
+                <li><a href="#">+ CONTACT US</a></li>
+                <li><a href="#">ABOUT</a></li>
+            </ul>
+            <div class="header-icons">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search...">
+                    <button>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+                <div class="icon">
+                    <a href="/wishlist" style="position: relative; display: inline-block; color: black;">
+                        <svg width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </a>
+                </div>
+                <a href="/cart" style="position: relative; display: inline-block; color: black;">
+                    <svg width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span style="position:absolute; top:-5px; right:-5px; background:black; color:white; border-radius:50%; padding:2px 5px; font-size:10px;">2</span>
+                </a>
+                <% if(locals.user) { %>
+                    <div class="dropdown">
+                        <div class="icon profile">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="11" />
+                                <path d="M12,14.9c-3.5,0-6.5,2-8,5c2,2.1,4.9,3.3,8,3.3s6-1.3,8-3.3C18.5,17,15.5,14.9,12,14.9z" />
+                                <circle cx="12" cy="8.7" r="3.6" />
+                            </svg>
+                        </div>
+                        <div class="dropdown-content">
+                            <span class="user-name"><%= locals.user.firstName %></span>
+                            <a href="/Profile">Profile</a>
+                            <a href="/logout">Logout</a>    
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="icon profile">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="11" />
+                            <path d="M12,14.9c-3.5,0-6.5,2-8,5c2,2.1,4.9,3.3,8,3.3s6-1.3,8-3.3C18.5,17,15.5,14.9,12,14.9z" />
+                            <circle cx="12" cy="8.7" r="3.6" />
+                        </svg>
+                    </div>
+                    <div class="auth-links">
+                        <a href="/login" class="login">Login</a>
+                        <a href="/signup" class="signup">Sign Up</a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <div id="order-confirmation-page">
+                <div class="breadcrumbs">
+                    <a href="/" class="breadcrumb-item">Home</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <a href="/shop" class="breadcrumb-item">Shop</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <a href="/cart" class="breadcrumb-item">Cart</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item active">Payment</span>
+                </div>
+                
+                <!-- Success header -->
+                <div class="success-header">
+                    <div class="checkmark-circle">
+                        <i class="fas fa-check" style="color: #8a6a94;"></i>
+                    </div>
+                    <h1>Order Successful!</h1>
+                    <p>Thank you for your purchase, <%= user.firstName %> <%= user.lastName %>.</p>
+                </div>
+                
+                <div class="order-content">
+                    <!-- Order Details -->
+                    <div class="order-section">
+                        <h2 class="section-title">Order Details</h2>
+                        <div class="order-info">
+                            <div class="info-item">
+                                <div class="info-label">Order ID</div>
+                                <div class="info-value"><%= order.orderId %></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Order Date</div>
+                                <div class="info-value"><%= order.orderDate %></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Payment Method</div>
+                                <div class="info-value"><%= order.paymentMethod %></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="order-section">
+                        <h2 class="section-title">Shipping Address</h2>
+                        <% if (order.address && Object.keys(order.address).length > 0) { %>
+                            <div class="address-container">
+                                <div class="address-box">
+                                    <div class="address-header">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>Delivery Location</span>
+                                    </div>
+                                    <div class="address-content">
+                                        <p><strong><%= order.address.name || 'N/A' %></strong></p>
+                                        <p><%= order.address.landMark || 'N/A' %></p>
+                                        <p><%= order.address.city || '' %>, <%= order.address.state || '' %> <%= order.address.pincode || '' %></p>
+                                        <p>Phone: <%= order.address.phone || 'N/A' %></p>
+                                        <% if (order.address.altPhone) { %>
+                                            <p>Alternate Phone: <%= order.address.altPhone %></p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <div class="address-container">
+                                <div class="address-box">
+                                    <div class="address-header">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>Delivery Location</span>
+                                    </div>
+                                    <div class="address-content">
+                                        <p>No address provided</p>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <!-- Order Items -->
+                    <div class="order-section">
+                        <h2 class="section-title">Order Items</h2>
+                        <table class="product-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Size</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% order.items.forEach(item => { %>
+                                    <tr>
+                                        <td class="product-name"><%= item.productName %></td>
+                                        <td><%= item.variant.size %></td>
+                                        <td><%= item.quantity %></td>
+                                        <td>₹<%= item.price.toFixed(2) %></td>
+                                        <td>₹<%= item.totalPrice.toFixed(2) %></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                        
+                        <!-- Order Summary -->
+                        <div class="order-summary">
+                            <div class="summary-row">
+                                <div class="summary-label">Subtotal:</div>
+                                <div class="summary-value">₹<%= order.subtotal.toFixed(2) %></div>
+                            </div>
+                            <div class="summary-row">
+                                <div class="summary-label">Gift Wrap Total:</div>
+                                <div class="summary-value">₹<%= order.giftWrapTotal.toFixed(2) %></div>
+                            </div>
+                            <div class="summary-row">
+                                <div class="summary-label">Shipping:</div>
+                                <div class="summary-value">₹<%= order.shipping.toFixed(2) %></div>
+                            </div>
+                            <div class="summary-row">
+                                <div class="summary-label">Discount:</div>
+                                <div class="summary-value">₹<%= (order.discount || 0).toFixed(2) %></div>
+                            </div>
+                            <div class="grand-total">
+                                <div>Total:</div>
+                                <div>₹<%= order.finalAmount.toFixed(2) %></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="actions">
+                        <a href="/order-invoice?orderId=<%= order.orderId %>" class="btn btn-primary">
+                            <i class="fas fa-download"></i> Download Invoice
+                        </a>
+                        <a href="/shop" class="btn btn-outline">
+                            <i class="fas fa-shopping-bag"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Success Section (Optional) -->
+            <div id="payment-success-page" style="display: none;">
+                <div class="breadcrumbs">
+                    <a href="/" class="breadcrumb-item">Home</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <a href="/shop" class="breadcrumb-item">Shop</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <a href="/cart" class="breadcrumb-item">Cart</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item active">Payment</span>
+                </div>
+                
+                <div class="payment-icon-container">
+                    <div class="payment-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <h2 class="payment-success-text">PAYMENT SUCCESSFUL!</h2>
+                    <p class="payment-success-subtext">Thank you for your purchase, <%= user.firstName %> <%= user.lastName %>.</p>
+                    
+                    <a href="/order-success?orderId=<%= order.orderId %>" class="btn btn-black">VIEW ORDER</a>
+                    
+                    <div class="secondary-action">
+                        <a href="/order-invoice?orderId=<%= order.orderId %>" class="receipt-link">View E-Receipt</a>
+                        <a href="/review?orderId=<%= order.orderId %>" class="review-btn">Write a review</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">
+            <img src="/img/footer Logo.png" alt="Luxe.com Logo">
+        </div>
+        <div class="footer-container">
+            <div class="footer-column who-we-are">
+                <h3>WHO WE ARE</h3>
+                <p>Bringing you the best of Beauty with the best of results of Naturals at the best prices guaranteed with Quality.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-column menu">
+                <h3>MENU</h3>
+                <ul>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Journal</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-column help">
+                <h3>HELP</h3>
+                <ul>
+                    <li><a href="#">Shipping Information</a></li>
+                    <li><a href="#">Returns & Exchange</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column care-visit">
+                <h3>CARE FOR A VISIT?</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Kinfra Industrial Park, Kanjancherry, Kozhikode, Kerala</p>
+                <p><i class="fas fa-phone"></i> +91 1000000000</p>
+                <p><i class="fas fa-envelope"></i> sahad.luxe.com@gmail.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © 2024 All rights reserved</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Order Success Page Scripts
+        function showOrderConfirmation() {
+            document.getElementById('order-confirmation-page').style.display = 'block';
+            document.getElementById('payment-success-page').style.display = 'none';
+        }
+        
+        function showPaymentSuccess() {
+            document.getElementById('order-confirmation-page').style.display = 'none';
+            document.getElementById('payment-success-page').style.display = 'block';
+        }
+        
+        showOrderConfirmation();
+
+        // Header Scripts
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const profileIcons = document.querySelectorAll('.icon.profile');
+                profileIcons.forEach(icon => {
+                    icon.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const dropdown = icon.closest('.dropdown');
+                        if (dropdown) {
+                            dropdown.classList.toggle('active');
+                        }
+                    });
+                });
+
+                document.addEventListener('click', (e) => {
+                    const dropdowns = document.querySelectorAll('.dropdown');
+                    dropdowns.forEach(dropdown => {
+                        if (!dropdown.contains(e.target)) {
+                            dropdown.classList.remove('active');
+                        }
+                    });
+                });
+
+                const searchInput = document.getElementById('searchInput');
+                const searchResults = document.getElementById('searchResults');
+
+                searchInput.addEventListener('input', async () => {
+                    try {
+                        const query = searchInput.value.trim();
+
+                        if (!query) {
+                            searchResults.innerHTML = '';
+                            searchResults.classList.remove('active');
+                            return;
+                        }
+
+                        const response = await fetch(`/search?query=${encodeURIComponent(query)}`);
+                        const products = await response.json();
+
+                        if (!products || products.length === 0) {
+                            searchResults.innerHTML = '<p class="no-results">No products found</p>';
+                            searchResults.classList.add('active');
+                            return;
+                        }
+
+                        const resultsHtml = products.map(product => {
+                            const price = product.variants[0]?.salePrice || product.variants[0]?.regularPrice;
+                            return `
+                                <a href="/productViewPage?id=${product._id}" class="result-item">
+                                    <span>${product.productName}</span>
+                                    <span>${product.productBrand.brandName}</span>
+                                    <span>${price}₹</span>
+                                </a>
+                            `;
+                        }).join('');
+
+                        searchResults.innerHTML = resultsHtml;
+                        searchResults.classList.add('active');
+                    } catch (error) {
+                        console.error('Search error:', error);
+                        searchResults.innerHTML = '<p class="no-results">Error searching</p>';
+                        searchResults.classList.add('active');
+                    }
+                });
+            } catch (error) {
+                console.error('Error setting up header:', error);
+            }
+        });
+    </script>
+</body>
+</html>

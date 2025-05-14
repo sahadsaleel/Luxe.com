@@ -4,6 +4,7 @@ const userController = require('../controller/user/userController');
 const profileControllers = require('../controller/user/profileControllers');
 const productController = require('../controller/user/productController');
 const cartController = require('../controller/user/cartController');
+const orderController = require('../controller/user/orderController')
 const { uploadSingleImage } = require('../helpers/multer');
 const passport = require('passport');
 const { userAuth } = require('../middleware/auth');
@@ -71,6 +72,8 @@ router.post('/wishlist/add', cartController.addToWishlist);
 
 router.get('/checkout', cartController.loadCheckout);
 router.post('/checkout/submit', cartController.submitCheckout);
+
+router.get('/order-success', userAuth, orderController.loadOrderSuccessPage);
 
 // Error 
 router.get('/pageNotFound', userController.pageNotFound);

@@ -333,13 +333,13 @@ const changeEmail = async (req, res) => {
     }
 };
 
-const userAddress = async (req, res) =>{
+const userAddress = async (req, res) => {
     try {
         const userId = req.session.user;
-        if (!userId){
+        if (!userId) {
             return res.redirect('/login');
         }
-        
+
         const userData = await User.findById(userId);
         if (!userData) {
             return res.redirect('/login');
@@ -373,29 +373,27 @@ const getAddress = async (req, res) => {
 const addAddress = async (req, res) => {
     try {
         const userId = req.session.user;
-        const { addressType, name, addressLine1, addressLine2, city, state, zipCode, country, phone, altPhone, isDefault } = req.body;
+        const { addressType, name, landMark, city, state, pincode, phone, altPhone, isDefault } = req.body;
 
-        if (!addressType || !name || !addressLine1 || !city || !state || !zipCode || !country || !phone) {
+        if (!addressType || !name || !landMark || !city || !state || !pincode || !phone) {
             return res.status(400).json({ message: 'All required fields must be provided' });
         }
 
-        if (!/^\d{5,10}$/.test(zipCode) || !/^\d{10}$/.test(phone) || (altPhone && !/^\d{10}$/.test(altPhone))) {
-            return res.status(400).json({ message: 'Invalid zip code or phone number' });
+        if (!/^\d{6}$/.test(pincode) || !/^\d{10}$/.test(phone) || (altPhone && !/^\d{10}$/.test(altPhone))) {
+            return res.status(400).json({ message: 'Invalid pincode or phone number' });
         }
 
         let addressData = await Address.findOne({ userId });
         const newAddress = {
             addressType,
             name,
-            addressLine1,
-            addressLine2: addressLine2 || '',
+            landMark,
             city,
             state,
-            zipCode,
-            country,
+            pincode,
             phone,
             altPhone: altPhone || '',
-            isDefault: isDefault === 'on' || isDefault === true || isDefault === 'true'
+            isDefault: isDefault === true || isDefault === 'true',
         };
 
         if (!addressData) {
@@ -419,14 +417,14 @@ const editAddress = async (req, res) => {
     try {
         const userId = req.session.user;
         const addressId = req.params.id;
-        const { addressType, name, addressLine1, addressLine2, city, state, zipCode, country, phone, altPhone, isDefault } = req.body;
+        const { addressType, name, landMark, city, state, pincode, phone, altPhone, isDefault } = req.body;
 
-        if (!addressType || !name || !addressLine1 || !city || !state || !zipCode || !country || !phone) {
+        if (!addressType || !name || !landMark || !city || !state || !pincode || !phone) {
             return res.status(400).json({ message: 'All required fields must be provided' });
         }
 
-        if (!/^\d{5,10}$/.test(zipCode) || !/^\d{10}$/.test(phone) || (altPhone && !/^\d{10}$/.test(altPhone))) {
-            return res.status(400).json({ message: 'Invalid zip code or phone number' });
+        if (!/^\d{6}$/.test(pincode) || !/^\d{10}$/.test(phone) || (altPhone && !/^\d{10}$/.test(altPhone))) {
+            return res.status(400).json({ message: 'Invalid pincode or phone number' });
         }
 
         const addressData = await Address.findOne({ userId, 'address._id': addressId });
@@ -437,15 +435,13 @@ const editAddress = async (req, res) => {
         const updateData = {
             addressType,
             name,
-            addressLine1,
-            addressLine2: addressLine2 || '',
+            landMark,
             city,
             state,
-            zipCode,
-            country,
+            pincode,
             phone,
             altPhone: altPhone || '',
-            isDefault: isDefault === 'on' || isDefault === true || isDefault === 'true'
+            isDefault: isDefault === true || isDefault === 'true',
         };
 
         if (updateData.isDefault) {
