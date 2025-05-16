@@ -1,0 +1,602 @@
+<%- include('../../views/partials/user/header') %>
+
+<div class="container">
+    <div class="header">
+        <div class="logo">Luxe.com</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/shop">Shop</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <div class="nav-icons">
+            <a href="/wishlist"><i class="fas fa-heart"></i></a>
+            <a href="/cart"><i class="fas fa-shopping-cart"></i></a>
+            <a href="/profile"><i class="fas fa-user"></i></a>
+        </div>
+    </div>
+
+    <div class="breadcrumb-container">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Wallet</li>
+        </ol>
+    </div>
+
+    <div class="main-content">
+        <div class="sidebar">
+            <div class="profile-brief">
+                <div class="profile-image">
+                    <img src="<%= user && user.profileImage ? user.profileImage : '/img/profile-placeholder.png' %>" alt="Profile Image">
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : 'User' %></div>
+                    <div class="profile-email"><%= user && user.email ? user.email : 'N/A' %></div>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
+                <li><a href="/address"><i class="fas fa-address-book"></i> Address Book</a></li>
+                <li><a href="/orders"><i class="fas fa-shopping-bag"></i> My Orders</a></li>
+                <li><a href="/wallet" class="active"><i class="fas fa-wallet"></i> My Wallet</a></li>
+                <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
+                <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
+            </ul>
+        </div>
+
+       <div class="wallet-content">
+            <h2 class="section-title">My Wallet</h2>
+            <div class="wallet-card">
+                <div class="card-decoration"></div>
+                <div class="wallet-brand">WALLET</div>
+                <div class="balance-label">Available Balance</div>
+                <div class="balance-amount">₹<%= user && user.wallet && user.wallet.length > 0 ? user.wallet[0].balance.toFixed(2) : '0.00' %></div>
+                <div class="card-number">**** **** **** <%= user && user.wallet && user.wallet.length > 0 ? user.wallet[0].cardLastFour : '1234' %></div>
+                <div class="card-actions">
+                    <button class="card-btn" id="addMoneyBtn"><i class="fas fa-plus"></i> Add Money</button>
+                    <button class="card-btn"><i class="fas fa-exchange-alt"></i> Transfer</button>
+                </div>
+            </div>
+
+            <div class="add-amount" id="addAmountSection">
+                <h3>Add Amount</h3>
+                <form action="/wallet/add" method="POST">
+                    <input type="number" class="amount-input" name="amount" placeholder="Enter amount" min="1" step="0.01" required>
+                    <button type="submit" class="add-btn">Add Amount</button>
+                </form>
+            </div>
+
+            <div class="transaction-history">
+                <h3>Transaction History</h3>
+                <table class="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Transaction ID</th>
+                            <th>Payment Method</th>
+                            <th>Description</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (user && user.wallet && user.wallet.length > 0 && user.wallet[0].transactions && user.wallet[0].transactions.length > 0) { %>
+                            <% user.wallet[0].transactions.forEach(transaction => { %>
+                                <tr>
+                                    <td class="amount <%= transaction.type.toLowerCase() %>">
+                                        <%= transaction.type === 'Credit' ? '+' : '-' %>₹<%= transaction.amount.toFixed(2) %>
+                                    </td>
+                                    <td><span class="type-badge <%= transaction.type.toLowerCase() %>"><%= transaction.type %></span></td>
+                                    <td><%= new Date(transaction.date).toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' }) %></td>
+                                    <td><%= transaction.id %></td>
+                                    <td><%= transaction.paymentMethod %></td>
+                                    <td><%= transaction.description %></td>
+                                    <td><button class="view-btn" data-id="<%= transaction.id %>">View</button></td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="7">No transactions found.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <div class="pagination-btn">1</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../../views/partials/user/footer') %>
+
+<style>
+    :root {
+        --primary-color: #8a6a94;
+        --secondary-color: #7a5a84;
+        --accent-color: #9a7aa4;
+        --text-color: #333;
+        --light-text: #777;
+        --background: #f8f9fa;
+        --card-bg: #fff;
+        --border-radius: 12px;
+        --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        background-color: var(--background);
+        color: var(--text-color);
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+    }
+
+    .logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 20px;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: var(--text-color);
+        font-size: 15px;
+        transition: var(--transition);
+    }
+
+    .nav-links a:hover {
+        color: var(--primary-color);
+    }
+
+    .nav-icons {
+        display: flex;
+        gap: 15px;
+    }
+
+    .nav-icons a {
+        color: var(--text-color);
+        font-size: 18px;
+        transition: var(--transition);
+    }
+
+    .nav-icons a:hover {
+        color: var(--primary-color);
+    }
+
+    .breadcrumb-container {
+        padding: 15px 0;
+        background-color: var(--card-bg);
+        border-bottom: 1px solid #eee;
+    }
+
+    .breadcrumb {
+        display: flex;
+        list-style: none;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: '›';
+        margin: 0 10px;
+        color: var(--light-text);
+    }
+
+    .breadcrumb-item a {
+        color: var(--light-text);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .breadcrumb-item a:hover {
+        color: var(--primary-color);
+    }
+
+    .breadcrumb-item.active {
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    .main-content {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr);
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    .sidebar {
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        padding: 25px;
+        box-shadow: var(--box-shadow);
+        height: fit-content;
+    }
+
+    .profile-brief {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .profile-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: #e9e9e9;
+    }
+
+    .profile-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-name {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .profile-email {
+        font-size: 14px;
+        color: var(--light-text);
+    }
+
+    .nav-menu {
+        list-style: none;
+    }
+
+    .nav-menu li {
+        margin-bottom: 12px;
+    }
+
+    .nav-menu a {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: var(--text-color);
+        font-size: 15px;
+        padding: 8px 15px;
+        border-radius: 8px;
+        transition: var(--transition);
+    }
+
+    .nav-menu a:hover {
+        background-color: rgba(138, 106, 148, 0.1);
+        color: var(--primary-color);
+    }
+
+    .nav-menu a.active {
+        background-color: rgba(138, 106, 148, 0.15);
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .nav-menu i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .wallet-content {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .wallet-card {
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: var(--border-radius);
+        padding: 25px;
+        box-shadow: var(--box-shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .wallet-brand {
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+    .balance-label {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .balance-amount {
+        font-size: 36px;
+        font-weight: 600;
+        margin: 15px 0;
+    }
+
+    .card-number {
+        font-size: 16px;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 15px;
+    }
+
+    .card-btn {
+        background-color: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--transition);
+    }
+
+    .card-btn:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .card-decoration {
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 150px;
+        height: 150px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .add-amount {
+        display: none;
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        padding: 25px;
+        box-shadow: var(--box-shadow);
+    }
+
+    .add-amount.active {
+        display: block;
+    }
+
+    .amount-input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #e1e1e1;
+        border-radius: 8px;
+        font-size: 15px;
+        margin-bottom: 15px;
+        transition: var(--transition);
+    }
+
+    .amount-input:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(138, 106, 148, 0.2);
+    }
+
+    .add-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .add-btn:hover {
+        background-color: var(--secondary-color);
+    }
+
+    .transaction-history {
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        padding: 25px;
+        box-shadow: var(--box-shadow);
+    }
+
+    .transactions-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    .transactions-table th {
+        text-align: left;
+        padding: 12px 15px;
+        background-color: #f9f9f9;
+        color: var(--light-text);
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .transactions-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        color: var(--text-color);
+        font-size: 14px;
+    }
+
+    .transactions-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .amount.credit {
+        color: #2ecc71;
+        font-weight: 500;
+    }
+
+    .amount.debit {
+        color: #e74c3c;
+        font-weight: 500;
+    }
+
+    .type-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .type-badge.credit {
+        background-color: rgba(46, 204, 113, 0.1);
+        color: #2ecc71;
+    }
+
+    .type-badge.debit {
+        background-color: rgba(231, 76, 60, 0.1);
+        color: #e74c3c;
+    }
+
+    .view-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .view-btn:hover {
+        background-color: var(--secondary-color);
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination-btn {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 8px;
+        margin: 0 5px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: var(--transition);
+    }
+
+    .pagination-btn:hover {
+        background-color: var(--secondary-color);
+    }
+
+    @media (max-width: 768px) {
+        .main-content {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            padding: 20px;
+        }
+
+        .profile-brief {
+            flex-direction: row;
+            align-items: center;
+            text-align: left;
+        }
+
+        .profile-image {
+            width: 80px;
+            height: 80px;
+            margin-right: 15px;
+            margin-bottom: 0;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .container {
+            padding: 15px;
+        }
+
+        .wallet-card {
+            padding: 20px;
+        }
+
+        .balance-amount {
+            font-size: 28px;
+        }
+
+        .card-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const addMoneyBtn = document.getElementById('addMoneyBtn');
+        const addAmountSection = document.getElementById('addAmountSection');
+
+        addMoneyBtn.addEventListener('click', () => {
+            addAmountSection.classList.toggle('active');
+        });
+    });
+</script>

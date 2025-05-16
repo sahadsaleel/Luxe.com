@@ -4,7 +4,8 @@ const userController = require('../controller/user/userController');
 const profileControllers = require('../controller/user/profileControllers');
 const productController = require('../controller/user/productController');
 const cartController = require('../controller/user/cartController');
-const orderController = require('../controller/user/orderController')
+const orderController = require('../controller/user/orderController');
+const walletController = require('../controller/user/walletController')
 const { uploadSingleImage } = require('../helpers/multer');
 const passport = require('passport');
 const { userAuth } = require('../middleware/auth');
@@ -23,12 +24,12 @@ router.post('/resend-otp', userController.resendOtp);
 // Google OAuth 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
-  '/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login?message=blocked' }),
-  (req, res) => {
-    req.session.user = req.user._id;
-    res.redirect('/');
-  }
+    '/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login?message=blocked' }),
+    (req, res) => {
+        req.session.user = req.user._id;
+        res.redirect('/');
+    }
 );
 
 // Password Reset 
@@ -69,11 +70,19 @@ router.post('/cart/update-quantity', cartController.updateCartQuantity);
 router.post('/cart/remove', cartController.removeFromCart);
 router.post('/wishlist/add', cartController.addToWishlist);
 
-
+// Checkout
 router.get('/checkout', cartController.loadCheckout);
 router.post('/checkout/submit', cartController.submitCheckout);
 
+// Orders
 router.get('/order-success', userAuth, orderController.loadOrderSuccessPage);
+router.get('/orders', userAuth, orderController.loadMyOrdersPage);
+router.get('/orders/details/:orderId', userAuth, orderController.loadOrderDetailPage);
+router.post('/orders/details/:orderId/cancel', userAuth, orderController.cancelOrder);
+router.post('/orders/details/:orderId/cancel-item/:itemId', userAuth, orderController.cancelOrderItem);
+router.post('/orders/details/:orderId/return', userAuth, orderController.requestReturn);
+
+router.get('/wallet', userAuth, walletController.loadWalletPage);
 
 // Error 
 router.get('/pageNotFound', userController.pageNotFound);

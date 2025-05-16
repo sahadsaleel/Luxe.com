@@ -3,7 +3,7 @@ const Product = require('../../models/productSchema');
 const Cart = require('../../models/cartSchema');
 const Address = require('../../models/addressSchema');
 const Order = require('../../models/orderSchema');
-
+const mongoose = require('mongoose');
 
 const loadCartPage = async (req, res) => {
     try {

@@ -1,0 +1,1310 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxe.com - Order Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="/css/userProfile.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <style>
+        .order-details-content {
+            padding: 20px;
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .order-id {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            text-transform: capitalize;
+        }
+        .status.pending { background-color: #fff3cd; color: #856404; }
+        .status.processing { background-color: #d1ecf1; color: #0c5460; }
+        .status.shipped { background-color: #cce5ff; color: #004085; }
+        .status.delivered { background-color: #d4edda; color: #155724; }
+        .status.cancelled { background-color: #f8d7da; color: #721c24; }
+        .status.return-requested { background-color: #fff3cd; color: #856404; }
+        .status.return-approved { background-color: #d1ecf1; color: #0c5460; }
+        .status.return-completed { background-color: #d4edda; color: #155724; }
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .order-items-table th,
+        .order-items-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        .order-items-table th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+        }
+        .product-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .item-cancelled {
+            background-color: #f8f8f8;
+            color: #999;
+        }
+        .item-cancelled .action-button {
+            display: none;
+        }
+        .order-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .address-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .pricing-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+        .pricing-table td:last-child {
+            text-align: right;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background-color: #fff;
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .close-btn {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #666;
+            background: none;
+            border: none;
+        }
+        .modal-body {
+            padding: 20px 0;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .action-button, .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+        .btn-cancel, .action-button.btn-cancel {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .btn-cancel:hover, .action-button.btn-cancel:hover {
+            background-color: #c82333;
+        }
+        .btn-back {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .btn-back:hover {
+            background-color: #e0e0e0;
+        }
+        .btn-invoice {
+            background-color: #2874f0;
+            color: #fff;
+        }
+        .btn-invoice:hover {
+            background-color: #1a5dc7;
+        }
+        .btn-disabled, .action-button.btn-disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .btn-loading {
+            background-color: #999;
+            cursor: not-allowedNotifier('cursor', 'not-allowed');
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .spinner {
+            border: 2px solid #fff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .order-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .order-summary-table th,
+        .order-summary-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        .order-summary-table th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+        }
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            padding: 15px;
+            background-color: #f8d7da;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .invoice-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .invoice-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .invoice-logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .invoice-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .invoice-detail-label {
+            font-weight: 500;
+            color: #333;
+        }
+        .invoice-detail-value {
+            color: #555;
+        }
+        .invoice-body {
+            padding: 20px;
+        }
+        .invoice-section {
+            margin-bottom: 20px;
+        }
+        .invoice-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .invoice-address-box {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .invoice-table th,
+        .invoice-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            font-size: 0.9rem;
+        }
+        .invoice-table th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+        }
+        .invoice-total-table {
+            width: 50%;
+            margin-left: auto;
+            border-collapse: collapse;
+        }
+        .invoice-total-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+        .invoice-footer {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+        .invoice-download-area {
+            padding: 10px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../../views/partials/user/header') %>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">Luxe.com</div>
+        </div>
+
+        <div class="breadcrumb-container">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/orders">My Orders</a></li>
+                    <li class="breadcrumb-item active">Order Details</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="profile-brief">
+                    <div class="profile-image">
+                        <img src="<%= user && user.profileImage ? user.profileImage : '/img/profile images.png' %>" alt="Profile Image">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : 'Guest' %></div>
+                        <div class="profile-email"><%= user && user.email ? user.email : 'N/A' %></div>
+                    </div>
+                </div>
+
+                <ul class="nav-menu">
+                    <h3>Manage My Account</h3>
+                    <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li><a href="/address"><i class="fas fa-address-book"></i> Address Book</a></li>
+
+                    <h3>Orders & Wishlist</h3>
+                    <li><a href="/orders" class="active"><i class="fas fa-shopping-bag"></i> My Orders</a></li>
+                    <li><a href="/wishlist"><i class="fas fa-heart"></i> My Wishlist</a></li>
+
+                    <h3>Payments</h3>
+                    <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
+                    <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
+                </ul>
+            </div>
+
+            <div class="content">
+                <div class="profile-header">
+                    <h1>Order Details</h1>
+                </div>
+
+                <div class="card">
+                    <% if (!order) { %>
+                        <div class="error-message">Order not found.</div>
+                    <% } else if (!order.orderedItems || order.orderedItems.length === 0) { %>
+                        <div class="error-message">No items found in this order.</div>
+                    <% } else { %>
+                        <div class="card-header">
+                            <i class="fas fa-shopping-bag"></i>
+                            <h2>Order #<%= order.orderId %></h2>
+                            <span class="status <%= order.status.toLowerCase().replace(' ', '-') %>">
+                                <%= order.status.charAt(0).toUpperCase() + order.status.slice(1).toLowerCase() %>
+                            </span>
+                        </div>
+
+                        <table class="order-items-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Size</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                    <th>Gift Wrap</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% order.orderedItems.forEach(item => { %>
+                                    <tr class="<%= item.isCanceled ? 'item-cancelled' : '' %>" data-item-id="<%= item._id %>">
+                                        <td>
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <img src="<%= item.productImage || '/img/placeholder.png' %>" alt="<%= item.productName || 'Product' %>" class="product-image">
+                                                <span><%= item.productName || 'N/A' %></span>
+                                            </div>
+                                        </td>
+                                        <td><%= item.variant && item.variant.size ? item.variant.size : 'N/A' %></td>
+                                        <td><%= item.quantity || 'N/A' %></td>
+                                        <td>₹<%= Number(item.price || 0).toFixed(2) %></td>
+                                        <td>₹<%= Number(item.totalPrice || 0).toFixed(2) %></td>
+                                        <td><%= item.isGiftWrapped ? 'Yes' : 'No' %></td>
+                                        <td class="item-status">
+                                            <% if (item.status==='Cancelled') { %>
+                                                Cancelled <%= item.cancelReason ? `(${item.cancelReason})` : '' %>
+                                            <% } else { %>
+                                                Active
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <% if (['Pending', 'Processing'].includes(order.status) && !item.isCanceled) { %>
+                                                <button class="action-button btn-cancel" data-item-id="<%= item._id %>" onclick="showCancelItemModal('<%= item._id %>')">Cancel</button>
+                                            <% } else if (item.isCanceled) { %>
+                                                <button class="action-button btn-disabled" disabled>Cancelled</button>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-info-circle"></i>
+                                <h2>Order Information</h2>
+                            </div>
+                            <div class="order-info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">Order Date</div>
+                                    <div class="info-value">
+                                        <%= order.orderDate ? new Date(order.orderDate).toLocaleDateString('en-GB', { 
+                                            day: '2-digit', 
+                                            month: '2-digit', 
+                                            year: 'numeric' 
+                                        }) : 'N/A' %>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Payment Method</div>
+                                    <div class="info-value"><%= order.paymentMethod ? order.paymentMethod.charAt(0).toUpperCase() + order.paymentMethod.slice(1) : 'N/A' %></div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Delivery Method</div>
+                                    <div class="info-value"><%= order.deliveryMethod ? order.deliveryMethod.charAt(0).toUpperCase() + order.deliveryMethod.slice(1) : 'N/A' %></div>
+                                </div>
+                                <% if (order.invoiceDate) { %>
+                                    <div class="info-item">
+                                        <div class="info-label">Invoice Date</div>
+                                        <div class="info-value">
+                                            <%= new Date(order.invoiceDate).toLocaleDateString('en-GB', { 
+                                                day: '2-digit', 
+                                                month: '2-digit', 
+                                                year: 'numeric' 
+                                            }) %>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <h2>Shipping Address</h2>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-value">
+                                    <% if (order.addressDetails) { %>
+                                        <%= order.addressDetails.name || 'N/A' %> 
+                                        <%= order.addressDetails.addressType ? `(${order.addressDetails.addressType})` : '' %><br>
+                                        <%= order.addressDetails.landMark ? order.addressDetails.landMark + ',' : '' %> 
+                                        <%= order.addressDetails.city ? order.addressDetails.city + ',' : '' %> 
+                                        <%= order.addressDetails.state ? order.addressDetails.state : '' %> 
+                                        <%= order.addressDetails.pincode ? order.addressDetails.pincode : '' %><br>
+                                        Phone: <%= order.addressDetails.phone || 'N/A' %> 
+                                        <%= order.addressDetails.altPhone ? `, Alt: ${order.addressDetails.altPhone}` : '' %>
+                                    <% } else { %>
+                                        Address not available
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <h2>Pricing Summary</h2>
+                            </div>
+                            <table class="pricing-table">
+                                <tr>
+                                    <td>Subtotal</td>
+                                    <td>₹<%=order.totalPrice.toFixed(2) %></td>
+                                </tr>
+                                <tr>
+                                    <td>Gift Wrap Total</td>
+                                    <td>₹<%= Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : (item.isGiftWrapped ? 100 : 0)), 0)).toFixed(2) %></td>
+                                </tr>
+                                <tr>
+                                    <td>Shipping</td>
+                                    <td>₹<%= Number(order.shipping || 0).toFixed(2) %></td>
+                                </tr>
+                                <% if (order.discount > 0) { %>
+                                    <tr>
+                                        <td>Discount</td>
+                                        <td>-₹<%= Number(order.discount).toFixed(2) %></td>
+                                    </tr>
+                                <% } %>
+                                <tr>
+                                    <td>Final Amount</td>
+                                    <td>₹<%= order.finalAmount.toFixed(2) %></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="action-buttons">
+                            <a href="/orders" class="btn btn-back"><i class="fas fa-arrow-left"></i> Back to Orders</a>
+                            <button class="btn btn-invoice" onclick="showInvoiceModal()"><i class="fas fa-file-pdf"></i> Download Invoice</button>
+                            <% if (['Pending', 'Processing'].includes(order.status)) { %>
+                                <button class="btn btn-cancel" onclick="showCancelModal()">Cancel Order</button>
+                            <% } else if (order.status === 'Delivered') { %>
+                                <% const daysSinceDelivery = order.deliveredOn ? Math.floor((new Date() - new Date(order.deliveredOn)) / (1000 * 60 * 60 * 24)) : 0; %>
+                                <% if (daysSinceDelivery <= 30 && !order.returnRequestedOn) { %>
+                                    <button class="btn btn-cancel" onclick="showReturnModal()">Request Return</button>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Confirmation Modal (Entire Order) -->
+    <div class="modal-overlay" id="cancelModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Cancel Order</div>
+                <button class="close-btn" onclick="closeCancelModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="cancelOrderForm">
+                    <p>Are you sure you want to cancel Order #<%= order && order.orderId ? order.orderId : 'N/A' %>? This action cannot be undone.</p>
+                    <% if (order && order.orderedItems && order.orderedItems.length > 0) { %>
+                        <div class="form-group">
+                            <h4>Order Summary</h4>
+                            <table class="order-summary-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Size</th>
+                                        <th>Qty</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cancelOrderSummary"></tbody>
+                            </table>
+                            <p><strong>Total Amount: </strong>₹<%= Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : item.totalPrice), 0)).toFixed(2) %></p>
+                        </div>
+                    <% } %>
+                    <div class="form-group">
+                        <label for="cancelOrderReason">Reason for Cancellation</label>
+                        <select id="cancelOrderReason" name="reason" required>
+                            <option value="">Select a reason</option>
+                            <option value="Ordered by mistake">Ordered by mistake</option>
+                            <option value="Better price available">Better price available</option>
+                            <option value="No longer needed">No longer needed</option>
+                            <option value="Expected delivery too long">Expected delivery too long</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="cancelOrderComments">Additional Comments (Optional)</label>
+                        <textarea id="cancelOrderComments" name="comments" rows="3" placeholder="Please provide details (optional)"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-back" onclick="closeCancelModal()">Keep Order</button>
+                        <button type="submit" class="btn btn-cancel" id="cancelOrderSubmit">Cancel Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Item Modal -->
+    <div class="modal-overlay" id="cancelItemModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Cancel Item</div>
+                <button class="close-btn" onclick="closeCancelItemModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="cancelItemForm">
+                    <p>Are you sure you want to cancel the following item?</p>
+                    <div class="form-group">
+                        <h4>Item Summary</h4>
+                        <table class="order-summary-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Size</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cancelItemSummary"></tbody>
+                        </table>
+                    </div>
+                    <div class="form-group">
+                        <label for="cancelReason">Reason for Cancellation</label>
+                        <select id="cancelReason" name="reason" required>
+                            <option value="">Select a reason</option>
+                            <option value="Ordered by mistake">Ordered by mistake</option>
+                            <option value="Better price available">Better price available</option>
+                            <option value="No longer needed">No longer needed</option>
+                            <option value="Expected delivery too long">Expected delivery too long</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="cancelComments">Additional Comments (Optional)</label>
+                        <textarea id="cancelComments" name="comments" rows="3" placeholder="Please provide details (optional)"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-back" onclick="closeCancelItemModal()">Keep Item</button>
+                        <button
+
+ type="submit" class="btn btn-cancel" id="cancelItemSubmit">Cancel Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Return Modal -->
+    <div class="modal-overlay" id="returnModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Request Return</div>
+                <button class="close-btn" onclick="closeReturnModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="returnOrderForm">
+                    <p>Are you sure you want to request a return for Order #<%= order && order.orderId ? order.orderId : 'N/A' %>?</p>
+                    <% if (order && order.orderedItems && order.orderedItems.length > 0) { %>
+                        <div class="form-group">
+                            <h4>Order Summary</h4>
+                            <table class="order-summary-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Size</th>
+                                        <th>Qty</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="returnOrderSummary"></tbody>
+                            </table>
+                            <p><strong>Total Amount: </strong>₹<%= Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : item.totalPrice), 0)).toFixed(2) %></p>
+                        </div>
+                    <% } %>
+                    <div class="form-group">
+                        <label for="returnReason">Reason for Return</label>
+                        <select id="returnReason" name="reason" required>
+                            <option value="">Select a reason</option>
+                            <option value="Defective product">Defective product</option>
+                            <option value="Wrong item received">Wrong item received</option>
+                            <option value="Not as described">Not as described</option>
+                            <option value="Changed mind">Changed mind</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="returnComments">Additional Comments (Optional)</label>
+                        <textarea id="returnComments" name="comments" rows="3" placeholder="Please provide details (optional)"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-back" onclick="closeReturnModal()">Cancel</button>
+                        <button type="submit" class="btn btn-cancel" id="returnOrderSubmit">Request Return</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div class="modal-overlay" id="invoiceModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Invoice</div>
+                <button class="close-btn" onclick="closeInvoiceModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="invoiceContent">
+                    <div class="invoice-header">
+                        <div class="invoice-title">
+                            <div class="invoice-logo">Luxe.com</div>
+                            <div>INVOICE</div>
+                        </div>
+                        <div id="modalStatus" class="status"></div>
+                        <div class="invoice-details">
+                            <div class="invoice-detail-col">
+                                <div class="invoice-detail-label">Order ID</div>
+                                <div id="modalOrderId" class="invoice-detail-value"></div>
+                                <div class="invoice-detail-label" style="margin-top: 10px;">Order Date</div>
+                                <div id="modalOrderDate" class="invoice-detail-value"></div>
+                                <div id="modalInvoiceDateContainer" style="margin-top: 10px;">
+                                    <div class="invoice-detail-label">Invoice Date</div>
+                                    <div id="modalInvoiceDate" class="invoice-detail-value"></div>
+                                </div>
+                            </div>
+                            <div class="invoice-detail-col">
+                                <div class="invoice-detail-label">Payment Method</div>
+                                <div id="modalPaymentMethod" class="invoice-detail-value"></div>
+                                <div class="invoice-detail-label" style="margin-top: 10px;">Delivery Method</div>
+                                <div id="modalDeliveryMethod" class="invoice-detail-value"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invoice-body">
+                        <div class="invoice-section">
+                            <div class="invoice-section-title">Customer Information</div>
+                            <div class="invoice-address">
+                                <div class="invoice-address-box">
+                                    <div class="invoice-address-title">Shipping Address</div>
+                                    <div id="modalAddress"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invoice-section">
+                            <div class="invoice-section-title">Order Summary</div>
+                            <table class="invoice-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Size</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Total</th>
+                                        <th>Gift Wrap</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalItems"></tbody>
+                            </table>
+                            <div class="invoice-total-section">
+                                <table class="invoice-total-table">
+                                    <tr>
+                                        <td>Subtotal</td>
+                                        <td id="modalSubtotal" style="text-align: right;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Gift Wrap</td>
+                                        <td id="modalGiftWrapTotal" style="text-align: right;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Shipping</td>
+                                        <td id="modalShipping" style="text-align: right;"></td>
+                                    </tr>
+                                    <% if (order && order.discount > 0) { %>
+                                        <tr>
+                                            <td>Discount</td>
+                                            <td id="modalDiscount" style="text-align: right;"></td>
+                                        </tr>
+                                    <% } %>
+                                    <tr>
+                                        <td>Grand Total</td>
+                                        <td id="modalFinalAmount" style="text-align: right;"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invoice-footer">
+                        <div class="invoice-note">Thank you for shopping with Luxe! For any questions regarding your order, please contact our customer support.</div>
+                        <div>© 2025 Luxe. All rights reserved.</div>
+                    </div>
+                </div>
+                <div class="invoice-download-area">
+                    <button class="btn btn-invoice" onclick="downloadInvoice()">
+                        <i class="fas fa-file-pdf"></i> Download Invoice PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../../views/partials/user/footer') %>
+
+    <script>
+        const orderData = {
+            orderId: '<%= order && order.orderId ? order.orderId : "N/A" %>',
+            orderDate: '<%= order && order.orderDate ? new Date(order.orderDate).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" }) : "N/A" %>',
+            invoiceDate: '<%= order && order.invoiceDate ? new Date(order.invoiceDate).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" }) : "N/A" %>',
+            status: '<%= order && order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1).toLowerCase() : "N/A" %>',
+            paymentMethod: '<%= order && order.paymentMethod ? order.paymentMethod.charAt(0).toUpperCase() + order.paymentMethod.slice(1) : "N/A" %>',
+            deliveryMethod: '<%= order && order.deliveryMethod ? order.deliveryMethod.charAt(0).toUpperCase() + order.deliveryMethod.slice(1) : "N/A" %>',
+            address: '<%= order && order.addressDetails && order.addressDetails.name ? order.addressDetails.name + " (" + (order.addressDetails.addressType || "") + "), " + (order.addressDetails.landMark || "") + ", " + (order.addressDetails.city || "") + ", " + (order.addressDetails.state || "") + " " + (order.addressDetails.pincode || "") + ", Phone: " + (order.addressDetails.phone || "N/A") + (order.addressDetails.altPhone ? ", Alt: " + order.addressDetails.altPhone : "") : "N/A" %>',
+            totalPrice: '<%= order && order.orderedItems ? Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : item.totalPrice), 0)).toFixed(2) : "0.00" %>',
+            giftWrapTotal: '<%= order && order.orderedItems ? Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : (item.isGiftWrapped ? 100 : 0)), 0)).toFixed(2) : "0.00" %>',
+            shipping: '<%= order && order.shipping ? Number(order.shipping).toFixed(2) : "0.00" %>',
+            discount: '<%= order && order.discount ? Number(order.discount).toFixed(2) : "0.00" %>',
+            finalAmount: '<%= order && order.orderedItems ? Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : item.totalPrice), 0) + (order.shipping || 0) - (order.discount || 0)).toFixed(2) : "0.00" %>',
+            items: [
+                <% if (order && order.orderedItems && order.orderedItems.length > 0) { %>
+                    <% order.orderedItems.forEach((item, index) => { %>
+                        {
+                            itemId: '<%= item._id %>',
+                            productName: '<%= item.productName || "N/A" %>',
+                            size: '<%= item.variant && item.variant.size ? item.variant.size : "N/A" %>',
+                            quantity: '<%= item.quantity || "N/A" %>',
+                            price: '<%= Number(item.price || 0).toFixed(2) %>',
+                            totalPrice: '<%= Number(item.totalPrice || 0).toFixed(2) %>',
+                            isGiftWrapped: '<%= item.isGiftWrapped ? "Yes" : "No" %>',
+                            isCanceled: <%= item.isCanceled ? 'true' : 'false' %>,
+                            cancelReason: '<%= item.cancelReason || "" %>',
+                            productImage: '<%= item.productImage || "/img/placeholder.png" %>'
+                        }<%= index < order.orderedItems.length - 1 ? ',' : '' %>
+                    <% }); %>
+                <% } %>
+            ]
+        };
+
+        function showToast(message, type = 'success') {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'right',
+                backgroundColor: type === 'success' ? '#28a745' : '#dc3545',
+                stopOnFocus: true,
+            }).showToast();
+        }
+
+        function showCancelModal() {
+            if (!orderData.items || orderData.items.length === 0) {
+                showToast('No items available to cancel.', 'error');
+                return;
+            }
+            const summaryTable = document.getElementById('cancelOrderSummary');
+            summaryTable.innerHTML = '';
+            orderData.items.forEach(item => {
+                if (!item.isCanceled) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.productName}</td>
+                        <td>${item.size}</td>
+                        <td>${item.quantity}</td>
+                        <td>₹${item.totalPrice}</td>
+                    `;
+                    summaryTable.appendChild(row);
+                }
+            });
+            document.getElementById('cancelModal').classList.add('active');
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelModal').classList.remove('active');
+            document.getElementById('cancelOrderReason').value = '';
+            document.getElementById('cancelOrderComments').value = '';
+            const submitBtn = document.getElementById('cancelOrderSubmit');
+            submitBtn.innerHTML = 'Cancel Order';
+            submitBtn.classList.remove('btn-loading');
+            submitBtn.disabled = false;
+        }
+
+        let currentItemId = null;
+
+        function showCancelItemModal(itemId) {
+            const item = orderData.items.find(i => i.itemId === itemId);
+            if (!item) {
+                showToast('Item not found.', 'error');
+                return;
+            }
+            if (item.isCanceled) {
+                showToast('This item is already cancelled.', 'error');
+                return;
+            }
+            currentItemId = itemId;
+            const summaryTable = document.getElementById('cancelItemSummary');
+            summaryTable.innerHTML = `
+                <tr>
+                    <td>${item.productName}</td>
+                    <td>${item.size}</td>
+                    <td>${item.quantity}</td>
+                    <td>₹${item.totalPrice}</td>
+                </tr>
+            `;
+            document.getElementById('cancelItemModal').classList.add('active');
+        }
+
+        function closeCancelItemModal() {
+            document.getElementById('cancelItemModal').classList.remove('active');
+            currentItemId = null;
+            document.getElementById('cancelReason').value = '';
+            document.getElementById('cancelComments').value = '';
+            const submitBtn = document.getElementById('cancelItemSubmit');
+            submitBtn.innerHTML = 'Cancel Item';
+            submitBtn.classList.remove('btn-loading');
+            submitBtn.disabled = false;
+        }
+
+        function showReturnModal() {
+            if (!orderData.items || orderData.items.length === 0) {
+                showToast('No items available to return.', 'error');
+                return;
+            }
+            const summaryTable = document.getElementById('returnOrderSummary');
+            summaryTable.innerHTML = '';
+            orderData.items.forEach(item => {
+                if (!item.isCanceled) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.productName}</td>
+                        <td>${item.size}</td>
+                        <td>${item.quantity}</td>
+                        <td>₹${item.totalPrice}</td>
+                    `;
+                    summaryTable.appendChild(row);
+                }
+            });
+            document.getElementById('returnModal').classList.add('active');
+        }
+
+        function closeReturnModal() {
+            document.getElementById('returnModal').classList.remove('active');
+            document.getElementById('returnReason').value = '';
+            document.getElementById('returnComments').value = '';
+            const submitBtn = document.getElementById('returnOrderSubmit');
+            submitBtn.innerHTML = 'Request Return';
+            submitBtn.classList.remove('btn-loading');
+            submitBtn.disabled = false;
+        }
+
+        document.getElementById('cancelOrderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const reason = document.getElementById('cancelOrderReason').value;
+            const comments = document.getElementById('cancelOrderComments').value;
+            const submitBtn = document.getElementById('cancelOrderSubmit');
+
+            if (!reason) {
+                showToast('Please select a cancellation reason.', 'error');
+                return;
+            }
+
+            submitBtn.innerHTML = '<span class="spinner"></span> Cancelling...';
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`/orders/details/${orderData.orderId}/cancel`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reason, comments })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Order cancelled successfully!');
+                    orderData.status = 'Cancelled';
+                    window.location.reload()
+                    const statusElement = document.querySelector('.status');
+                    if (statusElement) {
+                        statusElement.textContent = 'Cancelled';
+                        statusElement.className = 'status cancelled';
+                    }
+                    const cancelButton = document.querySelector('.btn-cancel[onclick="showCancelModal()"]');
+                    if (cancelButton) {
+                        cancelButton.style.display = 'none';
+                    }
+                    orderData.items.forEach(item => {
+                        item.isCanceled = true;
+                        item.cancelReason = reason;
+                    });
+                    document.querySelectorAll('.order-items-table tbody tr').forEach(row => {
+                        row.classList.add('item-cancelled');
+                        const statusCell = row.querySelector('.item-status');
+                        statusCell.textContent = `Cancelled (${reason})`;
+                        const actionCell = row.querySelector('td:last-child');
+                        actionCell.innerHTML = `<button class="action-button btn-disabled" disabled>Cancelled</button>`;
+                    });
+                    orderData.totalPrice = '0.00';
+                    orderData.giftWrapTotal = '0.00';
+                    orderData.finalAmount = '0.00';
+                    closeCancelModal();
+                } else {
+                    showToast(result.message || 'Failed to cancel order.', 'error');
+                }
+            } catch (error) {
+                showToast('An error occurred while cancelling the order.', 'error');
+            }
+            submitBtn.innerHTML = 'Cancel Order';
+            submitBtn.classList.remove('btn-loading');
+            submitBtn.disabled = false;
+        });
+
+        document.getElementById('cancelItemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentItemId) {
+                showToast('No item selected to cancel.', 'error');
+                return;
+            }
+
+            const item = orderData.items.find(i => i.itemId === currentItemId);
+            if (!item) {
+                showToast('Item not found.', 'error');
+                closeCancelItemModal();
+                return;
+            }
+            if (item.isCanceled) {
+                showToast('This item is already cancelled.', 'error');
+                closeCancelItemModal();
+                return;
+            }
+
+            const reason = document.getElementById('cancelReason').value;
+            const comments = document.getElementById('cancelComments').value;
+            const submitBtn = document.getElementById('cancelItemSubmit');
+
+            if (!reason) {
+                showToast('Please select a cancellation reason.', 'error');
+                return;
+            }
+
+            submitBtn.innerHTML = '<span class="spinner"></span> Cancelling...';
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`/orders/details/${orderData.orderId}/cancel-item/${currentItemId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reason, comments })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Item cancelled successfully!');
+                    const itemRow = document.querySelector(`tr[data-item-id="${currentItemId}"]`);
+                    if (itemRow) {
+                        itemRow.classList.add('item-cancelled');
+                        const statusCell = itemRow.querySelector('.item-status');
+                        statusCell.textContent = `Cancelled (${reason})`;
+                        const actionCell = itemRow.querySelector('td:last-child');
+                        actionCell.innerHTML = `<button class="action-button btn-disabled" disabled>Cancelled</button>`;
+                    }
+                    if (item) {
+                        item.isCanceled = true;
+                        item.cancelReason = reason;
+                    }
+
+                    const allCancelled = orderData.items.every(item => item.isCanceled);
+                    if (allCancelled) {
+                        orderData.status = 'Cancelled';
+                        const statusElement = document.querySelector('.status');
+                        if (statusElement) {
+                            statusElement.textContent = 'Cancelled';
+                            statusElement.className = 'status cancelled';
+                        }
+                        const cancelOrderButton = document.querySelector('.btn-cancel[onclick="showCancelModal()"]');
+                        if (cancelOrderButton) {
+                            cancelOrderButton.style.display = 'none';
+                        }
+                    }
+
+                    closeCancelItemModal();
+                } else {
+                    showToast(result.message || 'Failed to cancel item.', 'error');
+                }
+            } catch (error) {
+                showToast('An error occurred while cancelling the item.', 'error');
+            }
+            submitBtn.innerHTML = 'Cancel Item';
+            submitBtn.classList.remove('btn-loading');
+            submitBtn.disabled = false;
+        });
+
+        document.getElementById('returnOrderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const reason = document.getElementById('returnReason').value;
+            const comments = document.getElementById('returnComments').value;
+            const submitBtn = document.getElementById('returnOrderSubmit');
+
+            if (!reason) {
+                showToast('Please select a return reason.', 'error');
+                return;
+            }
+
+            submitBtn.innerHTML = '<span class="spinner"></span> Requesting...';
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`/orders/details/${orderData.orderId}/return`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reason, comments })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Return request submitted successfully!');
+                    orderData.status = 'Return Requested';
+                    const statusElement = document.querySelector('.status');
+                    if (statusElement) {
+                        statusElement.textContent = 'Return Requested';
+                        statusElement.className = 'status return-requested';
+                    }
+                    const returnButton = document.querySelector('.btn-cancel[onclick="showReturnModal()"]');
+                    if (returnButton) {
+                        returnButton.style.display = 'none';
+                    }
+                    closeReturnModal();
+                } else {
+                    showToast(result.message || 'Failed to submit return request.', 'error');
+                }
+            } catch (error) {
+                showToast('An error occurred while submitting return request.', 'error');
+            }
+            submitBtn.innerHTML = 'Request Return';
+            submitBtn.classList.remove('btn-loading');
+            submitBtn.disabled = false;
+        });
+
+        function showInvoiceModal() {
+            try {
+                if (!orderData.items || orderData.items.length === 0) {
+                    showToast('No items available for invoice.', 'error');
+                    return;
+                }
+                document.getElementById('modalOrderId').textContent = orderData.orderId;
+                document.getElementById('modalOrderDate').textContent = orderData.orderDate;
+                const invoiceDateContainer = document.getElementById('modalInvoiceDateContainer');
+                if (orderData.invoiceDate && orderData.invoiceDate !== 'N/A') {
+                    invoiceDateContainer.style.display = 'block';
+                    document.getElementById('modalInvoiceDate').textContent = orderData.invoiceDate;
+                } else {
+                    invoiceDateContainer.style.display = 'none';
+                }
+                document.getElementById('modalStatus').textContent = orderData.status;
+                document.getElementById('modalStatus').className = `status ${orderData.status.toLowerCase().replace(' ', '-')}`;
+                document.getElementById('modalPaymentMethod').textContent = orderData.paymentMethod;
+                document.getElementById('modalDeliveryMethod').textContent = orderData.deliveryMethod;
+                document.getElementById('modalAddress').textContent = orderData.address;
+
+                const itemsTableBody = document.getElementById('modalItems');
+                itemsTableBody.innerHTML = '';
+                orderData.items.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.productName}</td>
+                        <td>${item.size}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.isCanceled ? 'N/A' : '₹' + item.price}</td>
+                        <td>${item.isCanceled ? 'N/A' : '₹' + item.totalPrice}</td>
+                        <td>${item.isCanceled ? 'N/A' : item.isGiftWrapped}</td>
+                        <td>${item.isCanceled ? 'Cancelled (' + (item.cancelReason || 'No reason') + ')' : 'Active'}</td>
+                    `;
+                    itemsTableBody.appendChild(row);
+                });
+
+                document.getElementById('modalSubtotal').textContent = '₹' + orderData.totalPrice;
+                document.getElementById('modalGiftWrapTotal').textContent = '₹' + orderData.giftWrapTotal;
+                document.getElementById('modalShipping').textContent = '₹' + orderData.shipping;
+                const discountElement = document.getElementById('modalDiscount');
+                if (discountElement) {
+                    if (orderData.discount > 0) {
+                        discountElement.parentElement.style.display = 'table-row';
+                        discountElement.textContent = '-₹' + orderData.discount;
+                    } else {
+                        discountElement.parentElement.style.display = 'none';
+                    }
+                }
+                document.getElementById('modalFinalAmount').textContent = '₹' + orderData.finalAmount;
+                document.getElementById('invoiceModal').classList.add('active');
+            } catch (error) {
+                showToast(' four word maximum.', 'error');
+            }
+        }
+
+        function closeInvoiceModal() {
+            document.getElementById('invoiceModal').classList.remove('active');
+        }
+
+        function downloadInvoice() {
+            try {
+                if (!orderData.items || orderData.items.length === 0) {
+                    showToast('No items available for invoice.', 'error');
+                    return;
+                }
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                doc.setFillColor(138, 106, 148);
+                doc.rect(0, 0, 210, 40, 'F');
+                doc.setFontSize(20);
+                doc.setTextColor(255, 255, 255);
+                doc.text('Luxe.com', 20, 20);
+                doc.setFontSize(14);
+                doc.text('INVOICE', 190, 20, { align: 'right' });
+
+                doc.setTextColor(0, 0, 0);
+                let yOffset = 50;
+                doc.setFontSize(12);
+                doc.text('Order Details', 20, yOffset);
+                doc.setDrawColor(138, 106, 148);
+                doc.line(20, yOffset + 2, 190, yOffset + 2);
+                yOffset += 10;
+                doc.setFontSize(10);
+                doc.text(`Order ID: ${orderData.orderId}`, 20, yOffset);
+                yOffset += 8;
+                doc.text(`Order Date: ${orderData.orderDate}`, 20, yOffset);
+                yOffset += 8;
+                if (orderData.invoiceDate && orderData.invoiceDate !== 'N/A') {
+                    doc.text(`Invoice Date: ${orderData.invoiceDate}`, 20, yOffset);
+                    yOffset += 8;
+                }
+                doc.text(`Status: ${orderData.status}`, 20, yOffset);
+                yOffset += 8;
+                doc.text(`Payment Method: ${orderData.paymentMethod}`, 20, yOffset);
+                yOffset += 8;
+                doc.text(`Delivery Method: ${orderData.deliveryMethod}`, 20, yOffset);
+                yOffset += 15;
+
+                doc.setFontSize(12);
+                doc.text('Shipping Address', 20, yOffset);
+                doc.line(20, yOffset + 2, 190, yOffset + 2);
+                yOffset += 10;
+                doc.setFontSize(10);
+                const addressLines = doc.splitTextToSize(orderData.address, 170);
+                addressLines.forEach(line => {
+                    doc.text(line, 20, yOffset);
+                    yOffset += 6;
+                });
+                yOffset += 10;
+
+                doc.setFontSize(12);
+                doc.text('Order Summary', 20, yOffset);
+                doc.line(20, yOffset + 2, 190, yOffset + 2);
+                yOffset += 10;
+
+                const tableData = orderData.items.map(item => [
+                    item.productName,
+                    item.size,
+                    item.quantity,
+                    item.isCanceled ? 'N/A' : `₹${item.price}`,
+                    item.isCanceled ? 'N/A' : `₹${item.totalPrice}`,
+                    item.isCanceled ? 'N/A' : item.isGiftWrapped,
+                    item.isCanceled ? `Cancelled (${item.cancelReason || 'No reason'})` : 'Active'
+                ]);
+
+                doc.autoTable({
+                    startY: yOffset,
+                    head: [['Product', 'Size', 'Quantity', 'Price', 'Total', 'Gift Wrap', 'Status']],
+                    body: tableData,
+                    theme: 'grid',
+                    styles: { fontSize: 8, cellPadding: 2 },
+                    headStyles: { fillColor: [138, 106, 148], textColor: [255, 255, 255] },
+                    margin: { left: 20, right: 20 }
+                });
+
+                yOffset = doc.lastAutoTable.finalY + 10;
+
+                const totalData = [
+                    ['Subtotal', `₹${orderData.totalPrice}`],
+                    ['Gift Wrap', `₹${orderData.giftWrapTotal}`],
+                    ['Shipping', `₹${orderData.shipping}`]
+                ];
+                if (orderData.discount > 0) {
+                    totalData.push(['Discount', `-₹${orderData.discount}`]);
+                }
+                totalData.push(['Grand Total', `₹${orderData.finalAmount}`]);
+
+                doc.autoTable({
+                    startY: yOffset,
+                    body: totalData,
+                    theme: 'grid',
+                    styles: { fontSize: 8, cellPadding: 2 },
+                    columnStyles: { 0: { halign: 'left' }, 1: { halign: 'right' } },
+                    margin: { left: 120, right: 20 }
+                });
+
+                yOffset = doc.lastAutoTable.finalY + 20;
+
+                doc.setFontSize(8);
+                doc.setTextColor(100, 100, 100);
+                doc.text('Thank you for shopping with Luxe! For any questions regarding your order, please contact our customer support.', 105, yOffset, { align: 'center' });
+                yOffset += 6;
+                doc.text('© 2025 Luxe. All rights reserved.', 105, yOffset, { align: 'center' });
+
+                doc.save(`Invoice_${orderData.orderId}.pdf`);
+                showToast('Invoice downloaded successfully!');
+            } catch (error) {
+                showToast('Failed to download invoice.', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

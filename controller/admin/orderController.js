@@ -6,23 +6,59 @@ const Address = require('../../models/addressSchema');
 
 const loadOrderPage = async (req, res) => {
     try {
-        const orders = await Order.find({})
+        let page = parseInt(req.query.page) || 1;
+        const limit = 5;
+        let search = req.query.search || '';
+        let sort = req.query.sort || 'newest';
+
+        const query = {};
+        if (search) {
+            query.orderId = { $regex: ".*" + search + ".*", $options: 'i' };
+        }
+
+        let sortOption;
+        switch (sort) {
+            case 'oldest':
+                sortOption = { createdOn: 1 };
+                break;
+            case 'a-z':
+                sortOption = { 'userId.firstName': 1 };
+                break;
+            case 'z-a':
+                sortOption = { 'userId.firstName': -1 };
+                break;
+            default:
+                sortOption = { createdOn: -1 };
+        }
+
+        const orders = await Order.find(query)
             .populate('userId', 'firstName lastName')
-            .sort({ createdOn: -1 });
+            .sort(sortOption)
+            .limit(limit)
+            .skip((page - 1) * limit)
+            .exec();
+
+        const count = await Order.countDocuments(query);
+
+        const orderData = orders.map(order => ({
+            _id: order._id,
+            orderId: order.orderId,
+            user: order.userId,
+            invoiceDate: order.invoiceDate || order.createdOn,
+            status: order.status,
+            finalAmount: order.finalAmount,
+        }));
 
         res.render('admin/orders', {
-            orders: orders.map(order => ({
-                _id: order._id,
-                orderId: order.orderId,
-                user: order.userId,
-                invoiceDate: order.invoiceDate || order.createdOn,
-                status: order.status,
-                finalAmount: order.finalAmount,
-            })),
+            orders: orderData,
+            currentPage: page,
+            totalPages: Math.ceil(count / limit),
+            search,
+            sort
         });
     } catch (error) {
         console.error('Error loading admin orders:', error);
-        res.status(500).send('Server Error');
+        res.redirect('/admin/pageerror');
     }
 };
 
@@ -32,8 +68,10 @@ const loadOrderDetailPage = async (req, res) => {
 
         const order = await Order.findById(orderId)
             .populate('userId', 'firstName lastName')
-            .populate('orderedItems.productId', 'productName productImage')
-            .populate('address');
+            .populate({
+                path: 'orderedItems.productId',
+                select: 'productName productImage variants',
+            });
 
         if (!order) {
             return res.redirect('/admin/pageNotFound');
@@ -47,10 +85,7 @@ const loadOrderDetailPage = async (req, res) => {
             quantity: item.quantity,
             unitPrice: item.price,
             totalPrice: item.totalPrice,
-            status: order.status, 
         }));
-
-        const returnItems = []; 
 
         res.render('admin/orderViewPage', {
             order: {
@@ -59,18 +94,20 @@ const loadOrderDetailPage = async (req, res) => {
                 user: order.userId,
                 orderDate: order.createdOn.toDateString(),
                 address: order.addressDetails ? {
-                    name: order.addressDetails.name,
-                    landMark: order.addressDetails.landMark,
-                    city: order.addressDetails.city,
-                    state: order.addressDetails.state,
-                    pincode: order.addressDetails.pincode,
-                    phone: order.addressDetails.phone,
-                    altPhone: order.addressDetails.altPhone,
+                    name: order.addressDetails.name || 'N/A',
+                    landMark: order.addressDetails.landMark || 'N/A',
+                    city: order.addressDetails.city || 'N/A',
+                    state: order.addressDetails.state || 'N/A',
+                    pincode: order.addressDetails.pincode || 'N/A',
+                    phone: order.addressDetails.phone || 'N/A',
+                    altPhone: order.addressDetails.altPhone || 'N/A',
                 } : {},
                 items: orderItems,
                 total: order.finalAmount,
                 status: order.status,
-                returnItems: returnItems,
+                returnRequestedOn: order.returnRequestedOn,
+                returnReason: order.returnReason,
+                returnComments: order.returnComments,
             },
         });
     } catch (error) {
@@ -84,7 +121,16 @@ const updateOrderStatus = async (req, res) => {
         const { orderId } = req.params;
         const { status } = req.body;
 
-        const validStatuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Canceled', 'Return Request', 'Returned'];
+        const validStatuses = [
+            'Pending',
+            'Processing',
+            'Shipped',
+            'Delivered',
+            'Canceled',
+            'Return Request',
+            'Return Approved',
+            'Return Completed',
+        ];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ success: false, error: 'Invalid status' });
         }
@@ -97,8 +143,40 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
+const approveReturn = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        if (order.status !== 'Return Request') {
+            return res.status(400).json({ success: false, message: 'No return request to approve' });
+        }
+
+        order.status = 'Return Approved';
+        order.refundStatus = order.paymentMethod === 'cash on delivery' ? 'Not Initiated' : 'Initiated';
+        await order.save();
+
+        // Restock inventory
+        for (const item of order.orderedItems) {
+            await Product.updateOne(
+                { _id: item.productId, 'variants._id': item.variantId },
+                { $inc: { 'variants.$.stock': item.quantity } }
+            );
+        }
+
+        res.json({ success: true, message: 'Return approved successfully' });
+    } catch (error) {
+        console.error('Error approving return:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
 module.exports = {
     loadOrderPage,
     loadOrderDetailPage,
     updateOrderStatus,
+    approveReturn,
 };

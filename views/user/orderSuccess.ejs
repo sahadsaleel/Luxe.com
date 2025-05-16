@@ -6,6 +6,8 @@
     <title>Order Successful - Luxe.com</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/orderSuccess.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -347,6 +349,176 @@
         main {
             flex: 1;
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .invoice-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #8a6a94;
+        }
+
+        .invoice-logo {
+            font-size: 28px;
+        }
+
+        .invoice-status {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .invoice-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .invoice-detail-col {
+            flex: 1;
+        }
+
+        .invoice-detail-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .invoice-detail-value {
+            color: #555;
+        }
+
+        .invoice-section {
+            margin-top: 20px;
+        }
+
+        .invoice-section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8a6a94;
+            border-bottom: 2px solid #8a6a94;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .invoice-address {
+            margin-top: 10px;
+        }
+
+        .invoice-address-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .invoice-table th,
+        .invoice-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .invoice-table th {
+            background-color: #8a6a94;
+            color: white;
+        }
+
+        .invoice-total-section {
+            margin-top: 20px;
+        }
+
+        .invoice-total-table {
+            width: 50%;
+            margin-left: auto;
+            border-collapse: collapse;
+        }
+
+        .invoice-total-table td {
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .invoice-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .invoice-note {
+            margin-bottom: 10px;
+        }
+
+        .invoice-download-area {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-invoice-download {
+            background-color: #8a6a94;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-invoice-download:hover {
+            background-color: #6b4e76;
+        }
     </style>
 </head>
 <body>
@@ -405,7 +577,7 @@
                     </div>
                 <% } else { %>
                     <div class="icon profile">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: black;" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="11" />
                             <path d="M12,14.9c-3.5,0-6.5,2-8,5c2,2.1,4.9,3.3,8,3.3s6-1.3,8-3.3C18.5,17,15.5,14.9,12,14.9z" />
                             <circle cx="12" cy="8.7" r="3.6" />
@@ -474,6 +646,7 @@
                                     </div>
                                     <div class="address-content">
                                         <p><strong><%= order.address.name || 'N/A' %></strong></p>
+                                        <p><%= order.address.address || 'N/A' %></p>
                                         <p><%= order.address.landMark || 'N/A' %></p>
                                         <p><%= order.address.city || '' %>, <%= order.address.state || '' %> <%= order.address.pincode || '' %></p>
                                         <p>Phone: <%= order.address.phone || 'N/A' %></p>
@@ -517,8 +690,8 @@
                                         <td class="product-name"><%= item.productName %></td>
                                         <td><%= item.variant.size %></td>
                                         <td><%= item.quantity %></td>
-                                        <td>₹<%= item.price.toFixed(2) %></td>
-                                        <td>₹<%= item.totalPrice.toFixed(2) %></td>
+                                        <td>Rs <%= item.price.toFixed(2) %></td>
+                                        <td>Rs <%= item.totalPrice.toFixed(2) %></td>
                                     </tr>
                                 <% }) %>
                             </tbody>
@@ -528,32 +701,32 @@
                         <div class="order-summary">
                             <div class="summary-row">
                                 <div class="summary-label">Subtotal:</div>
-                                <div class="summary-value">₹<%= order.subtotal.toFixed(2) %></div>
+                                <div class="summary-value">Rs <%= order.subtotal.toFixed(2) %></div>
                             </div>
                             <div class="summary-row">
                                 <div class="summary-label">Gift Wrap Total:</div>
-                                <div class="summary-value">₹<%= order.giftWrapTotal.toFixed(2) %></div>
+                                <div class="summary-value">Rs <%= order.giftWrapTotal.toFixed(2) %></div>
                             </div>
                             <div class="summary-row">
                                 <div class="summary-label">Shipping:</div>
-                                <div class="summary-value">₹<%= order.shipping.toFixed(2) %></div>
+                                <div class="summary-value">Rs <%= order.shipping.toFixed(2) %></div>
                             </div>
                             <div class="summary-row">
                                 <div class="summary-label">Discount:</div>
-                                <div class="summary-value">₹<%= (order.discount || 0).toFixed(2) %></div>
+                                <div class="summary-value">Rs <%= (order.discount || 0).toFixed(2) %></div>
                             </div>
                             <div class="grand-total">
                                 <div>Total:</div>
-                                <div>₹<%= order.finalAmount.toFixed(2) %></div>
+                                <div>Rs <%= order.finalAmount.toFixed(2) %></div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Action Buttons -->
                     <div class="actions">
-                        <a href="/order-invoice?orderId=<%= order.orderId %>" class="btn btn-primary">
+                        <button class="btn btn-primary" onclick="showInvoiceModal()">
                             <i class="fas fa-download"></i> Download Invoice
-                        </a>
+                        </button>
                         <a href="/shop" class="btn btn-outline">
                             <i class="fas fa-shopping-bag"></i> Continue Shopping
                         </a>
@@ -585,6 +758,114 @@
                     <div class="secondary-action">
                         <a href="/order-invoice?orderId=<%= order.orderId %>" class="receipt-link">View E-Receipt</a>
                         <a href="/review?orderId=<%= order.orderId %>" class="review-btn">Write a review</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Invoice Modal -->
+            <div class="modal" id="invoiceModal">
+                <div class="modal-content">
+                    <span class="modal-close" onclick="closeInvoiceModal()">×</span>
+                    
+                    <div id="invoiceContent">
+                        <div class="invoice-header">
+                            <div class="invoice-title">
+                                <div class="invoice-logo">Luxe.com</div>
+                                <div>INVOICE</div>
+                            </div>
+                            <div id="modalStatus" class="invoice-status"></div>
+                            
+                            <div class="invoice-details">
+                                <div class="invoice-detail-col">
+                                    <div class="invoice-detail-label">Order ID</div>
+                                    <div id="modalOrderId" class="invoice-detail-value"></div>
+                                    
+                                    <div class="invoice-detail-label" style="margin-top: 10px;">Order Date</div>
+                                    <div id="modalOrderDate" class="invoice-detail-value"></div>
+                                    
+                                    <div class="invoice-detail-label" style="margin-top: 10px;">Invoice Date</div>
+                                    <div id="modalInvoiceDate" class="invoice-detail-value"></div>
+                                </div>
+                                
+                                <div class="invoice-detail-col">
+                                    <div class="invoice-detail-label">Payment Method</div>
+                                    <div id="modalPaymentMethod" class="invoice-detail-value"></div>
+                                    
+                                    <div class="invoice-detail-label" style="margin-top: 10px;">Delivery Method</div>
+                                    <div id="modalDeliveryMethod" class="invoice-detail-value"></div>
+                                    
+                                    <div class="invoice-detail-label" style="margin-top: 10px;">Status</div>
+                                    <div id="modalStatus" class="invoice-detail-value"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="invoice-body">
+                            <div class="invoice-section">
+                                <div class="invoice-section-title">Customer Information</div>
+                                <div class="invoice-address">
+                                    <div class="invoice-address-box">
+                                        <div class="invoice-address-title">Shipping Address</div>
+                                        <div id="modalAddress"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="invoice-section">
+                                <div class="invoice-section-title">Order Summary</div>
+                                <table class="invoice-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Size</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Total</th>
+                                            <th>Gift Wrap</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="modalItems"></tbody>
+                                </table>
+                                
+                                <div class="invoice-total-section">
+                                    <table class="invoice-total-table">
+                                        <tr>
+                                            <td>Subtotal</td>
+                                            <td id="modalSubtotal" style="text-align: right;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Gift Wrap</td>
+                                            <td id="modalGiftWrapTotal" style="text-align: right;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Shipping</td>
+                                            <td id="modalShipping" style="text-align: right;"></td>
+                                        </tr>
+                                        <% if (order.discount && order.discount > 0) { %>
+                                        <tr>
+                                            <td>Discount</td>
+                                            <td id="modalDiscount" style="text-align: right;"></td>
+                                        </tr>
+                                        <% } %>
+                                        <tr>
+                                            <td>Grand Total</td>
+                                            <td id="modalFinalAmount" style="text-align: right;"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="invoice-footer">
+                            <div class="invoice-note">Thank you for shopping with Luxe! For any questions regarding your order, please contact our customer support.</div>
+                            <div>© 2025 Luxe. All rights reserved.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="invoice-download-area">
+                        <button class="btn-invoice-download" onclick="downloadInvoice()">
+                            <i class="fas fa-file-pdf"></i> Download Invoice PDF
+                        </button>
                     </div>
                 </div>
             </div>
@@ -640,7 +921,44 @@
     </footer>
     
     <script>
-        // Order Success Page Scripts
+        // Utility function to format date as DD/MM/YYYY
+        function formatDate(dateStr) {
+            if (!dateStr || dateStr === 'N/A') return 'N/A';
+            const date = new Date(dateStr);
+            if (isNaN(date)) return dateStr; // If dateStr isn't a valid date, return as-is
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        const orderData = {
+            orderId: '<%= order.orderId %>',
+            orderDate: '<%= order.orderDate %>',
+            invoiceDate: '<%= order.invoiceDate ? order.invoiceDate : order.orderDate %>', // Default to orderDate if invoiceDate is not provided
+            status: '<%= order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1).toLowerCase() : "Processing" %>',
+            paymentMethod: '<%= order.paymentMethod %>',
+            deliveryMethod: '<%= order.deliveryMethod ? order.deliveryMethod.charAt(0).toUpperCase() + order.deliveryMethod.slice(1) : "Standard" %>',
+            address: '<%= order.address.name %> (<%= order.address.addressType || "Home" %>), <%= order.address.landMark || "N/A" %>, <%= order.address.city || "" %>, <%= order.address.state || "" %> <%= order.address.pincode || "" %>, Phone: <%= order.address.phone || "N/A" %> <%= order.address.altPhone ? `, Alt: ${order.address.altPhone}` : "" %>',
+            subtotal: '<%= Number(order.subtotal).toFixed(2) %>',
+            giftWrapTotal: '<%= Number(order.giftWrapTotal).toFixed(2) %>',
+            shipping: '<%= Number(order.shipping).toFixed(2) %>',
+            discount: '<%= Number(order.discount || 0).toFixed(2) %>',
+            finalAmount: '<%= Number(order.finalAmount).toFixed(2) %>',
+            items: [
+                <% order.items.forEach((item, index) => { %>
+                    {
+                        productName: '<%= item.productName %>',
+                        size: '<%= item.variant.size %>',
+                        quantity: '<%= item.quantity %>',
+                        price: '<%= Number(item.price).toFixed(2) %>',
+                        totalPrice: '<%= Number(item.totalPrice).toFixed(2) %>',
+                        isGiftWrapped: '<%= item.isGiftWrapped ? "Yes" : "No" %>'
+                    }<%= index < order.items.length - 1 ? ',' : '' %>
+                <% }) %>
+            ]
+        };
+
         function showOrderConfirmation() {
             document.getElementById('order-confirmation-page').style.display = 'block';
             document.getElementById('payment-success-page').style.display = 'none';
@@ -653,7 +971,164 @@
         
         showOrderConfirmation();
 
-        // Header Scripts
+        function showInvoiceModal() {
+            document.getElementById('modalOrderId').textContent = orderData.orderId;
+            document.getElementById('modalOrderDate').textContent = formatDate(orderData.orderDate);
+            document.getElementById('modalInvoiceDate').textContent = formatDate(orderData.invoiceDate);
+            document.getElementById('modalStatus').textContent = orderData.status;
+            document.getElementById('modalPaymentMethod').textContent = orderData.paymentMethod;
+            document.getElementById('modalDeliveryMethod').textContent = orderData.deliveryMethod;
+            document.getElementById('modalAddress').textContent = orderData.address;
+
+            const itemsTableBody = document.getElementById('modalItems');
+            itemsTableBody.innerHTML = '';
+            orderData.items.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.productName}</td>
+                    <td>${item.size}</td>
+                    <td>${item.quantity}</td>
+                    <td>Rs ${item.price}</td>
+                    <td>Rs ${item.totalPrice}</td>
+                    <td>${item.isGiftWrapped}</td>
+                `;
+                itemsTableBody.appendChild(row);
+            });
+
+            document.getElementById('modalSubtotal').textContent = 'Rs ' + orderData.subtotal;
+            document.getElementById('modalGiftWrapTotal').textContent = 'Rs ' + orderData.giftWrapTotal;
+            document.getElementById('modalShipping').textContent = 'Rs ' + orderData.shipping;
+            if (orderData.discount && orderData.discount > 0) {
+                document.getElementById('modalDiscount').textContent = '-Rs ' + orderData.discount;
+            }
+            document.getElementById('modalFinalAmount').textContent = 'Rs ' + orderData.finalAmount;
+            document.getElementById('invoiceModal').style.display = 'block';
+        }
+
+        function closeInvoiceModal() {
+            document.getElementById('invoiceModal').style.display = 'none';
+        }
+
+        function downloadInvoice() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Header
+            doc.setFontSize(24);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Luxe.com', 20, 20);
+            doc.setFontSize(16);
+            doc.text('INVOICE', 160, 20, { align: 'right' });
+
+            // Order Details
+            let yOffset = 40;
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Order Details', 20, yOffset);
+            yOffset += 10;
+
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Order ID: ${orderData.orderId}`, 20, yOffset);
+            yOffset += 8;
+            doc.text(`Order Date: ${formatDate(orderData.orderDate)}`, 20, yOffset);
+            yOffset += 8;
+            doc.text(`Invoice Date: ${formatDate(orderData.invoiceDate)}`, 20, yOffset);
+            yOffset += 8;
+            doc.text(`Status: ${orderData.status}`, 20, yOffset);
+            yOffset += 8;
+            doc.text(`Payment Method: ${orderData.paymentMethod}`, 20, yOffset);
+            yOffset += 8;
+            doc.text(`Delivery Method: ${orderData.deliveryMethod}`, 20, yOffset);
+            yOffset += 15;
+
+            // Shipping Address
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Shipping Address', 20, yOffset);
+            yOffset += 10;
+
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(orderData.address, 20, yOffset, { maxWidth: 170 });
+            yOffset += 25;
+
+            // Order Summary
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Order Summary', 20, yOffset);
+            yOffset += 10;
+
+            const items = orderData.items.map(item => [
+                item.productName,
+                item.size,
+                item.quantity,
+                `Rs ${item.price}`,
+                `Rs ${item.totalPrice}`,
+                item.isGiftWrapped
+            ]);
+            doc.autoTable({
+                startY: yOffset,
+                head: [['Product', 'Size', 'Quantity', 'Price', 'Total', 'Gift Wrap']],
+                body: items,
+                theme: 'grid',
+                styles: { fontSize: 9, cellPadding: 3 },
+                headStyles: {
+                    fillColor: [200, 200, 200],
+                    textColor: [0, 0, 0],
+                    fontStyle: 'bold'
+                },
+                columnStyles: {
+                    0: { cellWidth: 50 },
+                    1: { cellWidth: 20 },
+                    2: { cellWidth: 20 },
+                    3: { cellWidth: 25 },
+                    4: { cellWidth: 25 },
+                    5: { cellWidth: 25 }
+                }
+            });
+
+            // Pricing Summary
+            yOffset = doc.lastAutoTable.finalY + 15;
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Pricing Summary', 20, yOffset);
+            yOffset += 10;
+
+            const pricingBody = [
+                ['Subtotal', `Rs ${orderData.subtotal}`],
+                ['Gift Wrap Total', `Rs ${orderData.giftWrapTotal}`],
+                ['Shipping', `Rs ${orderData.shipping}`],
+            ];
+            if (orderData.discount && orderData.discount > 0) {
+                pricingBody.push(['Discount', `-Rs ${orderData.discount}`]);
+            }
+            pricingBody.push(['Grand Total', `Rs ${orderData.finalAmount}`]);
+
+            doc.autoTable({
+                startY: yOffset,
+                body: pricingBody,
+                theme: 'grid',
+                styles: { fontSize: 10, cellPadding: 3 },
+                headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
+                columnStyles: {
+                    0: { fontStyle: 'bold' },
+                    1: { halign: 'right' }
+                }
+            });
+
+            // Footer
+            yOffset = doc.lastAutoTable.finalY + 20;
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'italic');
+            doc.text('Thank you for shopping with Luxe!', 105, yOffset, { align: 'center' });
+            doc.setFont('helvetica', 'normal');
+            doc.text('Contact us: support@luxe.com | +91 123-456-7890', 105, yOffset + 8, { align: 'center' });
+            doc.text('© 2025 Luxe. All rights reserved.', 105, yOffset + 16, { align: 'center' });
+
+            doc.save(`invoice_${orderData.orderId}.pdf`);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             try {
                 const profileIcons = document.querySelectorAll('.icon.profile');
@@ -717,6 +1192,13 @@
                         searchResults.classList.add('active');
                     }
                 });
+
+                window.onclick = function(event) {
+                    const modal = document.getElementById('invoiceModal');
+                    if (event.target == modal) {
+                        modal.style.display = 'none';
+                    }
+                };
             } catch (error) {
                 console.error('Error setting up header:', error);
             }

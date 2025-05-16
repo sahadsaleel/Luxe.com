@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-
-
 const generateOrderId = async () => {
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
     let randomPart = '';
@@ -51,6 +49,36 @@ const orderSchema = new Schema({
         isGiftWrapped: {
             type: Boolean,
         },
+        cancelReason: {
+            type: String,
+            required: false,
+        },
+        cancelComments: {
+            type: String,
+            required: false,
+        },
+        status: {
+            type: String,
+            required: false,
+            enum: ['Active', 'Cancelled', 'Return Requested', 'Return Approved', 'Return Completed'],
+            default: 'Active',
+        },
+        returnReason: {
+            type: String,
+            required: false,
+        },
+        returnComments: {
+            type: String,
+            required: false,
+        },
+        returnRequestedOn: {
+            type: Date,
+            required: false,
+        },
+        returnApprovedOn: {
+            type: Date,
+            required: false,
+        },
     }],
     totalPrice: {
         type: Number,
@@ -90,10 +118,13 @@ const orderSchema = new Schema({
     invoiceDate: {
         type: Date,
     },
+    deliveryDate: {
+        type: Date,
+    }, 
     status: {
         type: String,
         required: true,
-        enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Canceled', 'Return Request', 'Returned'],
+        enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Requested', 'Return Approved'],
     },
     createdOn: {
         type: Date,
@@ -114,6 +145,20 @@ const orderSchema = new Schema({
         enum: ['razorpay', 'luxewallet', 'cash on delivery'],
         required: true,
     },
+    returnRequestedOn: {
+        type: Date,
+    }, 
+    returnReason: {
+        type: String,
+    }, 
+    returnComments: {
+        type: String,
+    }, 
+    refundStatus: {
+        type: String,
+        enum: ['Not Initiated', 'Initiated', 'Completed', 'Failed'],
+        default: 'Not Initiated',
+    }, 
 });
 
 orderSchema.pre('save', async function (next) {

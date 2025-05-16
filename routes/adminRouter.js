@@ -9,7 +9,8 @@ const orderController = require('../controller/admin/orderController');
 const { uploadSingleImage, uploadMultipleImages } = require('../helpers/multer');
 const { userAuth, adminAuth } = require('../middleware/auth');
 
-// Test route for Cloudinary uploads
+
+
 router.post('/test-cloudinary', adminAuth, uploadSingleImage, async (req, res) => {
   try {
     if (!req.file) {
@@ -64,8 +65,7 @@ router.get('/getProduct/:id', adminAuth, productController.getProductById);
 router.get('/orders', adminAuth, orderController.loadOrderPage);
 router.get('/orders/:orderId', adminAuth, orderController.loadOrderDetailPage);
 router.post('/orders/:orderId/update-status', adminAuth, orderController.updateOrderStatus);
-
-
+router.post('/orders/:orderId/approve-return', adminAuth, orderController.approveReturn);
 
 
 module.exports = router;

@@ -34,6 +34,10 @@
                         <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
                         <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
                         <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                        <option value="Canceled" <%= order.status === 'Canceled' ? 'selected' : '' %>>Canceled</option>
+                        <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
+                        <option value="Return Approved" <%= order.status === 'Return Approved' ? 'selected' : '' %>>Return Approved</option>
+                        <option value="Return Completed" <%= order.status === 'Return Completed' ? 'selected' : '' %>>Return Completed</option>
                     </select>
                     <button class="btn btn-primary update-btn" data-order-id="<%= order._id %>">
                         <span class="button-icon">✓</span>
@@ -76,6 +80,35 @@
                         <%= order.address.pincode || 'N/A' %>
                     </div>
                 </div>
+
+                <% if (order.status === 'Return Request' || order.status === 'Return Approved' || order.status === 'Return Completed') { %>
+                    <div class="return-request-box">
+                        <div class="return-icon">↩️</div>
+                        <div class="info-label">Return Request Details</div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Requested On</div>
+                                <div class="info-value"><%= order.returnRequestedOn ? order.returnRequestedOn.toLocaleDateString() : 'N/A' %></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Reason</div>
+                                <div class="info-value"><%= order.returnReason || 'N/A' %></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Comments</div>
+                                <div class="info-value"><%= order.returnComments || 'N/A' %></div>
+                            </div>
+                            <% if (order.status === 'Return Request') { %>
+                                <div class="info-item">
+                                    <button class="btn btn-primary approve-return-btn" data-order-id="<%= order._id %>">
+                                        <span class="button-icon">✓</span>
+                                        Approve Return
+                                    </button>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } %>
             </div>
         </div>
         
@@ -108,7 +141,11 @@
                                 <td><%= item.quantity %></td>
                                 <td>₹<%= item.unitPrice.toFixed(2) %></td>
                                 <td>₹<%= item.totalPrice.toFixed(2) %></td>
-                                <td><span class="badge badge-<%= item.status.toLowerCase().replace(' ', '-') %>"><%= item.status %></span></td>
+                                <td>
+                                    <span class="badge badge-<%= order.status.toLowerCase().replace(' ', '-') %>">
+                                        <%= order.status %>
+                                    </span>
+                                </td>
                             </tr>
                         <% }) %>
                     </tbody>
@@ -119,62 +156,11 @@
                 </div>
             </div>
         </div>
-        
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">
-                    <span class="card-title-icon">↩️</span>
-                    Return Items
-                </div>
-            </div>
-            <div class="card-body" style="padding: 0;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 80px">Product</th>
-                            <th>Product Name</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Reason</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (order.returnItems && order.returnItems.length > 0) { %>
-                            <% order.returnItems.forEach(item => { %>
-                                <tr>
-                                    <td>
-                                        <img src="<%= item.productImage %>" alt="<%= item.productName %>" class="product-img">
-                                    </td>
-                                    <td class="product-name"><%= item.productName %></td>
-                                    <td><%= item.quantity %></td>
-                                    <td>₹<%= item.price.toFixed(2) %></td>
-                                    <td><%= item.reason || 'N/A' %></td>
-                                    <td>
-                                        <button class="action-btn">Process Return</button>
-                                    </td>
-                                </tr>
-                            <% }) %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="6">
-                                    <div class="empty-state">
-                                        <div class="empty-icon">📦</div>
-                                        <div class="empty-text">No return items found</div>
-                                        <div class="empty-subtext">All items in this order are in good standing</div>
-                                    </div>
-                                </td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-
+        // Dropdown menu toggle
         document.querySelector('.dropdown-toggle').addEventListener('click', () => {
             const dropdownMenu = document.querySelector('.dropdown-menu');
             dropdownMenu.classList.toggle('show');
@@ -187,6 +173,7 @@
             }
         });
 
+        // Update order status
         document.querySelector('.update-btn').addEventListener('click', async () => {
             const orderId = document.querySelector('.update-btn').dataset.orderId;
             const status = document.querySelector('.select-status').value;
@@ -206,7 +193,7 @@
                         className: 'Toastify__toast--success',
                         stopOnFocus: true,
                     }).showToast();
-                    setTimeout(() => location.reload(), 1000); 
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     Toastify({
                         text: `Error updating status: ${result.error}`,
@@ -229,6 +216,47 @@
             }
         });
 
+        document.querySelectorAll('.approve-return-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const orderId = button.dataset.orderId;
+                try {
+                    const response = await fetch(`/admin/orders/${orderId}/approve-return`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        Toastify({
+                            text: 'Return approved successfully',
+                            duration: 3000,
+                            gravity: 'top',
+                            position: 'right',
+                            className: 'Toastify__toast--success',
+                            stopOnFocus: true,
+                        }).showToast();
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        Toastify({
+                            text: `Error approving return: ${result.message}`,
+                            duration: 3000,
+                            gravity: 'top',
+                            position: 'right',
+                            className: 'Toastify__toast--error',
+                            stopOnFocus: true,
+                        }).showToast();
+                    }
+                } catch (error) {
+                    Toastify({
+                        text: `Error approving return: ${error.message}`,
+                        duration: 3000,
+                        gravity: 'top',
+                        position: 'right',
+                        className: 'Toastify__toast--error',
+                        stopOnFocus: true,
+                    }).showToast();
+                }
+            });
+        });
     </script>
 </body>
 </html>

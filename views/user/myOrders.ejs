@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxe.com - My Orders</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/myOrder.css">
+</head>
+<body>
+     <%- include('../../views/partials/user/header') %>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-container">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">My Orders</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="profile-brief">
+                    <div class="profile-image">
+                        <img src="<%= user && user.profileImage ? user.profileImage : '/img/profile-image-placeholder.png' %>" alt="Profile Image">
+                    </div>
+                    <div class="profile-name"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : 'Guest' %></div>
+                    <div class="profile-email"><%= user && user.email ? user.email : 'N/A' %></div>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li><a href="/address"><i class="fas fa-map-marker-alt"></i> Address Book</a></li>
+                    <li><a href="/orders" class="active"><i class="fas fa-box"></i> My Orders</a></li>
+                    <li><a href="/wishlist"><i class="fas fa-heart"></i> My Wishlist</a></li>
+                    <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
+                    <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign out</a></li>
+                </ul>
+            </div>
+
+            <!-- Orders Content -->
+            <div class="orders-content">
+                <h2>My Orders</h2>
+                <% if (orders && orders.length > 0) { %>
+                    <div class="card">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Order Date</th>
+                                    <th>Status</th>
+                                    <th>Order Method</th>
+                                    <th>Total Amount</th>
+                                    <th>View Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% orders.forEach(order => { %>
+                                    <tr>
+                                        <td><%= order.orderId %></td>
+                                        <td><%= new Date(order.createdOn).toLocaleDateString('en-GB', { 
+                                            day: '2-digit', 
+                                            month: '2-digit', 
+                                            year: 'numeric' 
+                                        }) %></td>
+                                        <td>
+                                            <span class="status <%= order.status.toLowerCase() %>">
+                                                <%= order.status.charAt(0).toUpperCase() + order.status.slice(1).toLowerCase() %>
+                                            </span>
+                                        </td>
+                                        <td><%= order.paymentMethod %></td>
+                                        <td>₹<%= Number(order.finalAmount).toFixed(2) %></td>
+                                        <td>
+                                            <% if (order.status.toLowerCase() === 'failed') { %>
+                                                <a href="/orders/retry/<%= order.orderId %>" class="btn btn-retry">
+                                                    <i class="fas fa-redo"></i> Retry Payment
+                                                </a>
+                                            <% } else { %>
+                                                <a href="/orders/details/<%= order.orderId %>" class="btn btn-details">
+                                                    <i class="far fa-eye"></i> Details
+                                                </a>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <% if (totalPages > 1) { %>
+                        <div class="pagination">
+                            <% if (currentPage > 1) { %>
+                                <a href="/orders?page=<%= currentPage - 1 %>"><i class="fas fa-chevron-left"></i></a>
+                            <% } %>
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <a href="/orders?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+                            <% } %>
+                            <% if (currentPage < totalPages) { %>
+                                <a href="/orders?page=<%= currentPage + 1 %>"><i class="fas fa-chevron-right"></i></a>
+                            <% } %>
+                        </div>
+                        <div class="pagination-info">
+                            Page <%= currentPage %> of <%= totalPages %>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <div class="no-orders">
+                        <p>No orders found. Start shopping now!</p>
+                        <a href="/shop">Shop Now</a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+   <%-include("../../views/partials/user/footer")%>
+</body>
+</html>

@@ -4,6 +4,8 @@ const Category = require('../../models/categorySchema');
 const Brand = require('../../models/brandSchema');
 const Wishlist = require('../../models/wishlistSchema');
 
+
+
 const productViewPage = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -109,7 +111,7 @@ const addToWishlist = async (req, res) => {
   try {
     const { productId } = req.params;
     const userId = req.session.user;
-    const { currentPageUrl } = req.body; // Accept currentPageUrl for consistency
+    const { currentPageUrl } = req.body; 
 
     if (!userId) {
       return res.status(401).json({
@@ -190,8 +192,8 @@ const removeFromWishlist = async (req, res) => {
   try {
     const { productId } = req.params;
     const userId = req.session.user;
-    const { currentPageUrl } = req.body; // Accept currentPageUrl for consistency
-
+    const { currentPageUrl } = req.body; 
+    
     if (!userId) {
       return res.status(401).json({
         success: false,

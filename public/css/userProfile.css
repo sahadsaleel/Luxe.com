@@ -623,9 +623,9 @@
 
         /* Google login note */
         .google-login-note {
-            font-size: 14px;
-            color: #666;
-            font-style: italic;
+            font-size: 18px;
+            font-weight: 700;
+            color: #565555;
             margin-top: 8px;
         }
 

@@ -69,7 +69,6 @@
 
     .purchase-buttons .btn {
       font-size: 0.85rem;
-摄像头
     }
 
     .wishlist-icon, .btn-wishlist {
@@ -278,6 +277,47 @@
       right: 20px;
       z-index: 1055;
     }
+
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 1rem 0;
+    }
+
+    .quantity-btn {
+      width: 40px;
+      height: 40px;
+      background-color: #f8f8f8;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .quantity-btn:hover {
+      background-color: #e0e0e0;
+    }
+
+    .quantity-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .quantity-input {
+      width: 60px;
+      height: 40px;
+      text-align: center;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      font-size: 1rem;
+      background-color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -330,13 +370,19 @@
           <p class="mb-2 fw-bold">Select Size:</p>
           <div class="size-option">
             <% product.variants.forEach((variant, index) => { %>
-              <input type="radio" name="size" id="size-<%= variant.size %>" value="<%= variant.size %>" <%= index === 0 ? 'checked' : '' %>>
+              <input type="radio" name="size" id="size-<%= variant.size %>" value="<%= variant.size %>" <%= index === 0 ? 'checked' : '' %> data-quantity="<%= variant.quantity %>">
               <label for="size-<%= variant.size %>">
                 <span><%= variant.size %>ml</span>
                 <span>₹<%= variant.salePrice > 0 ? variant.salePrice : variant.regularPrice %></span>
               </label>
             <% }) %>
           </div>
+        </div>
+        <div class="quantity-selector">
+          <p class="mb-2 fw-bold">Quantity:</p>
+          <button class="quantity-btn" id="decreaseQty">−</button>
+          <input type="text" class="quantity-input" id="quantityInput" value="1" readonly>
+          <button class="quantity-btn" id="increaseQty">+</button>
         </div>
         <div class="gift-option">
           <div class="gift-option-title">
@@ -365,15 +411,15 @@
           <% } %>
         </div>
         <div class="purchase-buttons">
-            <button class="btn btn-add-to-bag" 
-                    data-product-id="<%= product._id %>" 
-                    onclick="addToCart('<%= product._id %>')"
-                    <%= product.variants.every(variant => variant.quantity === 0) ? 'disabled' : '' %>>
-              Add to bag
+          <button class="btn btn-add-to-bag" 
+                  data-product-id="<%= product._id %>" 
+                  onclick="addToCart('<%= product._id %>')"
+                  <%= product.variants.every(variant => variant.quantity === 0) ? 'disabled' : '' %>>
+            Add to bag
           </button>
           <button class="btn btn-buy-now" 
-                    <%= product.variants.every(variant => variant.quantity === 0) ? 'disabled' : '' %>>
-              Buy now
+                  <%= product.variants.every(variant => variant.quantity === 0) ? 'disabled' : '' %>>
+            Buy now
           </button>
         </div>
       </div>
@@ -521,7 +567,7 @@
   <img class="zoom-modal-content" id="zoomedImage">
 </div>
 <%- include("../../views/partials/user/footer") %>
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script>
   async function toggleWishlist(productId, button) {
@@ -565,19 +611,19 @@
       } finally {
         button.disabled = false;
       }
-    }
+  }
 
-    function showToast(message, icon = 'success') {
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: icon,
-        title: message,
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-      });
-    }
+  function showToast(message, icon = 'success') {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: icon,
+      title: message,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+  }
 
   document.addEventListener('DOMContentLoaded', function() {
     const thumbnails = document.querySelectorAll('.thumbnail');
@@ -588,6 +634,9 @@
     const modalImg = document.getElementById('zoomedImage');
     const priceElement = document.getElementById('productPrice');
     const sizeRadios = document.querySelectorAll('input[name="size"]');
+    const quantityInput = document.getElementById('quantityInput');
+    const decreaseBtn = document.getElementById('decreaseQty');
+    const increaseBtn = document.getElementById('increaseQty');
     let cx, cy;
 
     function calculateRatio() {
@@ -675,9 +724,45 @@
         if (selectedVariant) {
           const price = selectedVariant.salePrice > 0 ? selectedVariant.salePrice : selectedVariant.regularPrice;
           priceElement.textContent = `₹${price}`;
+          updateQuantityButtons(selectedVariant.quantity);
         }
       });
     });
+
+    function updateQuantityButtons(maxQuantity) {
+      const currentQuantity = parseInt(quantityInput.value);
+      decreaseBtn.disabled = currentQuantity <= 1;
+      increaseBtn.disabled = currentQuantity >= maxQuantity || currentQuantity >= 5;
+    }
+
+    decreaseBtn.addEventListener('click', () => {
+      let quantity = parseInt(quantityInput.value);
+      if (quantity > 1) {
+        quantity--;
+        quantityInput.value = quantity;
+        const selectedSize = document.querySelector('input[name="size"]:checked').value;
+        const selectedVariant = variants.find(v => v.size.toString() === selectedSize);
+        updateQuantityButtons(selectedVariant.quantity);
+      }
+    });
+
+    increaseBtn.addEventListener('click', () => {
+      let quantity = parseInt(quantityInput.value);
+      const selectedSize = document.querySelector('input[name="size"]:checked').value;
+      const selectedVariant = variants.find(v => v.size.toString() === selectedSize);
+      if (quantity < selectedVariant.quantity && quantity < 5) {
+        quantity++;
+        quantityInput.value = quantity;
+        updateQuantityButtons(selectedVariant.quantity);
+      } else {
+        showToast(`Maximum quantity is ${Math.min(selectedVariant.quantity, 5)}`, 'error');
+      }
+    });
+
+    // Initialize quantity buttons based on default selected size
+    const defaultSize = document.querySelector('input[name="size"]:checked').value;
+    const defaultVariant = variants.find(v => v.size.toString() === defaultSize);
+    updateQuantityButtons(defaultVariant.quantity);
 
     const slider = document.querySelector('.similar-products-slider');
     const prevBtn = document.getElementById('prevBtn');
@@ -719,58 +804,61 @@
     });
   });
 
-    async function addToCart(productId) {
-        try {
-            const selectedSizeRadio = document.querySelector('input[name="size"]:checked');
-            if (!selectedSizeRadio) {
-                showToast('Please select a size.', 'error');
-                return;
-            }
+  async function addToCart(productId) {
+    try {
+      const selectedSizeRadio = document.querySelector('input[name="size"]:checked');
+      if (!selectedSizeRadio) {
+        showToast('Please select a size.', 'error');
+        return;
+      }
 
-            const giftWrapCheckbox = document.getElementById('giftWrap');
-            const isGiftWrapped = giftWrapCheckbox.checked;
+      const giftWrapCheckbox = document.getElementById('giftWrap');
+      const isGiftWrapped = giftWrapCheckbox.checked;
+      const quantity = parseInt(document.getElementById('quantityInput').value);
 
-            const variants = <%- JSON.stringify(product.variants) %>;
-            const selectedSize = selectedSizeRadio.value;
-            const selectedVariant = variants.find(v => v.size.toString() === selectedSize);
+      const variants = <%- JSON.stringify(product.variants) %>;
+      const selectedSize = selectedSizeRadio.value;
+      const selectedVariant = variants.find(v => v.size.toString() === selectedSize);
 
-            if (!selectedVariant) {
-                showToast('Selected variant not found.', 'error');
-                return;
-            }
+      if (!selectedVariant) {
+        showToast('Selected variant not found.', 'error');
+        return;
+      }
 
-            console.log('Adding to cart:', { productId, variantId: selectedVariant._id, isGiftWrapped });
+      console.log('Adding to cart:', { productId, variantId: selectedVariant._id, quantity, isGiftWrapped });
 
-            const addToBagBtn = document.querySelector(`.btn-add-to-bag[data-product-id="${productId}"]`);
-            addToBagBtn.disabled = true;
+      const addToBagBtn = document.querySelector(`.btn-add-to-bag[data-product-id="${productId}"]`);
+      addToBagBtn.disabled = true;
 
-            const response = await fetch('/cart/add', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId, variantId: selectedVariant._id, isGiftWrapped }),
-                credentials: 'same-origin',
-            });
+      const response = await fetch('/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, variantId: selectedVariant._id, isGiftWrapped, quantity }),
+        credentials: 'same-origin',
+      });
 
-            const result = await response.json();
+      const result = await response.json();
 
-            if (result.success) {
-                showToast('Product added to cart!', 'success');
-                window.location.href = '/cart';
-            } else {
-                if (result.message.includes('log in')) {
-                    window.location.href = '/login';
-                } else {
-                    showToast(result.message, 'error');
-                }
-            }
-        } catch (error) {
-            console.error('Error adding to cart:', error);
-            showToast('Failed to add to cart. Please try again.', 'error');
-        } finally {
-            const addToBagBtn = document.querySelector(`.btn-add-to-bag[data-product-id="${productId}"]`);
-            addToBagBtn.disabled = false;
+      if (result.success) {
+        showToast('Product added to cart!', 'success');
+        if (result.isMaxQuantity) {
+          window.location.href = '/cart';
         }
+      } else {
+        if (result.message.includes('log in')) {
+          window.location.href = '/login';
+        } else {
+          showToast(result.message, 'error');
+        }
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      showToast('Failed to add to cart. Please try again.', 'error');
+    } finally {
+      const addToBagBtn = document.querySelector(`.btn-add-to-bag[data-product-id="${productId}"]`);
+      addToBagBtn.disabled = false;
     }
+  }
 </script>
 </body>
 </html>

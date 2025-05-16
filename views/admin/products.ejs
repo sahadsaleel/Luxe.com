@@ -590,7 +590,6 @@
         </div>
     </div>
 
-    <!-- Crop Modal -->
     <div id="cropModal" class="crop-modal">
         <div class="crop-modal-content">
             <span class="close-btn" id="closeCropModal">×</span>
@@ -956,7 +955,6 @@
             });
         });
         
-        // Validate product form
         function validateProductForm(form, isEdit = false) {
             clearProductErrorMessages(form);
         
@@ -975,7 +973,6 @@
         
             let isValid = true;
         
-            // Field validations
             if (!name) {
                 displayProductErrorMessage(form, isEdit ? 'editNameError' : 'nameError', 'Product name is required');
                 isValid = false;
@@ -997,7 +994,6 @@
                 isValid = false;
             }
         
-            // Image validation: 3 to 4 images
             if (images < 3) {
                 displayProductErrorMessage(form, isEdit ? 'editImageError' : 'addImageError', 'At least 3 images are required');
                 isValid = false;
@@ -1007,7 +1003,6 @@
                 isValid = false;
             }
         
-            // Variant validation
             if (variants.length > 5) {
                 displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', 'Maximum 5 variants are allowed');
                 isValid = false;
@@ -1052,7 +1047,6 @@
             return isValid;
         }
         
-        // Add product form submission
         let isAddProductSubmitting = false;
         addProductForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1116,7 +1110,6 @@
             }
         });
         
-        // Edit product form submission
         let isEditProductSubmitting = false;
         editProductForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1180,7 +1173,6 @@
             }
         });
         
-        // Delete product
         document.querySelectorAll('.delete-btn').forEach(button => {
             button.addEventListener('click', async () => {
                 const productId = button.getAttribute('data-id');
@@ -1223,7 +1215,6 @@
             }
         }
         
-        // Search and sort products
         const searchInput = document.getElementById('searchInput');
         const sortSelect = document.getElementById('sortSelect');
         
@@ -1251,7 +1242,6 @@
             fetchProducts(searchInput.value, sortSelect.value);
         });
         
-        // Error handling utilities
         function displayProductErrorMessage(form, elementId, message) {
             let errorElement = form.querySelector(`#${elementId}`);
             if (!errorElement) {

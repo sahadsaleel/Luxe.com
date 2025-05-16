@@ -53,7 +53,7 @@
             background-color: #d3d3d3;
         }
         .status-badge {
-            color: white;
+            color: rgb(0, 0, 0);
             padding: 5px 10px;
             border-radius: 3px;
             font-size: 12px;
@@ -124,7 +124,7 @@
     <%- include('../../views/partials/admin/header') %>
     <div class="container">
         <div class="search-filter">
-            <input type="text" class="search-bar" placeholder="Search for product...">
+            <input type="text" class="search-bar" id="searchInput" placeholder="Search for product...">
             <div class="dropdown">
                 <select class="custom-select" id="sortSelect">
                     <option value="newest">Newest</option>
@@ -135,7 +135,7 @@
             </div>
         </div>
         
-        <table>
+        <table id="orderTable">
             <thead>
                 <tr>
                     <th>USER NAME</th>
@@ -167,5 +167,63 @@
         </table>
     </div>
     <%- include('../../views/partials/admin/footer') %>
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
+        const table = document.getElementById('orderTable');
+        const tbody = table.querySelector('tbody');
+        const originalRows = Array.from(tbody.querySelectorAll('tr'));
+
+        const getRowData = row => {
+            return {
+                row,
+                userName: row.cells[0].textContent.trim().toLowerCase(),
+                orderId: row.cells[1].textContent.trim().toLowerCase(),
+                amount: parseFloat(row.cells[2].textContent.replace('₹', '').trim()),
+                orderDate: new Date(row.cells[3].textContent.trim()),
+                status: row.cells[4].textContent.trim().toLowerCase()
+            };
+        };
+
+        let rowData = originalRows.map(getRowData);
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim().toLowerCase();
+            rowData = originalRows.map(getRowData); 
+            const filteredRows = rowData.filter(data => 
+                data.userName.includes(query) ||
+                data.orderId.includes(query) ||
+                data.status.includes(query)
+            );
+            updateTable(filteredRows);
+        });
+
+        sortSelect.addEventListener('change', () => {
+            let sortedRows = [...rowData];
+            switch (sortSelect.value) {
+                case 'newest':
+                    sortedRows.sort((a, b) => b.orderDate - a.orderDate);
+                    break;
+                case 'oldest':
+                    sortedRows.sort((a, b) => a.orderDate - b.orderDate);
+                    break;
+                case 'a-z':
+                    sortedRows.sort((a, b) => a.userName.localeCompare(b.userName));
+                    break;
+                case 'z-a':
+                    sortedRows.sort((a, b) => b.userName.localeCompare(a.userName));
+                    break;
+            }
+            updateTable(sortedRows);
+        });
+        
+        function updateTable(rows) {
+            tbody.innerHTML = '';
+            rows.forEach(data => tbody.appendChild(data.row));
+        }
+    });
+    </script>
+    
 </body>
 </html>
