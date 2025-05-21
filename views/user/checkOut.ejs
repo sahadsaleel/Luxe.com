@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="/css/checkout.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <style>
-        /* Loading spinner styles */
         .checkout-btn {
             position: relative;
             display: inline-flex;
@@ -38,6 +37,38 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        .coupon-section {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .coupon-section input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex: 1;
+        }
+        .coupon-section button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .coupon-section .apply-btn {
+            background-color: #000000;
+            color: white;
+        }
+        .coupon-section .remove-btn {
+            background-color: #000000;
+            color: white;
+        }
+        .coupon-applied {
+            color: #28a745;
+            font-weight: bold;
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -199,6 +230,21 @@
                             <% }) %>
                         </div>
 
+                        <!-- Coupon Section -->
+                        <div class="coupon-section">
+                            <input type="text" id="couponCode" placeholder="Enter coupon code" <%= appliedCoupon ? 'disabled' : '' %> value="<%= appliedCoupon ? appliedCoupon.code : '' %>">
+                            <% if (appliedCoupon) { %>
+                                <button type="button" class="remove-btn" id="removeCouponBtn">Remove</button>
+                            <% } else { %>
+                                <button type="button" class="apply-btn" id="applyCouponBtn">Apply</button>
+                            <% } %>
+                        </div>
+                        <% if (appliedCoupon) { %>
+                            <div class="coupon-applied">
+                                Coupon Applied: <%= appliedCoupon.code %> (-₹<%= appliedCoupon.discount.toFixed(2) %>)
+                            </div>
+                        <% } %>
+
                         <div class="summary-row" data-type="subtotal">
                             <span class="summary-label">Subtotal (<%= cartItems.length %> items)</span>
                             <span class="summary-value">₹<%= parseFloat(subtotal).toFixed(2) %></span>
@@ -208,6 +254,13 @@
                             <div class="summary-row" data-type="gift-wrapping">
                                 <span class="summary-label">Gift Packaging</span>
                                 <span class="summary-value">₹<%= parseFloat(giftWrapTotal).toFixed(2) %></span>
+                            </div>
+                        <% } %>
+
+                        <% if (appliedCoupon) { %>
+                            <div class="summary-row" data-type="discount">
+                                <span class="summary-label">Discount</span>
+                                <span class="summary-value summary-discount">-₹<%= parseFloat(appliedCoupon.discount).toFixed(2) %></span>
                             </div>
                         <% } %>
 
@@ -340,6 +393,9 @@
             const cancelBtn = document.getElementById('cancelBtn');
             const addressForm = document.getElementById('addressForm');
             const proceedToPaymentBtn = document.getElementById('proceedToPaymentBtn');
+            const applyCouponBtn = document.getElementById('applyCouponBtn');
+            const removeCouponBtn = document.getElementById('removeCouponBtn');
+            const couponCodeInput = document.getElementById('couponCode');
 
             deliveryOptions.forEach(option => {
                 option.addEventListener('click', function() {
@@ -510,11 +566,108 @@
                 }
             });
 
+            applyCouponBtn?.addEventListener('click', async () => {
+                const couponCode = couponCodeInput.value.trim().toUpperCase();
+                if (!couponCode) {
+                    Toastify({
+                        text: 'Please enter a coupon code.',
+                        duration: 3000,
+                        gravity: 'top',
+                        position: 'right',
+                        backgroundColor: '#dc3545',
+                        stopOnFocus: true
+                    }).showToast();
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/cart/apply-coupon', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ couponCode })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        Toastify({
+                            text: result.message,
+                            duration: 2000,
+                            gravity: 'top',
+                            position: 'right',
+                            backgroundColor: '#28a745',
+                            stopOnFocus: true
+                        }).showToast();
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        Toastify({
+                            text: result.message || 'Failed to apply coupon.',
+                            duration: 3000,
+                            gravity: 'top',
+                            position: 'right',
+                            backgroundColor: '#dc3545',
+                            stopOnFocus: true
+                        }).showToast();
+                    }
+                } catch (error) {
+                    Toastify({
+                        text: 'Error applying coupon.',
+                        duration: 3000,
+                        gravity: 'top',
+                        position: 'right',
+                        backgroundColor: '#dc3545',
+                        stopOnFocus: true
+                    }).showToast();
+                }
+            });
+
+            removeCouponBtn?.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/cart/remove-coupon', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        Toastify({
+                            text: result.message,
+                            duration: 2000,
+                            gravity: 'top',
+                            position: 'right',
+                            backgroundColor: '#28a745',
+                            stopOnFocus: true
+                        }).showToast();
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        Toastify({
+                            text: result.message || 'Failed to remove coupon.',
+                            duration: 3000,
+                            gravity: 'top',
+                            position: 'right',
+                            backgroundColor: '#dc3545',
+                            stopOnFocus: true
+                        }).showToast();
+                    }
+                } catch (error) {
+                    Toastify({
+                        text: 'Error removing coupon.',
+                        duration: 3000,
+                        gravity: 'top',
+                        position: 'right',
+                        backgroundColor: '#dc3545',
+                        stopOnFocus: true
+                    }).showToast();
+                }
+            });
+
             function updateTotals() {
                 const selectedDelivery = document.querySelector('input[name="deliveryMethod"]:checked');
                 const deliveryOptions = <%- JSON.stringify(deliveryOptions || []) %>;
                 const subtotal = Number(<%- subtotal || 0 %>);
                 const giftWrapTotal = Number(<%- giftWrapTotal || 0 %>);
+                const discount = Number(<%- appliedCoupon ? appliedCoupon.discount : 0 %>);
 
                 if (!selectedDelivery || !shippingValueElement || !totalValueElement) {
                     console.warn('Missing delivery selection or DOM elements');
@@ -523,7 +676,7 @@
 
                 const selectedOption = deliveryOptions.find(opt => opt.id === selectedDelivery.value);
                 const shippingPrice = selectedOption ? selectedOption.price : 0;
-                const total = subtotal + giftWrapTotal + shippingPrice;
+                const total = subtotal + giftWrapTotal + shippingPrice - discount;
 
                 shippingValueElement.innerHTML = shippingPrice === 0 ? 'FREE' : `₹${shippingPrice.toFixed(2)}`;
                 totalValueElement.innerHTML = `₹${total.toFixed(2)}`;

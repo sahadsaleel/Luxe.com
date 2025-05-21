@@ -103,7 +103,7 @@
       border: 1px solid #8a6a94;
       width: 120px;
       height: 120px;
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255 свас, 0.3);
       cursor: none;
       display: none;
       border-radius: 50%;
@@ -359,7 +359,7 @@
       <div class="product-details-card">
         <div class="d-flex justify-content-between align-items-center">
           <h1 class="h3"><%= product.productName %></h1>
-          <button class="wishlist-icon" data-product-id="<%= product._id %>" onclick="toggleWishlist('<%= product._id %>', this)" <%= product.variants.every(variant => variant.quantity === 0) ? 'disabled' : '' %>>
+          <button class="wishlist-icon" data-product-id="<%= product._id %>" onclick="toggleWishlist('<%= product._id %>', this)">
             <i class="<%= isInWishlist ? 'fa-solid fa-heart' : 'fa-regular fa-heart' %>" style="<%= isInWishlist ? 'color: red;' : '' %>"></i>
           </button>
         </div>
@@ -391,7 +391,7 @@
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="giftWrap">
             <label class="form-check-label" for="giftWrap">
-              Add luxury gift wrapping (+450 ₹)
+              Add luxury gift wrapping (+100₹)
             </label>
           </div>
           <div class="form-check">
@@ -537,7 +537,7 @@
                   <a href="/productViewPage?id=<%= product._id %>">
                     <img src="<%= product.productImage[0] || '/images/placeholder.jpg' %>" alt="<%= product.productName %>" class="img-fluid">
                   </a>
-                  <button class="btn-wishlist" onclick="toggleWishlist('<%= product._id %>', this)" <%= product.variants.every(variant => variant.quantity === 0) ? 'disabled' : '' %>>
+                  <button class="btn-wishlist" onclick="toggleWishlist('<%= product._id %>', this)">
                     <i class="<%= wishlist.products.some(item => item.productId.toString() === product._id.toString()) ? 'fa-solid fa-heart' : 'fa-regular fa-heart' %>" style="<%= wishlist.products.some(item => item.productId.toString() === product._id.toString()) ? 'color: red;' : '' %>"></i>
                   </button>
                 </div>
@@ -824,8 +824,6 @@
         showToast('Selected variant not found.', 'error');
         return;
       }
-
-      console.log('Adding to cart:', { productId, variantId: selectedVariant._id, quantity, isGiftWrapped });
 
       const addToBagBtn = document.querySelector(`.btn-add-to-bag[data-product-id="${productId}"]`);
       addToBagBtn.disabled = true;

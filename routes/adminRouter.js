@@ -6,11 +6,12 @@ const categoryController = require('../controller/admin/categoryController');
 const brandController = require('../controller/admin/brandController');
 const productController = require('../controller/admin/productController');
 const orderController = require('../controller/admin/orderController');
+const couponController = require('../controller/admin/couponController');
+const offerController = require('../controller/admin/offerController'); 
 const { uploadSingleImage, uploadMultipleImages } = require('../helpers/multer');
 const { userAuth, adminAuth } = require('../middleware/auth');
 
-
-
+// Test Cloudinary upload
 router.post('/test-cloudinary', adminAuth, uploadSingleImage, async (req, res) => {
   try {
     if (!req.file) {
@@ -39,7 +40,7 @@ router.get('/logout', adminController.logout);
 router.get('/customers', adminAuth, customerController.customerInfo);
 router.get('/blockCustomer', adminAuth, customerController.customerBlocked);
 router.get('/unblockCustomer', adminAuth, customerController.customerUnblocked);
-router.post('/upload-image',adminAuth, uploadSingleImage, customerController.uploadProfileImage);
+router.post('/upload-image', adminAuth, uploadSingleImage, customerController.uploadProfileImage);
 
 // Category management
 router.get('/category', adminAuth, categoryController.categoryInfo);
@@ -58,14 +59,30 @@ router.get('/products', adminAuth, productController.getProductPage);
 router.post('/addProduct', adminAuth, uploadMultipleImages, productController.addProduct);
 router.post('/editProduct', adminAuth, uploadMultipleImages, productController.editProduct);
 router.get('/deleteProduct/:id', adminAuth, productController.deleteProduct);
-router.get('/getProduct/:id', adminAuth, productController.getProductById); 
-
+router.get('/getProduct/:id', adminAuth, productController.getProductById);
 
 // Order management
 router.get('/orders', adminAuth, orderController.loadOrderPage);
 router.get('/orders/:orderId', adminAuth, orderController.loadOrderDetailPage);
 router.post('/orders/:orderId/update-status', adminAuth, orderController.updateOrderStatus);
-router.post('/orders/:orderId/approve-return', adminAuth, orderController.approveReturn);
+router.post('/orders/approve-return/:orderId', adminAuth, orderController.approveReturn);
+
+// Coupon management
+router.get('/coupons', adminAuth, couponController.getCoupons);
+router.get('/coupons/:id', adminAuth, couponController.getCouponById);
+router.post('/coupons/add', adminAuth, couponController.addCoupon);
+router.put('/coupons/edit/:id', adminAuth, couponController.editCoupon);
+router.delete('/coupons/delete/:id', adminAuth, couponController.deleteCoupon);
+
+// Offer management
+router.get('/offers',adminAuth, offerController.offerPage);
+router.post('/offers',adminAuth, offerController.addOffer);
+router.get('/offers/:id',adminAuth, offerController.getOffer);
+router.post('/offers/edit',adminAuth, offerController.editOffer);
+router.post('/offers/disable',adminAuth, offerController.disableOffer);
+router.post('/offers/enable',adminAuth, offerController.enableOffer);
+router.get('/:offerType',adminAuth, offerController.getApplicableItems);
+
 
 
 module.exports = router;

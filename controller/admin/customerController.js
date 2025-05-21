@@ -2,6 +2,8 @@ const User = require('../../models/userSchema');
 const cloudinary = require('../../config/cloudinary');
 const { uploadSingleImage } = require('../../helpers/multer'); 
 
+
+
 const customerInfo = async (req, res) => {
     try {
         let search = req.query.search || '';

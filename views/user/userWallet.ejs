@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/userProfile.css">
+</head>
+<body>
+    <%- include('../../views/partials/user/header') %>
+
+    <div class="container">
+
+        <div class="breadcrumb-container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/profile">My Account</a></li>
+                <li class="breadcrumb-item active">My Wallet</li>
+            </ol>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="profile-brief">
+                    <div class="profile-image">
+                        <img src="<%= user && user.profileImage ? user.profileImage : '/img/profile-placeholder.png' %>" alt="Profile Image">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : 'User' %></div>
+                        <div class="profile-email"><%= user && user.email ? user.email : 'N/A' %></div>
+                    </div>
+                </div>
+                <ul class="nav-menu">
+                    <h3>Manage My Account</h3>
+                    <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li><a href="/address"><i class="fas fa-address-book"></i> Address Book</a></li>
+                    <h3>Orders & Wishlist</h3>
+                    <li><a href="/orders"><i class="fas fa-shopping-bag"></i> My Orders</a></li>
+                    <li><a href="/wishlist"><i class="fas fa-heart"></i> My Wishlist</a></li>
+                    <h3>Payments</h3>
+                    <li><a href="/wallet" class="active"><i class="fas fa-wallet"></i> My Wallet</a></li>
+                    <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
+                </ul>
+            </div>
+
+            <div class="content">
+                <div class="profile-header">
+                    <h1>My Wallet</h1>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-wallet"></i>
+                        <h2>Wallet Balance</h2>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Current Balance</div>
+                            <div class="info-value">₹<%= wallet && wallet.balance ? wallet.balance.toFixed(2) : '0.00' %></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-history"></i>
+                        <h2>Transaction History</h2>
+                    </div>
+                    <% if (wallet && wallet.transactions && wallet.transactions.length > 0) { %>
+                        <div class="transaction-list">
+                            <% wallet.transactions.forEach(transaction => { %>
+                                <div class="transaction-item">
+                                    <div class="transaction-details">
+                                        <div class="transaction-type">
+                                            <%= transaction.type === 'Credit' ? 'Credit' : 'Debit' %>
+                                        </div>
+                                        <div class="transaction-amount" style="color: <%= transaction.type === 'Credit' ? '#2ecc71' : '#e74c3c' %>;">
+                                            <%= transaction.type === 'Credit' ? '+' : '-' %> ₹<%= transaction.amount.toFixed(2) %>
+                                        </div>
+                                    </div>
+                                    <div class="transaction-meta">
+                                        <div class="transaction-date">
+                                            <%= new Date(transaction.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                        </div>
+                                        <div class="transaction-description">
+                                            <%= transaction.description || 'No description' %>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <p>No transactions found.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container"></div>
+    <%- include('../../views/partials/user/footer') %>
+
+    <style>
+        :root {
+            --primary-color: #8a6a94;
+            --secondary-color: #7a5a84;
+            --accent-color: #9a7aa4;
+            --text-color: #333;
+            --light-text: #777;
+            --background: #f8f9fa;
+            --card-bg: #fff;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .transaction-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .transaction-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-details {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .transaction-type {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .transaction-amount {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .transaction-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+            color: var(--light-text);
+        }
+
+        .transaction-date {
+            font-size: 13px;
+        }
+
+        .transaction-description {
+            font-size: 13px;
+            max-width: 300px;
+            text-align: right;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            animation: slideIn 0.3s forwards;
+        }
+
+        .toast.success {
+            background-color: #2ecc71;
+        }
+
+        .toast.error {
+            background-color: #e74c3c;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .transaction-meta {
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .transaction-description {
+                text-align: left;
+                max-width: 100%;
+            }
+        }
+        .info-value {
+          font-weight: 900;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.querySelector('.toast-container').appendChild(toast);
+            setTimeout(() => {
+                toast.style.transition = 'all 0.3s ease';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+         async function requestReturn(orderId, productId, variantId) {
+            const returnReason = prompt('Enter return reason:');
+            if (!returnReason) return;
+
+            try {
+              const response = await fetch('/return-product', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderId, productId, variantId, returnReason }),
+              });
+              const data = await response.json();
+              if (data.success) {
+                showToast(data.message, 'success');
+                setTimeout(() => location.reload(), 2000);
+              } else {
+                showToast(data.message, 'error');
+              }
+            } catch (error) {
+              showToast('Failed to submit return request', 'error');
+            }
+          }
+    </script>
+</body>
+</html>

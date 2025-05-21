@@ -9,12 +9,6 @@
     --border-radius: 12px;
     --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
-    --pending-bg: #fff5e6;
-    --pending-color: #ffa500;
-    --delivered-bg: #e6ffe6;
-    --delivered-color: #00cc00;
-    --failed-bg: #ffe6e6;
-    --failed-color: #cc0000;
 }
 
 * {
@@ -229,57 +223,84 @@ body {
     font-weight: 600;
 }
 
-.orders-table {
-    width: 100%;
-    border-collapse: collapse;
+.coupon-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.orders-table th {
-    text-align: left;
+.coupon-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 15px;
-    background-color: #f5f5f5;
-    color: var(--text-color);
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.coupon-item:hover {
+    background-color: rgba(138, 106, 148, 0.05);
+}
+
+.coupon-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.coupon-code {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.coupon-code .code {
+    font-size: 16px;
     font-weight: 600;
-    font-size: 14px;
-}
-
-.orders-table td {
-    padding: 15px;
-    border-bottom: 1px solid #eaeaea;
-    font-size: 14px;
-}
-
-.orders-table tr:last-child td {
-    border-bottom: none;
-}
-
-.status {
-    display: inline-block;
+    color: var(--primary-color);
+    background-color: rgba(138, 106, 148, 0.1);
     padding: 5px 10px;
-    border-radius: 15px;
+    border-radius: 4px;
+}
+
+.copy-btn {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 5px 10px;
+    border-radius: 4px;
     font-size: 12px;
-    font-weight: 600;
-    text-transform: capitalize;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: var(--transition);
 }
 
-.status.pending {
-    background-color: var(--pending-bg);
-    color: var(--pending-color);
+.copy-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
 }
 
-.status.delivered {
-    background-color: var(--delivered-bg);
-    color: var(--delivered-color);
+.coupon-info h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: var(--text-color);
 }
 
-.status.failed {
-    background-color: var(--failed-bg);
-    color: var(--failed-color);
+.coupon-info p {
+    font-size: 13px;
+    color: var(--light-text);
+}
+
+.coupon-actions {
+    display: flex;
+    gap: 10px;
 }
 
 .action-button {
-    display: inline-flex;
-    align-items: center;
     background-color: var(--primary-color);
     color: white;
     border: none;
@@ -288,7 +309,6 @@ body {
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    text-decoration: none;
     transition: var(--transition);
 }
 
@@ -296,64 +316,107 @@ body {
     background-color: var(--secondary-color);
 }
 
-.action-button.retry {
-    background-color: #333;
+.terms-btn {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
 }
 
-.action-button.retry:hover {
-    background-color: #222;
+.terms-btn:hover {
+    background-color: rgba(138, 106, 148, 0.1);
 }
 
-.action-button i {
-    margin-right: 5px;
-}
-
-.no-orders {
+.no-coupons {
     text-align: center;
     padding: 40px;
 }
 
-.no-orders p {
+.no-coupons p {
     margin-bottom: 20px;
     color: var(--light-text);
     font-size: 16px;
 }
 
-.pagination {
-    display: flex;
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
     justify-content: center;
-    margin-top: 30px;
+    align-items: center;
+    z-index: 999;
+    backdrop-filter: blur(4px);
 }
 
-.pagination a {
+.modal {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #eaeaea;
+    position: sticky;
+    top: 0;
+    background-color: var(--card-bg);
+    z-index: 1;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--light-text);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 35px;
-    height: 35px;
-    margin: 0 5px;
-    border-radius: 8px;
-    background-color: var(--card-bg);
-    color: var(--text-color);
-    text-decoration: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     transition: var(--transition);
+}
+
+.close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--text-color);
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.modal-body p {
     font-size: 14px;
+    color: var(--text-color);
+    line-height: 1.8;
 }
 
-.pagination a.active {
-    background-color: var(--primary-color);
-    color: #fff;
-}
-
-.pagination a:hover:not(.active) {
-    background-color: rgba(138, 106, 148, 0.1);
-}
-
-.pagination-info {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 14px;
-    color: var(--light-text);
+.modal-overlay.active {
+    display: flex;
 }
 
 @media (max-width: 768px) {
@@ -379,15 +442,21 @@ body {
         flex: 1;
     }
 
-    .orders-table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+    .coupon-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
     }
 
-    .orders-table th,
-    .orders-table td {
-        min-width: 120px;
+    .coupon-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .action-button,
+    .terms-btn {
+        flex: 1;
+        text-align: center;
     }
 }
 

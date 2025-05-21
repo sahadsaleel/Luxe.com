@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Management Dashboard</title>
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+       
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f9f9f9;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .header1 {
+            justify-self: end;
+            padding: 20px;
+        }
+        .search-user-section {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-top: 30px;
+            padding-right: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .search-container {
+            position: relative;
+            margin-right: 15px;
+            flex: 1;
+            max-width: 300px;
+            min-width: 200px;
+        }
+        .search-input {
+            background-color: #7db87d;
+            border: none;
+            border-radius: 5px;
+            color: rgb(0, 0, 0);
+            padding: 12px 15px 12px 35px;
+            width: 100%;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .search-input::placeholder {
+            color: black;
+        }
+        .dropdown {
+            padding: 8px 12px;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            width: 120px;
+            margin-left: 10px;
+        }
+        .dropdown select {
+            border: none;
+            background: transparent;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 500;
+            outline: none;
+        }
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background-color: #7db87d;
+            color: rgb(0, 0, 0);
+        }
+        .btn-primary:hover {
+            background-color: #000000 !important;
+        }
+        .mainCantainer {
+            padding: 40px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        th {
+            background-color: #7db87d;
+            color: rgb(0, 0, 0);
+            text-align: left;
+            padding: 12px;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 2px solid white;
+            background-color: #d3d3d3;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            margin: 0 5px;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        .close-btn {
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        input[type="text"], select, input[type="number"], input[type="date"], textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: none;
+        }
+        .spinner-border {
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        .btn-loading .spinner-border {
+            display: inline-block;
+        }
+        .btn-loading .btn-text {
+            display: none;
+        }
+        .btn:not(.btn-loading) .spinner-border {
+            display: none;
+        }
+        .btn:not(.btn-loading) .btn-text {
+            display: inline;
+        }
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../../views/partials/admin/header') %>
+
+    <div class="search-user-section">
+        <div class="search-container">
+            <input type="text" placeholder="Search offers..." class="search-input" id="searchInput" value="<%= search %>">
+        </div>
+        <div class="dropdown">
+            <select class="custom-select" id="sortSelect">
+                <option value="newest" <%= req.query.sort === 'newest' ? 'selected' : '' %>>Newest</option>
+                <option value="oldest" <%= req.query.sort === 'oldest' ? 'selected' : '' %>>Oldest</option>
+                <option value="a-z" <%= req.query.sort === 'a-z' ? 'selected' : '' %>>A-Z</option>
+                <option value="z-a" <%= req.query.sort === 'z-a' ? 'selected' : '' %>>Z-A</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="header1">
+        <button class="btn btn-primary" id="addOfferBtn">ADD NEW OFFER</button>
+    </div>
+
+    <div class="mainCantainer">
+        <table>
+            <thead>
+                <tr>
+                    <th>OFFER NAME</th>
+                    <th>DESCRIPTION</th>
+                    <th>DISCOUNT (%)</th>
+                    <th>START DATE</th>
+                    <th>END DATE</th>
+                    <th>OFFER TYPE</th>
+                    <th>APPLICABLE TO</th>
+                    <th>STATUS</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody id="offersTableBody">
+                <% offers.forEach(offer => { %>
+                    <tr>
+                        <td><%= offer.offerName %></td>
+                        <td><%= offer.description %></td>
+                        <td><%= offer.discount %>%</td>
+                        <td><%= new Date(offer.startDate).toLocaleDateString() %></td>
+                        <td><%= new Date(offer.endDate).toLocaleDateString() %></td>
+                        <td><%= offer.offerType.charAt(0).toUpperCase() + offer.offerType.slice(1) %></td>
+                        <td><%= offer.targetId ? offer.targetId.name || offer.targetId : 'N/A' %></td>
+                        <td><%= offer.status %></td>
+                        <td>
+                            <button class="action-btn edit-btn" data-id="<%= offer._id %>">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <% if (offer.status === 'Disabled') { %>
+                                <button class="action-btn enable-btn" data-id="<%= offer._id %>">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M5 12h14"></path>
+                                        <path d="M12 5v14"></path>
+                                    </svg>
+                                </button>
+                            <% } else { %>
+                                <button class="action-btn disable-btn" data-id="<%= offer._id %>">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                                    </svg>
+                                </button>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mt-4">
+                <% if (currentPage > 1) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= search %>">Previous</a>
+                    </li>
+                <% } %>
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>&search=<%= search %>"><%= i %></a>
+                    </li>
+                <% } %>
+                <% if (currentPage < totalPages) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= search %>">Next</a>
+                    </li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Add Offer Modal -->
+    <div id="addOfferModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeAddModal">×</span>
+            <h2>Add New Offer</h2>
+            <form id="addOfferForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="OfferName">Offer Name</label>
+                        <input type="text" id="OfferName" name="offerName">
+                        <div id="NameError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        <textarea id="Description" name="description"></textarea>
+                        <div id="DescriptionError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Discount">Discount Percentage</label>
+                        <input type="number" id="Discount" name="discount" min="0" max="100">
+                        <div id="DiscountError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="StartDate">Start Date</label>
+                        <input type="date" id="StartDate" name="startDate">
+                        <div id="StartDateError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="EndDate">End Date</label>
+                        <input type="date" id="EndDate" name="endDate">
+                        <div id="EndDateError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="OfferType">Offer Type</label>
+                        <select id="OfferType" name="offerType">
+                            <option value="" selected disabled>Select offer type</option>
+                            <option value="product">Product</option>
+                            <option value="category">Category</option>
+                            <option value="brand">Brand</option>
+                        </select>
+                        <div id="OfferTypeError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ItemSelect">Applicable To</label>
+                        <select id="ItemSelect" name="itemSelect">
+                            <option value="" selected disabled>Select applicable item</option>
+                        </select>
+                        <div id="ItemSelectError" class="error-message"></div>
+                    </div>
+                </div>
+                <div class="add-btn-container">
+                    <button type="submit" class="btn btn-primary" id="addOfferSubmitBtn">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="btn-text">ADD</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Offer Modal -->
+    <div id="editOfferModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeEditModal">×</span>
+            <h2>Edit Offer</h2>
+            <form id="editOfferForm">
+                <input type="hidden" id="eofferId" name="eofferId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="eofferName">Offer Name</label>
+                        <input type="text" id="eofferName" name="eofferName">
+                        <div id="editNameError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="edescription">Description</label>
+                        <textarea id="edescription" name="edescription"></textarea>
+                        <div id="editDescriptionError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ediscount">Discount Percentage</label>
+                        <input type="number" id="ediscount" name="ediscount" min="0" max="100">
+                        <div id="editDiscountError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="estartDate">Start Date</label>
+                        <input type="date" id="estartDate" name="estartDate">
+                        <div id="editStartDateError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="eendDate">End Date</label>
+                        <input type="date" id="eendDate" name="eendDate">
+                        <div id="editEndDateError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="eofferType">Offer Type</label>
+                        <select id="eofferType" name="eofferType">
+                            <option value="" selected disabled>Select offer type</option>
+                            <option value="product">Product</option>
+                            <option value="category">Category</option>
+                            <option value="brand">Brand</option>
+                        </select>
+                        <div id="editOfferTypeError" class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="eitemSelect">Applicable To</label>
+                        <select id="eitemSelect" name="eitemSelect">
+                            <option value="" selected disabled>Select applicable item</option>
+                        </select>
+                        <div id="editItemSelectError" class="error-message"></div>
+                    </div>
+                </div>
+                <div class="add-btn-container">
+                    <button type="submit" class="btn btn-primary" id="editOfferSubmitBtn">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="btn-text">UPDATE</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <%- include('../../views/partials/admin/footer') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            const addOfferBtn = document.getElementById('addOfferBtn');
+            const addOfferModal = document.getElementById('addOfferModal');
+            const closeAddModal = document.getElementById('closeAddModal');
+            const addOfferForm = document.getElementById('addOfferForm');
+            const addOfferSubmitBtn = document.getElementById('addOfferSubmitBtn');
+
+            const editOfferModal = document.getElementById('editOfferModal');
+            const closeEditModal = document.getElementById('closeEditModal');
+            const editOfferForm = document.getElementById('editOfferForm');
+            const editOfferSubmitBtn = document.getElementById('editOfferSubmitBtn');
+
+            const searchInput = document.getElementById('searchInput');
+            const sortSelect = document.getElementById('sortSelect');
+
+            // Open add offer modal
+            addOfferBtn.addEventListener('click', () => {
+                addOfferModal.style.display = 'block';
+                addOfferForm.reset();
+                const today = new Date();
+                const futureDate = new Date();
+                futureDate.setDate(today.getDate() + 30);
+                document.getElementById('StartDate').value = today.toISOString().split('T')[0];
+                document.getElementById('EndDate').value = futureDate.toISOString().split('T')[0];
+                updateApplicableToOptions('ItemSelect', 'category');
+            });
+
+            // Close modals
+            closeAddModal.addEventListener('click', () => {
+                closeModal(addOfferModal, addOfferForm, addOfferSubmitBtn, 'ADD');
+            });
+
+            closeEditModal.addEventListener('click', () => {
+                closeModal(editOfferModal, editOfferForm, editOfferSubmitBtn, 'UPDATE');
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === addOfferModal) closeModal(addOfferModal, addOfferForm, addOfferSubmitBtn, 'ADD');
+                if (e.target === editOfferModal) closeModal(editOfferModal, editOfferForm, editOfferSubmitBtn, 'UPDATE');
+            });
+
+            // Fetch applicable items for dropdown
+            async function updateApplicableToOptions(selectId, offerType) {
+                const applicableToSelect = document.getElementById(selectId);
+                applicableToSelect.innerHTML = '<option value="" disabled selected>Select applicable item</option>';
+                try {
+                    const response = await fetch(`/admin/${offerType.toLowerCase()}s`);
+                    const items = await response.json();
+                    items.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item._id;
+                        option.textContent = item.name;
+                        applicableToSelect.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error(`Error fetching ${offerType.toLowerCase()}s:`, error);
+                    Swal.fire({ icon: 'error', title: 'Error', text: `Failed to load ${offerType} options` });
+                }
+            }
+
+            // Close modal and reset form
+            function closeModal(modal, form, button, text) {
+                modal.style.display = 'none';
+                form.reset();
+                clearErrorMessages(form);
+                resetButtonState(button, text);
+            }
+
+            // Form validation
+            function validateOfferForm(form, prefix) {
+                clearErrorMessages(form);
+                let isValid = true;
+
+                const offerName = form.querySelector(`#${prefix}offerName`)?.value.trim();
+                const description = form.querySelector(`#${prefix}description`)?.value.trim();
+                const discount = parseFloat(form.querySelector(`#${prefix}discount`)?.value.trim());
+                const startDate = form.querySelector(`#${prefix}startDate`)?.value.trim();
+                const endDate = form.querySelector(`#${prefix}endDate`)?.value.trim();
+                const offerType = form.querySelector(`#${prefix}offerType`)?.value.trim();
+                const itemSelect = form.querySelector(`#${prefix}itemSelect`)?.value.trim();
+
+                if (!offerName || offerName.length < 3 || offerName.length > 100) {
+                    displayErrorMessage(`${prefix}NameError`, 'Offer name must be 3-100 characters');
+                    isValid = false;
+                }
+
+                if (!description || description.length < 10 || description.length > 500) {
+                    displayErrorMessage(`${prefix}DescriptionError`, 'Description must be 10-500 characters');
+                    isValid = false;
+                }
+
+                if (isNaN(discount) || discount <= 0 || discount > 100) {
+                    displayErrorMessage(`${prefix}DiscountError`, 'Discount percentage must be 0-100');
+                    isValid = false;
+                }
+
+                if (!startDate) {
+                    displayErrorMessage(`${prefix}StartDateError`, 'Start date is required');
+                    isValid = false;
+                }
+
+                if (!endDate) {
+                    displayErrorMessage(`${prefix}EndDateError`, 'End date is required');
+                    isValid = false;
+                }
+
+                if (new Date(startDate) > new Date(endDate)) {
+                    displayErrorMessage(`${prefix}EndDateError`, 'End date must be after start date');
+                    isValid = false;
+                }
+
+                if (!offerType) {
+                    displayErrorMessage(`${prefix}OfferTypeError`, 'Offer type is required');
+                    isValid = false;
+                }
+
+                if (!itemSelect) {
+                    displayErrorMessage(`${prefix}ItemSelectError`, 'Applicable item is required');
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Please fill all fields correctly'
+                    });
+                }
+
+                return isValid;
+            }
+
+            // Button state management
+            function setButtonLoading(button, loadingText) {
+                button.classList.add('btn-loading');
+                button.disabled = true;
+                button.querySelector('.btn-text').textContent = loadingText;
+            }
+
+            function resetButtonState(button, originalText) {
+                button.classList.remove('btn-loading');
+                button.disabled = false;
+                button.querySelector('.btn-text').textContent = originalText;
+            }
+
+            // Add offer form submission
+            addOfferForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (validateOfferForm(addOfferForm, '')) {
+                    setButtonLoading(addOfferSubmitBtn, 'Adding...');
+                    const formData = new FormData(addOfferForm);
+                    const data = Object.fromEntries(formData.entries());
+                    data.discount = parseFloat(data.discount);
+
+                    try {
+                        const response = await fetch('/admin/offers', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+
+                        const result = await response.json();
+                        if (response.ok) {
+                            Swal.fire({ icon: 'success', title: 'Success', text: result.message, timer: 1500 })
+                                .then(() => window.location.reload());
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Error', text: result.message || 'Failed to add offer' });
+                        }
+                    } catch (err) {
+                        console.error('Add offer error:', err);
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Network error, please try again' });
+                    } finally {
+                        resetButtonState(addOfferSubmitBtn, 'ADD');
+                    }
+                }
+            });
+
+            // Edit offer form submission
+            editOfferForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (validateOfferForm(editOfferForm, 'e')) {
+                    setButtonLoading(editOfferSubmitBtn, 'Updating...');
+                    const formData = new FormData(editOfferForm);
+                    const data = Object.fromEntries(formData.entries());
+                    data.ediscount = parseFloat(data.ediscount);
+
+                    try {
+                        const response = await fetch('/admin/offers/edit', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+
+                        const result = await response.json();
+                        if (response.ok) {
+                            Swal.fire({ icon: 'success', title: 'Updated', text: result.message, timer: 1500 })
+                                .then(() => window.location.reload());
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Error', text: result.message || 'Failed to update offer' });
+                        }
+                    } catch (err) {
+                        console.error('Edit offer error:', err);
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Server error, please try again' });
+                    } finally {
+                        resetButtonState(editOfferSubmitBtn, 'UPDATE');
+                    }
+                }
+            });
+
+            // Edit button click
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.dataset.id;
+                    try {
+                        const res = await fetch(`/admin/offers/${id}`);
+                        const offer = await res.json();
+                        if (res.ok) {
+                            populateEditForm(offer);
+                            await updateApplicableToOptions('eitemSelect', offer.offerType);
+                            editOfferModal.style.display = 'block';
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to fetch offer' });
+                        }
+                    } catch (err) {
+                        console.error('Fetch error:', err);
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Server error' });
+                    }
+                });
+            });
+
+            // Populate edit form
+            function populateEditForm(offer) {
+                document.getElementById('eofferId').value = offer._id;
+                document.getElementById('eofferName').value = offer.offerName;
+                document.getElementById('edescription').value = offer.description;
+                document.getElementById('ediscount').value = offer.discount;
+                document.getElementById('estartDate').value = new Date(offer.startDate).toISOString().split('T')[0];
+                document.getElementById('eendDate').value = new Date(offer.endDate).toISOString().split('T')[0];
+                document.getElementById('eofferType').value = offer.offerType;
+                document.getElementById('eitemSelect').value = offer.targetId?._id || '';
+            }
+
+            // Disable button click
+            document.querySelectorAll('.disable-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.dataset.id;
+                    const confirm = await Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'Disable this offer?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, disable it!',
+                        cancelButtonText: 'Cancel',
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                    });
+
+                    if (confirm.isConfirmed) {
+                        try {
+                            const res = await fetch('/admin/offers/disable', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ offerId: id })
+                            });
+                            if (res.ok) {
+                                Swal.fire({ icon: 'success', title: 'Disabled', text: 'Offer disabled successfully', timer: 1500 })
+                                    .then(() => window.location.reload());
+                            } else {
+                                Swal.fire({ icon: 'error', title: 'Error', text: 'Disable failed' });
+                            }
+                        } catch (err) {
+                            console.error('Disable error:', err);
+                            Swal.fire({ icon: 'error', title: 'Error', text: 'Server error' });
+                        }
+                    }
+                });
+            });
+
+            // Enable button click
+            document.querySelectorAll('.enable-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.dataset.id;
+                    const confirm = await Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'Enable this offer?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, enable it!',
+                        cancelButtonText: 'Cancel',
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                    });
+
+                    if (confirm.isConfirmed) {
+                        try {
+                            const res = await fetch('/admin/offers/enable', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ offerId: id })
+                            });
+                            if (res.ok) {
+                                Swal.fire({ icon: 'success', title: 'Enabled', text: 'Offer enabled successfully', timer: 1500 })
+                                    .then(() => window.location.reload());
+                            } else {
+                                Swal.fire({ icon: 'error', title: 'Error', text: 'Enable failed' });
+                            }
+                        } catch (err) {
+                            console.error('Enable error:', err);
+                            Swal.fire({ icon: 'error', title: 'Error', text: 'Server error' });
+                        }
+                    }
+                });
+            });
+
+            // Update applicable items on offer type change
+            document.getElementById('OfferType').addEventListener('change', async (e) => {
+                await updateApplicableToOptions('ItemSelect', e.target.value);
+            });
+
+            document.getElementById('eofferType').addEventListener('change', async (e) => {
+                await updateApplicableToOptions('eitemSelect', e.target.value);
+            });
+
+            // Client-side search
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.toLowerCase();
+                document.querySelectorAll('tbody tr').forEach(row => {
+                    row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+                });
+            });
+
+            // Sort selection
+            sortSelect.addEventListener('change', () => {
+                window.location.href = `/admin/offers?page=1&search=${searchInput.value}&sort=${sortSelect.value}`;
+            });
+
+            // Error message handling
+            function displayErrorMessage(id, msg) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.textContent = msg;
+                    el.style.display = 'block';
+                }
+            }
+
+            function clearErrorMessages(form) {
+                form.querySelectorAll('.error-message').forEach(el => {
+                    el.textContent = '';
+                    el.style.display = 'none';
+                });
+            }
+        } catch (err) {
+            console.error('Script error:', err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An unexpected error occurred'
+            });
+        }
+    });
+    </script>
+</body>
+</html>
+
+

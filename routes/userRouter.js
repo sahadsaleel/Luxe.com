@@ -5,7 +5,8 @@ const profileControllers = require('../controller/user/profileControllers');
 const productController = require('../controller/user/productController');
 const cartController = require('../controller/user/cartController');
 const orderController = require('../controller/user/orderController');
-const walletController = require('../controller/user/walletController')
+const walletController = require('../controller/user/walletController');
+const couponController = require('../controller/user/couponController');
 const { uploadSingleImage } = require('../helpers/multer');
 const passport = require('passport');
 const { userAuth } = require('../middleware/auth');
@@ -42,6 +43,7 @@ router.post('/resend-reset-otp', profileControllers.resendOtp);
 // Profile 
 router.get('/profile', userAuth, profileControllers.userProfile);
 router.post('/profile/update', userAuth, uploadSingleImage, profileControllers.updateProfile);
+router.post('/profile/removeImage', userAuth, uploadSingleImage, profileControllers.removeProfileImage);
 router.post('/profile/changePassword', userAuth, profileControllers.changePassword);
 router.post('/profile/changeEmail', userAuth, profileControllers.changeEmail);
 
@@ -64,15 +66,15 @@ router.post('/wishlist/add/:productId', userAuth, productController.addToWishlis
 router.post('/wishlist/remove/:productId', userAuth, productController.removeFromWishlist);
 
 // Cart 
-router.get('/cart', cartController.loadCartPage);
-router.post('/cart/add', cartController.addToCart);
-router.post('/cart/update-quantity', cartController.updateCartQuantity);
-router.post('/cart/remove', cartController.removeFromCart);
-router.post('/wishlist/add', cartController.addToWishlist);
+router.get('/cart', userAuth, cartController.loadCartPage);
+router.post('/cart/add', userAuth, cartController.addToCart);
+router.post('/cart/update-quantity', userAuth, cartController.updateCartQuantity);
+router.post('/cart/remove', userAuth, cartController.removeFromCart);
+// router.post('/wishlist/add', userAuth, cartController.addToWishlist);
 
 // Checkout
-router.get('/checkout', cartController.loadCheckout);
-router.post('/checkout/submit', cartController.submitCheckout);
+router.get('/checkout', userAuth, cartController.loadCheckout);
+router.post('/checkout/submit', userAuth, cartController.submitCheckout);
 
 // Orders
 router.get('/order-success', userAuth, orderController.loadOrderSuccessPage);
@@ -82,7 +84,16 @@ router.post('/orders/details/:orderId/cancel', userAuth, orderController.cancelO
 router.post('/orders/details/:orderId/cancel-item/:itemId', userAuth, orderController.cancelOrderItem);
 router.post('/orders/details/:orderId/return', userAuth, orderController.requestReturn);
 
+// Wallet
 router.get('/wallet', userAuth, walletController.loadWalletPage);
+router.post('/return-product', userAuth, walletController.requestReturn);
+// router.post('/approve-return', userAuth, walletController.approveReturn);
+
+// Coupons
+router.get('/coupons', userAuth, couponController.loadCoupons);
+router.post('/cart/apply-coupon', userAuth, couponController.applyCoupon);
+router.post('/cart/remove-coupon', userAuth, couponController.removeCoupon);
+router.get('/coupons/available', userAuth, couponController.getAvailableCoupons);
 
 // Error 
 router.get('/pageNotFound', userController.pageNotFound);

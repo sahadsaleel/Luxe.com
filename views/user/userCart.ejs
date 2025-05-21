@@ -118,6 +118,13 @@
                     </div>
                 <% } %>
                 
+                <% if (appliedCoupon) { %>
+                    <div class="summary-row">
+                        <span class="summary-label">Coupon Discount (<%= appliedCoupon.code %>)</span>
+                        <span class="summary-value">-₹<%= Number(appliedCoupon.discount).toFixed(2) %></span>
+                    </div>
+                <% } %>
+                
                 <div class="summary-row">
                     <span class="summary-label">Shipping</span>
                     <span class="summary-value">Free</span>
@@ -135,181 +142,260 @@
                     <div class="promo-content">
                         <div class="promo-input">
                             <input type="text" class="promo-field" placeholder="Enter promo code">
-                            <button class="promo-btn">Apply</button>
+                            <button class="promo-btn" id="apply-coupon-btn">Apply</button>
                         </div>
+                        <% if (appliedCoupon) { %>
+                            <div class="coupon-applied">
+                                <div class="coupon-info">
+                                    <span class="coupon-code"><%= appliedCoupon.code %></span>
+                                    <span class="coupon-discount">Discount: ₹<%= Number(appliedCoupon.discount).toFixed(2) %></span>
+                                </div>
+                                <button class="coupon-remove" id="remove-coupon-btn">Remove</button>
+                            </div>
+                        <% } %>
                     </div>
-                </div>
-                
-                <button class="checkout-btn" onclick="window.location.href='/checkout'">Proceed to Checkout</button>
-                
+                    <button class="coupon-modal-btn">Show Available Coupons</button>
+                </div>   
+                <button class="checkout-btn" onclick="window.location.href = '/checkout'">Proceed to Checkout</button>    
                 <div class="secure-checkout">
                     <i class="fas fa-lock"></i> Secure Checkout
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Coupon Modal -->
+    <div class="coupon-modal">
+        <div class="coupon-modal-content">
+            <span class="coupon-modal-close">&times;</span>
+            <h2>Available Coupons</h2>
+            <div class="coupon-list" id="coupon-list">
+                <!-- Coupons will be dynamically loaded here -->
+                <p class="loading-coupons">Loading available coupons...</p>
+            </div>
+        </div>
+    </div>
+
     <%- include('../../views/partials/user/footer') %>
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const promoToggle = document.querySelector('.promo-toggle');
-            const promoContent = document.querySelector('.promo-content');
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Promo code toggle
+  const promoToggle = document.querySelector('.promo-toggle');
+  const promoContent = document.querySelector('.promo-content');
+  if (promoToggle && promoContent) {
+    promoToggle.addEventListener('click', function() {
+      promoContent.classList.toggle('show');
+      promoToggle.classList.toggle('open');
+    });
+  }
 
-            if (promoToggle && promoContent) {
-                promoToggle.addEventListener('click', function() {
-                    promoContent.classList.toggle('show');
-                    promoToggle.classList.toggle('open');
-                });
-            } else {
-                console.warn('Promo toggle or content not found in the DOM');
-            }
+  // Coupon modal handling
+  const couponModalBtn = document.querySelector('.coupon-modal-btn');
+  const couponModal = document.querySelector('.coupon-modal');
+  const couponModalClose = document.querySelector('.coupon-modal-close');
+  const couponList = document.getElementById('coupon-list');
 
-            const quantityBtns = document.querySelectorAll('.quantity-btn');
-            console.log('Quantity buttons found:', quantityBtns.length);
+  if (couponModalBtn && couponModal && couponModalClose) {
+    couponModalBtn.addEventListener('click', function() {
+      couponModal.style.display = 'block';
+      loadCoupons();
+    });
+    couponModalClose.addEventListener('click', function() {
+      couponModal.style.display = 'none';
+    });
+    window.addEventListener('click', function(event) {
+      if (event.target === couponModal) {
+        couponModal.style.display = 'none';
+      }
+    });
+  }
 
-            quantityBtns.forEach(btn => {
-                btn.addEventListener('click', async function() {
-                    if (btn.disabled) return;
+  // Apply coupon button
+  const applyCouponBtn = document.getElementById('apply-coupon-btn');
+  if (applyCouponBtn) {
+    applyCouponBtn.addEventListener('click', function() {
+      const promoField = document.querySelector('.promo-field');
+      const couponCode = promoField.value.trim().toUpperCase();
+      applyCoupon(couponCode);
+    });
+  }
 
-                    const itemId = btn.getAttribute('data-item-id');
-                    const action = btn.getAttribute('data-action');
-                    const input = btn.parentElement.querySelector('.quantity-input');
-                    let quantity = parseInt(input.value);
+  // Remove coupon button
+  const removeCouponBtn = document.getElementById('remove-coupon-btn');
+  if (removeCouponBtn) {
+    removeCouponBtn.addEventListener('click', removeCoupon);
+  }
 
-                    console.log('Button clicked:', { itemId, action, currentQuantity: quantity });
+  // Quantity buttons
+  const quantityBtns = document.querySelectorAll('.quantity-btn');
+  quantityBtns.forEach(btn => {
+    btn.addEventListener('click', async function() {
+      if (btn.disabled) return;
 
-                    if (!itemId) {
-                        Toastify({
-                            text: 'Error: Invalid item ID',
-                            duration: 3000,
-                            gravity: 'top',
-                            position: 'right',
-                            backgroundColor: '#dc3545',
-                            stopOnFocus: true
-                        }).showToast();
-                        return;
-                    }
+      const itemId = btn.getAttribute('data-item-id');
+      const action = btn.getAttribute('data-action');
+      const input = btn.parentElement.querySelector('.quantity-input');
+      let quantity = parseInt(input.value);
 
-                    if (action === 'increase' && quantity < 5) {
-                        quantity++;
-                    } else if (action === 'decrease' && quantity > 1) {
-                        quantity--;
-                    } else {
-                        Toastify({
-                            text: action === 'increase' ? 'Maximum quantity reached (5)' : 'Minimum quantity is 1',
-                            duration: 3000,
-                            gravity: 'top',
-                            position: 'right',
-                            backgroundColor: '#dc3545',
-                            stopOnFocus: true
-                        }).showToast();
-                        return;
-                    }
+      if (action === 'increase' && quantity < 5) {
+        quantity++;
+      } else if (action === 'decrease' && quantity > 1) {
+        quantity--;
+      } else {
+        showToast(action === 'increase' ? 'Maximum quantity is 5' : 'Minimum quantity is 1', 'error');
+        return;
+      }
 
-                    input.value = quantity;
-                    console.log('New quantity:', quantity);
+      input.value = quantity;
+      try {
+        const response = await fetch('/cart/update-quantity', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ itemId, quantity })
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast('Quantity updated', 'success');
+          window.location.reload();
+        } else {
+          showToast(data.message || 'Failed to update quantity', 'error');
+          input.value = quantity - (action === 'increase' ? 1 : -1);
+        }
+      } catch (error) {
+        showToast('Error updating quantity', 'error');
+        input.value = quantity - (action === 'increase' ? 1 : -1);
+      }
+    });
+  });
 
-                    try {
-                        const response = await fetch('/cart/update-quantity', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ itemId, quantity }),
-                        });
+  // Show toast notification
+  function showToast(message, type) {
+    Toastify({
+      text: message,
+      duration: 3000,
+      gravity: 'top',
+      position: 'right',
+      backgroundColor: type === 'success' ? '#28a745' : '#dc3545',
+      stopOnFocus: true
+    }).showToast();
+  }
 
-                        const data = await response.json();
-                        console.log('Server response:', data);
+  // Load available coupons
+  async function loadCoupons() {
+    try {
+      couponList.innerHTML = '<p class="loading-coupons">Loading coupons...</p>';
+      const response = await fetch('/coupons/available');
+      if (!response.ok) throw new Error('Failed to load coupons');
+      const coupons = await response.json();
 
-                        if (data.success) {
-                            Toastify({
-                                text: 'Quantity updated successfully',
-                                duration: 3000,
-                                gravity: 'top',
-                                position: 'right',
-                                backgroundColor: '#28a745',
-                                stopOnFocus: true
-                            }).showToast();
-                            
-                        } else {
-                            Toastify({
-                                text: data.message || 'Failed to update quantity',
-                                duration: 3000,
-                                gravity: 'top',
-                                position: 'right',
-                                backgroundColor: '#dc3545',
-                                stopOnFocus: true
-                            }).showToast();
-                            input.value = quantity - (action === 'increase' ? 1 : -1);
-                        }
-                    } catch (error) {
-                        console.error('Error updating quantity:', error);
-                        Toastify({
-                            text: 'An error occurred while updating the quantity',
-                            duration: 3000,
-                            gravity: 'top',
-                            position: 'right',
-                            backgroundColor: '#dc3545',
-                            stopOnFocus: true
-                        }).showToast();
-                        input.value = quantity - (action === 'increase' ? 1 : -1);
-                    }
-                });
-            });
+      couponList.innerHTML = '';
+      if (coupons.length > 0) {
+        coupons.forEach(coupon => {
+          const couponItem = document.createElement('div');
+          couponItem.classList.add('coupon-item');
+          couponItem.innerHTML = `
+            <div class="coupon-details">
+              <h3>${coupon.code}</h3>
+              <p>Discount: ${coupon.discount}%</p>
+              <p>Min Purchase: ₹${coupon.minPurchase.toFixed(2)}</p>
+              <p>Expires: ${new Date(coupon.expiryDate).toLocaleDateString()}</p>
+            </div>
+            <button class="apply-coupon-btn" data-code="${coupon.code}">Apply</button>
+          `;
+          couponList.appendChild(couponItem);
         });
 
-        async function removeFromCart(itemId) {
-            if (!itemId) {
-                Toastify({
-                    text: 'Error: Invalid item ID',
-                    duration: 3000,
-                    gravity: 'top',
-                    position: 'right',
-                    backgroundColor: '#dc3545',
-                    stopOnFocus: true
-                }).showToast();
-                return;
-            }
+        document.querySelectorAll('.apply-coupon-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const code = this.getAttribute('data-code');
+            applyCoupon(code);
+            couponModal.style.display = 'none';
+          });
+        });
+      } else {
+        couponList.innerHTML = '<p>No coupons available.</p>';
+      }
+    } catch (error) {
+      console.error('Error loading coupons:', error);
+      couponList.innerHTML = '<p>Failed to load coupons. Try again later.</p>';
+      showToast('Failed to load coupons', 'error');
+    }
+  }
 
-            try {
-                const response = await fetch('/cart/remove', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ itemId }),
-                });
+  // Apply coupon
+  async function applyCoupon(code) {
+    if (!code) {
+      showToast('Please enter a coupon code', 'error');
+      return;
+    }
 
-                const data = await response.json();
-                if (data.success) {
-                    Toastify({
-                        text: 'Item removed from cart',
-                        duration: 3000,
-                        gravity: 'top',
-                        position: 'right',
-                        backgroundColor: '#28a745',
-                        stopOnFocus: true
-                    }).showToast();
-                    window.location.reload();
-                } else {
-                    Toastify({
-                        text: data.message || 'Failed to remove item',
-                        duration: 3000,
-                        gravity: 'top',
-                        position: 'right',
-                        backgroundColor: '#dc3545',
-                        stopOnFocus: true
-                    }).showToast();
-                }
-            } catch (error) {
-                console.error('Error removing item:', error);
-                Toastify({
-                    text: 'An error occurred while removing the item',
-                    duration: 3000,
-                    gravity: 'top',
-                    position: 'right',
-                    backgroundColor: '#dc3545',
-                    stopOnFocus: true
-                }).showToast();
-            }
-        }
-    </script>
+    try {
+      const response = await fetch('/cart/apply-coupon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ couponCode: code })
+      });
+      const data = await response.json();
+      if (data.success) {
+        showToast(data.message, 'success');
+        window.location.reload();
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (error) {
+      console.error('Error applying coupon:', error);
+      showToast('Failed to apply coupon', 'error');
+    }
+  }
+
+  // Remove coupon
+  async function removeCoupon() {
+    try {
+      const response = await fetch('/cart/remove-coupon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await response.json();
+      if (data.success) {
+        showToast('Coupon removed', 'success');
+        window.location.reload();
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (error) {
+      console.error('Error removing coupon:', error);
+      showToast('Failed to remove coupon', 'error');
+    }
+  }
+
+  // Remove item from cart
+  async function removeFromCart(itemId) {
+    if (!itemId) {
+      showToast('Invalid item ID', 'error');
+      return;
+    }
+
+    try {
+      const response = await fetch('/cart/remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemId })
+      });
+      const data = await response.json();
+      if (data.success) {
+        showToast('Item removed from cart', 'success');
+        window.location.reload();
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (error) {
+      console.error('Error removing item:', error);
+      showToast('Failed to remove item', 'error');
+    }
+  }
+});
+</script>
 </body>
 </html>

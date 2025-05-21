@@ -49,15 +49,20 @@
                     <h3>Payments</h3>
                     <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
                     <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
                 </ul>
             </div>
-
             <div class="content">
                 <div class="profile-header">
                     <h1>My Profile</h1>
-                    <button id="editProfileBtn" class="edit-btn">
-                        <i class="fas fa-edit"></i> Edit Profile
-                    </button>
+                    <div class="profile-actions">
+                        <button id="editProfileBtn" class="edit-btn">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </button>
+                        <button id="removeProfileImageBtn" class="remove-btn">
+                            <i class="fas fa-trash"></i> Remove Image
+                        </button>
+                    </div>
                 </div>
 
                 <div class="card">
@@ -175,7 +180,7 @@
                 <form id="passwordChangeForm">
                     <div id="oldPasswordError" class="error-message"></div>
                     <div class="form-group">
-                        <label class="form-label" for="oldPassword">Old Password</label>
+                        <label class="form-label" for="oldPassword">Current Password</label>
                         <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
                     </div>
                     <div id="newPasswordError" class="error-message"></div>
@@ -259,7 +264,6 @@
                 }
             });
 
-            // Change Password modal functionality
             const openChangePasswordModal = document.getElementById('openChangePasswordModal');
             const closePasswordModalBtn = document.getElementById('closePasswordModalBtn');
             const changePasswordModal = document.getElementById('changePasswordModal');
@@ -283,7 +287,6 @@
                 }
             });
 
-            // Change Email modal functionality
             const openChangeEmailModal = document.getElementById('openChangeEmailModal');
             const closeEmailModalBtn = document.getElementById('closeEmailModalBtn');
             const changeEmailModal = document.getElementById('changeEmailModal');
@@ -307,7 +310,6 @@
                 }
             });
 
-            // Image cropper functionality
             const imageInput = document.getElementById('image');
             const imagePreview = document.querySelector('.image-preview');
             const imageUploadContainer = document.querySelector('.image-upload-container');
@@ -379,7 +381,6 @@
                 imagePreview.style.display = 'none';
             });
 
-            // Password change form validation and submission
             document.addEventListener("DOMContentLoaded", function () {
                 const oldPassword = document.getElementById("oldPassword");
                 const newPassword = document.getElementById("newPassword");
@@ -527,7 +528,6 @@
                     confirmPassword.addEventListener("input", newPasswordValidateChecking);
                 }
 
-                // Email change form validation and submission
                 const currentPassword = document.getElementById("currentPassword");
                 const newEmail = document.getElementById("newEmail");
                 const confirmEmail = document.getElementById("confirmEmail");
@@ -676,15 +676,12 @@
                 function validateEditProfileForm() {
                     let isValid = true;
 
-                    // First Name validation
                     if (firstName.value.trim() === "") {
                         firstName.parentElement.classList.add("invalid");
                         isValid = false;
                     } else {
                         firstName.parentElement.classList.remove("invalid");
                     }
-
-                    // Last Name validation
                     if (lastName.value.trim() === "") {
                         lastName.parentElement.classList.add("invalid");
                         isValid = false;
@@ -692,8 +689,7 @@
                         lastName.parentElement.classList.remove("invalid");
                     }
 
-                    // Phone validation
-                    const phoneRegex = /^\d{10}$/;
+                    const phoneRegex =/^[6-9]\d{9}$/;
                     if (phone.value.trim() === "") {
                         phone.parentElement.classList.add("invalid");
                         isValid = false;
@@ -770,6 +766,67 @@
                 lastName.addEventListener('input', validateEditProfileForm);
                 phone.addEventListener('input', validateEditProfileForm);
             });
+
+            removeProfileImageBtn.addEventListener('click', async function () {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This will remove your profile image and set it to the default image.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, remove it!',
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await fetch('/profile/removeImage', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                            });
+
+                            const result = await response.json();
+
+                            if (response.ok) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: result.message || 'Profile image removed successfully',
+                                    confirmButtonColor: '#8a6a94',
+                                }).then(() => {
+                                    location.reload(); 
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: result.message || 'Failed to remove profile image',
+                                    confirmButtonColor: '#8a6a94',
+                                });
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An error occurred. Please try again.',
+                                confirmButtonColor: '#8a6a94',
+                            });
+                        }
+                    }
+                });
+            });
+            function updateRemoveButtonState() {
+                const profileImage = '<%= user && user.profileImage ? user.profileImage : "/img/profile images.png" %>';
+                if (profileImage === '/img/profile images.png') {
+                    removeProfileImageBtn.disabled = true;
+                } else {
+                    removeProfileImageBtn.disabled = false;
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', updateRemoveButtonState);
         </script>
 </body>
 </html>

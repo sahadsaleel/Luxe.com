@@ -5,7 +5,9 @@ const Address = require('../../models/addressSchema');
 const Order = require('../../models/orderSchema');
 const mongoose = require('mongoose');
 
-// Utility function to validate MongoDB ObjectId
+
+
+
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const loadOrderSuccessPage = async (req, res) => {
@@ -13,34 +15,28 @@ const loadOrderSuccessPage = async (req, res) => {
         const userId = req.session.user;
         const { orderId } = req.query;
 
-        // Validate user session
         if (!userId) {
             return res.redirect('/login');
         }
 
-        // Validate user existence
         const userData = await User.findById(userId);
         if (!userData) {
             return res.redirect('/login');
         }
 
-        // Validate orderId
         if (!orderId || !isValidObjectId(orderId)) {
             return res.redirect('/pageNotFound');
         }
 
-        // Fetch order with populated product details
         const order = await Order.findById(orderId).populate({
             path: 'orderedItems.productId',
             select: 'productName productImage variants',
         });
 
-        // Validate order and user ownership
         if (!order || order.userId.toString() !== userId.toString()) {
             return res.redirect('/pageNotFound');
         }
 
-        // Transform order items for the view
         const orderItems = order.orderedItems.map(item => {
             const variant = item.productId?.variants?.find(v => v._id.toString() === item.variantId?.toString()) || {};
             return {
@@ -56,11 +52,11 @@ const loadOrderSuccessPage = async (req, res) => {
             };
         });
 
-        // Render the order success page
         res.render('user/orderSuccess', {
             user: userData,
             order: {
-                orderId: order.orderId,
+                orderId: order._id.toString(), 
+                customOrderId: order.orderId, 
                 orderDate: order.createdOn.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
                 status: order.status,
                 paymentMethod: order.paymentMethod,
@@ -74,6 +70,7 @@ const loadOrderSuccessPage = async (req, res) => {
             },
         });
     } catch (error) {
+        console.error('Error loading order success page:', error);
         res.redirect('/pageNotFound');
     }
 };
@@ -94,7 +91,6 @@ const loadMyOrdersPage = async (req, res) => {
         const limit = 10;
         const skip = (page - 1) * limit;
 
-        // Fetch orders with pagination
         const orders = await Order.find({ userId })
             .sort({ createdOn: -1 })
             .skip(skip)
@@ -104,7 +100,6 @@ const loadMyOrdersPage = async (req, res) => {
         const totalOrders = await Order.countDocuments({ userId });
         const totalPages = Math.ceil(totalOrders / limit);
 
-        // Format orders for the view
         const formattedOrders = orders.map(order => ({
             orderId: order.orderId,
             createdOn: order.createdOn,
@@ -138,7 +133,6 @@ const loadOrderDetailPage = async (req, res) => {
             return res.status(401).render('error', { message: 'Unauthorized: Please log in' });
         }
 
-        // Fetch the order and populate referenced fields
         const order = await Order.findOne({ orderId, userId })
             .populate('orderedItems.productId')
             .populate('userId')
@@ -152,12 +146,10 @@ const loadOrderDetailPage = async (req, res) => {
             order.orderedItems = [];
         }
 
-        // Fetch user details if not in session or incomplete
         let user = req.session.userData;
         if (!user || !user.profileImage || !user.firstName || !user.lastName) {
             user = await User.findById(userId).select('profileImage firstName lastName email');
             if (user) {
-                // Update session data only with necessary fields
                 req.session.userData = {
                     profileImage: user.profileImage,
                     firstName: user.firstName,
@@ -167,7 +159,6 @@ const loadOrderDetailPage = async (req, res) => {
             }
         }
 
-        // Transform the order object for the view
         const transformedOrder = order.toObject();
         transformedOrder.orderDate = transformedOrder.createdOn;
 
@@ -248,7 +239,7 @@ const cancelOrder = async (req, res) => {
 
         await order.save();
 
-        res.json({ success: true, message: 'Order cancelled successfully' });
+       return res.status(200).json({ success: true, message: 'Order cancelled successfully' });
     } catch (err) {
         console.error('Error in cancelOrder:', err);
         res.status(500).json({ success: false, message: 'Internal server error' });
@@ -283,7 +274,7 @@ const cancelOrderItem = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Item not found in order' });
         }
 
-        if (item.isCanceled) {
+        if (item.status === 'Cancelled') {
             return res.status(400).json({ success: false, message: 'Item is already cancelled' });
         }
 
@@ -291,18 +282,18 @@ const cancelOrderItem = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Cancellation reason is required' });
         }
 
-        item.isCanceled = true;
         item.status = 'Cancelled';
         item.cancelReason = reason.trim();
         item.cancelComments = comments ? comments.trim() : '';
         item.cancelRequestedOn = new Date();
         item.cancelApprovedOn = new Date();
+        item.totalPrice = 0; 
 
-        order.totalPrice = order.orderedItems.reduce((sum, i) => sum + (i.isCanceled ? 0 : i.totalPrice), 0);
-        order.giftWrapTotal = order.orderedItems.reduce((sum, i) => sum + (i.isCanceled ? 0 : (i.isGiftWrapped ? 100 : 0)), 0);
+        order.totalPrice = order.orderedItems.reduce((sum, i) => sum + (i.status === 'Cancelled' ? 0 : i.totalPrice), 0);
+        order.giftWrapTotal = order.orderedItems.reduce((sum, i) => sum + (i.status === 'Cancelled' ? 0 : (i.isGiftWrapped ? 100 : 0)), 0);
         order.finalAmount = order.totalPrice + order.giftWrapTotal + (order.shipping || 0) - (order.discount || 0);
 
-        const allCancelled = order.orderedItems.every(i => i.isCanceled);
+        const allCancelled = order.orderedItems.every(i => i.status === 'Cancelled');
         if (allCancelled) {
             order.status = 'Cancelled';
             order.cancelRequestedOn = new Date();
@@ -311,6 +302,7 @@ const cancelOrderItem = async (req, res) => {
             order.giftWrapTotal = 0;
             order.finalAmount = 0;
             order.discount = 0;
+            order.refundStatus = order.paymentMethod === 'Cash On Delivery' ? 'Not Initiated' : 'Initiated';
         }
 
         await Product.updateOne(
@@ -320,7 +312,18 @@ const cancelOrderItem = async (req, res) => {
 
         await order.save();
 
-        res.status(200).json({ success: true, message: 'Item cancelled successfully', allCancelled });
+        return res.status(200).json({
+            success: true,
+            message: 'Item cancelled successfully',
+            allCancelled,
+            order: {
+                totalPrice: order.totalPrice.toFixed(2),
+                giftWrapTotal: order.giftWrapTotal.toFixed(2),
+                finalAmount: order.finalAmount.toFixed(2),
+                discount: order.discount.toFixed(2),
+                status: order.status
+            }
+        });
     } catch (err) {
         console.error('Error in cancelOrderItem:', err);
         res.status(500).json({ success: false, message: 'Server error while cancelling item' });

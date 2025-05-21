@@ -49,6 +49,7 @@
                     <h3>Payments</h3>
                     <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
                     <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
                 </ul>
             </div>
 
@@ -271,12 +272,12 @@
             let isValid = true;
             const fields = [
                 { id: 'name', errorId: 'nameError', message: 'Please enter the full name.' },
-                { id: 'phone', errorId: 'phoneError', message: 'Please enter a valid 10-digit phone number.', pattern: /^\d{10}$/ },
+                { id: 'phone', errorId: 'phoneError', message: 'Please enter a valid 10-digit phone number.', pattern: /^[6-9]\d{9}$/ },
                 { id: 'addressType', errorId: 'addressTypeError', message: 'Please select an address type.' },
                 { id: 'landMark', errorId: 'landMarkError', message: 'Please enter a landmark.' },
                 { id: 'city', errorId: 'cityError', message: 'Please enter your city.' },
                 { id: 'state', errorId: 'stateError', message: 'Please enter your state.' },
-                { id: 'pincode', errorId: 'pincodeError', message: 'Please enter a valid 6-digit pincode.', pattern: /^\d{6}$/ },
+                { id: 'pincode', errorId: 'pincodeError', message: 'Please enter a valid 6-digit pincode.', pattern: /^[1-9][0-9]{5}$/ },
             ];
 
             fields.forEach(field => {

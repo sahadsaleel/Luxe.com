@@ -15,8 +15,6 @@
             box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
-
-        /* Header Styles */
         header {
             background-color: #8a6a94;
             border-bottom: 1px solid #e0e0e0;
@@ -632,6 +630,12 @@
                                 <div class="info-label">Payment Method</div>
                                 <div class="info-value"><%= order.paymentMethod %></div>
                             </div>
+                            <% if (order.couponCode) { %>
+                                <div class="info-item">
+                                    <div class="info-label">Coupon Applied</div>
+                                    <div class="info-value"><%= order.couponCode %></div>
+                                </div>
+                            <% } %>
                         </div>
                     </div>
                     
@@ -646,7 +650,6 @@
                                     </div>
                                     <div class="address-content">
                                         <p><strong><%= order.address.name || 'N/A' %></strong></p>
-                                        <p><%= order.address.address || 'N/A' %></p>
                                         <p><%= order.address.landMark || 'N/A' %></p>
                                         <p><%= order.address.city || '' %>, <%= order.address.state || '' %> <%= order.address.pincode || '' %></p>
                                         <p>Phone: <%= order.address.phone || 'N/A' %></p>
@@ -711,10 +714,12 @@
                                 <div class="summary-label">Shipping:</div>
                                 <div class="summary-value">Rs <%= order.shipping.toFixed(2) %></div>
                             </div>
-                            <div class="summary-row">
-                                <div class="summary-label">Discount:</div>
-                                <div class="summary-value">Rs <%= (order.discount || 0).toFixed(2) %></div>
-                            </div>
+                            <% if (order.discount && order.discount > 0) { %>
+                                <div class="summary-row">
+                                    <div class="summary-label">Discount (<%= order.couponCode || 'Coupon' %>):</div>
+                                    <div class="summary-value">-Rs <%= order.discount.toFixed(2) %></div>
+                                </div>
+                            <% } %>
                             <div class="grand-total">
                                 <div>Total:</div>
                                 <div>Rs <%= order.finalAmount.toFixed(2) %></div>
@@ -842,10 +847,10 @@
                                             <td id="modalShipping" style="text-align: right;"></td>
                                         </tr>
                                         <% if (order.discount && order.discount > 0) { %>
-                                        <tr>
-                                            <td>Discount</td>
-                                            <td id="modalDiscount" style="text-align: right;"></td>
-                                        </tr>
+                                            <tr>
+                                                <td>Discount (<%= order.couponCode || 'Coupon' %>)</td>
+                                                <td id="modalDiscount" style="text-align: right;"></td>
+                                            </tr>
                                         <% } %>
                                         <tr>
                                             <td>Grand Total</td>
@@ -921,288 +926,299 @@
     </footer>
     
     <script>
-        // Utility function to format date as DD/MM/YYYY
-        function formatDate(dateStr) {
-            if (!dateStr || dateStr === 'N/A') return 'N/A';
-            const date = new Date(dateStr);
-            if (isNaN(date)) return dateStr; // If dateStr isn't a valid date, return as-is
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            return `${day}/${month}/${year}`;
-        }
+    function formatDate(dateStr) {
+        if (!dateStr || dateStr === 'N/A') return 'N/A';
+        const date = new Date(dateStr);
+        if (isNaN(date)) return dateStr;
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
 
-        const orderData = {
-            orderId: '<%= order.orderId %>',
-            orderDate: '<%= order.orderDate %>',
-            invoiceDate: '<%= order.invoiceDate ? order.invoiceDate : order.orderDate %>', // Default to orderDate if invoiceDate is not provided
-            status: '<%= order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1).toLowerCase() : "Processing" %>',
-            paymentMethod: '<%= order.paymentMethod %>',
-            deliveryMethod: '<%= order.deliveryMethod ? order.deliveryMethod.charAt(0).toUpperCase() + order.deliveryMethod.slice(1) : "Standard" %>',
-            address: '<%= order.address.name %> (<%= order.address.addressType || "Home" %>), <%= order.address.landMark || "N/A" %>, <%= order.address.city || "" %>, <%= order.address.state || "" %> <%= order.address.pincode || "" %>, Phone: <%= order.address.phone || "N/A" %> <%= order.address.altPhone ? `, Alt: ${order.address.altPhone}` : "" %>',
-            subtotal: '<%= Number(order.subtotal).toFixed(2) %>',
-            giftWrapTotal: '<%= Number(order.giftWrapTotal).toFixed(2) %>',
-            shipping: '<%= Number(order.shipping).toFixed(2) %>',
-            discount: '<%= Number(order.discount || 0).toFixed(2) %>',
-            finalAmount: '<%= Number(order.finalAmount).toFixed(2) %>',
-            items: [
-                <% order.items.forEach((item, index) => { %>
-                    {
-                        productName: '<%= item.productName %>',
-                        size: '<%= item.variant.size %>',
-                        quantity: '<%= item.quantity %>',
-                        price: '<%= Number(item.price).toFixed(2) %>',
-                        totalPrice: '<%= Number(item.totalPrice).toFixed(2) %>',
-                        isGiftWrapped: '<%= item.isGiftWrapped ? "Yes" : "No" %>'
-                    }<%= index < order.items.length - 1 ? ',' : '' %>
-                <% }) %>
-            ]
-        };
+    const orderData = {
+        orderId: '<%= order.orderId %>',
+        orderDate: '<%= order.orderDate %>',
+        invoiceDate: '<%= order.invoiceDate ? order.invoiceDate : order.orderDate %>',
+        status: '<%= order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1).toLowerCase() : "Processing" %>',
+        paymentMethod: '<%= order.paymentMethod %>',
+        deliveryMethod: '<%= order.deliveryMethod ? order.deliveryMethod.charAt(0).toUpperCase() + order.deliveryMethod.slice(1) : "Standard" %>',
+        couponCode: '<%= order.couponCode || "" %>',
+        address: '<%= order.address.name %> (<%= order.address.addressType || "Home" %>), <%= order.address.landMark || "N/A" %>, <%= order.address.city || "" %>, <%= order.address.state || "" %> <%= order.address.pincode || "" %>, Phone: <%= order.address.phone || "N/A" %> <%= order.address.altPhone ? `, Alt: ${order.address.altPhone}` : "" %>',
+        subtotal: '<%= Number(order.subtotal).toFixed(2) %>',
+        giftWrapTotal: '<%= Number(order.giftWrapTotal).toFixed(2) %>',
+        shipping: '<%= Number(order.shipping).toFixed(2) %>',
+        discount: '<%= Number(order.discount || 0).toFixed(2) %>',
+        finalAmount: '<%= Number(order.finalAmount).toFixed(2) %>',
+        items: [
+            <% order.items.forEach((item, index) => { %>
+                {
+                    productName: '<%= item.productName %>',
+                    size: '<%= item.variant.size %>',
+                    quantity: '<%= item.quantity %>',
+                    price: '<%= Number(item.price).toFixed(2) %>',
+                    totalPrice: '<%= Number(item.totalPrice).toFixed(2) %>',
+                    isGiftWrapped: '<%= item.isGiftWrapped ? "Yes" : "No" %>'
+                }<%= index < order.items.length - 1 ? ',' : '' %>
+            <% }) %>
+        ]
+    };
 
-        function showOrderConfirmation() {
-            document.getElementById('order-confirmation-page').style.display = 'block';
-            document.getElementById('payment-success-page').style.display = 'none';
-        }
-        
-        function showPaymentSuccess() {
-            document.getElementById('order-confirmation-page').style.display = 'none';
-            document.getElementById('payment-success-page').style.display = 'block';
-        }
-        
+    function showOrderConfirmation() {
+        document.getElementById('order-confirmation-page').style.display = 'block';
+        document.getElementById('payment-success-page').style.display = 'none';
+    }
+
+    function showPaymentSuccess() {
+        document.getElementById('order-confirmation-page').style.display = 'none';
+        document.getElementById('payment-success-page').style.display = 'block';
+    }
+
+    // Check URL query parameter to determine which page to show
+    const urlParams = new URLSearchParams(window.location.search);
+    const showSuccess = urlParams.get('showSuccess');
+
+    if (showSuccess === 'true') {
+        showPaymentSuccess();
+    } else {
         showOrderConfirmation();
+    }
 
-        function showInvoiceModal() {
-            document.getElementById('modalOrderId').textContent = orderData.orderId;
-            document.getElementById('modalOrderDate').textContent = formatDate(orderData.orderDate);
-            document.getElementById('modalInvoiceDate').textContent = formatDate(orderData.invoiceDate);
-            document.getElementById('modalStatus').textContent = orderData.status;
-            document.getElementById('modalPaymentMethod').textContent = orderData.paymentMethod;
-            document.getElementById('modalDeliveryMethod').textContent = orderData.deliveryMethod;
-            document.getElementById('modalAddress').textContent = orderData.address;
+    function showInvoiceModal() {
+        document.getElementById('modalOrderId').textContent = orderData.orderId;
+        document.getElementById('modalOrderDate').textContent = formatDate(orderData.orderDate);
+        document.getElementById('modalInvoiceDate').textContent = formatDate(orderData.invoiceDate);
+        document.getElementById('modalStatus').textContent = orderData.status;
+        document.getElementById('modalPaymentMethod').textContent = orderData.paymentMethod;
+        document.getElementById('modalDeliveryMethod').textContent = orderData.deliveryMethod;
+        document.getElementById('modalAddress').textContent = orderData.address;
 
-            const itemsTableBody = document.getElementById('modalItems');
-            itemsTableBody.innerHTML = '';
-            orderData.items.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.productName}</td>
-                    <td>${item.size}</td>
-                    <td>${item.quantity}</td>
-                    <td>Rs ${item.price}</td>
-                    <td>Rs ${item.totalPrice}</td>
-                    <td>${item.isGiftWrapped}</td>
-                `;
-                itemsTableBody.appendChild(row);
-            });
+        const itemsTableBody = document.getElementById('modalItems');
+        itemsTableBody.innerHTML = '';
+        orderData.items.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.productName}</td>
+                <td>${item.size}</td>
+                <td>${item.quantity}</td>
+                <td>Rs ${item.price}</td>
+                <td>Rs ${item.totalPrice}</td>
+                <td>${item.isGiftWrapped}</td>
+            `;
+            itemsTableBody.appendChild(row);
+        });
 
-            document.getElementById('modalSubtotal').textContent = 'Rs ' + orderData.subtotal;
-            document.getElementById('modalGiftWrapTotal').textContent = 'Rs ' + orderData.giftWrapTotal;
-            document.getElementById('modalShipping').textContent = 'Rs ' + orderData.shipping;
-            if (orderData.discount && orderData.discount > 0) {
-                document.getElementById('modalDiscount').textContent = '-Rs ' + orderData.discount;
-            }
-            document.getElementById('modalFinalAmount').textContent = 'Rs ' + orderData.finalAmount;
-            document.getElementById('invoiceModal').style.display = 'block';
+        document.getElementById('modalSubtotal').textContent = 'Rs ' + orderData.subtotal;
+        document.getElementById('modalGiftWrapTotal').textContent = 'Rs ' + orderData.giftWrapTotal;
+        document.getElementById('modalShipping').textContent = 'Rs ' + orderData.shipping;
+        if (orderData.discount && orderData.discount > 0) {
+            document.getElementById('modalDiscount').textContent = '-Rs ' + orderData.discount;
         }
+        document.getElementById('modalFinalAmount').textContent = 'Rs ' + orderData.finalAmount;
+        document.getElementById('invoiceModal').style.display = 'block';
+    }
 
-        function closeInvoiceModal() {
-            document.getElementById('invoiceModal').style.display = 'none';
+    function closeInvoiceModal() {
+        document.getElementById('invoiceModal').style.display = 'none';
+    }
+
+    function downloadInvoice() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Header
+        doc.setFontSize(24);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Luxe.com', 20, 20);
+        doc.setFontSize(16);
+        doc.text('INVOICE', 160, 20, { align: 'right' });
+
+        // Order Details
+        let yOffset = 40;
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Order Details', 20, yOffset);
+        yOffset += 10;
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Order ID: ${orderData.orderId}`, 20, yOffset);
+        yOffset += 8;
+        doc.text(`Order Date: ${formatDate(orderData.orderDate)}`, 20, yOffset);
+        yOffset += 8;
+        doc.text(`Invoice Date: ${formatDate(orderData.invoiceDate)}`, 20, yOffset);
+        yOffset += 8;
+        doc.text(`Status: ${orderData.status}`, 20, yOffset);
+        yOffset += 8;
+        doc.text(`Payment Method: ${orderData.paymentMethod}`, 20, yOffset);
+        yOffset += 8;
+        doc.text(`Delivery Method: ${orderData.deliveryMethod}`, 20, yOffset);
+        if (orderData.couponCode) {
+            yOffset += 8;
+            doc.text(`Coupon Code: ${orderData.couponCode}`, 20, yOffset);
         }
+        yOffset += 15;
 
-        function downloadInvoice() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+        // Shipping Address
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Shipping Address', 20, yOffset);
+        yOffset += 10;
 
-            // Header
-            doc.setFontSize(24);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Luxe.com', 20, 20);
-            doc.setFontSize(16);
-            doc.text('INVOICE', 160, 20, { align: 'right' });
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text(orderData.address, 20, yOffset, { maxWidth: 170 });
+        yOffset += 25;
 
-            // Order Details
-            let yOffset = 40;
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Order Details', 20, yOffset);
-            yOffset += 10;
+        // Order Summary
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Order Summary', 20, yOffset);
+        yOffset += 10;
 
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Order ID: ${orderData.orderId}`, 20, yOffset);
-            yOffset += 8;
-            doc.text(`Order Date: ${formatDate(orderData.orderDate)}`, 20, yOffset);
-            yOffset += 8;
-            doc.text(`Invoice Date: ${formatDate(orderData.invoiceDate)}`, 20, yOffset);
-            yOffset += 8;
-            doc.text(`Status: ${orderData.status}`, 20, yOffset);
-            yOffset += 8;
-            doc.text(`Payment Method: ${orderData.paymentMethod}`, 20, yOffset);
-            yOffset += 8;
-            doc.text(`Delivery Method: ${orderData.deliveryMethod}`, 20, yOffset);
-            yOffset += 15;
-
-            // Shipping Address
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Shipping Address', 20, yOffset);
-            yOffset += 10;
-
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text(orderData.address, 20, yOffset, { maxWidth: 170 });
-            yOffset += 25;
-
-            // Order Summary
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Order Summary', 20, yOffset);
-            yOffset += 10;
-
-            const items = orderData.items.map(item => [
-                item.productName,
-                item.size,
-                item.quantity,
-                `Rs ${item.price}`,
-                `Rs ${item.totalPrice}`,
-                item.isGiftWrapped
-            ]);
-            doc.autoTable({
-                startY: yOffset,
-                head: [['Product', 'Size', 'Quantity', 'Price', 'Total', 'Gift Wrap']],
-                body: items,
-                theme: 'grid',
-                styles: { fontSize: 9, cellPadding: 3 },
-                headStyles: {
-                    fillColor: [200, 200, 200],
-                    textColor: [0, 0, 0],
-                    fontStyle: 'bold'
-                },
-                columnStyles: {
-                    0: { cellWidth: 50 },
-                    1: { cellWidth: 20 },
-                    2: { cellWidth: 20 },
-                    3: { cellWidth: 25 },
-                    4: { cellWidth: 25 },
-                    5: { cellWidth: 25 }
-                }
-            });
-
-            // Pricing Summary
-            yOffset = doc.lastAutoTable.finalY + 15;
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Pricing Summary', 20, yOffset);
-            yOffset += 10;
-
-            const pricingBody = [
-                ['Subtotal', `Rs ${orderData.subtotal}`],
-                ['Gift Wrap Total', `Rs ${orderData.giftWrapTotal}`],
-                ['Shipping', `Rs ${orderData.shipping}`],
-            ];
-            if (orderData.discount && orderData.discount > 0) {
-                pricingBody.push(['Discount', `-Rs ${orderData.discount}`]);
-            }
-            pricingBody.push(['Grand Total', `Rs ${orderData.finalAmount}`]);
-
-            doc.autoTable({
-                startY: yOffset,
-                body: pricingBody,
-                theme: 'grid',
-                styles: { fontSize: 10, cellPadding: 3 },
-                headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
-                columnStyles: {
-                    0: { fontStyle: 'bold' },
-                    1: { halign: 'right' }
-                }
-            });
-
-            // Footer
-            yOffset = doc.lastAutoTable.finalY + 20;
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'italic');
-            doc.text('Thank you for shopping with Luxe!', 105, yOffset, { align: 'center' });
-            doc.setFont('helvetica', 'normal');
-            doc.text('Contact us: support@luxe.com | +91 123-456-7890', 105, yOffset + 8, { align: 'center' });
-            doc.text('© 2025 Luxe. All rights reserved.', 105, yOffset + 16, { align: 'center' });
-
-            doc.save(`invoice_${orderData.orderId}.pdf`);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                const profileIcons = document.querySelectorAll('.icon.profile');
-                profileIcons.forEach(icon => {
-                    icon.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const dropdown = icon.closest('.dropdown');
-                        if (dropdown) {
-                            dropdown.classList.toggle('active');
-                        }
-                    });
-                });
-
-                document.addEventListener('click', (e) => {
-                    const dropdowns = document.querySelectorAll('.dropdown');
-                    dropdowns.forEach(dropdown => {
-                        if (!dropdown.contains(e.target)) {
-                            dropdown.classList.remove('active');
-                        }
-                    });
-                });
-
-                const searchInput = document.getElementById('searchInput');
-                const searchResults = document.getElementById('searchResults');
-
-                searchInput.addEventListener('input', async () => {
-                    try {
-                        const query = searchInput.value.trim();
-
-                        if (!query) {
-                            searchResults.innerHTML = '';
-                            searchResults.classList.remove('active');
-                            return;
-                        }
-
-                        const response = await fetch(`/search?query=${encodeURIComponent(query)}`);
-                        const products = await response.json();
-
-                        if (!products || products.length === 0) {
-                            searchResults.innerHTML = '<p class="no-results">No products found</p>';
-                            searchResults.classList.add('active');
-                            return;
-                        }
-
-                        const resultsHtml = products.map(product => {
-                            const price = product.variants[0]?.salePrice || product.variants[0]?.regularPrice;
-                            return `
-                                <a href="/productViewPage?id=${product._id}" class="result-item">
-                                    <span>${product.productName}</span>
-                                    <span>${product.productBrand.brandName}</span>
-                                    <span>${price}₹</span>
-                                </a>
-                            `;
-                        }).join('');
-
-                        searchResults.innerHTML = resultsHtml;
-                        searchResults.classList.add('active');
-                    } catch (error) {
-                        console.error('Search error:', error);
-                        searchResults.innerHTML = '<p class="no-results">Error searching</p>';
-                        searchResults.classList.add('active');
-                    }
-                });
-
-                window.onclick = function(event) {
-                    const modal = document.getElementById('invoiceModal');
-                    if (event.target == modal) {
-                        modal.style.display = 'none';
-                    }
-                };
-            } catch (error) {
-                console.error('Error setting up header:', error);
+        const items = orderData.items.map(item => [
+            item.productName,
+            item.size,
+            item.quantity,
+            `Rs ${item.price}`,
+            `Rs ${item.totalPrice}`,
+            item.isGiftWrapped
+        ]);
+        doc.autoTable({
+            startY: yOffset,
+            head: [['Product', 'Size', 'Quantity', 'Price', 'Total', 'Gift Wrap']],
+            body: items,
+            theme: 'grid',
+            styles: { fontSize: 9, cellPadding: 3 },
+            headStyles: {
+                fillColor: [200, 200, 200],
+                textColor: [0, 0, 0],
+                fontStyle: 'bold'
+            },
+            columnStyles: {
+                0: { cellWidth: 50 },
+                1: { cellWidth: 20 },
+                2: { cellWidth: 20 },
+                3: { cellWidth: 25 },
+                4: { cellWidth: 25 },
+                5: { cellWidth: 25 }
             }
         });
+
+        // Pricing Summary
+        yOffset = doc.lastAutoTable.finalY + 15;
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Pricing Summary', 20, yOffset);
+        yOffset += 10;
+
+        const pricingBody = [
+            ['Subtotal', `Rs ${orderData.subtotal}`],
+            ['Gift Wrap Total', `Rs ${orderData.giftWrapTotal}`],
+            ['Shipping', `Rs ${orderData.shipping}`],
+        ];
+        if (orderData.discount && orderData.discount > 0) {
+            pricingBody.push([`Discount (${orderData.couponCode || 'Coupon'})`, `-Rs ${orderData.discount}`]);
+        }
+        pricingBody.push(['Grand Total', `Rs ${orderData.finalAmount}`]);
+
+        doc.autoTable({
+            startY: yOffset,
+            body: pricingBody,
+            theme: 'grid',
+            styles: { fontSize: 10, cellPadding: 3 },
+            headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
+            columnStyles: {
+                0: { fontStyle: 'bold' },
+                1: { halign: 'right' }
+            }
+        });
+
+        // Footer
+        yOffset = doc.lastAutoTable.finalY + 20;
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'italic');
+        doc.text('Thank you for shopping with Luxe!', 105, yOffset, { align: 'center' });
+        doc.setFont('helvetica', 'normal');
+        doc.text('Contact us: support@luxe.com | +91 123-456-7890', 105, yOffset + 8, { align: 'center' });
+        doc.text('© 2025 Luxe. All rights reserved.', 105, yOffset + 16, { align: 'center' });
+
+        doc.save(`invoice_${orderData.orderId}.pdf`);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            const profileIcons = document.querySelectorAll('.icon.profile');
+            profileIcons.forEach(icon => {
+                icon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const dropdown = icon.closest('.dropdown');
+                    if (dropdown) {
+                        dropdown.classList.toggle('active');
+                    }
+                });
+            });
+
+            document.addEventListener('click', () => {
+                const dropdowns = document.querySelectorAll('.dropdown');
+                dropdowns.forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+            });
+
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+
+            searchInput?.addEventListener('input', async () => {
+                const query = searchInput.value.trim();
+                if (query.length < 3) {
+                    searchResults.classList.remove('active');
+                    searchResults.innerHTML = '';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+                    const results = await response.json();
+
+                    searchResults.innerHTML = '';
+                    if (results.length === 0) {
+                        searchResults.innerHTML = '<div class="no-results">No results found</div>';
+                    } else {
+                        results.forEach(item => {
+                            const resultItem = document.createElement('a');
+                            resultItem.href = item.url;
+                            resultItem.className = 'result-item';
+                            resultItem.innerHTML = `
+                                <span>${item.name}</span>
+                                <span style="font-size: 12px; color: #666;">${item.category}</span>
+                            `;
+                            searchResults.appendChild(resultItem);
+                        });
+                    }
+                    searchResults.classList.add('active');
+                } catch (error) {
+                    console.error('Search error:', error);
+                    searchResults.innerHTML = '<div class="no-results">Error fetching results</div>';
+                    searchResults.classList.add('active');
+                }
+            });
+
+            searchInput?.addEventListener('blur', () => {
+                setTimeout(() => {
+                    searchResults.classList.remove('active');
+                }, 200);
+            });
+
+            searchInput?.addEventListener('focus', () => {
+                if (searchResults.innerHTML) {
+                    searchResults.classList.add('active');
+                }
+            });
+        } catch (error) {
+            console.error('Initialization error:', error);
+        }
+    });
     </script>
 </body>
 </html>

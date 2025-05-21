@@ -76,7 +76,6 @@ const logout = async (req,res)=>{
             res.redirect('/admin/login')
         })
     } catch (error) {
-        // console.log("error during logout",error);
         res.redirect('/admin/pageerror')
         
     }

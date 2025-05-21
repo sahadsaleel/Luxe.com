@@ -229,6 +229,40 @@ const updateProfile = async (req, res) => {
     }
 };
 
+const removeProfileImage = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        if (!userId) {
+            return res.status(401).json({ message: 'User not authenticated' });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (user.profileImage && user.profileImage !== '/img/profile images.png') {
+            const publicId = user.profileImage
+                .split('/')
+                .slice(-2)
+                .join('/')
+                .split('.')[0];
+
+            await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
+
+            user.profileImage = '/img/profile images.png';
+            await user.save();
+
+            return res.status(200).json({ message: 'Profile image removed successfully' });
+        }
+
+        return res.status(400).json({ message: 'No custom profile image to remove' });
+    } catch (error) {
+        console.error('Error removing profile image:', error);
+        return res.status(500).json({ message: 'An error occurred while removing the profile image' });
+    }
+};
+
 const changePassword = async (req, res) => {
     try {
         const { oldPassword, newPassword, confirmPassword } = req.body;
@@ -516,6 +550,7 @@ module.exports = {
     resendOtp,
     userProfile,
     updateProfile,
+    removeProfileImage,
     changePassword,
     changeEmail,
     userAddress,

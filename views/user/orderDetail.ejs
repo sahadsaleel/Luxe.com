@@ -802,509 +802,592 @@
     <%- include('../../views/partials/user/footer') %>
 
     <script>
-        const orderData = {
-            orderId: '<%= order && order.orderId ? order.orderId : "N/A" %>',
-            orderDate: '<%= order && order.orderDate ? new Date(order.orderDate).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" }) : "N/A" %>',
-            invoiceDate: '<%= order && order.invoiceDate ? new Date(order.invoiceDate).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" }) : "N/A" %>',
-            status: '<%= order && order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1).toLowerCase() : "N/A" %>',
-            paymentMethod: '<%= order && order.paymentMethod ? order.paymentMethod.charAt(0).toUpperCase() + order.paymentMethod.slice(1) : "N/A" %>',
-            deliveryMethod: '<%= order && order.deliveryMethod ? order.deliveryMethod.charAt(0).toUpperCase() + order.deliveryMethod.slice(1) : "N/A" %>',
-            address: '<%= order && order.addressDetails && order.addressDetails.name ? order.addressDetails.name + " (" + (order.addressDetails.addressType || "") + "), " + (order.addressDetails.landMark || "") + ", " + (order.addressDetails.city || "") + ", " + (order.addressDetails.state || "") + " " + (order.addressDetails.pincode || "") + ", Phone: " + (order.addressDetails.phone || "N/A") + (order.addressDetails.altPhone ? ", Alt: " + order.addressDetails.altPhone : "") : "N/A" %>',
-            totalPrice: '<%= order && order.orderedItems ? Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : item.totalPrice), 0)).toFixed(2) : "0.00" %>',
-            giftWrapTotal: '<%= order && order.orderedItems ? Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : (item.isGiftWrapped ? 100 : 0)), 0)).toFixed(2) : "0.00" %>',
-            shipping: '<%= order && order.shipping ? Number(order.shipping).toFixed(2) : "0.00" %>',
-            discount: '<%= order && order.discount ? Number(order.discount).toFixed(2) : "0.00" %>',
-            finalAmount: '<%= order && order.orderedItems ? Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : item.totalPrice), 0) + (order.shipping || 0) - (order.discount || 0)).toFixed(2) : "0.00" %>',
-            items: [
-                <% if (order && order.orderedItems && order.orderedItems.length > 0) { %>
-                    <% order.orderedItems.forEach((item, index) => { %>
-                        {
-                            itemId: '<%= item._id %>',
-                            productName: '<%= item.productName || "N/A" %>',
-                            size: '<%= item.variant && item.variant.size ? item.variant.size : "N/A" %>',
-                            quantity: '<%= item.quantity || "N/A" %>',
-                            price: '<%= Number(item.price || 0).toFixed(2) %>',
-                            totalPrice: '<%= Number(item.totalPrice || 0).toFixed(2) %>',
-                            isGiftWrapped: '<%= item.isGiftWrapped ? "Yes" : "No" %>',
-                            isCanceled: <%= item.isCanceled ? 'true' : 'false' %>,
-                            cancelReason: '<%= item.cancelReason || "" %>',
-                            productImage: '<%= item.productImage || "/img/placeholder.png" %>'
-                        }<%= index < order.orderedItems.length - 1 ? ',' : '' %>
-                    <% }); %>
-                <% } %>
-            ]
-        };
+    const orderData = {
+        orderId: '<%= order && order.orderId ? order.orderId : "N/A" %>',
+        orderDate: '<%= order && order.orderDate ? new Date(order.orderDate).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" }) : "N/A" %>',
+        invoiceDate: '<%= order && order.invoiceDate ? new Date(order.invoiceDate).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" }) : "N/A" %>',
+        status: '<%= order && order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1).toLowerCase() : "N/A" %>',
+        paymentMethod: '<%= order && order.paymentMethod ? order.paymentMethod.charAt(0).toUpperCase() + order.paymentMethod.slice(1) : "N/A" %>',
+        deliveryMethod: '<%= order && order.deliveryMethod ? order.deliveryMethod.charAt(0).toUpperCase() + order.deliveryMethod.slice(1) : "N/A" %>',
+        address: '<%= order && order.addressDetails && order.addressDetails.name ? order.addressDetails.name + " (" + (order.addressDetails.addressType || "") + "), " + (order.addressDetails.landMark || "") + ", " + (order.addressDetails.city || "") + ", " + (order.addressDetails.state || "") + " " + (order.addressDetails.pincode || "") + ", Phone: " + (order.addressDetails.phone || "N/A") + (order.addressDetails.altPhone ? ", Alt: " + order.addressDetails.altPhone : "") : "N/A" %>',
+        totalPrice: '<%= order && order.orderedItems ? Number(order.orderedItems.reduce((sum, item) => sum + (item.status === "Cancelled" ? 0 : item.totalPrice), 0)).toFixed(2) : "0.00" %>',
+        giftWrapTotal: '<%= order && order.orderedItems ? Number(order.orderedItems.reduce((sum, item) => sum + (item.status === "Cancelled" ? 0 : (item.isGiftWrapped ? 100 : 0)), 0)).toFixed(2) : "0.00" %>',
+        shipping: '<%= order && order.shipping ? Number(order.shipping).toFixed(2) : "0.00" %>',
+        discount: '<%= order && order.discount ? Number(order.discount).toFixed(2) : "0.00" %>',
+        finalAmount: '<%= order && order.orderedItems ? Number(order.orderedItems.reduce((sum, item) => sum + (item.status === "Cancelled" ? 0 : item.totalPrice), 0) + (order.shipping || 0) - (order.discount || 0)).toFixed(2) : "0.00" %>',
+        items: [
+            <% if (order && order.orderedItems && order.orderedItems.length > 0) { %>
+                <% order.orderedItems.forEach((item, index) => { %>
+                    {
+                        itemId: '<%= item._id %>',
+                        productName: '<%= item.productName || "N/A" %>',
+                        size: '<%= item.variant && item.variant.size ? item.variant.size : "N/A" %>',
+                        quantity: '<%= item.quantity || "N/A" %>',
+                        price: '<%= Number(item.price || 0).toFixed(2) %>',
+                        totalPrice: '<%= Number(item.totalPrice || 0).toFixed(2) %>',
+                        isGiftWrapped: '<%= item.isGiftWrapped ? "Yes" : "No" %>',
+                        status: '<%= item.status || "Active" %>',
+                        cancelReason: '<%= item.cancelReason || "" %>',
+                        productImage: '<%= item.productImage || "/img/placeholder.png" %>'
+                    }<%= index < order.orderedItems.length - 1 ? ',' : '' %>
+                <% }); %>
+            <% } %>
+        ]
+    };
 
-        function showToast(message, type = 'success') {
-            Toastify({
-                text: message,
-                duration: 3000,
-                gravity: 'top',
-                position: 'right',
-                backgroundColor: type === 'success' ? '#28a745' : '#dc3545',
-                stopOnFocus: true,
-            }).showToast();
+    function showToast(message, type = 'success') {
+        Toastify({
+            text: message,
+            duration: 3000,
+            gravity: 'top',
+            position: 'right',
+            backgroundColor: type === 'success' ? '#28a745' : '#dc3545',
+            stopOnFocus: true,
+        }).showToast();
+    }
+
+    function showCancelModal() {
+        if (!orderData.items || orderData.items.length === 0) {
+            showToast('No items available to cancel.', 'error');
+            return;
         }
-
-        function showCancelModal() {
-            if (!orderData.items || orderData.items.length === 0) {
-                showToast('No items available to cancel.', 'error');
-                return;
-            }
-            const summaryTable = document.getElementById('cancelOrderSummary');
-            summaryTable.innerHTML = '';
-            orderData.items.forEach(item => {
-                if (!item.isCanceled) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.productName}</td>
-                        <td>${item.size}</td>
-                        <td>${item.quantity}</td>
-                        <td>₹${item.totalPrice}</td>
-                    `;
-                    summaryTable.appendChild(row);
-                }
-            });
-            document.getElementById('cancelModal').classList.add('active');
-        }
-
-        function closeCancelModal() {
-            document.getElementById('cancelModal').classList.remove('active');
-            document.getElementById('cancelOrderReason').value = '';
-            document.getElementById('cancelOrderComments').value = '';
-            const submitBtn = document.getElementById('cancelOrderSubmit');
-            submitBtn.innerHTML = 'Cancel Order';
-            submitBtn.classList.remove('btn-loading');
-            submitBtn.disabled = false;
-        }
-
-        let currentItemId = null;
-
-        function showCancelItemModal(itemId) {
-            const item = orderData.items.find(i => i.itemId === itemId);
-            if (!item) {
-                showToast('Item not found.', 'error');
-                return;
-            }
-            if (item.isCanceled) {
-                showToast('This item is already cancelled.', 'error');
-                return;
-            }
-            currentItemId = itemId;
-            const summaryTable = document.getElementById('cancelItemSummary');
-            summaryTable.innerHTML = `
-                <tr>
+        const summaryTable = document.getElementById('cancelOrderSummary');
+        summaryTable.innerHTML = '';
+        orderData.items.forEach(item => {
+            if (item.status !== 'Cancelled') {
+                const row = document.createElement('tr');
+                row.innerHTML = `
                     <td>${item.productName}</td>
                     <td>${item.size}</td>
                     <td>${item.quantity}</td>
                     <td>₹${item.totalPrice}</td>
-                </tr>
-            `;
-            document.getElementById('cancelItemModal').classList.add('active');
-        }
-
-        function closeCancelItemModal() {
-            document.getElementById('cancelItemModal').classList.remove('active');
-            currentItemId = null;
-            document.getElementById('cancelReason').value = '';
-            document.getElementById('cancelComments').value = '';
-            const submitBtn = document.getElementById('cancelItemSubmit');
-            submitBtn.innerHTML = 'Cancel Item';
-            submitBtn.classList.remove('btn-loading');
-            submitBtn.disabled = false;
-        }
-
-        function showReturnModal() {
-            if (!orderData.items || orderData.items.length === 0) {
-                showToast('No items available to return.', 'error');
-                return;
+                `;
+                summaryTable.appendChild(row);
             }
-            const summaryTable = document.getElementById('returnOrderSummary');
-            summaryTable.innerHTML = '';
-            orderData.items.forEach(item => {
-                if (!item.isCanceled) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.productName}</td>
-                        <td>${item.size}</td>
-                        <td>${item.quantity}</td>
-                        <td>₹${item.totalPrice}</td>
-                    `;
-                    summaryTable.appendChild(row);
-                }
+        });
+        document.getElementById('cancelModal').classList.add('active');
+    }
+
+    function closeCancelModal() {
+        document.getElementById('cancelModal').classList.remove('active');
+        document.getElementById('cancelOrderReason').value = '';
+        document.getElementById('cancelOrderComments').value = '';
+        const submitBtn = document.getElementById('cancelOrderSubmit');
+        submitBtn.innerHTML = 'Cancel Order';
+        submitBtn.classList.remove('btn-loading');
+        submitBtn.disabled = false;
+    }
+
+    let currentItemId = null;
+
+    function showCancelItemModal(itemId) {
+        const item = orderData.items.find(i => i.itemId === itemId);
+        if (!item) {
+            showToast('Item not found.', 'error');
+            return;
+        }
+        if (item.status === 'Cancelled') {
+            showToast('This item is already cancelled.', 'error');
+            return;
+        }
+        currentItemId = itemId;
+        const summaryTable = document.getElementById('cancelItemSummary');
+        summaryTable.innerHTML = `
+            <tr>
+                <td>${item.productName}</td>
+                <td>${item.size}</td>
+                <td>${item.quantity}</td>
+                <td>₹${item.totalPrice}</td>
+            </tr>
+        `;
+        document.getElementById('cancelItemModal').classList.add('active');
+    }
+
+    function closeCancelItemModal() {
+        document.getElementById('cancelItemModal').classList.remove('active');
+        currentItemId = null;
+        document.getElementById('cancelReason').value = '';
+        document.getElementById('cancelComments').value = '';
+        const submitBtn = document.getElementById('cancelItemSubmit');
+        submitBtn.innerHTML = 'Cancel Item';
+        submitBtn.classList.remove('btn-loading');
+        submitBtn.disabled = false;
+    }
+
+    function showReturnModal() {
+        if (!orderData.items || orderData.items.length === 0) {
+            showToast('No items available to return.', 'error');
+            return;
+        }
+        const summaryTable = document.getElementById('returnOrderSummary');
+        summaryTable.innerHTML = '';
+        orderData.items.forEach(item => {
+            if (item.status !== 'Cancelled') {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.productName}</td>
+                    <td>${item.size}</td>
+                    <td>${item.quantity}</td>
+                    <td>₹${item.totalPrice}</td>
+                `;
+                summaryTable.appendChild(row);
+            }
+        });
+        document.getElementById('returnModal').classList.add('active');
+    }
+
+    function closeReturnModal() {
+        document.getElementById('returnModal').classList.remove('active');
+        document.getElementById('returnReason').value = '';
+        document.getElementById('returnComments').value = '';
+        const submitBtn = document.getElementById('returnOrderSubmit');
+        submitBtn.innerHTML = 'Request Return';
+        submitBtn.classList.remove('btn-loading');
+        submitBtn.disabled = false;
+    }
+
+    document.getElementById('cancelOrderForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const reason = document.getElementById('cancelOrderReason').value;
+        const comments = document.getElementById('cancelOrderComments').value;
+        const submitBtn = document.getElementById('cancelOrderSubmit');
+
+        if (!reason) {
+            showToast('Please select a cancellation reason.', 'error');
+            return;
+        }
+
+        submitBtn.innerHTML = '<span class="spinner"></span> Cancelling...';
+        submitBtn.classList.add('btn-loading');
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch(`/orders/details/${orderData.orderId}/cancel`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reason, comments })
             });
-            document.getElementById('returnModal').classList.add('active');
+            const result = await response.json();
+            if (result.success) {
+                showToast('Order cancelled successfully!');
+                orderData.status = 'Cancelled';
+                orderData.totalPrice = '0.00';
+                orderData.giftWrapTotal = '0.00';
+                orderData.finalAmount = '0.00';
+                orderData.discount = '0.00';
+                const statusElement = document.querySelector('.status');
+                if (statusElement) {
+                    statusElement.textContent = 'Cancelled';
+                    statusElement.className = 'status cancelled';
+                }
+                const cancelButton = document.querySelector('.btn-cancel[onclick="showCancelModal()"]');
+                if (cancelButton) {
+                    cancelButton.style.display = 'none';
+                }
+                orderData.items.forEach(item => {
+                    item.status = 'Cancelled';
+                    item.cancelReason = reason;
+                    item.totalPrice = '0.00';
+                });
+                document.querySelectorAll('.order-items-table tbody tr').forEach(row => {
+                    row.classList.add('item-cancelled');
+                    const statusCell = row.querySelector('.item-status');
+                    statusCell.textContent = `Cancelled (${reason})`;
+                    const actionCell = row.querySelector('td:last-child');
+                    actionCell.innerHTML = `<button class="action-button btn-disabled" disabled>Cancelled</button>`;
+                });
+                // Update pricing table
+                document.getElementById('subtotal').textContent = '₹0.00';
+                document.getElementById('giftWrapTotal').textContent = '₹0.00';
+                document.getElementById('finalAmount').textContent = '₹0.00';
+                const discountRow = document.getElementById('discountRow');
+                if (discountRow) {
+                    discountRow.style.display = 'none';
+                }
+                closeCancelModal();
+            } else {
+                showToast(result.message || 'Failed to cancel order.', 'error');
+            }
+        } catch (error) {
+            showToast('An error occurred while cancelling the order.', 'error');
+        }
+        submitBtn.innerHTML = 'Cancel Order';
+        submitBtn.classList.remove('btn-loading');
+        submitBtn.disabled = false;
+    });
+
+    document.getElementById('cancelItemForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('cancelItemSubmit');
+        if (submitBtn.dataset.submitting === 'true') {
+            console.log('Cancel item submission already in progress, ignoring duplicate submission');
+            return;
         }
 
-        function closeReturnModal() {
-            document.getElementById('returnModal').classList.remove('active');
-            document.getElementById('returnReason').value = '';
-            document.getElementById('returnComments').value = '';
-            const submitBtn = document.getElementById('returnOrderSubmit');
-            submitBtn.innerHTML = 'Request Return';
-            submitBtn.classList.remove('btn-loading');
-            submitBtn.disabled = false;
+        if (!currentItemId) {
+            showToast('No item selected to cancel.', 'error');
+            return;
         }
 
-        document.getElementById('cancelOrderForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const reason = document.getElementById('cancelOrderReason').value;
-            const comments = document.getElementById('cancelOrderComments').value;
-            const submitBtn = document.getElementById('cancelOrderSubmit');
+        const item = orderData.items.find(i => i.itemId === currentItemId);
+        if (!item) {
+            showToast('Item not found.', 'error');
+            closeCancelItemModal();
+            return;
+        }
+        if (item.status === 'Cancelled') {
+            showToast('This item is already cancelled.', 'error');
+            closeCancelItemModal();
+            return;
+        }
 
-            if (!reason) {
-                showToast('Please select a cancellation reason.', 'error');
-                return;
+        const reason = document.getElementById('cancelReason')?.value;
+        const comments = document.getElementById('cancelComments')?.value;
+
+        if (!reason) {
+            showToast('Please select a cancellation reason.', 'error');
+            return;
+        }
+
+        submitBtn.dataset.submitting = 'true';
+        submitBtn.innerHTML = '<span class="spinner"></span> Cancelling...';
+        submitBtn.classList.add('btn-loading');
+        submitBtn.disabled = true;
+
+        try {
+            console.log(`Sending cancel item request for order: ${orderData.orderId}, item: ${currentItemId}`);
+            const response = await fetch(`/orders/details/${orderData.orderId}/cancel-item/${currentItemId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reason, comments })
+            });
+
+            console.log('Response status:', response.status);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.log('Response error text:', errorText);
+                throw new Error(`Server responded with status ${response.status}: ${errorText}`);
             }
 
-            submitBtn.innerHTML = '<span class="spinner"></span> Cancelling...';
-            submitBtn.classList.add('btn-loading');
-            submitBtn.disabled = true;
+            const result = await response.json();
+            console.log('Parsed response:', result);
 
-            try {
-                const response = await fetch(`/orders/details/${orderData.orderId}/cancel`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ reason, comments })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    showToast('Order cancelled successfully!');
+            if (result.success) {
+                console.log('Item cancellation successful');
+                showToast('Item cancelled successfully!', 'success');
+
+                const itemRow = document.querySelector(`tr[data-item-id="${currentItemId}"]`);
+                if (itemRow) {
+                    itemRow.classList.add('item-cancelled');
+                    const statusCell = itemRow.querySelector('.item-status');
+                    if (statusCell) statusCell.textContent = `Cancelled (${reason})`;
+                    const totalCell = itemRow.querySelector('td:nth-child(5)');
+                    if (totalCell) totalCell.textContent = '₹0.00';
+                    const actionCell = itemRow.querySelector('td:last-child');
+                    if (actionCell) {
+                        actionCell.innerHTML = `<button class="action-button btn-disabled" disabled>Cancelled</button>`;
+                    }
+                }
+                if (item) {
+                    item.status = 'Cancelled';
+                    item.cancelReason = reason;
+                    item.totalPrice = '0.00';
+                }
+
+                // Update orderData with backend response
+                orderData.totalPrice = result.order.totalPrice;
+                orderData.giftWrapTotal = result.order.giftWrapTotal;
+                orderData.finalAmount = result.order.finalAmount;
+                orderData.discount = result.order.discount;
+
+                // Update pricing table with null checks
+                const subtotalElement = document.getElementById('subtotal');
+                if (subtotalElement) subtotalElement.textContent = `₹${result.order.totalPrice}`;
+
+                const giftWrapTotalElement = document.getElementById('giftWrapTotal');
+                if (giftWrapTotalElement) giftWrapTotalElement.textContent = `₹${result.order.giftWrapTotal}`;
+
+                const finalAmountElement = document.getElementById('finalAmount');
+                if (finalAmountElement) finalAmountElement.textContent = `₹${result.order.finalAmount}`;
+
+                const discountRow = document.getElementById('discountRow');
+                if (discountRow) {
+                    const discountElement = document.getElementById('discount');
+                    if (parseFloat(result.order.discount) > 0 && discountElement) {
+                        discountElement.textContent = `-₹${result.order.discount}`;
+                        discountRow.style.display = 'table-row';
+                    } else {
+                        discountRow.style.display = 'none';
+                    }
+                }
+
+                // Handle full order cancellation
+                if (result.allCancelled) {
                     orderData.status = 'Cancelled';
-                    window.location.reload()
                     const statusElement = document.querySelector('.status');
                     if (statusElement) {
                         statusElement.textContent = 'Cancelled';
                         statusElement.className = 'status cancelled';
                     }
-                    const cancelButton = document.querySelector('.btn-cancel[onclick="showCancelModal()"]');
-                    if (cancelButton) {
-                        cancelButton.style.display = 'none';
+                    const cancelOrderButton = document.querySelector('.btn-cancel[onclick="showCancelModal()"]');
+                    if (cancelOrderButton) {
+                        cancelOrderButton.style.display = 'none';
                     }
-                    orderData.items.forEach(item => {
-                        item.isCanceled = true;
-                        item.cancelReason = reason;
-                    });
-                    document.querySelectorAll('.order-items-table tbody tr').forEach(row => {
-                        row.classList.add('item-cancelled');
-                        const statusCell = row.querySelector('.item-status');
-                        statusCell.textContent = `Cancelled (${reason})`;
-                        const actionCell = row.querySelector('td:last-child');
-                        actionCell.innerHTML = `<button class="action-button btn-disabled" disabled>Cancelled</button>`;
-                    });
-                    orderData.totalPrice = '0.00';
-                    orderData.giftWrapTotal = '0.00';
-                    orderData.finalAmount = '0.00';
-                    closeCancelModal();
-                } else {
-                    showToast(result.message || 'Failed to cancel order.', 'error');
                 }
-            } catch (error) {
-                showToast('An error occurred while cancelling the order.', 'error');
-            }
-            submitBtn.innerHTML = 'Cancel Order';
-            submitBtn.classList.remove('btn-loading');
-            submitBtn.disabled = false;
-        });
 
-        document.getElementById('cancelItemForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!currentItemId) {
-                showToast('No item selected to cancel.', 'error');
-                return;
-            }
-
-            const item = orderData.items.find(i => i.itemId === currentItemId);
-            if (!item) {
-                showToast('Item not found.', 'error');
                 closeCancelItemModal();
-                return;
+            } else {
+                console.log('Server returned success: false', result.message);
+                showToast(result.message || 'Failed to cancel item.', 'error');
             }
-            if (item.isCanceled) {
-                showToast('This item is already cancelled.', 'error');
-                closeCancelItemModal();
-                return;
-            }
-
-            const reason = document.getElementById('cancelReason').value;
-            const comments = document.getElementById('cancelComments').value;
-            const submitBtn = document.getElementById('cancelItemSubmit');
-
-            if (!reason) {
-                showToast('Please select a cancellation reason.', 'error');
-                return;
-            }
-
-            submitBtn.innerHTML = '<span class="spinner"></span> Cancelling...';
-            submitBtn.classList.add('btn-loading');
-            submitBtn.disabled = true;
-
-            try {
-                const response = await fetch(`/orders/details/${orderData.orderId}/cancel-item/${currentItemId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ reason, comments })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    showToast('Item cancelled successfully!');
-                    const itemRow = document.querySelector(`tr[data-item-id="${currentItemId}"]`);
-                    if (itemRow) {
-                        itemRow.classList.add('item-cancelled');
-                        const statusCell = itemRow.querySelector('.item-status');
-                        statusCell.textContent = `Cancelled (${reason})`;
-                        const actionCell = itemRow.querySelector('td:last-child');
-                        actionCell.innerHTML = `<button class="action-button btn-disabled" disabled>Cancelled</button>`;
-                    }
-                    if (item) {
-                        item.isCanceled = true;
-                        item.cancelReason = reason;
-                    }
-
-                    const allCancelled = orderData.items.every(item => item.isCanceled);
-                    if (allCancelled) {
-                        orderData.status = 'Cancelled';
-                        const statusElement = document.querySelector('.status');
-                        if (statusElement) {
-                            statusElement.textContent = 'Cancelled';
-                            statusElement.className = 'status cancelled';
-                        }
-                        const cancelOrderButton = document.querySelector('.btn-cancel[onclick="showCancelModal()"]');
-                        if (cancelOrderButton) {
-                            cancelOrderButton.style.display = 'none';
-                        }
-                    }
-
-                    closeCancelItemModal();
-                } else {
-                    showToast(result.message || 'Failed to cancel item.', 'error');
-                }
-            } catch (error) {
-                showToast('An error occurred while cancelling the item.', 'error');
-            }
+        } catch (error) {
+            console.error('Error during item cancellation:', error.message);
+            showToast(`An error occurred: ${error.message || 'Please try again.'}`, 'error');
+        } finally {
+            submitBtn.dataset.submitting = 'false';
             submitBtn.innerHTML = 'Cancel Item';
             submitBtn.classList.remove('btn-loading');
             submitBtn.disabled = false;
-        });
+        }
+    });
 
-        document.getElementById('returnOrderForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const reason = document.getElementById('returnReason').value;
-            const comments = document.getElementById('returnComments').value;
-            const submitBtn = document.getElementById('returnOrderSubmit');
+    document.getElementById('returnOrderForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-            if (!reason) {
-                showToast('Please select a return reason.', 'error');
-                return;
+        const reason = document.getElementById('returnReason')?.value;
+        const comments = document.getElementById('returnComments')?.value;
+        const submitBtn = document.getElementById('returnOrderSubmit');
+
+        if (!reason) {
+            showToast('Please select a return reason.', 'error');
+            return;
+        }
+
+        if (submitBtn.disabled) {
+            return; // Prevent multiple submissions
+        }
+
+        submitBtn.innerHTML = '<span class="spinner"></span> Requesting...';
+        submitBtn.classList.add('btn-loading');
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch(`/orders/details/${orderData.orderId}/return`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reason, comments })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            submitBtn.innerHTML = '<span class="spinner"></span> Requesting...';
-            submitBtn.classList.add('btn-loading');
-            submitBtn.disabled = true;
+            const result = await response.json();
 
-            try {
-                const response = await fetch(`/orders/details/${orderData.orderId}/return`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ reason, comments })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    showToast('Return request submitted successfully!');
-                    orderData.status = 'Return Requested';
-                    const statusElement = document.querySelector('.status');
-                    if (statusElement) {
-                        statusElement.textContent = 'Return Requested';
-                        statusElement.className = 'status return-requested';
-                    }
-                    const returnButton = document.querySelector('.btn-cancel[onclick="showReturnModal()"]');
-                    if (returnButton) {
-                        returnButton.style.display = 'none';
-                    }
-                    closeReturnModal();
-                } else {
-                    showToast(result.message || 'Failed to submit return request.', 'error');
+            if (result.success) {
+                showToast('Return request submitted successfully!', 'success');
+                orderData.status = 'Return Requested';
+
+                const statusElement = document.querySelector('.status');
+                if (statusElement) {
+                    statusElement.textContent = 'Return Requested';
+                    statusElement.className = 'status return-requested';
                 }
-            } catch (error) {
-                showToast('An error occurred while submitting return request.', 'error');
+
+                const returnButton = document.querySelector('.btn-cancel[onclick="showReturnModal()"]');
+                if (returnButton) {
+                    returnButton.style.display = 'none';
+                }
+
+                closeReturnModal();
+            } else {
+                showToast(result.message || 'Failed to submit return request.', 'error');
             }
+        } catch (error) {
+            console.error('Error submitting return request:', error);
+            showToast(`An error occurred: ${error.message || 'Please try again.'}`, 'error');
+        } finally {
             submitBtn.innerHTML = 'Request Return';
             submitBtn.classList.remove('btn-loading');
             submitBtn.disabled = false;
-        });
+        }
+    });
 
-        function showInvoiceModal() {
-            try {
-                if (!orderData.items || orderData.items.length === 0) {
-                    showToast('No items available for invoice.', 'error');
-                    return;
-                }
-                document.getElementById('modalOrderId').textContent = orderData.orderId;
-                document.getElementById('modalOrderDate').textContent = orderData.orderDate;
-                const invoiceDateContainer = document.getElementById('modalInvoiceDateContainer');
-                if (orderData.invoiceDate && orderData.invoiceDate !== 'N/A') {
-                    invoiceDateContainer.style.display = 'block';
-                    document.getElementById('modalInvoiceDate').textContent = orderData.invoiceDate;
+    function showInvoiceModal() {
+        try {
+            if (!orderData.items || orderData.items.length === 0) {
+                showToast('No items available for invoice.', 'error');
+                return;
+            }
+            document.getElementById('modalOrderId').textContent = orderData.orderId;
+            document.getElementById('modalOrderDate').textContent = orderData.orderDate;
+            const invoiceDateContainer = document.getElementById('modalInvoiceDateContainer');
+            if (orderData.invoiceDate && orderData.invoiceDate !== 'N/A') {
+                invoiceDateContainer.style.display = 'block';
+                document.getElementById('modalInvoiceDate').textContent = orderData.invoiceDate;
+            } else {
+                invoiceDateContainer.style.display = 'none';
+            }
+            document.getElementById('modalStatus').textContent = orderData.status;
+            document.getElementById('modalStatus').className = `status ${orderData.status.toLowerCase().replace(' ', '-')}`;
+            document.getElementById('modalPaymentMethod').textContent = orderData.paymentMethod;
+            document.getElementById('modalDeliveryMethod').textContent = orderData.deliveryMethod;
+            document.getElementById('modalAddress').textContent = orderData.address;
+
+            const itemsTableBody = document.getElementById('modalItems');
+            itemsTableBody.innerHTML = '';
+            orderData.items.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.productName}</td>
+                    <td>${item.size}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.status === 'Cancelled' ? 'N/A' : '₹' + item.price}</td>
+                    <td>${item.status === 'Cancelled' ? 'N/A' : '₹' + item.totalPrice}</td>
+                    <td>${item.status === 'Cancelled' ? 'N/A' : item.isGiftWrapped}</td>
+                    <td>${item.status === 'Cancelled' ? 'Cancelled (' + (item.cancelReason || 'No reason') + ')' : 'Active'}</td>
+                `;
+                itemsTableBody.appendChild(row);
+            });
+
+            document.getElementById('modalSubtotal').textContent = '₹' + orderData.totalPrice;
+            document.getElementById('modalGiftWrapTotal').textContent = '₹' + orderData.giftWrapTotal;
+            document.getElementById('modalShipping').textContent = '₹' + orderData.shipping;
+            const discountElement = document.getElementById('modalDiscount');
+            if (discountElement) {
+                const modalDiscountRow = document.getElementById('modalDiscountRow');
+                if (parseFloat(orderData.discount) > 0) {
+                    modalDiscountRow.style.display = 'table-row';
+                    discountElement.textContent = '-₹' + orderData.discount;
                 } else {
-                    invoiceDateContainer.style.display = 'none';
+                    modalDiscountRow.style.display = 'none';
                 }
-                document.getElementById('modalStatus').textContent = orderData.status;
-                document.getElementById('modalStatus').className = `status ${orderData.status.toLowerCase().replace(' ', '-')}`;
-                document.getElementById('modalPaymentMethod').textContent = orderData.paymentMethod;
-                document.getElementById('modalDeliveryMethod').textContent = orderData.deliveryMethod;
-                document.getElementById('modalAddress').textContent = orderData.address;
-
-                const itemsTableBody = document.getElementById('modalItems');
-                itemsTableBody.innerHTML = '';
-                orderData.items.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.productName}</td>
-                        <td>${item.size}</td>
-                        <td>${item.quantity}</td>
-                        <td>${item.isCanceled ? 'N/A' : '₹' + item.price}</td>
-                        <td>${item.isCanceled ? 'N/A' : '₹' + item.totalPrice}</td>
-                        <td>${item.isCanceled ? 'N/A' : item.isGiftWrapped}</td>
-                        <td>${item.isCanceled ? 'Cancelled (' + (item.cancelReason || 'No reason') + ')' : 'Active'}</td>
-                    `;
-                    itemsTableBody.appendChild(row);
-                });
-
-                document.getElementById('modalSubtotal').textContent = '₹' + orderData.totalPrice;
-                document.getElementById('modalGiftWrapTotal').textContent = '₹' + orderData.giftWrapTotal;
-                document.getElementById('modalShipping').textContent = '₹' + orderData.shipping;
-                const discountElement = document.getElementById('modalDiscount');
-                if (discountElement) {
-                    if (orderData.discount > 0) {
-                        discountElement.parentElement.style.display = 'table-row';
-                        discountElement.textContent = '-₹' + orderData.discount;
-                    } else {
-                        discountElement.parentElement.style.display = 'none';
-                    }
-                }
-                document.getElementById('modalFinalAmount').textContent = '₹' + orderData.finalAmount;
-                document.getElementById('invoiceModal').classList.add('active');
-            } catch (error) {
-                showToast(' four word maximum.', 'error');
             }
+            document.getElementById('modalFinalAmount').textContent = '₹' + orderData.finalAmount;
+            document.getElementById('invoiceModal').classList.add('active');
+        } catch (error) {
+            showToast('Error generating invoice.', 'error');
         }
+    }
 
-        function closeInvoiceModal() {
-            document.getElementById('invoiceModal').classList.remove('active');
-        }
+    function closeInvoiceModal() {
+        document.getElementById('invoiceModal').classList.remove('active');
+    }
 
-        function downloadInvoice() {
-            try {
-                if (!orderData.items || orderData.items.length === 0) {
-                    showToast('No items available for invoice.', 'error');
-                    return;
-                }
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
+    function downloadInvoice() {
+        try {
+            if (!orderData.items || orderData.items.length === 0) {
+                showToast('No items available for invoice.', 'error');
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
 
-                doc.setFillColor(138, 106, 148);
-                doc.rect(0, 0, 210, 40, 'F');
-                doc.setFontSize(20);
-                doc.setTextColor(255, 255, 255);
-                doc.text('Luxe.com', 20, 20);
-                doc.setFontSize(14);
-                doc.text('INVOICE', 190, 20, { align: 'right' });
+            doc.setFillColor(138, 106, 148);
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setFontSize(20);
+            doc.setTextColor(255, 255, 255);
+            doc.text('Luxe.com', 20, 20);
+            doc.setFontSize(14);
+            doc.text('INVOICE', 190, 20, { align: 'right' });
 
-                doc.setTextColor(0, 0, 0);
-                let yOffset = 50;
-                doc.setFontSize(12);
-                doc.text('Order Details', 20, yOffset);
-                doc.setDrawColor(138, 106, 148);
-                doc.line(20, yOffset + 2, 190, yOffset + 2);
-                yOffset += 10;
-                doc.setFontSize(10);
-                doc.text(`Order ID: ${orderData.orderId}`, 20, yOffset);
+            doc.setTextColor(0, 0, 0);
+            let yOffset = 50;
+            doc.setFontSize(12);
+            doc.text('Order Details', 20, yOffset);
+            doc.setDrawColor(138, 106, 148);
+            doc.line(20, yOffset + 2, 190, yOffset + 2);
+            yOffset += 10;
+            doc.setFontSize(10);
+            doc.text(`Order ID: ${orderData.orderId}`, 20, yOffset);
+            yOffset += 8;
+            doc.text(`Order Date: ${orderData.orderDate}`, 20, yOffset);
+            yOffset += 8;
+            if (orderData.invoiceDate && orderData.invoiceDate !== 'N/A') {
+                doc.text(`Invoice Date: ${orderData.invoiceDate}`, 20, yOffset);
                 yOffset += 8;
-                doc.text(`Order Date: ${orderData.orderDate}`, 20, yOffset);
-                yOffset += 8;
-                if (orderData.invoiceDate && orderData.invoiceDate !== 'N/A') {
-                    doc.text(`Invoice Date: ${orderData.invoiceDate}`, 20, yOffset);
-                    yOffset += 8;
-                }
-                doc.text(`Status: ${orderData.status}`, 20, yOffset);
-                yOffset += 8;
-                doc.text(`Payment Method: ${orderData.paymentMethod}`, 20, yOffset);
-                yOffset += 8;
-                doc.text(`Delivery Method: ${orderData.deliveryMethod}`, 20, yOffset);
-                yOffset += 15;
+            }
+            doc.text(`Status: ${orderData.status}`, 20, yOffset);
+            yOffset += 8;
+            doc.text(`Payment Method: ${orderData.paymentMethod}`, 20, yOffset);
+            yOffset += 8;
+            doc.text(`Delivery Method: ${orderData.deliveryMethod}`, 20, yOffset);
+            yOffset += 15;
 
-                doc.setFontSize(12);
-                doc.text('Shipping Address', 20, yOffset);
-                doc.line(20, yOffset + 2, 190, yOffset + 2);
-                yOffset += 10;
-                doc.setFontSize(10);
-                const addressLines = doc.splitTextToSize(orderData.address, 170);
-                addressLines.forEach(line => {
-                    doc.text(line, 20, yOffset);
-                    yOffset += 6;
-                });
-                yOffset += 10;
-
-                doc.setFontSize(12);
-                doc.text('Order Summary', 20, yOffset);
-                doc.line(20, yOffset + 2, 190, yOffset + 2);
-                yOffset += 10;
-
-                const tableData = orderData.items.map(item => [
-                    item.productName,
-                    item.size,
-                    item.quantity,
-                    item.isCanceled ? 'N/A' : `₹${item.price}`,
-                    item.isCanceled ? 'N/A' : `₹${item.totalPrice}`,
-                    item.isCanceled ? 'N/A' : item.isGiftWrapped,
-                    item.isCanceled ? `Cancelled (${item.cancelReason || 'No reason'})` : 'Active'
-                ]);
-
-                doc.autoTable({
-                    startY: yOffset,
-                    head: [['Product', 'Size', 'Quantity', 'Price', 'Total', 'Gift Wrap', 'Status']],
-                    body: tableData,
-                    theme: 'grid',
-                    styles: { fontSize: 8, cellPadding: 2 },
-                    headStyles: { fillColor: [138, 106, 148], textColor: [255, 255, 255] },
-                    margin: { left: 20, right: 20 }
-                });
-
-                yOffset = doc.lastAutoTable.finalY + 10;
-
-                const totalData = [
-                    ['Subtotal', `₹${orderData.totalPrice}`],
-                    ['Gift Wrap', `₹${orderData.giftWrapTotal}`],
-                    ['Shipping', `₹${orderData.shipping}`]
-                ];
-                if (orderData.discount > 0) {
-                    totalData.push(['Discount', `-₹${orderData.discount}`]);
-                }
-                totalData.push(['Grand Total', `₹${orderData.finalAmount}`]);
-
-                doc.autoTable({
-                    startY: yOffset,
-                    body: totalData,
-                    theme: 'grid',
-                    styles: { fontSize: 8, cellPadding: 2 },
-                    columnStyles: { 0: { halign: 'left' }, 1: { halign: 'right' } },
-                    margin: { left: 120, right: 20 }
-                });
-
-                yOffset = doc.lastAutoTable.finalY + 20;
-
-                doc.setFontSize(8);
-                doc.setTextColor(100, 100, 100);
-                doc.text('Thank you for shopping with Luxe! For any questions regarding your order, please contact our customer support.', 105, yOffset, { align: 'center' });
+            doc.setFontSize(12);
+            doc.text('Shipping Address', 20, yOffset);
+            doc.line(20, yOffset + 2, 190, yOffset + 2);
+            yOffset += 10;
+            doc.setFontSize(10);
+            const addressLines = doc.splitTextToSize(orderData.address, 170);
+            addressLines.forEach(line => {
+                doc.text(line, 20, yOffset);
                 yOffset += 6;
-                doc.text('© 2025 Luxe. All rights reserved.', 105, yOffset, { align: 'center' });
+            });
+            yOffset += 10;
 
-                doc.save(`Invoice_${orderData.orderId}.pdf`);
-                showToast('Invoice downloaded successfully!');
-            } catch (error) {
-                showToast('Failed to download invoice.', 'error');
+            doc.setFontSize(12);
+            doc.text('Order Summary', 20, yOffset);
+            doc.line(20, yOffset + 2, 190, yOffset + 2);
+            yOffset += 10;
+
+            const tableData = orderData.items.map(item => [
+                item.productName,
+                item.size,
+                item.quantity,
+                item.status === 'Cancelled' ? 'N/A' : `₹${item.price}`,
+                item.status === 'Cancelled' ? 'N/A' : `₹${item.totalPrice}`,
+                item.status === 'Cancelled' ? 'N/A' : item.isGiftWrapped,
+                item.status === 'Cancelled' ? `Cancelled (${item.cancelReason || 'No reason'})` : 'Active'
+            ]);
+
+            doc.autoTable({
+                startY: yOffset,
+                head: [['Product', 'Size', 'Quantity', 'Price', 'Total', 'Gift Wrap', 'Status']],
+                body: tableData,
+                theme: 'grid',
+                styles: { fontSize: 8, cellPadding: 2 },
+                headStyles: { fillColor: [138, 106, 148], textColor: [255, 255, 255] },
+                margin: { left: 20, right: 20 }
+            });
+
+            yOffset = doc.lastAutoTable.finalY + 10;
+
+            const totalData = [
+                ['Subtotal', `₹${orderData.totalPrice}`],
+                ['Gift Wrap', `₹${orderData.giftWrapTotal}`],
+                ['Shipping', `₹${orderData.shipping}`]
+            ];
+            if (parseFloat(orderData.discount) > 0) {
+                totalData.push(['Discount', `-₹${orderData.discount}`]);
             }
+            totalData.push(['Grand Total', `₹${orderData.finalAmount}`]);
+
+            doc.autoTable({
+                startY: yOffset,
+                body: totalData,
+                theme: 'grid',
+                styles: { fontSize: 8, cellPadding: 2 },
+                columnStyles: { 0: { halign: 'left' }, 1: { halign: 'right' } },
+                margin: { left: 120, right: 20 }
+            });
+
+            yOffset = doc.lastAutoTable.finalY + 20;
+
+            doc.setFontSize(8);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Thank you for shopping with Luxe! For any questions regarding your order, please contact our customer support.', 105, yOffset, { align: 'center' });
+            yOffset += 6;
+            doc.text('© 2025 Luxe. All rights reserved.', 105, yOffset, { align: 'center' });
+
+            doc.save(`Invoice_${orderData.orderId}.pdf`);
+            showToast('Invoice downloaded successfully!');
+        } catch (error) {
+            showToast('Failed to download invoice.', 'error');
         }
-    </script>
+    }
+</script>
 </body>
 </html>

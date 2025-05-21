@@ -37,7 +37,6 @@
                         <option value="Canceled" <%= order.status === 'Canceled' ? 'selected' : '' %>>Canceled</option>
                         <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
                         <option value="Return Approved" <%= order.status === 'Return Approved' ? 'selected' : '' %>>Return Approved</option>
-                        <option value="Return Completed" <%= order.status === 'Return Completed' ? 'selected' : '' %>>Return Completed</option>
                     </select>
                     <button class="btn btn-primary update-btn" data-order-id="<%= order._id %>">
                         <span class="button-icon">✓</span>
@@ -81,7 +80,7 @@
                     </div>
                 </div>
 
-                <% if (order.status === 'Return Request' || order.status === 'Return Approved' || order.status === 'Return Completed') { %>
+                <% if (order.status === 'Return Requested' || order.status === 'Return Approved' ) { %>
                     <div class="return-request-box">
                         <div class="return-icon">↩️</div>
                         <div class="info-label">Return Request Details</div>
@@ -98,11 +97,16 @@
                                 <div class="info-label">Comments</div>
                                 <div class="info-value"><%= order.returnComments || 'N/A' %></div>
                             </div>
-                            <% if (order.status === 'Return Request') { %>
+                            <% if (order.status === 'Return Requested') { %>
                                 <div class="info-item">
+                                    <select name="returnStatus" id="returnStatus">
+                                        <option value="" selected>Select status</option>
+                                        <option value="approved">Approved</option>
+                                        <option value="rejected">Rejected</option>
+                                    </select>
                                     <button class="btn btn-primary approve-return-btn" data-order-id="<%= order._id %>">
                                         <span class="button-icon">✓</span>
-                                        Approve Return
+                                        Process Status
                                     </button>
                                 </div>
                             <% } %>
@@ -173,7 +177,6 @@
             }
         });
 
-        // Update order status
         document.querySelector('.update-btn').addEventListener('click', async () => {
             const orderId = document.querySelector('.update-btn').dataset.orderId;
             const status = document.querySelector('.select-status').value;
@@ -219,15 +222,21 @@
         document.querySelectorAll('.approve-return-btn').forEach(button => {
             button.addEventListener('click', async () => {
                 const orderId = button.dataset.orderId;
+                const status = document.getElementById("returnStatus").value;
+                
                 try {
-                    const response = await fetch(`/admin/orders/${orderId}/approve-return`, {
+                    const response = await fetch(`/admin/orders/approve-return/${orderId}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status })
                     });
                     const result = await response.json();
                     if (result.success) {
+                        // if (status === 'rejected') {
+                        //     alert('Return rejected');
+                        // }
                         Toastify({
-                            text: 'Return approved successfully',
+                            text: status === 'rejected' ? 'Return rejected successfully' : 'Return approved successfully',
                             duration: 3000,
                             gravity: 'top',
                             position: 'right',
@@ -237,7 +246,7 @@
                         setTimeout(() => location.reload(), 1000);
                     } else {
                         Toastify({
-                            text: `Error approving return: ${result.message}`,
+                            text: `Error processing return: ${result.message}`,
                             duration: 3000,
                             gravity: 'top',
                             position: 'right',
@@ -247,7 +256,7 @@
                     }
                 } catch (error) {
                     Toastify({
-                        text: `Error approving return: ${error.message}`,
+                        text: `Error processing return: ${error.message}`,
                         duration: 3000,
                         gravity: 'top',
                         position: 'right',

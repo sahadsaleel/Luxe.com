@@ -8,7 +8,6 @@ const db = require('./config/db');
 const userRouter = require('./routes/userRouter');
 const adminRouter = require('./routes/adminRouter');
 const nocache = require('nocache');
-// const { translateAliases } = require('./models/userSchema');
 
  
 dotenv.config();

@@ -50,7 +50,6 @@ const addBrand = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid status value' });
     }
 
-    //Wrap the stream in a Promise
     const streamUpload = (buffer) => {
       return new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
@@ -104,7 +103,6 @@ const addBrand = async (req, res) => {
 
 const editBrand = async (req, res) => {
   try {
-    // console.log('Received request edit brand:', req.body, req.file);
     const { id, brandName, status } = req.body;
     const file = req.file;
 

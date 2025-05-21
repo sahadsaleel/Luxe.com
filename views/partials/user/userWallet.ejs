@@ -1,0 +1,40 @@
+<div class="transaction-history">
+    <h3>Transaction History</h3>
+    <table class="transactions-table">
+        <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Transaction ID</th>
+                <th>Method</th>
+                <th>Description</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (user && user.wallet && user.wallet.length > 0 && user.wallet[0].transactions && user.wallet[0].transactions.length > 0) { %>
+                <% user.wallet[0].transactions.forEach(transaction => { %>
+                    <tr>
+                        <td class="amount <%= transaction.type.toLowerCase() %>">
+                            <%= transaction.type === 'Credit' ? '+' : '-' %>₹<%= transaction.amount.toFixed(2) %>
+                        </td>
+                        <td><span class="type-badge <%= transaction.type.toLowerCase() %>"><%= transaction.type %></span></td>
+                        <td><%= new Date(transaction.date).toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' }) %></td>
+                        <td><%= transaction.transactionId %></td>
+                        <td><%= transaction.method %></td>
+                        <td><%= transaction.description %></td>
+                        <td><button class="view-btn" data-id="<%= transaction.transactionId %>">View</button></td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr>
+                    <td colspan="7">No transactions found.</td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+    <div class="pagination">
+        <div class="pagination-btn">1</div>
+    </div>
+</div>

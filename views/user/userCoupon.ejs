@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Coupons | Luxe.com</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="/css/userCoupon.css">
+</head>
+<body>
+    <%- include('../../views/partials/user/header') %>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">Luxe.com</div>
+        </div>
+
+        <div class="breadcrumb-container">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active">My Coupons</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="profile-brief">
+                    <div class="profile-image">
+                        <img src="<%= user && user.profileImage ? user.profileImage : '/img/profile images.png' %>" alt="Profile Image">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : '' %></div>
+                        <div class="profile-email"><%= user && user.email ? user.email : 'N/A' %></div>
+                    </div>
+                </div>
+
+                <ul class="nav-menu">
+                    <h3>Manage My Account</h3>
+                    <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li><a href="/address"><i class="fas fa-address-book"></i> Address Book</a></li>
+                    <h3>Orders & Wishlist</h3>
+                    <li><a href="/orders"><i class="fas fa-shopping-bag"></i> My Orders</a></li>
+                    <li><a href="/wishlist"><i class="fas fa-heart"></i> My Wishlist</a></li>
+                    <h3>Payments</h3>
+                    <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
+                    <li><a href="/coupons" class="active"><i class="fas fa-tag"></i> My Coupons</a></li>
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
+                </ul>
+            </div>
+
+            <div class="content">
+                <div class="profile-header">
+                    <h1>My Coupons</h1>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-tag"></i>
+                        <h2>Available Coupons</h2>
+                    </div>
+
+                    <div class="coupon-list">
+                        <% if (coupons && coupons.length > 0) { %>
+                            <% coupons.forEach(coupon => { %>
+                                <div class="coupon-item">
+                                    <div class="coupon-details">
+                                        <div class="coupon-code">
+                                            <span class="code"><%= coupon.code %></span>
+                                            <button class="copy-btn" onclick="copyToClipboard('<%= coupon.code %>')">
+                                                <i class="fas fa-copy"></i> Copy
+                                            </button>
+                                        </div>
+                                        <div class="coupon-info">
+                                            <h3><%= coupon.discountValue %>% Off</h3>
+
+                                            <p>Expires on: <%= new Date(coupon.expireOn).toLocaleDateString() %></p>
+                                            <p>Min. Order: ₹<%= coupon.minimumPrice %></p>
+                                        </div>
+                                    </div>
+                                    <div class="coupon-actions">
+                                        <button class="action-button apply-btn" onclick="applyCoupon('<%= coupon.code %>')">Apply Coupon</button>
+                                        <button class="terms-btn" onclick="showTerms('Valid on orders above ₹<%= coupon.minimumPrice %>. Cannot be combined with other offers.')">Terms</button>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <div class="no-coupons">
+                                <p>No coupons available. Check back for new offers!</p>
+                                <a href="/shop" class="action-button">Shop Now</a>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="termsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Coupon Terms</div>
+                <button class="close-btn" id="closeTermsModalBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <p id="termsContent"></p>
+            </div>
+        </div>
+    </div>
+
+    <%- include("../../views/partials/user/footer") %>
+    <!-- Keep the HTML exactly as provided, only update the JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script>
+    function copyToClipboard(code) {
+    navigator.clipboard.writeText(code).then(() => {
+        Toastify({
+        text: `Coupon ${code} copied!`,
+        duration: 2000,
+        gravity: 'top',
+        position: 'right',
+        backgroundColor: '#4CAF50'
+        }).showToast();
+    }).catch(() => {
+        Toastify({
+        text: 'Failed to copy coupon code',
+        duration: 2000,
+        gravity: 'top',
+        position: 'right',
+        backgroundColor: '#e74c3c'
+        }).showToast();
+    });
+    }
+
+    function applyCoupon(code) {
+    Toastify({
+        text: `Please apply coupon ${code} at checkout`,
+        duration: 2500,
+        gravity: 'top',
+        position: 'right',
+        backgroundColor: '#4CAF50'
+    }).showToast();
+    window.location.href = '/cart'; // Redirect to cart to apply the coupon
+    }
+
+    function showTerms(terms) {
+    document.getElementById('termsContent').innerText = terms;
+    const termsModal = document.getElementById('termsModal');
+    termsModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    }
+
+    document.getElementById('closeTermsModalBtn').addEventListener('click', function() {
+    const termsModal = document.getElementById('termsModal');
+    termsModal.classList.remove('active');
+    document.body.style.overflow = '';
+    });
+
+    window.addEventListener('click', function(event) {
+    const termsModal = document.getElementById('termsModal');
+    if (event.target === termsModal) {
+        termsModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    });
+    </script>
+</body>
+</html>

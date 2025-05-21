@@ -3,6 +3,7 @@ const User = require('../../models/userSchema');
 const Product = require('../../models/productSchema');
 const Cart = require('../../models/cartSchema');
 const Address = require('../../models/addressSchema');
+const Wallet = require("../../models/walletSchema")
 
 const loadOrderPage = async (req, res) => {
     try {
@@ -128,8 +129,6 @@ const updateOrderStatus = async (req, res) => {
             'Delivered',
             'Canceled',
             'Return Request',
-            'Return Approved',
-            'Return Completed',
         ];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ success: false, error: 'Invalid status' });
@@ -143,36 +142,209 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
+// const approveReturn = async (req, res) => {
+//     try {
+//         const { orderId } = req.params;
+//         const order = await Order.findById(orderId);
+//         if (!order) {
+//             return res.status(404).json({ success: false, message: 'Order not found' });
+//         }
+
+//         if (order.status !== 'Return Request') {
+//             return res.status(400).json({ success: false, message: 'No return request to approve' });
+//         }
+
+//         order.status = 'Return Approved';
+//         order.refundStatus = order.paymentMethod === 'cash on delivery' ? 'Not Initiated' : 'Initiated';
+//         await order.save();
+
+//         // Restock inventory
+//         for (const item of order.orderedItems) {
+//             await Product.updateOne(
+//                 { _id: item.productId, 'variants._id': item.variantId },
+//                 { $inc: { 'variants.$.stock': item.quantity } }
+//             );
+//         }
+
+//         res.json({ success: true, message: 'Return approved successfully' });
+//     } catch (error) {
+//         console.error('Error approving return:', error);
+//         res.status(500).json({ success: false, message: 'Internal server error' });
+//     }
+// };
+
+
+
 const approveReturn = async (req, res) => {
+
+    const {status} = req.body ;
+    const {orderId} = req.params;
+    
     try {
-        const { orderId } = req.params;
-        const order = await Order.findById(orderId);
-        if (!order) {
-            return res.status(404).json({ success: false, message: 'Order not found' });
+        // if (!req.user.isAdmin) {
+        //     return res.status(403).json({ success: false, message: 'Admin access required' });
+        // }
+            
+        const order  = await Order.findById(orderId);
+
+    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+
+    // const item = order.orderedItems.find(
+    //   (i) => i.productId.toString() === productId && (!variantId || i.variantId.toString() === variantId)
+    // );
+    // if (!item) return res.status(404).json({ success: false, message: 'Item not found in order' });
+
+    // if (item.status !== 'Return Requested') {
+    //   return res.status(400).json({ success: false, message: 'No return request found for this item' });
+    // }
+
+    if(status === "rejected") {
+       order.status =  "Delivered"
+       
+    }else {
+        
+        const refundAmount = order.finalAmount;
+
+        let wallet = await Wallet.findOne({ userId: order.userId });
+        if (!wallet) {
+            console.log('Creating new wallet for user:', order.userId);
+            wallet = new Wallet({
+                userId: order.userId,
+                balance: 0,
+                currency: 'INR',
+                transactions: [],
+            });
+        }
+        
+        wallet.balance += refundAmount;
+        wallet.transactions.push({
+            orderId: order._id.toString(),
+            amount: refundAmount,
+            type: 'Credit',
+            method: 'Refund',
+            status: 'Completed',
+            date: new Date(),
+            description: `Refund for returned item (Order: ${order.orderId})`,
+        });
+        
+        try {
+            await wallet.save();
+            console.log('Wallet updated with refund:', wallet._id);
+        } catch (err) {
+            console.error('Error saving wallet in approveReturn:', err);
+            throw err;
         }
 
-        if (order.status !== 'Return Request') {
-            return res.status(400).json({ success: false, message: 'No return request to approve' });
-        }
+        for(let item  of order.orderedItems ) {
+            item.status = "Return Approved";
 
-        order.status = 'Return Approved';
-        order.refundStatus = order.paymentMethod === 'cash on delivery' ? 'Not Initiated' : 'Initiated';
-        await order.save();
-
-        // Restock inventory
-        for (const item of order.orderedItems) {
             await Product.updateOne(
                 { _id: item.productId, 'variants._id': item.variantId },
                 { $inc: { 'variants.$.stock': item.quantity } }
             );
-        }
+        } 
 
-        res.json({ success: true, message: 'Return approved successfully' });
-    } catch (error) {
-        console.error('Error approving return:', error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
+        order.status = 'Return Approved'
     }
+
+    await order.save();
+
+    res.json({ success: true, message: `status updated` });
+  } catch (error) {
+    console.error('Approve Return Error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+
 };
+
+// const approveReturn = async (req, res) => {
+
+//     const {status} = req.body ;
+//     const {orderId} = req.params;
+    
+//     try {
+//         if (!req.user.isAdmin) {
+//             return res.status(403).json({ success: false, message: 'Admin access required' });
+//         }
+            
+//         const order  = await Order.findById(orderId);
+
+//     if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+
+//     // const item = order.orderedItems.find(
+//     //   (i) => i.productId.toString() === productId && (!variantId || i.variantId.toString() === variantId)
+//     // );
+//     // if (!item) return res.status(404).json({ success: false, message: 'Item not found in order' });
+
+//     // if (item.status !== 'Return Requested') {
+//     //   return res.status(400).json({ success: false, message: 'No return request found for this item' });
+//     // }
+
+//     if(status === "rejected") {
+//        order.status =  "Delivered"
+       
+//     }else {
+
+//     }
+
+
+//     const refundAmount = item.totalPrice;
+    
+//     // Update item status
+//     item.status = 'Return Approved';
+//     item.returnApprovedOn = new Date();
+//     order.refundStatus = 'Initiated';
+
+//     // Update wallet
+//     let wallet = await Wallet.findOne({ userId: order.userId });
+//     if (!wallet) {
+//       console.log('Creating new wallet for user:', order.userId);
+//       wallet = new Wallet({
+//         userId: order.userId,
+//         balance: 0,
+//         currency: 'INR',
+//         transactions: [],
+//       });
+//     }
+
+
+//     console.log(refundAmount);
+    
+//     wallet.balance += refundAmount;
+//     wallet.transactions.push({
+//       orderId: order._id.toString(),
+//       amount: refundAmount,
+//       type: 'Credit',
+//       method: 'Refund',
+//       status: 'Completed',
+//       date: new Date(),
+//       description: `Refund for returned item (Order: ${order.orderId})`,
+//     });
+
+//     try {
+//       await wallet.save();
+//       console.log('Wallet updated with refund:', wallet._id);
+//     } catch (err) {
+//       console.error('Error saving wallet in approveReturn:', err);
+//       throw err;
+//     }
+
+//     await Product.updateOne(
+//       { _id: item.productId, 'variants._id': item.variantId },
+//       { $inc: { 'variants.$.stock': item.quantity } }
+//     );
+
+//     item.status = 'Return Completed';
+//     order.refundStatus = 'Completed';
+
+//     await order.save();
+
+//     res.json({ success: true, message: `Refund of ₹${refundAmount.toFixed(2)} credited to wallet` });
+//   } catch (error) {
+//     console.error('Approve Return Error:', error);
+//     res.status(500).json({ success: false, message: 'Server error' });
+//   }
+// };
 
 module.exports = {
     loadOrderPage,

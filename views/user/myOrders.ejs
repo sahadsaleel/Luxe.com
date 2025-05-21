@@ -8,46 +8,59 @@
     <link rel="stylesheet" href="/css/myOrder.css">
 </head>
 <body>
-     <%- include('../../views/partials/user/header') %>
+    <%- include('../../views/partials/user/header') %>
 
-    <!-- Breadcrumb -->
-    <div class="breadcrumb-container">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item active">My Orders</li>
-            </ol>
-        </div>
-    </div>
-
-    <!-- Main Content -->
     <div class="container">
+        <div class="header">
+            <div class="logo">Luxe.com</div>
+        </div>
+
+        <div class="breadcrumb-container">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active">My Orders</li>
+                </ol>
+            </div>
+        </div>
+
         <div class="main-content">
-            <!-- Sidebar -->
             <div class="sidebar">
                 <div class="profile-brief">
                     <div class="profile-image">
                         <img src="<%= user && user.profileImage ? user.profileImage : '/img/profile-image-placeholder.png' %>" alt="Profile Image">
                     </div>
-                    <div class="profile-name"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : 'Guest' %></div>
-                    <div class="profile-email"><%= user && user.email ? user.email : 'N/A' %></div>
+                    <div class="profile-info">
+                        <div class="profile-name"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : 'Guest' %></div>
+                        <div class="profile-email"><%= user && user.email ? user.email : 'N/A' %></div>
+                    </div>
                 </div>
                 <ul class="nav-menu">
+                    <h3>Manage My Account</h3>
                     <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
-                    <li><a href="/address"><i class="fas fa-map-marker-alt"></i> Address Book</a></li>
+                    <li><a href="/address"><i class="fas fa-address-book"></i> Address Book</a></li>
+                    <h3>Orders & Wishlist</h3>
                     <li><a href="/orders" class="active"><i class="fas fa-box"></i> My Orders</a></li>
                     <li><a href="/wishlist"><i class="fas fa-heart"></i> My Wishlist</a></li>
+                    <h3>Payments</h3>
                     <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
                     <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
                     <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign out</a></li>
                 </ul>
             </div>
 
-            <!-- Orders Content -->
-            <div class="orders-content">
-                <h2>My Orders</h2>
-                <% if (orders && orders.length > 0) { %>
-                    <div class="card">
+            <div class="content">
+                <div class="profile-header">
+                    <h1>My Orders</h1>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-box"></i>
+                        <h2>Order History</h2>
+                    </div>
+
+                    <% if (orders && orders.length > 0) { %>
                         <table class="orders-table">
                             <thead>
                                 <tr>
@@ -56,7 +69,7 @@
                                     <th>Status</th>
                                     <th>Order Method</th>
                                     <th>Total Amount</th>
-                                    <th>View Details</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,11 +90,11 @@
                                         <td>₹<%= Number(order.finalAmount).toFixed(2) %></td>
                                         <td>
                                             <% if (order.status.toLowerCase() === 'failed') { %>
-                                                <a href="/orders/retry/<%= order.orderId %>" class="btn btn-retry">
+                                                <a href="/orders/retry/<%= order.orderId %>" class="action-button retry">
                                                     <i class="fas fa-redo"></i> Retry Payment
                                                 </a>
                                             <% } else { %>
-                                                <a href="/orders/details/<%= order.orderId %>" class="btn btn-details">
+                                                <a href="/orders/details/<%= order.orderId %>" class="action-button">
                                                     <i class="far fa-eye"></i> Details
                                                 </a>
                                             <% } %>
@@ -90,35 +103,34 @@
                                 <% }); %>
                             </tbody>
                         </table>
-                    </div>
 
-                    <!-- Pagination -->
-                    <% if (totalPages > 1) { %>
-                        <div class="pagination">
-                            <% if (currentPage > 1) { %>
-                                <a href="/orders?page=<%= currentPage - 1 %>"><i class="fas fa-chevron-left"></i></a>
-                            <% } %>
-                            <% for (let i = 1; i <= totalPages; i++) { %>
-                                <a href="/orders?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
-                            <% } %>
-                            <% if (currentPage < totalPages) { %>
-                                <a href="/orders?page=<%= currentPage + 1 %>"><i class="fas fa-chevron-right"></i></a>
-                            <% } %>
-                        </div>
-                        <div class="pagination-info">
-                            Page <%= currentPage %> of <%= totalPages %>
+                        <% if (totalPages > 1) { %>
+                            <div class="pagination">
+                                <% if (currentPage > 1) { %>
+                                    <a href="/orders?page=<%= currentPage - 1 %>"><i class="fas fa-chevron-left"></i></a>
+                                <% } %>
+                                <% for (let i = 1; i <= totalPages; i++) { %>
+                                    <a href="/orders?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+                                <% } %>
+                                <% if (currentPage < totalPages) { %>
+                                    <a href="/orders?page=<%= currentPage + 1 %>"><i class="fas fa-chevron-right"></i></a>
+                                <% } %>
+                            </div>
+                            <div class="pagination-info">
+                                Page <%= currentPage %> of <%= totalPages %>
+                            </div>
+                        <% } %>
+                    <% } else { %>
+                        <div class="no-orders">
+                            <p>No orders found. Start shopping now!</p>
+                            <a href="/shop" class="action-button">Shop Now</a>
                         </div>
                     <% } %>
-                <% } else { %>
-                    <div class="no-orders">
-                        <p>No orders found. Start shopping now!</p>
-                        <a href="/shop">Shop Now</a>
-                    </div>
-                <% } %>
+                </div>
             </div>
         </div>
     </div>
 
-   <%-include("../../views/partials/user/footer")%>
+    <%- include("../../views/partials/user/footer") %>
 </body>
 </html>
