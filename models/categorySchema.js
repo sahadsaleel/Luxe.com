@@ -1,31 +1,29 @@
-const mongoose = require('mongoose')
-const {Schema} = mongoose
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const categorySchema = new  Schema ({
-
-       name: {
+const categorySchema = new Schema({
+    name: {
         type: String,
         required: true,
-        unique: true
-      },
-      description: {
+        unique: true,
+    },
+    description: {
         type: String,
-        required: true
-      },
-      isListed: {
+        required: true,
+    },
+    isListed: {
         type: Boolean,
-        default: true
-      },
-      categoryOffer: {
+        default: true,
+    },
+    categoryOffer: {
         type: Number,
-        default: 0
-      },
-      createdAt: {
+        default: 0,
+    },
+    createdAt: {
         type: Date,
-        default: Date.now
-      },
+        default: Date.now,
+    },
+});
 
-})
-
-const Category = mongoose.model("Category", categorySchema)
-module.exports = Category 
+const Category = mongoose.model("Category", categorySchema);
+module.exports = Category;

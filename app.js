@@ -7,6 +7,7 @@ const passport = require('./config/passport');
 const db = require('./config/db');
 const userRouter = require('./routes/userRouter');
 const adminRouter = require('./routes/adminRouter');
+const MongoStore= require("connect-mongo")
 const nocache = require('nocache');
 
  
@@ -25,6 +26,10 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'default-secret',
     resave: false,
     saveUninitialized: true, 
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce',
+        collectionName: 'sessions'
+    }),
     cookie: {
         secure: false, 
         httpOnly: true, 
