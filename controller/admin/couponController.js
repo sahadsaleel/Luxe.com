@@ -1,8 +1,13 @@
 const Coupon = require('../../models/couponSchema');
 
+
 const getCoupons = async (req, res) => {
   try {
     const sort = req.query.sort || 'newest';
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     const sortOptions = {
       newest: { createdOn: -1 },
       oldest: { createdOn: 1 },
@@ -10,13 +15,29 @@ const getCoupons = async (req, res) => {
       'z-a': { name: -1 }
     };
 
-    const coupons = await Coupon.find().sort(sortOptions[sort] || sortOptions.newest);
-    res.render('admin/coupons', { coupons });
+    const [coupons, totalCoupons] = await Promise.all([
+      Coupon.find()
+        .sort(sortOptions[sort] || sortOptions.newest)
+        .skip(skip)
+        .limit(limit),
+      Coupon.countDocuments()
+    ]);
+
+    const totalPages = Math.ceil(totalCoupons / limit);
+
+    res.render('admin/coupons', {
+      coupons,
+      currentPage: page,
+      totalPages,
+      limit,
+      sort
+    });
   } catch (error) {
     console.error('Error fetching coupons:', error);
     res.status(500).json({ message: 'Failed to load coupons' });
   }
 };
+
 
 const getCouponById = async (req, res) => {
   try {

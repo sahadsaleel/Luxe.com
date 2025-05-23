@@ -140,9 +140,6 @@
     .arrow-icon.rotate {
       transform: rotate(180deg);
     }
-    .hero {
-      margin: 20px 0;
-    }
     .hero-image img {
       width: 100%;
       height: auto;

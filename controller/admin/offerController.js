@@ -90,12 +90,12 @@ const addOffer = async (req, res) => {
   try {
     const { offerName, description, offerType, itemSelect, startDate, endDate, discount } = req.body;
 
-    // Validate required fields
+    // console.log(req.body);
+    
     if (!offerName || !description || !offerType || !itemSelect || !startDate || !endDate || !discount) {
       return res.status(400).json({ success: false, message: "All fields are required" });
     }
 
-    // Check for duplicate offer name
     const existingOffer = await Offer.findOne({ offerName });
     if (existingOffer) {
       return res.status(409).json({ success: false, message: "Offer name already exists" });
@@ -204,7 +204,7 @@ const disableOffer = async (req, res) => {
   }
 };
 
-// Enable offer
+
 const enableOffer = async (req, res) => {
   try {
     const { offerId } = req.body;
@@ -224,14 +224,15 @@ const enableOffer = async (req, res) => {
 
 const getApplicableItems = async (req, res) => {
     try {
-        const { offerType } = req.params;
+      // console.log(req.params)
+        const { offerType } = req.params
         let items = [];
 
         switch (offerType.toLowerCase()) {
             case "product":
-                items = await Product.find({ isBlocked: false }).select("productName _id").lean();
+                items = await Product.find({ isDeleted: false }).select("productName _id").lean();
                 break;
-            case "category":
+            case "categories":
                 items = await Category.find({ isListed: true }).select("name _id").lean();
                 break;
             case "brand":
@@ -256,7 +257,7 @@ const validateTargetId = async (offerType, targetId) => {
       case "product":
         model = Product;
         break;
-      case "category":
+      case "categories":
         model = Category;
         break;
       case "brand":

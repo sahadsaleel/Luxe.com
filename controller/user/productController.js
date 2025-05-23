@@ -3,6 +3,7 @@ const User = require('../../models/userSchema');
 const Category = require('../../models/categorySchema');
 const Brand = require('../../models/brandSchema');
 const Wishlist = require('../../models/wishlistSchema');
+const Offer = require('../../models/offerSchema')
 
 
 
@@ -18,19 +19,56 @@ const productViewPage = async (req, res) => {
     if (userId) {
       userData = await User.findById(userId);
       wishlist = await Wishlist.findOne({ userId }).populate('products.productId');
-
       if (wishlist && wishlist.products.some(p => p.productId._id.toString() === productId)) {
         isInWishlist = true;
       }
     }
 
     const product = await Product.findById(productId)
-      .populate('productBrand')
-      .populate('productCategory');
+      .populate('productBrand', 'brandName offers')
+      .populate('productCategory', 'name offers')
+      .populate('offers');
 
     if (!product) {
       return res.redirect('/pageNotFound');
     }
+
+    const activeOffers = await Offer.find({
+      status: 'Active',
+      endDate: { $gt: new Date() },
+    });
+
+    const basePrice = product.variants && product.variants.length > 0
+      ? (product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice)
+      : 0;
+
+    let bestOffer = null;
+    let discountedPrice = basePrice;
+
+    const productOffers = activeOffers.filter(offer =>
+      offer.offerType === 'product' && offer.targetId.toString() === product._id.toString()
+    );
+    const categoryOffers = activeOffers.filter(offer =>
+      offer.offerType === 'categories' && product.productCategory && offer.targetId.toString() === product.productCategory._id.toString()
+    );
+    const brandOffers = activeOffers.filter(offer =>
+      offer.offerType === 'brand' && product.productBrand && offer.targetId.toString() === product.productBrand._id.toString()
+    );
+
+    const allOffers = [...productOffers, ...categoryOffers, ...brandOffers];
+    if (allOffers.length > 0) {
+      bestOffer = allOffers.reduce((best, offer) => (offer.discount > best.discount ? offer : best), allOffers[0]);
+      discountedPrice = basePrice - (basePrice * bestOffer.discount / 100);
+    }
+
+    const variants = product.variants.map(variant => {
+      const variantBasePrice = variant.salePrice > 0 ? variant.salePrice : variant.regularPrice;
+      const variantDiscountedPrice = bestOffer ? variantBasePrice - (variantBasePrice * bestOffer.discount / 100) : variantBasePrice;
+      return {
+        ...variant.toObject(),
+        discountedPrice: variantDiscountedPrice,
+      };
+    });
 
     const similarProducts = await Product.find({
       $or: [
@@ -41,18 +79,72 @@ const productViewPage = async (req, res) => {
       isDeleted: false,
       'variants.quantity': { $gt: 0 },
     })
-      .populate('productBrand')
-      .populate('productCategory')
+      .populate('productBrand', 'brandName')
+      .populate('productCategory', 'name')
       .limit(4)
       .sort({ createdAt: -1 });
 
+    const similarProductsWithOffers = similarProducts.map(product => {
+      const basePrice = product.variants && product.variants.length > 0
+        ? (product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice)
+        : 0;
+
+      let bestOffer = null;
+      let discountedPrice = basePrice;
+
+      const productOffers = activeOffers.filter(offer =>
+        offer.offerType === 'product' && offer.targetId.toString() === product._id.toString()
+      );
+      const categoryOffers = activeOffers.filter(offer =>
+        offer.offerType === 'categories' && product.productCategory && offer.targetId.toString() === product.productCategory._id.toString()
+      );
+      const brandOffers = activeOffers.filter(offer =>
+        offer.offerType === 'brand' && product.productBrand && offer.targetId.toString() === product.productBrand._id.toString()
+      );
+
+      const allOffers = [...productOffers, ...categoryOffers, ...brandOffers];
+      if (allOffers.length > 0) {
+        bestOffer = allOffers.reduce((best, offer) => (offer.discount > best.discount ? offer : best), allOffers[0]);
+        discountedPrice = basePrice - (basePrice * bestOffer.discount / 100);
+      }
+
+      return {
+        ...product.toObject(),
+        price: basePrice,
+        discountedPrice,
+        offers: productOffers,
+        category: {
+          ...product.productCategory,
+          offers: categoryOffers,
+        },
+        brand: {
+          ...product.productBrand,
+          offers: brandOffers,
+        },
+      };
+    });
+
     res.render('user/productViewPage', {
       user: userData || null,
-      product,
+      product: {
+        ...product.toObject(),
+        price: basePrice,
+        discountedPrice,
+        offers: productOffers,
+        category: {
+          ...product.productCategory,
+          offers: categoryOffers,
+        },
+        brand: {
+          ...product.productBrand,
+          offers: brandOffers,
+        },
+        variants,
+      },
       brand: product.productBrand || {},
       category: product.productCategory || {},
-      variants: product.variants || [],
-      similarProducts,
+      variants,
+      similarProducts: similarProductsWithOffers,
       wishlist: wishlist || { products: [] },
       isInWishlist,
     });
@@ -61,6 +153,7 @@ const productViewPage = async (req, res) => {
     res.redirect('/pageNotFound');
   }
 };
+
 
 const searchProduct = async (req, res) => {
   try {

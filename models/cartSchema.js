@@ -43,6 +43,14 @@ const cartSchema = new Schema({
     isGiftWrapped: {
       type: Boolean,
       default: false
+    },
+    appliedOffer: {
+      offerId: { type: Schema.Types.ObjectId, ref: 'Offer' },
+      offerName: { type: String },
+      offerType: { type: String, enum: ['product', 'categories', 'brand'] }, // No default
+      discountPercentage: { type: Number, min: 0 },
+      discountAmount: { type: Number, min: 0 },
+      endDate: { type: Date }
     }
   }],
   coupon: {

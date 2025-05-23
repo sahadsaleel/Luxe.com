@@ -3,6 +3,8 @@ const Category = require('../../models/categorySchema');
 const Product = require('../../models/productSchema');
 const Brand = require('../../models/brandSchema');
 const Wishlist = require('../../models/wishlistSchema')
+const Offer = require('../../models/offerSchema')
+const mongoose = require('mongoose');
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
@@ -284,28 +286,53 @@ const loadShopPage = async (req, res) => {
     };
 
     if (brands) {
-      const selectedBrands = brands.split(',').filter(id => id);
+      const selectedBrands = brands.split(',').filter(id => mongoose.Types.ObjectId.isValid(id));
       query.productBrand = { $in: selectedBrands };
       currentFilters.brandf = selectedBrands;
     }
 
     if (category) {
-      const selectedCategories = category.split(',').filter(id => id);
+      const selectedCategories = category.split(',').filter(id => mongoose.Types.ObjectId.isValid(id));
       query.productCategory = { $in: selectedCategories };
       currentFilters.categoryf = selectedCategories;
     }
 
     let products = await Product.find(query)
-      .populate('productBrand', 'brandName')
-      .populate('productCategory', 'name');
+      .populate('productBrand', 'brandName offers')
+      .populate('productCategory', 'name offers')
+      .populate('offers');
+
+    const activeOffers = await Offer.find({
+      status: 'Active',
+      endDate: { $gt: new Date() },
+    });
 
     products = products.map(product => {
-      const price = product.variants && product.variants.length > 0
+      const basePrice = product.variants && product.variants.length > 0
         ? (product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice)
         : 0;
 
-      if (!product.minSalePrice && price > 0) {
-        product.minSalePrice = price;
+      let bestOffer = null;
+      let discountedPrice = basePrice;
+
+      const productOffers = activeOffers.filter(offer =>
+        offer.offerType === 'product' && offer.targetId.toString() === product._id.toString()
+      );
+      const categoryOffers = activeOffers.filter(offer =>
+        offer.offerType === 'categories' && product.productCategory && offer.targetId.toString() === product.productCategory._id.toString()
+      );
+      const brandOffers = activeOffers.filter(offer =>
+        offer.offerType === 'brand' && product.productBrand && offer.targetId.toString() === product.productBrand._id.toString()
+      );
+
+      const allOffers = [...productOffers, ...categoryOffers, ...brandOffers];
+      if (allOffers.length > 0) {
+        bestOffer = allOffers.reduce((best, offer) => (offer.discount > best.discount ? offer : best), allOffers[0]);
+        discountedPrice = basePrice - (basePrice * bestOffer.discount / 100);
+      }
+
+      if (!product.minSalePrice && basePrice > 0) {
+        product.minSalePrice = basePrice;
         product.save().catch(err => console.error(`Error saving minSalePrice for product ${product._id}:`, err));
       }
 
@@ -314,16 +341,26 @@ const loadShopPage = async (req, res) => {
         name: product.productName || 'Unnamed Product',
         brand: product.productBrand ? product.productBrand.brandName : 'Unknown Brand',
         category: product.productCategory ? product.productCategory.name : 'Unknown Category',
-        price: price || 0,
+        price: basePrice || 0,
+        discountedPrice: discountedPrice || basePrice,
         image: product.productImage && product.productImage.length > 0 ? product.productImage[0] : '/img/placeholder.png',
         status: product.status,
+        offers: productOffers,
+        category: {
+          ...product.productCategory,
+          offers: categoryOffers,
+        },
+        brand: {
+          ...product.productBrand,
+          offers: brandOffers,
+        },
       };
     });
 
     if (priceFrom || priceTo) {
       const from = priceFrom ? parseFloat(priceFrom) : 0;
       const to = priceTo ? parseFloat(priceTo) : Infinity;
-      products = products.filter(product => product.price >= from && product.price <= to);
+      products = products.filter(product => product.discountedPrice >= from && product.discountedPrice <= to);
     }
 
     if (sort) {
@@ -332,9 +369,9 @@ const loadShopPage = async (req, res) => {
       } else if (sort === 'Z-A') {
         products.sort((a, b) => b.name.localeCompare(a.name));
       } else if (sort === 'price-low-high') {
-        products.sort((a, b) => a.price - b.price);
+        products.sort((a, b) => a.discountedPrice - b.discountedPrice);
       } else if (sort === 'price-high-low') {
-        products.sort((a, b) => b.price - a.price);
+        products.sort((a, b) => b.discountedPrice - a.discountedPrice);
       }
     }
 
@@ -355,7 +392,7 @@ const loadShopPage = async (req, res) => {
       categories: categoriesList,
       user: req.session.user ? await User.findById(req.session.user) : null,
       currentFilters,
-      wishlistProductIds, 
+      wishlistProductIds,
     });
   } catch (error) {
     console.error('Error in loadShopPage:', error);

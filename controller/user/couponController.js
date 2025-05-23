@@ -10,7 +10,7 @@ const validateCoupon = async (coupon, userId, cart) => {
   const subtotal = cart.items.reduce((sum, item) => {
     const itemPrice = Number(item.price) || 0;
     const isGiftWrapped = item.isGiftWrapped || false;
-    return sum + (isGiftWrapped ? itemPrice - 450 : itemPrice) * (item.quantity || 1);
+    return sum + (isGiftWrapped ? itemPrice - 100 : itemPrice) * (item.quantity || 1);
   }, 0);
 
   if (!coupon) {

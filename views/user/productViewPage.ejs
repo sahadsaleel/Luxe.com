@@ -103,7 +103,7 @@
       border: 1px solid #8a6a94;
       width: 120px;
       height: 120px;
-      background: rgba(255, 255, 255 свас, 0.3);
+      background: rgba(255, 255, 255, 0.3);
       cursor: none;
       display: none;
       border-radius: 50%;
@@ -318,6 +318,128 @@
       font-size: 1rem;
       background-color: #fff;
     }
+
+    /* Offer Badge Styles */
+    .offer-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      z-index: 1;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .offer-badge.categories {
+      background: linear-gradient(135deg, #4834d4, #686de0);
+    }
+
+    .offer-badge.brand {
+      background: linear-gradient(135deg, #00d2d3, #54a0ff);
+    }
+
+    .offer-badge.product {
+      background: linear-gradient(135deg, #ff9ff3, #f368e0);
+    }
+
+    /* Price Styles */
+    .price-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .current-price {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #2d3436;
+    }
+
+    .original-price {
+      font-size: 1.2rem;
+      color: #636e72;
+      text-decoration: line-through;
+    }
+
+    .discount-percent {
+      background: #00b894;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .savings-text {
+      color: #00b894;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* Offer Details */
+    .offer-details {
+      background: #f8f9fa;
+      padding: 8px;
+      margin: 8px 0;
+      border-radius: 4px;
+      border-left: 3px solid #00b894;
+    }
+
+    .offer-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #2d3436;
+      margin-bottom: 2px;
+    }
+
+    .offer-description {
+      font-size: 0.75rem;
+      color: #636e72;
+      line-height: 1.3;
+    }
+
+    .offer-validity {
+      font-size: 0.7rem;
+      color: #e17055;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    /* Limited Time Offer Animation */
+    .limited-time {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Countdown Timer */
+    .countdown-timer {
+      background: #2d3436;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .timer-digit {
+      background: #ff6b6b;
+      padding: 2px 4px;
+      border-radius: 2px;
+      margin: 0 1px;
+    }
   </style>
 </head>
 <body>
@@ -332,11 +454,24 @@
       </ol>
     </div>
   </div>
+  <% 
+    const allOffers = [
+      ...(product.offers || []),
+      ...(product.category?.offers || []),
+      ...(product.brand?.offers || [])
+    ];
+    const bestOffer = allOffers.length > 0 ? allOffers.reduce((best, offer) => (offer.discount > best.discount ? offer : best), allOffers[0]) : null;
+  %>
   <div class="row">
     <div class="col-md-6 mb-4">
       <div class="row">
         <div class="col-md-10 order-md-2">
           <div class="product-image-container">
+            <% if (bestOffer) { %>
+              <div class="offer-badge <%= bestOffer.offerType %> <%= bestOffer.discount >= 40 ? 'limited-time' : '' %>">
+                <%= bestOffer.discount %>% OFF
+              </div>
+            <% } %>
             <div class="product-image">
               <div class="img-zoom-lens" id="zoomLens"></div>
               <img src="<%= product.productImage[0] %>" alt="product image" class="img-fluid" id="productImg">
@@ -363,17 +498,56 @@
             <i class="<%= isInWishlist ? 'fa-solid fa-heart' : 'fa-regular fa-heart' %>" style="<%= isInWishlist ? 'color: red;' : '' %>"></i>
           </button>
         </div>
-        <div class="product-price" id="productPrice">
-          ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
+        <div class="price-container" id="productPrice">
+          <span class="current-price">₹<%= Math.round(product.variants[0].discountedPrice) %></span>
+          <% if (product.variants[0].discountedPrice < (product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice)) { %>
+            <span class="original-price">₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %></span>
+            <span class="discount-percent"><%= bestOffer ? bestOffer.discount : 0 %>% off</span>
+          <% } %>
         </div>
+        <% if (product.variants[0].discountedPrice < (product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice)) { %>
+          <div class="savings-text">
+            You save ₹<%= Math.round((product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice) - product.variants[0].discountedPrice) %>
+          </div>
+        <% } %>
+        <% if (bestOffer) { %>
+          <!-- <div class="offer-details">
+            <div class="offer-name"><%= bestOffer.offerName %></div>
+            <div class="offer-description"><%= bestOffer.description %></div>
+            <div class="offer-validity">
+              Valid till <%= new Date(bestOffer.endDate).toLocaleDateString('en-IN', { 
+                day: 'numeric', 
+                month: 'short', 
+                year: 'numeric' 
+              }) %>
+            </div>
+          </div> -->
+          <% if (bestOffer.discount >= 40) { %>
+            <div class="countdown-timer" id="timer-<%= product._id %>">
+              <span>Ends in: </span>
+              <span class="timer-digit" id="days-<%= product._id %>">00</span>d
+              <span class="timer-digit" id="hours-<%= product._id %>">00</span>h
+              <span class="timer-digit" id="minutes-<%= product._id %>">00</span>m
+              <span class="timer-digit" id="seconds-<%= product._id %>">00</span>s
+            </div>
+          <% } %>
+        <% } %>
         <div class="mt-4 mb-3">
           <p class="mb-2 fw-bold">Select Size:</p>
           <div class="size-option">
             <% product.variants.forEach((variant, index) => { %>
-              <input type="radio" name="size" id="size-<%= variant.size %>" value="<%= variant.size %>" <%= index === 0 ? 'checked' : '' %> data-quantity="<%= variant.quantity %>">
+              <input type="radio" name="size" id="size-<%= variant.size %>" value="<%= variant.size %>" <%= index === 0 ? 'checked' : '' %> 
+                     data-quantity="<%= variant.quantity %>" 
+                     data-discounted-price="<%= Math.round(variant.discountedPrice) %>" 
+                     data-base-price="<%= variant.salePrice > 0 ? variant.salePrice : variant.regularPrice %>">
               <label for="size-<%= variant.size %>">
                 <span><%= variant.size %>ml</span>
-                <span>₹<%= variant.salePrice > 0 ? variant.salePrice : variant.regularPrice %></span>
+                <span>₹<%= Math.round(variant.discountedPrice) %></span>
+                <% if (variant.discountedPrice < (variant.salePrice > 0 ? variant.salePrice : variant.regularPrice)) { %>
+                  <span style="font-size: 0.7rem; color: #636e72; text-decoration: line-through;">
+                    ₹<%= variant.salePrice > 0 ? variant.salePrice : variant.regularPrice %>
+                  </span>
+                <% } %>
               </label>
             <% }) %>
           </div>
@@ -534,6 +708,19 @@
             <div class="col-md-3 mb-4">
               <div class="similar-product-card h-100">
                 <div class="product-image-container">
+                  <% 
+                    const similarAllOffers = [
+                      ...(product.offers || []),
+                      ...(product.category?.offers || []),
+                      ...(product.brand?.offers || [])
+                    ];
+                    const similarBestOffer = similarAllOffers.length > 0 ? similarAllOffers.reduce((best, offer) => (offer.discount > best.discount ? offer : best), similarAllOffers[0]) : null;
+                  %>
+                  <% if (similarBestOffer) { %>
+                    <div class="offer-badge <%= similarBestOffer.offerType %> <%= similarBestOffer.discount >= 40 ? 'limited-time' : '' %>">
+                      <%= similarBestOffer.discount %>% OFF
+                    </div>
+                  <% } %>
                   <a href="/productViewPage?id=<%= product._id %>">
                     <img src="<%= product.productImage[0] || '/images/placeholder.jpg' %>" alt="<%= product.productName %>" class="img-fluid">
                   </a>
@@ -544,9 +731,14 @@
                 <div class="product-info p-3">
                   <h5 class="product-title"><%= product.productName %></h5>
                   <div class="similar-product-price mb-2">
-                    ₹<%= product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice %>
+                    <span class="current-price">₹<%= Math.round(product.discountedPrice) %></span>
+                    <% if (product.price !== product.discountedPrice) { %>
+                      <span class="original-price">₹<%= product.price %></span>
+                    <% } %>
                   </div>
-                  <button class="btn btn-add-to-bag w-100">Add to bag</button>
+                  <button class="btn btn-add-to-bag w-100" data-product-id="<%= product._id %>" onclick="addToCart('<%= product._id %>')">
+                    Add to bag
+                  </button>
                 </div>
               </div>
             </div>
@@ -571,46 +763,46 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script>
   async function toggleWishlist(productId, button) {
-      try {
-        const icon = button.querySelector('i');
-        const isInWishlist = icon.classList.contains('fa-solid');
-        button.disabled = true;
+    try {
+      const icon = button.querySelector('i');
+      const isInWishlist = icon.classList.contains('fa-solid');
+      button.disabled = true;
 
-        const url = isInWishlist ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'same-origin',
-        });
+      const url = isInWishlist ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+      });
 
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      const result = await response.json();
 
-        if (result.success) {
-          if (isInWishlist) {
-            icon.classList.remove('fa-solid', 'fa-heart');
-            icon.classList.add('fa-regular', 'fa-heart');
-            icon.style.color = '';
-            showToast('Removed from wishlist', 'success');
-          } else {
-            icon.classList.remove('fa-regular', 'fa-heart');
-            icon.classList.add('fa-solid', 'fa-heart');
-            icon.style.color = 'red';
-            showToast('Added to wishlist', 'success');
-          }
+      if (result.success) {
+        if (isInWishlist) {
+          icon.classList.remove('fa-solid', 'fa-heart');
+          icon.classList.add('fa-regular', 'fa-heart');
+          icon.style.color = '';
+          showToast('Removed from wishlist', 'success');
         } else {
-          if (result.message.includes('log in')) {
-            window.location.href = '/login';
-          } else {
-            showToast(result.message, 'error');
-          }
+          icon.classList.remove('fa-regular', 'fa-heart');
+          icon.classList.add('fa-solid', 'fa-heart');
+          icon.style.color = 'red';
+          showToast('Added to wishlist', 'success');
         }
-      } catch (error) {
-        console.error('Error toggling wishlist:', error);
-        showToast('Failed to update wishlist. Please try again.', 'error');
-      } finally {
-        button.disabled = false;
+      } else {
+        if (result.message.includes('log in')) {
+          window.location.href = '/login';
+        } else {
+          showToast(result.message, 'error');
+        }
       }
+    } catch (error) {
+      console.error('Error toggling wishlist:', error);
+      showToast('Failed to update wishlist. Please try again.', 'error');
+    } finally {
+      button.disabled = false;
+    }
   }
 
   function showToast(message, icon = 'success') {
@@ -722,8 +914,15 @@
         const selectedSize = this.value;
         const selectedVariant = variants.find(v => v.size.toString() === selectedSize);
         if (selectedVariant) {
-          const price = selectedVariant.salePrice > 0 ? selectedVariant.salePrice : selectedVariant.regularPrice;
-          priceElement.textContent = `₹${price}`;
+          const price = selectedVariant.discountedPrice;
+          const basePrice = selectedVariant.salePrice > 0 ? selectedVariant.salePrice : selectedVariant.regularPrice;
+          priceElement.innerHTML = `
+            <span class="current-price">₹${Math.round(price)}</span>
+            ${price < basePrice ? `
+              <span class="original-price">₹${basePrice}</span>
+              <span class="discount-percent">${Math.round((basePrice - price) / basePrice * 100)}% off</span>
+            ` : ''}
+          `;
           updateQuantityButtons(selectedVariant.quantity);
         }
       });
@@ -760,9 +959,38 @@
     });
 
     // Initialize quantity buttons based on default selected size
-    const defaultSize = document.querySelector('input[name="size"]:checked').value;
-    const defaultVariant = variants.find(v => v.size.toString() === defaultSize);
-    updateQuantityButtons(defaultVariant.quantity);
+    const defaultSize = document.querySelector('input[name="size"]:checked')?.value;
+    if (defaultSize) {
+      const defaultVariant = variants.find(v => v.size.toString() === defaultSize);
+      updateQuantityButtons(defaultVariant.quantity);
+    }
+
+    // Countdown Timer Logic
+    <% if (bestOffer && bestOffer.discount >= 40) { %>
+      const endDate = new Date('<%= bestOffer.endDate %>').getTime();
+      const timerElement = document.getElementById('timer-<%= product._id %>');
+      if (timerElement) {
+        const timer = setInterval(function() {
+          const now = new Date().getTime();
+          const distance = endDate - now;
+
+          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+          document.getElementById('days-<%= product._id %>').textContent = days.toString().padStart(2, '0');
+          document.getElementById('hours-<%= product._id %>').textContent = hours.toString().padStart(2, '0');
+          document.getElementById('minutes-<%= product._id %>').textContent = minutes.toString().padStart(2, '0');
+          document.getElementById('seconds-<%= product._id %>').textContent = seconds.toString().padStart(2, '0');
+
+          if (distance < 0) {
+            clearInterval(timer);
+            timerElement.textContent = 'Offer Expired';
+          }
+        }, 1000);
+      }
+    <% } %>
 
     const slider = document.querySelector('.similar-products-slider');
     const prevBtn = document.getElementById('prevBtn');

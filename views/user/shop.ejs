@@ -19,6 +19,7 @@
       font-size: 1.2rem;
       color: #8a6a94;
       transition: color 0.3s ease;
+      z-index: 2;
     }
     .wishlist-btn:hover {
       color: #1a1a1a;
@@ -31,6 +32,182 @@
     }
     .product-card {
       position: relative;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: white;
+    }
+    .product-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* Offer Badge Styles */
+    .offer-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      z-index: 1;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .offer-badge.category {
+      background: linear-gradient(135deg, #4834d4, #686de0);
+    }
+
+    .offer-badge.brand {
+      background: linear-gradient(135deg, #00d2d3, #54a0ff);
+    }
+
+    .offer-badge.product {
+      background: linear-gradient(135deg, #ff9ff3, #f368e0);
+    }
+
+    /* Price Styles */
+    .price-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .current-price {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #2d3436;
+    }
+
+    .original-price {
+      font-size: 0.9rem;
+      color: #636e72;
+      text-decoration: line-through;
+    }
+
+    .discount-percent {
+      background: #00b894;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .savings-text {
+      color: #00b894;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* Offer Details */
+    .offer-details {
+      background: #f8f9fa;
+      padding: 8px;
+      margin: 8px 0;
+      border-radius: 4px;
+      border-left: 3px solid #00b894;
+    }
+
+    .offer-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #2d3436;
+      margin-bottom: 2px;
+    }
+
+    .offer-description {
+      font-size: 0.75rem;
+      color: #636e72;
+      line-height: 1.3;
+    }
+
+    .offer-validity {
+      font-size: 0.7rem;
+      color: #e17055;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    /* Limited Time Offer Animation */
+    .limited-time {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Deal of the Day Styles */
+    .deal-of-day {
+      border: 2px solid #ff6b6b;
+      position: relative;
+    }
+
+    .deal-of-day::before {
+      content: "DEAL OF THE DAY";
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      right: -1px;
+      background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+      color: white;
+      text-align: center;
+      padding: 4px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    .deal-of-day .product-image {
+      margin-top: 20px;
+    }
+
+    /* Flash Sale Styles */
+    .flash-sale {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flash-sale::after {
+      content: "⚡ FLASH SALE";
+      position: absolute;
+      top: 35px;
+      left: -30px;
+      background: #fd79a8;
+      color: white;
+      padding: 4px 40px;
+      transform: rotate(-45deg);
+      font-size: 0.7rem;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* Countdown Timer */
+    .countdown-timer {
+      background: #2d3436;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .timer-digit {
+      background: #ff6b6b;
+      padding: 2px 4px;
+      border-radius: 2px;
+      margin: 0 1px;
     }
   </style>
 </head>
@@ -62,6 +239,7 @@
       SORT
     </button>
   </nav>
+  
   <div class="modal filter-modal" id="filterModal">
     <div class="modal-header">
       <h2>SHOW FILTERS</h2>
@@ -112,6 +290,7 @@
       <button class="show-button" id="applyFilters">SHOW PRODUCTS</button>
     </div>
   </div>
+  
   <div class="modal sort-modal" id="sortModal">
     <div class="modal-header">
       <h2>SORT</h2>
@@ -147,29 +326,123 @@
       <button class="show-button" id="applySort">SHOW PRODUCTS</button>
     </div>
   </div>
+  
   <div class="hero">
     <div class="hero-image">
       <img src="/img/image13.png" alt="banner_image">
     </div>
   </div>
+  
   <div class="main-content">
     <h2 class="section-title">Exclusive To You</h2>
     <div class="celebrity-products">
       <% if (products && products.length > 0) { %>
         <% products.forEach(product => { %>
           <% if (product.status === 'listed') { %>
-            <div class="product-card">
+            <%
+              // Calculate offer details
+              let bestOffer = null;
+              let discountedPrice = product.price;
+              let hasOffer = false;
+              
+              // Check for product-specific offers
+              if (product.offers && product.offers.length > 0) {
+                bestOffer = product.offers.find(offer => 
+                  offer.status === 'Active' && 
+                  new Date(offer.endDate) > new Date()
+                );
+              }
+              
+              // Check for category offers
+              if (!bestOffer && product.category && product.category.offers && product.category.offers.length > 0) {
+                bestOffer = product.category.offers.find(offer => 
+                  offer.status === 'Active' && 
+                  new Date(offer.endDate) > new Date()
+                );
+              }
+              
+              // Check for brand offers
+              if (!bestOffer && product.brand && product.brand.offers && product.brand.offers.length > 0) {
+                bestOffer = product.brand.offers.find(offer => 
+                  offer.status === 'Active' && 
+                  new Date(offer.endDate) > new Date()
+                );
+              }
+              
+              if (bestOffer) {
+                hasOffer = true;
+                discountedPrice = product.price - (product.price * bestOffer.discount / 100);
+              }
+              
+              // Determine special deal classes
+              let cardClasses = 'product-card';
+              if (hasOffer && bestOffer.discount >= 50) {
+                cardClasses += ' deal-of-day';
+              } else if (hasOffer && bestOffer.discount >= 30) {
+                cardClasses += ' flash-sale';
+              }
+            %>
+            
+            <div class="<%= cardClasses %>">
+              <!-- Offer Badge -->
+              <% if (hasOffer) { %>
+                <div class="offer-badge <%= bestOffer.offerType %> <%= bestOffer.discount >= 40 ? 'limited-time' : '' %>">
+                  <%= bestOffer.discount %>% OFF
+                </div>
+              <% } %>
+              
+              <!-- Wishlist Button -->
               <button class="wishlist-btn" onclick="toggleWishlist('<%= product.id %>', this)">
                 <i class="<%= wishlistProductIds.includes(product.id.toString()) ? 'fa-solid fa-heart' : 'fa-regular fa-heart' %>" style="<%= wishlistProductIds.includes(product.id.toString()) ? 'color: red;' : '' %>"></i>
               </button>
+              
               <div class="product-image">
                 <a href="/productViewPage?id=<%= product.id %>">
                   <img src="<%= product.image || '/img/placeholder.png' %>" alt="<%= product.name || 'Product Image' %>">
                 </a>
               </div>
+              
               <div class="product-info">
                 <h3 class="product-title"><%= product.name || 'Unnamed Product' %></h3>
-                <p class="product-price">₹<%= product.price || 'N/A' %></p>
+                
+                <div class="price-container">
+                  <span class="current-price">₹<%= Math.round(discountedPrice) %></span>
+                  <% if (hasOffer) { %>
+                    <span class="original-price">₹<%= product.price %></span>
+                    <span class="discount-percent"><%= bestOffer.discount %>% off</span>
+                  <% } %>
+                </div>
+                
+                <% if (hasOffer) { %>
+                  <div class="savings-text">
+                    You save ₹<%= Math.round(product.price - discountedPrice) %>
+                  </div>
+                <% } %>
+                
+                <% if (hasOffer) { %>
+                  <!-- <div class="offer-details">
+                    <div class="offer-name"><%= bestOffer.offerName %></div>
+                    <div class="offer-description"><%= bestOffer.description %></div>
+                    <div class="offer-validity">
+                      Valid till <%= new Date(bestOffer.endDate).toLocaleDateString('en-IN', { 
+                        day: 'numeric', 
+                        month: 'short', 
+                        year: 'numeric' 
+                      }) %>
+                    </div>
+                  </div> -->
+                  
+                  <% if (bestOffer.discount >= 40) { %>
+                    <div class="countdown-timer" id="timer-<%= product.id %>">
+                      <span>Ends in: </span>
+                      <span class="timer-digit" id="days-<%= product.id %>">00</span>d
+                      <span class="timer-digit" id="hours-<%= product.id %>">00</span>h
+                      <span class="timer-digit" id="minutes-<%= product.id %>">00</span>m
+                      <span class="timer-digit" id="seconds-<%= product.id %>">00</span>s
+                    </div>
+                  <% } %>
+                <% } %>
+                
                 <button onclick="addToCart('<%= product.id %>')" class="add-to-cart">ADD TO BAG</button>
               </div>
             </div>
@@ -183,9 +456,65 @@
       <% } %>
     </div>
   </div>
+  
   <%- include("../../views/partials/user/footer") %>
+  
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- <script>
+  <script>
+    function startCountdown(productId, endDate) {
+      const timer = setInterval(() => {
+        const now = new Date().getTime();
+        const end = new Date(endDate).getTime();
+        const distance = end - now;
+
+        if (distance < 0) {
+          clearInterval(timer);
+          document.getElementById(`timer-${productId}`).innerHTML = "EXPIRED";
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById(`days-${productId}`).textContent = days.toString().padStart(2, '0');
+        document.getElementById(`hours-${productId}`).textContent = hours.toString().padStart(2, '0');
+        document.getElementById(`minutes-${productId}`).textContent = minutes.toString().padStart(2, '0');
+        document.getElementById(`seconds-${productId}`).textContent = seconds.toString().padStart(2, '0');
+      }, 1000);
+    }
+
+    // Initialize countdowns for products with limited time offers
+    <% products.forEach(product => { %>
+      <% if (product.status === 'listed') { %>
+        <%
+          let bestOffer = null;
+          if (product.offers && product.offers.length > 0) {
+            bestOffer = product.offers.find(offer => 
+              offer.status === 'Active' && 
+              new Date(offer.endDate) > new Date()
+            );
+          }
+          if (!bestOffer && product.category && product.category.offers && product.category.offers.length > 0) {
+            bestOffer = product.category.offers.find(offer => 
+              offer.status === 'Active' && 
+              new Date(offer.endDate) > new Date()
+            );
+          }
+          if (!bestOffer && product.brand && product.brand.offers && product.brand.offers.length > 0) {
+            bestOffer = product.brand.offers.find(offer => 
+              offer.status === 'Active' && 
+              new Date(offer.endDate) > new Date()
+            );
+          }
+        %>
+        <% if (bestOffer && bestOffer.discount >= 40) { %>
+          startCountdown('<%= product.id %>', '<%= bestOffer.endDate %>');
+        <% } %>
+      <% } %>
+    <% }) %>
+
     async function fetchProducts() {
       const brands = Array.from(document.querySelectorAll('#filterModal input[name="brandf"]:checked'))
         .map(input => input.value);
@@ -263,7 +592,49 @@
     }
 
     async function addToCart(productId) {
-      alert('Add to cart functionality not implemented yet.');
+      try {
+        const response = await fetch(`/api/product/${productId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+        });
+
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const product = await response.json();
+
+        if (!product.variants || product.variants.length === 0) {
+          showToast('No variants available for this product.', 'error');
+          return;
+        }
+        const defaultVariant = product.variants.find(v => v.quantity > 0);
+        if (!defaultVariant) {
+          showToast('Product is out of stock.', 'error');
+          return;
+        }
+
+        const addToCartResponse = await fetch('/cart/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId, variantId: defaultVariant._id }),
+          credentials: 'same-origin',
+        });
+
+        const result = await addToCartResponse.json();
+
+        if (result.success) {
+          showToast('Product added to cart!', 'success');
+          window.location.href = '/cart';
+        } else {
+          if (result.message.includes('log in')) {
+            window.location.href = '/login';
+          } else {
+            showToast(result.message, 'error');
+          }
+        }
+      } catch (error) {
+        console.error('Error adding to cart:', error);
+        showToast('Failed to add to cart. Please try again.', 'error');
+      }
     }
 
     document.querySelector('#applyFilters').addEventListener('click', () => {
@@ -309,52 +680,6 @@
     function closeModal(modalId) {
       document.querySelector(modalId).style.display = 'none';
     }
-    async function addToCart(productId) {
-  try {
-    const response = await fetch(`/api/product/${productId}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
-    });
-
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const product = await response.json();
-
-    if (!product.variants || product.variants.length === 0) {
-      showToast('No variants available for this product.', 'error');
-      return;
-    }
-    const defaultVariant = product.variants.find(v => v.quantity > 0);
-    if (!defaultVariant) {
-      showToast('Product is out of stock.', 'error');
-      return;
-    }
-
-    const addToCartResponse = await fetch('/cart/add', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId, variantId: defaultVariant._id }),
-      credentials: 'same-origin',
-    });
-
-    const result = await addToCartResponse.json();
-
-    if (result.success) {
-      showToast('Product added to cart!', 'success');
-      window.location.href = '/cart';
-    } else {
-      if (result.message.includes('log in')) {
-        window.location.href = '/login';
-      } else {
-        showToast(result.message, 'error');
-      }
-    }
-  } catch (error) {
-    console.error('Error adding to cart:', error);
-    showToast('Failed to add to cart. Please try again.', 'error');
-  }
-}
-</script>
-
+  </script>
 </body>
 </html>

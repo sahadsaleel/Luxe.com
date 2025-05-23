@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const variantSchema = new mongoose.Schema({
   size: { type: String, required: true },
-  regularPrice: { type: Number, required: true },
+ 
   salePrice: { type: Number, default: 0 },
   quantity: { type: Number, required: true },
 });
@@ -44,10 +44,7 @@ const productSchema = new mongoose.Schema({
       message: 'At least one variant is required',
     },
   },
-  minSalePrice: {
-    type: Number,
-    default: 0,
-  },
+
   status: {
     type: String,
     enum: ['listed', 'unlisted'],
@@ -57,7 +54,10 @@ const productSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-}, { timestamps: true });
+  offers: [{ 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Offer' }], 
+  }, { timestamps: true });
 
 const Product = mongoose.model('Product', productSchema);
 module.exports = Product;

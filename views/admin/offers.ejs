@@ -88,7 +88,6 @@
         th {
             background-color: #7db87d !important;
             color: #fff;
-            padding: 20px !important;
         }
         .action-btn {
             background: none;
@@ -246,7 +245,7 @@
                                 <select class="form-select" id="OfferType" name="offerType">
                                     <option value="" disabled selected>Select offer type</option>
                                     <option value="product">Product</option>
-                                    <option value="category">Category</option>
+                                    <option value="categories">Category</option>
                                     <option value="brand">Brand</option>
                                 </select>
                                 <div id="OfferTypeError" class="error-message"></div>
@@ -313,7 +312,7 @@
                                 <select class="form-select" id="eofferType" name="eofferType">
                                     <option value="" disabled>Select offer type</option>
                                     <option value="product">Product</option>
-                                    <option value="category">Category</option>
+                                    <option value="categories">Category</option>
                                     <option value="brand">Brand</option>
                                 </select>
                                 <div id="editOfferTypeError" class="error-message"></div>
@@ -429,7 +428,6 @@
 
                 return isValid;
             };
-
             const updateApplicableItems = async (selectId, offerType) => {
                 const select = document.getElementById(selectId);
                 if (!select) {
@@ -438,7 +436,7 @@
                 }
                 select.innerHTML = '<option value="" disabled selected>Select applicable item</option>';
                 try {
-                    const response = await fetch(`/admin/${offerType || 'category'}`);
+                    const response = await fetch(`/admin/${offerType }`);
                     if (!response.ok) throw new Error(`Failed to fetch ${offerType} items`);
                     const items = await response.json();
                     items.forEach(item => {
@@ -457,7 +455,6 @@
                 }
             };
 
-            // Event Listeners
             addOfferBtn.addEventListener('click', () => {
                 addOfferForm.reset();
                 clearErrors(addOfferForm);
@@ -466,7 +463,9 @@
                 futureDate.setDate(today.getDate() + 30);
                 document.getElementById('StartDate').value = today.toISOString().split('T')[0];
                 document.getElementById('EndDate').value = futureDate.toISOString().split('T')[0];
-                updateApplicableItems('ItemSelect', 'category');
+                const offerType=document.getElementById("OfferType").value ||'categories'
+
+                updateApplicableItems('ItemSelect',offerType );
                 addOfferModal.show();
             });
 

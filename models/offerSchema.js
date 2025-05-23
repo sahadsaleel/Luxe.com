@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-
 const offerSchema = new Schema({
   offerName: {
     type: String,
@@ -40,12 +39,12 @@ const offerSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ["Active", "Disabled", "Expired"],
+    enum: ["Active", "Inactive"],
     default: "Active",
   },
   offerType: {
     type: String,
-    enum: ["product", "category", "brand"],
+    enum: ["product", "categories", "brand"],
     required: [true, "Offer type is required"],
   },
   targetId: {
@@ -53,25 +52,12 @@ const offerSchema = new Schema({
     required: [true, "Target ID is required"],
     refPath: "offerType",
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
-offerSchema.pre("save", function (next) {
-  this.updatedAt = Date.now();
-  next();
-});
+}, { timestamps: true });
 
 offerSchema.pre("save", function (next) {
   const now = new Date();
-  if (this.endDate < now && this.status !== "Disabled") {
-    this.status = "Expired";
+  if (this.endDate < now && this.status === "Active") {
+    this.status = "Inactive";
   }
   next();
 });

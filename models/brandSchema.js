@@ -19,6 +19,7 @@ const brandSchema = new Schema({
         type: Boolean,
         default: false,
       },
+      offers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Offer' }],
       createdAt: {
         type: Date,
         default: Date.now,
