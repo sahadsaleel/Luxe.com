@@ -4,943 +4,197 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/adminDashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .dashboard-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            padding-top: 30px;
-        }
-
-        .left-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding: 14px;
-        }
-
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding: 30px;
-        }
-
-        .download-section {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
-
-        .download-button {
-            background-color: #6fbf73;
-            color: #000;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .download-button i {
-            font-size: 1.2rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-        }
-        .stat-card {
-            background-color: #e6e9ff;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-
-        .stat-title {
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 5px;
-        }
-
-        .stat-value {
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .activity-section {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .activity-legend {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 15px;
-            justify-content: flex-end;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
-        }
-
-        .legend-color {
-            width: 12px;
-            height: 12px;
-        }
-
-        .chart-container {
-            height: 200px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .chart-column {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex-grow: 1;
-        }
-
-        .bar-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 2px;
-        }
-
-        .bar {
-            width: 20px;
-            background-color: #000;
-        }
-
-        .bar.this-year {
-            background-color: #6fbf73;
-        }
-
-        .month-label {
-            margin-top: 10px;
-            font-size: 12px;
-        }
-
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .summary-card {
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            position: relative;
-        }
-
-        .summary-card:nth-child(1) {
-            background-color: #222;
-            color: white;
-        }
-
-        .summary-card:nth-child(2) {
-            background-color: #00bcd4;
-            color: white;
-        }
-
-        .summary-card:nth-child(3) {
-            background-color: #f44336;
-            color: white;
-        }
-
-        .card-icon {
-            font-size: 24px;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card-details {
-            flex-grow: 1;
-        }
-
-        .card-title {
-            font-size: 12px;
-            margin-bottom: 5px;
-        }
-
-        .card-value {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .card-subtitle {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .mini-chart {
-            display: flex;
-            gap: 2px;
-            height: 40px;
-            align-items: flex-end;
-        }
-
-        .mini-bar {
-            width: 4px;
-            background-color: rgba(255, 255, 255, 0.5);
-        }
-
-        .products-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .products-table th {
-            background-color: #6fbf73;
-            color: #000;
-            text-align: left;
-            padding: 12px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .products-table td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
-            background-color: #e0e0e0;
-        }
-
-        .products-table tr:nth-child(odd) td {
-            background-color: #d6d6d6;
-        }
-
-        .product-image {
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .product-image img {
-            max-width: 100%;
-            max-height: 100%;
-        }
-
-        .server-status {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .status-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            align-self: flex-start;
-        }
-
-        .gauge-container {
-            position: relative;
-            width: 150px;
-            height: 75px;
-            margin-bottom: 10px;
-        }
-
-        .gauge-bg {
-            position: absolute;
-            width: 150px;
-            height: 75px;
-            border-top-left-radius: 75px;
-            border-top-right-radius: 75px;
-            background-color: #f5f5f5;
-            overflow: hidden;
-        }
-
-        .gauge-fill {
-            position: absolute;
-            width: 150px;
-            height: 75px;
-            border-top-left-radius: 75px;
-            border-top-right-radius: 75px;
-            background-color: #6fbf73;
-            clip-path: polygon(0 100%, 100% 100%, 100% 20%, 0 20%);
-        }
-
-        .gauge-percentage {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -20%);
-            font-size: 24px;
-            font-weight: bold;
-            color: #6fbf73;
-        }
-
-        .server-info {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            margin-top: 10px;
-            font-size: 12px;
-        }
-
-        .server-detail {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .detail-label {
-            font-size: 12px;
-            color: #777;
-        }
-
-        .detail-value {
-            font-weight: bold;
-        }
-
-        .reviews-section {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .review {
-            display: flex;
-            gap: 15px;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .review-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            overflow: hidden;
-            background-color: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .review-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .review-content {
-            flex-grow: 1;
-        }
-
-        .reviewer-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .rating {
-            color: #ffc107;
-            margin-bottom: 5px;
-        }
-
-        .review-text {
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .review-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-button {
-            border: none;
-            background: none;
-            color: #777;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .action-button.accept {
-            color: #6fbf73;
-        }
-
-        .activity-timeline {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .timeline {
-            position: relative;
-            margin-top: 20px;
-            padding-left: 30px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 15px;
-            height: 100%;
-            width: 2px;
-            background-color: #ddd;
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 30px;
-        }
-
-        .timeline-icon {
-            position: absolute;
-            left: -30px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: #6fbf73;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgb(0, 0, 0);
-        }
-
-        .timeline-content {
-            padding-left: 10px;
-        }
-
-        .timeline-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .timeline-time {
-            font-size: 12px;
-            color: #777;
-        }
-
-        .tooltip {
-            position: absolute;
-            background-color: #333;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            z-index: 10;
-        }
-
-        .user-avatars {
-            display: flex;
-            margin-top: 20px;
-        }
-
-        .user-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid white;
-            margin-left: -10px;
-        }
-
-        .user-avatar:first-child {
-            margin-left: 0;
-        }
-
-        .user-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        @media (max-width: 1200px) {
-            .dashboard-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .summary-cards {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
-<body>
+<body class="dashboard-container">
     <%- include('../../views/partials/admin/header') %>
-    <div class="dashboard-container">
-        <div class="left-panel">
-            <div class="download-section">
-                <button class="download-button">
-                    <i class="fas fa-download"></i>
-                    DOWNLOAD REPORT
-                </button>
-            </div>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-title">Total Users</div>
-                    <div class="stat-value">93</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-box"></i>
-                    </div>
-                    <div class="stat-title">Items Sold</div>
-                    <div class="stat-value">123</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="stat-title">Total Sales</div>
-                    <div class="stat-value">₹90700.00</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-title">Pending Orders</div>
-                    <div class="stat-value">29</div>
-                </div>
-            </div>
-            
-            <div class="activity-section">
-                <div class="section-title">Activity</div>
-                
-                <div class="activity-legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #000;"></div>
-                        Last Year
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #6fbf73;"></div>
-                        This Year
-                    </div>
-                </div>
-                
-                <div class="chart-container">
-                    <div class="chart-column">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 75%;"></div>
-                            <div class="bar this-year" style="height: 85%;"></div>
-                        </div>
-                        <div class="month-label">Jan</div>
-                    </div>
-                    <div class="chart-column">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 35%;"></div>
-                            <div class="bar this-year" style="height: 45%;"></div>
-                        </div>
-                        <div class="month-label">Feb</div>
-                    </div>
-                    <div class="chart-column">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 30%;"></div>
-                            <div class="bar this-year" style="height: 55%;"></div>
-                        </div>
-                        <div class="month-label">Mar</div>
-                    </div>
-                    <div class="chart-column">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 55%;"></div>
-                            <div class="bar this-year" style="height: 60%;"></div>
-                        </div>
-                        <div class="month-label">Apr</div>
-                    </div>
-                    <div class="chart-column">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 20%;"></div>
-                            <div class="bar this-year" style="height: 35%;"></div>
-                        </div>
-                        <div class="month-label">May</div>
-                    </div>
-                    <div class="chart-column">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 40%;"></div>
-                            <div class="bar this-year" style="height: 45%;"></div>
-                        </div>
-                        <div class="month-label">Jun</div>
-                    </div>
-                    <div class="chart-column">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 60%;"></div>
-                            <div class="bar this-year" style="height: 85%;"></div>
-                        </div>
-                        <div class="month-label">Jul</div>
-                        <div class="tooltip" style="display: none;">₹1,702</div>
-                    </div>
-                    <div class="chart-column">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 40%;"></div>
-                            <div class="bar this-year" style="height: 55%;"></div>
-                        </div>
-                        <div class="month-label">Aug</div>
-                    </div>
-                    <div class="chart-column">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 40%;"></div>
-                            <div class="bar this-year" style="height: 30%;"></div>
-                        </div>
-                        <div class="month-label">Sep</div>
-                    </div>
-                    <div class="chart-column">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 70%;"></div>
-                            <div class="bar this-year" style="height: 60%;"></div>
-                        </div>
-                        <div class="month-label">Oct</div>
-                    </div>
-                    <div class="chart-column">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 30%;"></div>
-                            <div class="bar this-year" style="height: 45%;"></div>
-                        </div>
-                        <div class="month-label">Nov</div>
-                    </div>
-                    <div class="chart-column">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 40%;"></div>
-                            <div class="bar this-year" style="height: 55%;"></div>
-                        </div>
-                        <div class="month-label">Dec</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="summary-cards">
-                <div class="summary-card">
-                    <div class="card-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="card-details">
-                        <div class="card-title">Total Sales</div>
-                        <div class="card-value">₹72324</div>
-                        <div class="card-subtitle">+3.5% from last month</div>
-                    </div>
-                    <div class="mini-chart">
-                        <div class="mini-bar" style="height: 50%;"></div>
-                        <div class="mini-bar" style="height: 70%;"></div>
-                        <div class="mini-bar" style="height: 30%;"></div>
-                        <div class="mini-bar" style="height: 90%;"></div>
-                        <div class="mini-bar" style="height: 60%;"></div>
-                    </div>
-                </div>
-                
-                <div class="summary-card">
-                    <div class="card-icon">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <div class="card-details">
-                        <div class="card-title">Income</div>
-                        <div class="card-value">₹30422.00</div>
-                        <div class="card-subtitle">Average from last month</div>
-                    </div>
-                    <div class="mini-chart">
-                        <div class="mini-bar" style="height: 60%;"></div>
-                        <div class="mini-bar" style="height: 40%;"></div>
-                        <div class="mini-bar" style="height: 70%;"></div>
-                        <div class="mini-bar" style="height: 50%;"></div>
-                        <div class="mini-bar" style="height: 80%;"></div>
-                    </div>
-                </div>
-                
-                <div class="summary-card">
-                    <div class="card-icon">
-                        <i class="fas fa-shopping-cart"></i>
-                    </div>
-                    <div class="card-details">
-                        <div class="card-title">Purchase This Month</div>
-                        <div class="card-value">₹53300</div>
-                        <div class="card-subtitle">Total purchases</div>
-                    </div>
-                    <div class="mini-chart">
-                        <div class="mini-bar" style="height: 70%;"></div>
-                        <div class="mini-bar" style="height: 60%;"></div>
-                        <div class="mini-bar" style="height: 80%;"></div>
-                        <div class="mini-bar" style="height: 40%;"></div>
-                        <div class="mini-bar" style="height: 90%;"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <table class="products-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>PRODUCT IMAGE</th>
-                        <th>PRODUCT NAME</th>
-                        <th>CATEGORY</th>
-                        <th>AMOUNT</th>
-                        <th>REVENUE</th>
-                        <th>QTY SOLD</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>#31237</td>
-                        <td>
-                            <div class="product-image">
-                               <img src="" alt="">
-                            </div>
-                        </td>
-                        <td>Outlast</td>
-                        <td>perfume</td>
-                        <td>5240 ₹</td>
-                        <td>102240 ₹</td>
-                        <td>227</td>
-                    </tr>
-                    <tr>
-                        <td>#31238</td>
-                        <td>
-                            <div class="product-image">
-                               
-                            </div>
-                        </td>
-                        <td>Aventus for Her</td>
-                        <td>perfume</td>
-                        <td>18500 ₹</td>
-                        <td>22090 ₹</td>
-                        <td>158</td>
-                    </tr>
-                    <tr>
-                        <td>#31239</td>
-                        <td>
-                            <div class="product-image">
-                               
-                            </div>
-                        </td>
-                        <td>Orege</td>
-                        <td>body spray</td>
-                        <td>14500 ₹</td>
-                        <td>32399 ₹</td>
-                        <td>91</td>
-                    </tr>
-                    <tr>
-                        <td>#31240</td>
-                        <td>
-                            <div class="product-image">
-                               
-                            </div>
-                        </td>
-                        <td>Nº5</td>
-                        <td>perfume</td>
-                        <td>11500 ₹</td>
-                        <td>88232 ₹</td>
-                        <td>321</td>
-                    </tr>
-                </tbody>
-            </table>
+
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="nav-menu">
+            <a href="/admin/dashboard?filter=weekly" class="nav-item <%= currentFilter === 'weekly' ? 'active' : '' %>">Weekly</a>
+            <a href="/admin/dashboard?filter=monthly" class="nav-item <%= currentFilter === 'monthly' ? 'active' : '' %>">Monthly</a>
+            <a href="/admin/dashboard?filter=yearly" class="nav-item <%= currentFilter === 'yearly' ? 'active' : '' %>">Yearly</a>
         </div>
-        
-        <div class="right-panel">
-            <div class="server-status">
-                <div class="status-title">Server Status</div>
-                
-                <div class="gauge-container">
-                    <div class="gauge-bg"></div>
-                    <div class="gauge-fill"></div>
-                    <div class="gauge-percentage">80.2%</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title">Admin Dashboard</div>
+            <button class="ledger-btn" onclick="window.location.href='/admin/dashboard?action=generateLedger'">Generate Ledger</button>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>Revenue</div>
+                    <div class="stat-icon"><i class="fas fa-rupee-sign"></i></div>
                 </div>
-                
-                <div class="server-info">
-                    <div class="server-detail">
-                        <div class="detail-label">Country</div>
-                        <div class="detail-value">India</div>
-                    </div>
-                    <div class="server-detail">
-                        <div class="detail-label">Domain</div>
-                        <div class="detail-value">luxe.com</div>
-                    </div>
+                <div class="stat-value">₹<%= salesData[currentFilter].stats.revenue.toLocaleString('en-IN') %></div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>Orders</div>
+                    <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                </div>
+                <div class="stat-value"><%= salesData[currentFilter].stats.orders %></div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>Customers</div>
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                </div>
+                <div class="stat-value"><%= salesData[currentFilter].stats.customers %></div>
+                <div class="stat-label">Total Customers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>Growth</div>
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                </div>
+                <div class="stat-value"><%= salesData[currentFilter].stats.growth %>%</div>
+                <div class="stat-label">Sales Growth</div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-section">
+            <div class="chart-card">
+                <div class="chart-title"><i class="fas fa-chart-bar"></i> Sales Chart</div>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
                 </div>
             </div>
-            
-            <div class="reviews-section">
-                <div class="section-title">User Reviews</div>
-                
-                <div class="review">
-                    <div class="review-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="review-content">
-                        <div class="reviewer-name">Christian Jornald</div>
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div class="review-text">Great Product</div>
-                        <div class="review-actions">
-                            <button class="action-button">Archive</button>
-                            <button class="action-button accept">Accept</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="review">
-                    <div class="review-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="review-content">
-                        <div class="reviewer-name">Rachel Happy</div>
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
-                        </div>
-                        <div class="review-text">Good Product</div>
-                        <div class="review-actions">
-                            <button class="action-button">Archive</button>
-                            <button class="action-button accept">Accept</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="review">
-                    <div class="review-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="review-content">
-                        <div class="reviewer-name">Vita Delong</div>
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
-                            <i class="far fa-star"></i>
-                        </div>
-                        <div class="review-text">Average Product</div>
-                        <div class="review-actions">
-                            <button class="action-button">Archive</button>
-                            <button class="action-button accept">Accept</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="user-avatars">
-                    <div class="user-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
+            <div class="list-container">
+                <div class="list-title"><i class="fas fa-star"></i> Top 10 Products</div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product</th>
+                                <th>Sales</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% topProducts.forEach((product, index) => { %>
+                                <tr>
+                                    <td><%= index + 1 %></td>
+                                    <td><%= product.name %></td>
+                                    <td><%= product.sales %></td>
+                                    <td>₹<%= product.revenue.toLocaleString('en-IN') %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            
-            <div class="activity-timeline">
-                <div class="section-title">Recent Activity of Yours</div>
-                
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-icon">
-                            <i class="fas fa-sign-in-alt"></i>
-                        </div>
-                        <div class="timeline-content">
-                            <div class="timeline-title">Logged In</div>
-                            <div class="timeline-time">3 Hour Ago</div>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-icon">
-                            <i class="fas fa-box-open"></i>
-                        </div>
-                        <div class="timeline-content">
-                            <div class="timeline-title">New Product Added</div>
-                            <div class="timeline-time">2 Hour Ago</div>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-icon">
-                            <i class="fas fa-download"></i>
-                        </div>
-                        <div class="timeline-content">
-                            <div class="timeline-title">Downloaded Report</div>
-                            <div class="timeline-time">2 Hour Ago</div>
-                        </div>
-                    </div>
+        </div>
+
+        <!-- Top Categories and Brands -->
+        <div class="chart-section">
+            <div class="list-container">
+                <div class="list-title"><i class="fas fa-list"></i> Top 10 Categories</div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Category</th>
+                                <th>Sales</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% topCategories.forEach((category, index) => { %>
+                                <tr>
+                                    <td><%= index + 1 %></td>
+                                    <td><%= category.name %></td>
+                                    <td><%= category.sales %></td>
+                                    <td>₹<%= category.revenue.toLocaleString('en-IN') %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="list-container">
+                <div class="list-title"><i class="fas fa-tags"></i> Top 10 Brands</div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Brand</th>
+                                <th>Sales</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% topBrands.forEach((brand, index) => { %>
+                                <tr>
+                                    <td><%= index + 1 %></td>
+                                    <td><%= brand.name %></td>
+                                    <td><%= brand.sales %></td>
+                                    <td>₹<%= brand.revenue.toLocaleString('en-IN') %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-    <%- include('../../views/partials/admin/footer') %>
+
+    <script>
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: <%- JSON.stringify(salesData[currentFilter].labels) %>,
+                datasets: [{
+                    label: 'Sales Revenue',
+                    data: <%- JSON.stringify(salesData[currentFilter].data) %>,
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true,
+                }],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => `₹${context.parsed.y.toLocaleString('en-IN')}`,
+                        },
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: (value) => `₹${value.toLocaleString('en-IN')}`,
+                        },
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45,
+                        },
+                    },
+                },
+            },
+        });
+    </script>
 </body>
 </html>

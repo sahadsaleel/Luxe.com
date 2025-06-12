@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Referrals | Luxe.com</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="/css/userProfile.css">
+    <link rel="stylesheet" href="/css/userReferral.css">
+    <style>
+        :root {
+            --primary-color: #046A38;
+            --secondary-color: #C4B7A6;
+            --accent-color: #B3A580;
+            --text-color: #2E2E2E;
+            --light-text: #777;
+            --background: #FFFFFF;
+            --card-bg: #FFFFFF;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 15px rgba(4, 106, 56, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .breadcrumb-container {
+            margin-bottom: 30px;
+        }
+
+        .breadcrumb {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .breadcrumb-item {
+            color: var(--light-text);
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item:not(:last-child)::after {
+            content: "/";
+            margin-left: 10px;
+            color: var(--light-text);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        .sidebar {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            height: fit-content;
+        }
+
+        .profile-brief {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-image {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px;
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .profile-email {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-menu h3 {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-menu li {
+            margin-bottom: 5px;
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            font-size: 15px;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .nav-menu a:hover {
+            background: #f8f9fa;
+            color: var(--primary-color);
+        }
+
+        .nav-menu a.active {
+            background-color: rgba(67, 97, 238, 0.15);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .nav-menu i {
+            margin-right: 10px;
+            width: 16px;
+        }
+
+        .content {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .profile-header h1 {
+            color: var(--text-color);
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid #eee;
+        }
+
+        .referral-overview {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .referral-overview .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .referral-overview .card-header i {
+            font-size: 20px;
+            color: white;
+            margin-right: 12px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .referral-overview .card-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .referral-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .referral-code-section {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .referral-code {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            background: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            border: 2px dashed var(--primary-color);
+            margin: 20px 0;
+            letter-spacing: 3px;
+        }
+
+        .copy-code-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            margin: 10px;
+        }
+
+        .copy-code-btn:hover {
+            background: #035a30;
+            transform: translateY(-2px);
+        }
+
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .share-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .share-btn.whatsapp {
+            background: #25d366;
+        }
+
+        .share-btn.facebook {
+            background: #1877f2;
+        }
+
+        .share-btn.twitter {
+            background: #1da1f2;
+        }
+
+        .share-btn.email {
+            background: #ea4335;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .card-header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .referral-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .referral-item {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            transition: transform 0.2s ease;
+        }
+
+        .referral-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .referral-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .referral-user {
+            font-weight: 600;
+            color: #444;
+        }
+
+        .referral-user i {
+            margin-right: 0.5rem;
+            color: #666;
+        }
+
+        .referral-reward {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .referral-meta {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .referral-date {
+            margin-bottom: 0.5rem;
+        }
+
+        .referral-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .no-referrals {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .no-referrals p {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: #28a745;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .referral-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .referral-code {
+                font-size: 1.5rem;
+                padding: 10px 20px;
+            }
+
+            .share-buttons {
+                flex-wrap: wrap;
+            }
+
+            .referral-details {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../../views/partials/user/header') %>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">Luxe.com</div>
+        </div>
+
+        <div class="breadcrumb-container">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active">My Referrals</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="profile-brief">
+                    <div class="profile-image">
+                        <img src="<%= user && user.profileImage ? user.profileImage : '/img/profile images.png' %>" alt="Profile Image">
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : '' %></div>
+                        <div class="profile-email"><%= user && user.email ? user.email : 'N/A' %></div>
+                    </div>
+                </div>
+
+                <ul class="nav-menu">
+                    <h3>Manage My Account</h3>
+                    <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li><a href="/address"><i class="fas fa-address-book"></i> Address Book</a></li>
+                    <h3>Orders & Wishlist</h3>
+                    <li><a href="/orders"><i class="fas fa-shopping-bag"></i> My Orders</a></li>
+                    <li><a href="/wishlist"><i class="fas fa-heart"></i> My Wishlist</a></li>
+                    <h3>Payments</h3>
+                    <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
+                    <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
+                    <li><a href="/referrals" class="active"><i class="fas fa-share-alt"></i> My Referrals</a></li>
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
+                </ul>
+            </div>
+
+            <div class="content">
+                <div class="profile-header">
+                    <h1>My Referrals</h1>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-gift"></i>
+                        <h2>Your Referral Code</h2>
+                    </div>
+                    <div class="referral-code-section">
+                        <div class="referral-code">
+                            <span class="code"><%= user.referalCode %></span>
+                            <button class="copy-btn" onclick="copyToClipboard('<%= user.referalCode %>')">
+                                <i class="fas fa-copy"></i> Copy Code
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-users"></i>
+                        <h2>Referral Statistics</h2>
+                    </div>
+                    <div class="referral-stats">
+                        <div class="stat-item">
+                            <div class="stat-value"><%= referralStats.totalReferrals || 0 %></div>
+                            <div class="stat-label">Total Referrals</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">₹<%= referralStats.totalEarnings || 0 %></div>
+                            <div class="stat-label">Total Earnings</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value"><%= referralStats.pendingReferrals || 0 %></div>
+                            <div class="stat-label">Pending Referrals</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-history"></i>
+                        <h2>Referral History</h2>
+                    </div>
+                    <div class="referral-history">
+                        <% if (referralHistory && referralHistory.length > 0) { %>
+                            <% referralHistory.forEach(referral => { %>
+                                <div class="referral-item">
+                                    <div class="referral-user">
+                                        <i class="fas fa-user-circle"></i>
+                                        <div class="user-details">
+                                            <div class="user-name"><%= referral.userName %></div>
+                                            <div class="join-date">Joined: <%= new Date(referral.joinDate).toLocaleDateString() %></div>
+                                        </div>
+                                    </div>
+                                    <div class="referral-status <%= referral.status.toLowerCase() %>">
+                                        <%= referral.status %>
+                                    </div>
+                                    <div class="referral-reward">
+                                        <% if (referral.status === 'Completed') { %>
+                                            <div class="reward-amount">₹<%= referral.rewardAmount %></div>
+                                            <div class="reward-date">Credited: <%= new Date(referral.rewardDate).toLocaleDateString() %></div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="no-referrals">
+                                <p>You haven't referred anyone yet. Share your referral code to start earning rewards!</p>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include("../../views/partials/user/footer") %>
+    
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                Toastify({
+                    text: 'Copied to clipboard!',
+                    duration: 2000,
+                    gravity: 'top',
+                    position: 'right',
+                    backgroundColor: '#4CAF50'
+                }).showToast();
+            }).catch(() => {
+                Toastify({
+                    text: 'Failed to copy text',
+                    duration: 2000,
+                    gravity: 'top',
+                    position: 'right',
+                    backgroundColor: '#e74c3c'
+                }).showToast();
+            });
+        }
+    </script>
+</body>
+</html>

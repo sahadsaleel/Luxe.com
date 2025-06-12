@@ -1,79 +1,81 @@
 <style>
-    /* Pagination container */
+   /* Pagination container */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Pagination links */
+.pagination a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 38px;
+    height: 38px;
+    text-decoration: none;
+    color: #e2e8f0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover effect for links */
+.pagination a:hover:not(.active) {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: #667eea;
+    color: #ffffff;
+}
+
+/* Active page */
+.pagination a.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-color: transparent;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: default;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Disabled state */
+.pagination span.disabled {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 38px;
+    height: 38px;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: not-allowed;
+}
+
+/* Previous/Next arrows */
+.pagination a[href*="page="]:not(.active) {
+    font-size: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
     .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
         gap: 8px;
-        padding: 10px 0;
-        font-family: Arial, sans-serif;
     }
-
-    /* Pagination links */
-    .pagination a {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        width: 36px;
-        height: 36px;
-        text-decoration: none;
-        color: #333;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-    }
-
-    /* Hover effect for links */
-    .pagination a:hover:not(.active) {
-        background-color: #f1f1f1;
-        border-color: #bbb;
-        color: #222;
-    }
-
-    /* Active page */
-    .pagination a.active {
-        background-color: #7db87d;
-        border-color: #7db87d;
-        color: #000000;
-        font-weight: 600;
-        cursor: default;
-    }
-
-    /* Disabled state */
+    .pagination a,
     .pagination span.disabled {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        width: 36px;
-        height: 36px;
-        color: #000000;
-        background-color: #979797;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-        cursor: not-allowed;
+        width: 34px;
+        height: 34px;
+        font-size: 13px;
     }
-
-    /* Previous/Next arrows */
-    .pagination a[href*="page="]:not(.active) {
-        font-size: 16px;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 576px) {
-        .pagination {
-            gap: 6px;
-        }
-        .pagination a,
-        .pagination span.disabled {
-            width: 32px;
-            height: 32px;
-            font-size: 13px;
-        }
-    }
+}
 </style>
 
 <% if (typeof currentPage !== 'undefined' && typeof totalPages !== 'undefined') { %>

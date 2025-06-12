@@ -1,18 +1,18 @@
 :root {
-    --primary-color: #8a6a94;
-    --secondary-color: #7a5a84;
-    --accent-color: #9a7aa4;
-    --text-color: #333;
-    --light-text: #777;
-    --background: #f8f9fa;
-    --card-bg: #fff;
+    --primary-color: #046A38;      /* Emerald Green */
+    --secondary-color: #C4B7A6;    /* Soft Taupe */
+    --accent-color: #B3A580;       /* Muted Gold */
+    --text-color: #2E2E2E;         /* Dark Charcoal */
+    --light-text: #777777;
+    --background: #FFFFFF;         /* Ivory White */
+    --card-bg: #FFFFFF;
     --border-radius: 12px;
-    --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --box-shadow: 0 4px 15px rgba(4, 106, 56, 0.1);
     --transition: all 0.3s ease;
-    --pending-bg: #fff5e6;
-    --pending-color: #ffa500;
-    --delivered-bg: #e6ffe6;
-    --delivered-color: #00cc00;
+    --pending-bg: rgba(4, 106, 56, 0.1);
+    --pending-color: #046A38;
+    --delivered-bg: rgba(4, 106, 56, 0.15);
+    --delivered-color: #046A38;
     --failed-bg: #ffe6e6;
     --failed-color: #cc0000;
 }
@@ -139,6 +139,7 @@ body {
     margin-bottom: 15px;
 }
 
+/* Navigation Menu */
 .nav-menu {
     list-style: none;
 }
@@ -165,12 +166,12 @@ body {
 }
 
 .nav-menu a:hover {
-    background-color: rgba(138, 106, 148, 0.1);
+    background-color: rgba(4, 106, 56, 0.1);
     color: var(--primary-color);
 }
 
 .nav-menu a.active {
-    background-color: rgba(138, 106, 148, 0.15);
+    background-color: rgba(4, 106, 56, 0.15);
     color: var(--primary-color);
     font-weight: 600;
 }
@@ -181,6 +182,7 @@ body {
     text-align: center;
 }
 
+/* Content Area */
 .content {
     display: flex;
     flex-direction: column;
@@ -205,60 +207,39 @@ body {
     padding: 25px;
 }
 
-.card-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.card-header i {
-    font-size: 20px;
-    color: var(--primary-color);
-    margin-right: 12px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(138, 106, 148, 0.1);
-    border-radius: 50%;
-}
-
-.card-header h2 {
-    font-size: 18px;
-    font-weight: 600;
-}
-
+/* Orders Table Styles */
 .orders-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
 }
 
 .orders-table th {
-    text-align: left;
-    padding: 15px;
-    background-color: #f5f5f5;
+    background-color: rgba(4, 106, 56, 0.05);
     color: var(--text-color);
     font-weight: 600;
-    font-size: 14px;
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid var(--primary-color);
 }
 
 .orders-table td {
     padding: 15px;
-    border-bottom: 1px solid #eaeaea;
-    font-size: 14px;
+    border-bottom: 1px solid var(--secondary-color);
 }
 
-.orders-table tr:last-child td {
-    border-bottom: none;
+.orders-table tr:hover {
+    background-color: rgba(4, 106, 56, 0.02);
 }
 
+/* Status Badges */
 .status {
     display: inline-block;
-    padding: 5px 10px;
-    border-radius: 15px;
+    padding: 6px 12px;
+    border-radius: 20px;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     text-transform: capitalize;
 }
 
@@ -272,90 +253,257 @@ body {
     color: var(--delivered-color);
 }
 
-.status.failed {
+.status.canceled {
     background-color: var(--failed-bg);
     color: var(--failed-color);
 }
 
+/* Action Buttons */
 .action-button {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    gap: 8px;
     background-color: var(--primary-color);
     color: white;
     border: none;
-    padding: 8px 15px;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    min-width: 120px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(4, 106, 56, 0.1);
+}
+
+.action-button i {
+    font-size: 16px;
+}
+
+.action-button:hover {
+    background-color: var(--accent-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(4, 106, 56, 0.15);
+}
+
+.action-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(4, 106, 56, 0.1);
+}
+
+.action-button:disabled {
+    background-color: var(--secondary-color);
+    color: var(--background);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    opacity: 0.7;
+}
+
+.action-button.secondary {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.action-button.secondary:hover {
+    background-color: rgba(4, 106, 56, 0.1);
+    color: var(--primary-color);
+}
+
+.action-button.small {
+    padding: 8px 16px;
+    min-width: 100px;
+    font-size: 13px;
+}
+
+.action-button.large {
+    padding: 12px 24px;
+    min-width: 140px;
+    font-size: 15px;
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+/* Modal styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    backdrop-filter: blur(4px);
+}
+
+.modal {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    width: 90%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #eaeaea;
+    position: sticky;
+    top: 0;
+    background-color: var(--card-bg);
+    z-index: 1;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--light-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--text-color);
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.form-section {
+    margin-bottom: 30px;
+}
+
+.form-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-section-title {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.required-note {
+    font-size: 13px;
+    color: var(--light-text);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(4, 106, 56, 0.2);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/* Modal active state */
+.modal-overlay.active {
+    display: flex;
+}
+
+/* Modal Buttons */
+.modal-footer {
+    padding: 20px 25px;
+    border-top: 1px solid #eaeaea;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background-color: #f8f9fa;
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+}
+
+.modal-btn {
+    padding: 10px 20px;
     border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    text-decoration: none;
     transition: var(--transition);
 }
 
-.action-button:hover {
+.modal-btn-secondary {
+    background-color: #e9ecef;
+    color: var(--text-color);
+    border: none;
+}
+
+.modal-btn-secondary:hover {
+    background-color: #dee2e6;
+}
+
+.modal-btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.modal-btn-primary:hover {
     background-color: var(--secondary-color);
 }
 
-.action-button.retry {
-    background-color: #333;
-}
-
-.action-button.retry:hover {
-    background-color: #222;
-}
-
-.action-button i {
-    margin-right: 5px;
-}
-
-.no-orders {
-    text-align: center;
-    padding: 40px;
-}
-
-.no-orders p {
-    margin-bottom: 20px;
-    color: var(--light-text);
-    font-size: 16px;
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-}
-
-.pagination a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 35px;
-    height: 35px;
-    margin: 0 5px;
-    border-radius: 8px;
-    background-color: var(--card-bg);
-    color: var(--text-color);
-    text-decoration: none;
-    transition: var(--transition);
-    font-size: 14px;
-}
-
-.pagination a.active {
-    background-color: var(--primary-color);
-    color: #fff;
-}
-
-.pagination a:hover:not(.active) {
-    background-color: rgba(138, 106, 148, 0.1);
-}
-
-.pagination-info {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 14px;
-    color: var(--light-text);
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
     .main-content {
         grid-template-columns: 1fr;
@@ -380,14 +528,12 @@ body {
     }
 
     .orders-table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+        font-size: 14px;
     }
 
-    .orders-table th,
-    .orders-table td {
-        min-width: 120px;
+    .status {
+        padding: 4px 8px;
+        font-size: 11px;
     }
 }
 
@@ -410,5 +556,160 @@ body {
 
     .breadcrumb-item + .breadcrumb-item::before {
         margin: 0 6px;
+    }
+
+    .action-button {
+        padding: 8px 16px;
+        min-width: 100px;
+        font-size: 13px;
+    }
+
+    .action-button.small {
+        padding: 6px 12px;
+        min-width: 80px;
+        font-size: 12px;
+    }
+
+    .action-button.large {
+        padding: 10px 20px;
+        min-width: 120px;
+        font-size: 14px;
+    }
+
+    .modal {
+        width: 95%;
+        margin: 10px;
+    }
+
+    .modal-header {
+        padding: 15px 20px;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 15px 20px;
+        flex-direction: column;
+    }
+
+    .modal-btn {
+        width: 100%;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Sort Modal Specific Styles */
+.sort-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 400px;
+    height: 100vh;
+    background-color: var(--card-bg);
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    display: none;
+}
+
+.sort-modal.show {
+    transform: translateX(0);
+    display: block;
+}
+
+.sort-modal .modal-header {
+    border-radius: 0;
+}
+
+.sort-modal .modal-body {
+    height: calc(100vh - 70px); /* Subtract header height */
+    overflow-y: auto;
+}
+
+.sort-modal .filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.sort-modal .filter-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 8px 0;
+}
+
+.sort-modal .filter-option input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}
+
+.sort-modal .price-input {
+    width: 100px;
+    padding: 8px;
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.sort-modal .price-range {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.sort-modal .button-container {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--card-bg);
+    padding: 20px;
+    border-top: 1px solid #eaeaea;
+    display: flex;
+    gap: 10px;
+}
+
+.sort-modal .clear-button,
+.sort-modal .show-button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.sort-modal .clear-button {
+    background-color: #f1f1f1;
+    color: var(--text-color);
+}
+
+.sort-modal .show-button {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.sort-modal .clear-button:hover {
+    background-color: #e5e5e5;
+}
+
+.sort-modal .show-button:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Responsive Sort Modal */
+@media (max-width: 576px) {
+    .sort-modal {
+        width: 100%;
     }
 }

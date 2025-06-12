@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -247,80 +246,275 @@
             margin: 20px 0;
         }
         .invoice-header {
-            padding: 20px;
+            padding: 30px;
             border-bottom: 1px solid #eee;
+            background: linear-gradient(135deg, #8a6a94 0%, #6a4c7c 100%);
+            color: white;
+            border-radius: 8px 8px 0 0;
         }
         .invoice-title {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
         .invoice-logo {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
         .invoice-details {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
         }
         .invoice-detail-label {
             font-weight: 500;
-            color: #333;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
         }
         .invoice-detail-value {
-            color: #555;
+            color: white;
+            font-size: 1rem;
         }
         .invoice-body {
-            padding: 20px;
+            padding: 30px;
+            background-color: white;
         }
         .invoice-section {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         .invoice-section-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 600;
-            margin-bottom: 10px;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #8a6a94;
         }
         .invoice-address-box {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        .invoice-address-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
         }
         .invoice-table {
             width: 100%;
-            border-collapse: collapse;
-        }
-        .invoice-table th,
-        .invoice-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            font-size: 0.9rem;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px #e0e0e0;
         }
         .invoice-table th {
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
             font-weight: 600;
+            color: #333;
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 2px solid #8a6a94;
+            white-space: nowrap;
+        }
+        .invoice-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: middle;
+        }
+        .invoice-table td:nth-child(3),
+        .invoice-table td:nth-child(4),
+        .invoice-table td:nth-child(5) {
+            text-align: right;
+            font-family: monospace;
+            font-size: 0.95rem;
+        }
+        .invoice-table tr:last-child td {
+            border-bottom: none;
         }
         .invoice-total-table {
-            width: 50%;
+            width: 100%;
+            max-width: 400px;
             margin-left: auto;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px #e0e0e0;
         }
         .invoice-total-table td {
-            padding: 8px;
-            border: 1px solid #ddd;
-            font-size: 0.9rem;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .invoice-total-table td:last-child {
+            text-align: right;
+            font-family: monospace;
+            font-size: 1rem;
+        }
+        .invoice-total-table tr:last-child {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .invoice-total-table tr:last-child td {
+            border-bottom: none;
+            color: #8a6a94;
         }
         .invoice-footer {
-            padding: 20px;
+            padding: 30px;
             text-align: center;
-            color: #666;
+            background-color: #f8f9fa;
             border-top: 1px solid #eee;
+            border-radius: 0 0 8px 8px;
+        }
+        .invoice-note {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
         }
         .invoice-download-area {
-            padding: 10px;
+            padding: 20px;
             text-align: right;
+            background-color: white;
+            border-top: 1px solid #eee;
+        }
+        .btn-invoice {
+            background-color: #8a6a94;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-invoice:hover {
+            background-color: #6a4c7c;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .btn-return {
+            background-color: #ffc107;
+            color: #000;
+        }
+        .btn-return:hover {
+            background-color: #e0a800;
+        }
+        .invoice-modal {
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-height: 90vh;
+        }
+        .invoice-preview {
+            flex: 1;
+            overflow-y: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .table-responsive {
+            overflow-x: auto;
+            margin: 0 -20px;
+            padding: 0 20px;
+        }
+        .logo-text {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        .logo-subtitle {
+            display: block;
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .invoice-label {
+            font-size: 2rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        .detail-group {
+            margin-bottom: 15px;
+        }
+        .invoice-section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .invoice-section-title i {
+            color: #8a6a94;
+        }
+        .invoice-note {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .invoice-note i {
+            color: #8a6a94;
+        }
+        .copyright {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        @media (max-width: 768px) {
+            .invoice-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .invoice-total-table {
+                width: 100%;
+            }
+            
+            .invoice-label {
+                font-size: 1.5rem;
+            }
+            
+            .logo-text {
+                font-size: 2rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .invoice-modal {
+                width: 95%;
+            }
+            
+            .invoice-header {
+                padding: 20px;
+            }
+            
+            .invoice-body {
+                padding: 20px;
+            }
+            
+            .invoice-section-title {
+                font-size: 1rem;
+            }
+        }
+        .order-details-content {
+            padding: 20px;
         }
     </style>
 </head>
@@ -358,14 +552,14 @@
                     <h3>Manage My Account</h3>
                     <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
                     <li><a href="/address"><i class="fas fa-address-book"></i> Address Book</a></li>
-
                     <h3>Orders & Wishlist</h3>
-                    <li><a href="/orders" class="active"><i class="fas fa-shopping-bag"></i> My Orders</a></li>
+                    <li><a href="/orders" class="active"><i class="fas fa-box"></i> My Orders</a></li>
                     <li><a href="/wishlist"><i class="fas fa-heart"></i> My Wishlist</a></li>
-
                     <h3>Payments</h3>
                     <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
                     <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
+                    <li><a href="/referrals"><i class="fas fa-share-alt"></i> My Referrals</a></li>
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign out</a></li>
                 </ul>
             </div>
 
@@ -415,9 +609,13 @@
                                         <td>₹<%= Number(item.price || 0).toFixed(2) %></td>
                                         <td>₹<%= Number(item.totalPrice || 0).toFixed(2) %></td>
                                         <td><%= item.isGiftWrapped ? 'Yes' : 'No' %></td>
-                                        <td class="item-status">
-                                            <% if (item.status==='Cancelled') { %>
+                                        <td class="item nickname-item-status">
+                                            <% if (item.status === 'Cancelled') { %>
                                                 Cancelled <%= item.cancelReason ? `(${item.cancelReason})` : '' %>
+                                            <% } else if (item.status === 'Return Requested') { %>
+                                                Return Requested
+                                            <% } else if (item.status === 'Return Approved') { %>
+                                                Return Approved
                                             <% } else { %>
                                                 Active
                                             <% } %>
@@ -427,6 +625,17 @@
                                                 <button class="action-button btn-cancel" data-item-id="<%= item._id %>" onclick="showCancelItemModal('<%= item._id %>')">Cancel</button>
                                             <% } else if (item.isCanceled) { %>
                                                 <button class="action-button btn-disabled" disabled>Cancelled</button>
+                                            <% } else if (order.status === 'Delivered' && !item.returnRequestedOn && !item.status.includes('Return')) { %>
+                                                <% const deliveryDate = order.deliveryDate || order.createdOn || order.updatedAt; %>
+                                                <% const daysSinceDelivery = Math.floor((new Date() - new Date(deliveryDate)) / (1000 * 60 * 60 * 24)); %>
+                                                <% console.log(`Item ${item._id}: daysSinceDelivery=${daysSinceDelivery}, deliveryDate=${deliveryDate}`); %>
+                                                <% if (daysSinceDelivery <= 30) { %>
+                                                    <button class="action-button btn-return" data-item-id="<%= item._id %>" onclick="showReturnItemModal('<%= item._id %>')">Return</button>
+                                                <% } %>
+                                            <% } else if (item.status === 'Return Requested') { %>
+                                                <button class="action-button btn-disabled" disabled>Return Requested</button>
+                                            <% } else if (item.status === 'Return Approved') { %>
+                                                <button class="action-button btn-disabled" disabled>Return Approved</button>
                                             <% } %>
                                         </td>
                                     </tr>
@@ -504,25 +713,25 @@
                             <table class="pricing-table">
                                 <tr>
                                     <td>Subtotal</td>
-                                    <td>₹<%=order.totalPrice.toFixed(2) %></td>
+                                    <td id="subtotal">₹<%= order.totalPrice.toFixed(2) %></td>
                                 </tr>
                                 <tr>
                                     <td>Gift Wrap Total</td>
-                                    <td>₹<%= Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : (item.isGiftWrapped ? 100 : 0)), 0)).toFixed(2) %></td>
+                                    <td id="giftWrapTotal">₹<%= Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : (item.isGiftWrapped ? 100 : 0)), 0)).toFixed(2) %></td>
                                 </tr>
                                 <tr>
                                     <td>Shipping</td>
-                                    <td>₹<%= Number(order.shipping || 0).toFixed(2) %></td>
+                                    <td id="shipping">₹<%= Number(order.shipping || 0).toFixed(2) %></td>
                                 </tr>
                                 <% if (order.discount > 0) { %>
-                                    <tr>
+                                    <tr id="discountRow">
                                         <td>Discount</td>
-                                        <td>-₹<%= Number(order.discount).toFixed(2) %></td>
+                                        <td id="discount">-₹<%= Number(order.discount).toFixed(2) %></td>
                                     </tr>
                                 <% } %>
                                 <tr>
                                     <td>Final Amount</td>
-                                    <td>₹<%= order.finalAmount.toFixed(2) %></td>
+                                    <td id="finalAmount">₹<%= order.finalAmount.toFixed(2) %></td>
                                 </tr>
                             </table>
                         </div>
@@ -533,7 +742,8 @@
                             <% if (['Pending', 'Processing'].includes(order.status)) { %>
                                 <button class="btn btn-cancel" onclick="showCancelModal()">Cancel Order</button>
                             <% } else if (order.status === 'Delivered') { %>
-                                <% const daysSinceDelivery = order.deliveredOn ? Math.floor((new Date() - new Date(order.deliveredOn)) / (1000 * 60 * 60 * 24)) : 0; %>
+                                <% const deliveryDate = order.deliveryDate || order.createdOn || order.updatedAt; %>
+                                <% const daysSinceDelivery = Math.floor((new Date() - new Date(deliveryDate)) / (1000 * 60 * 60 * 24)); %>
                                 <% if (daysSinceDelivery <= 30 && !order.returnRequestedOn) { %>
                                     <button class="btn btn-cancel" onclick="showReturnModal()">Request Return</button>
                                 <% } %>
@@ -637,9 +847,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-back" onclick="closeCancelItemModal()">Keep Item</button>
-                        <button
-
- type="submit" class="btn btn-cancel" id="cancelItemSubmit">Cancel Item</button>
+                        <button type="submit" class="btn btn-cancel" id="cancelItemSubmit">Cancel Item</button>
                     </div>
                 </form>
             </div>
@@ -699,102 +907,177 @@
 
     <!-- Invoice Modal -->
     <div class="modal-overlay" id="invoiceModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">Invoice</div>
-                <button class="close-btn" onclick="closeInvoiceModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <div id="invoiceContent">
-                    <div class="invoice-header">
-                        <div class="invoice-title">
-                            <div class="invoice-logo">Luxe.com</div>
-                            <div>INVOICE</div>
-                        </div>
-                        <div id="modalStatus" class="status"></div>
-                        <div class="invoice-details">
-                            <div class="invoice-detail-col">
-                                <div class="invoice-detail-label">Order ID</div>
-                                <div id="modalOrderId" class="invoice-detail-value"></div>
-                                <div class="invoice-detail-label" style="margin-top: 10px;">Order Date</div>
-                                <div id="modalOrderDate" class="invoice-detail-value"></div>
-                                <div id="modalInvoiceDateContainer" style="margin-top: 10px;">
-                                    <div class="invoice-detail-label">Invoice Date</div>
-                                    <div id="modalInvoiceDate" class="invoice-detail-value"></div>
-                                </div>
-                            </div>
-                            <div class="invoice-detail-col">
-                                <div class="invoice-detail-label">Payment Method</div>
-                                <div id="modalPaymentMethod" class="invoice-detail-value"></div>
-                                <div class="invoice-detail-label" style="margin-top: 10px;">Delivery Method</div>
-                                <div id="modalDeliveryMethod" class="invoice-detail-value"></div>
-                            </div>
-                        </div>
+        <div class="modal invoice-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <i class="fas fa-file-invoice"></i>
+                        Invoice Preview
                     </div>
-                    <div class="invoice-body">
-                        <div class="invoice-section">
-                            <div class="invoice-section-title">Customer Information</div>
-                            <div class="invoice-address">
-                                <div class="invoice-address-box">
-                                    <div class="invoice-address-title">Shipping Address</div>
-                                    <div id="modalAddress"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="invoice-section">
-                            <div class="invoice-section-title">Order Summary</div>
-                            <table class="invoice-table">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Size</th>
-                                        <th>Quantity</th>
-                                        <th>Price</th>
-                                        <th>Total</th>
-                                        <th>Gift Wrap</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="modalItems"></tbody>
-                            </table>
-                            <div class="invoice-total-section">
-                                <table class="invoice-total-table">
-                                    <tr>
-                                        <td>Subtotal</td>
-                                        <td id="modalSubtotal" style="text-align: right;"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Gift Wrap</td>
-                                        <td id="modalGiftWrapTotal" style="text-align: right;"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Shipping</td>
-                                        <td id="modalShipping" style="text-align: right;"></td>
-                                    </tr>
-                                    <% if (order && order.discount > 0) { %>
-                                        <tr>
-                                            <td>Discount</td>
-                                            <td id="modalDiscount" style="text-align: right;"></td>
-                                        </tr>
-                                    <% } %>
-                                    <tr>
-                                        <td>Grand Total</td>
-                                        <td id="modalFinalAmount" style="text-align: right;"></td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="invoice-footer">
-                        <div class="invoice-note">Thank you for shopping with Luxe! For any questions regarding your order, please contact our customer support.</div>
-                        <div>© 2025 Luxe. All rights reserved.</div>
-                    </div>
-                </div>
-                <div class="invoice-download-area">
-                    <button class="btn btn-invoice" onclick="downloadInvoice()">
-                        <i class="fas fa-file-pdf"></i> Download Invoice PDF
+                    <button class="close-btn" onclick="closeInvoiceModal()">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
+                <div class="modal-body">
+                    <div id="invoiceContent" class="invoice-preview">
+                        <div class="invoice-header">
+                            <div class="invoice-title">
+                                <div class="invoice-logo">
+                                    <span class="logo-text">LUXE</span>
+                                    <span class="logo-subtitle">Luxury perfume Store</span>
+                                </div>
+                                <div class="invoice-label">INVOICE</div>
+                            </div>
+                            <div id="modalStatus" class="status"></div>
+                            <div class="invoice-details">
+                                <div class="invoice-detail-col">
+                                    <div class="detail-group">
+                                        <div class="invoice-detail-label">Order ID</div>
+                                        <div id="modalOrderId" class="invoice-detail-value"></div>
+                                    </div>
+                                    <div class="detail-group">
+                                        <div class="invoice-detail-label">Order Date</div>
+                                        <div id="modalOrderDate" class="invoice-detail-value"></div>
+                                    </div>
+                                    <div id="modalInvoiceDateContainer" class="detail-group">
+                                        <div class="invoice-detail-label">Invoice Date</div>
+                                        <div id="modalInvoiceDate" class="invoice-detail-value"></div>
+                                    </div>
+                                </div>
+                                <div class="invoice-detail-col">
+                                    <div class="detail-group">
+                                        <div class="invoice-detail-label">Payment Method</div>
+                                        <div id="modalPaymentMethod" class="invoice-detail-value"></div>
+                                    </div>
+                                    <div class="detail-group">
+                                        <div class="invoice-detail-label">Delivery Method</div>
+                                        <div id="modalDeliveryMethod" class="invoice-detail-value"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invoice-body">
+                            <div class="invoice-section">
+                                <div class="invoice-section-title">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    Shipping Information
+                                </div>
+                                <div class="invoice-address">
+                                    <div class="invoice-address-box">
+                                        <div id="modalAddress"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="invoice-section">
+                                <div class="invoice-section-title">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Order Summary
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="invoice-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Size</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Total</th>
+                                                <th>Gift Wrap</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="modalItems"></tbody>
+                                    </table>
+                                </div>
+                                <div class="invoice-total-section">
+                                    <table class="invoice-total-table">
+                                        <tr>
+                                            <td>Subtotal</td>
+                                            <td id="modalSubtotal"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Gift Wrap</td>
+                                            <td id="modalGiftWrapTotal"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Shipping</td>
+                                            <td id="modalShipping"></td>
+                                        </tr>
+                                        <tr id="modalDiscountRow">
+                                            <td>Discount</td>
+                                            <td id="modalDiscount"></td>
+                                        </tr>
+                                        <tr class="total-row">
+                                            <td>Grand Total</td>
+                                            <td id="modalFinalAmount"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invoice-footer">
+                            <div class="invoice-note">
+                                <i class="fas fa-info-circle"></i>
+                                Thank you for shopping with Luxe! For any questions regarding your order, please contact our customer support.
+                            </div>
+                            <div class="copyright">© 2025 Luxe. All rights reserved.</div>
+                        </div>
+                    </div>
+                    <div class="invoice-download-area">
+                        <button class="btn btn-invoice" onclick="downloadInvoice()">
+                            <i class="fas fa-file-pdf"></i>
+                            Download Invoice PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Return Item Modal -->
+    <div class="modal-overlay" id="returnItemModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Return Item</div>
+                <button class="close-btn" onclick="closeReturnItemModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="returnItemForm">
+                    <p>Are you sure you want to return this item?</p>
+                    <div class="form-group">
+                        <h4>Item Summary</h4>
+                        <table class="order-summary-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Size</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="returnItemSummary"></tbody>
+                        </table>
+                    </div>
+                    <div class="form-group">
+                        <label for="returnItemReason">Reason for Return</label>
+                        <select id="returnItemReason" name="reason" required>
+                            <option value="">Select a reason</option>
+                            <option value="Defective product">Defective product</option>
+                            <option value="Wrong item received">Wrong item received</option>
+                            <option value="Not as described">Not as described</option>
+                            <option value="Changed mind">Changed mind</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="returnItemComments">Additional Comments (Optional)</label>
+                        <textarea id="returnItemComments" name="comments" rows="3" placeholder="Please provide details (optional)"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-back" onclick="closeReturnItemModal()">Cancel</button>
+                        <button type="submit" class="btn btn-return" id="returnItemSubmit">Request Return</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -828,6 +1111,7 @@
                         isGiftWrapped: '<%= item.isGiftWrapped ? "Yes" : "No" %>',
                         status: '<%= item.status || "Active" %>',
                         cancelReason: '<%= item.cancelReason || "" %>',
+                        returnReason: '<%= item.returnReason || "" %>',
                         productImage: '<%= item.productImage || "/img/placeholder.png" %>'
                     }<%= index < order.orderedItems.length - 1 ? ',' : '' %>
                 <% }); %>
@@ -996,7 +1280,6 @@
                     const actionCell = row.querySelector('td:last-child');
                     actionCell.innerHTML = `<button class="action-button btn-disabled" disabled>Cancelled</button>`;
                 });
-                // Update pricing table
                 document.getElementById('subtotal').textContent = '₹0.00';
                 document.getElementById('giftWrapTotal').textContent = '₹0.00';
                 document.getElementById('finalAmount').textContent = '₹0.00';
@@ -1096,21 +1379,14 @@
                     item.totalPrice = '0.00';
                 }
 
-                // Update orderData with backend response
                 orderData.totalPrice = result.order.totalPrice;
                 orderData.giftWrapTotal = result.order.giftWrapTotal;
                 orderData.finalAmount = result.order.finalAmount;
                 orderData.discount = result.order.discount;
 
-                // Update pricing table with null checks
-                const subtotalElement = document.getElementById('subtotal');
-                if (subtotalElement) subtotalElement.textContent = `₹${result.order.totalPrice}`;
-
-                const giftWrapTotalElement = document.getElementById('giftWrapTotal');
-                if (giftWrapTotalElement) giftWrapTotalElement.textContent = `₹${result.order.giftWrapTotal}`;
-
-                const finalAmountElement = document.getElementById('finalAmount');
-                if (finalAmountElement) finalAmountElement.textContent = `₹${result.order.finalAmount}`;
+                document.getElementById('subtotal').textContent = `₹${result.order.totalPrice}`;
+                document.getElementById('giftWrapTotal').textContent = `₹${result.order.giftWrapTotal}`;
+                document.getElementById('finalAmount').textContent = `₹${result.order.finalAmount}`;
 
                 const discountRow = document.getElementById('discountRow');
                 if (discountRow) {
@@ -1123,7 +1399,6 @@
                     }
                 }
 
-                // Handle full order cancellation
                 if (result.allCancelled) {
                     orderData.status = 'Cancelled';
                     const statusElement = document.querySelector('.status');
@@ -1166,7 +1441,7 @@
         }
 
         if (submitBtn.disabled) {
-            return; // Prevent multiple submissions
+            return;
         }
 
         submitBtn.innerHTML = '<span class="spinner"></span> Requesting...';
@@ -1215,6 +1490,10 @@
         }
     });
 
+    function formatCurrency(amount) {
+        return `RS ${Number(amount).toFixed(2)}`;
+    }
+
     function showInvoiceModal() {
         try {
             if (!orderData.items || orderData.items.length === 0) {
@@ -1244,30 +1523,30 @@
                     <td>${item.productName}</td>
                     <td>${item.size}</td>
                     <td>${item.quantity}</td>
-                    <td>${item.status === 'Cancelled' ? 'N/A' : '₹' + item.price}</td>
-                    <td>${item.status === 'Cancelled' ? 'N/A' : '₹' + item.totalPrice}</td>
+                    <td>${item.status === 'Cancelled' ? 'N/A' : formatCurrency(item.price)}</td>
+                    <td>${item.status === 'Cancelled' ? 'N/A' : formatCurrency(item.totalPrice)}</td>
                     <td>${item.status === 'Cancelled' ? 'N/A' : item.isGiftWrapped}</td>
-                    <td>${item.status === 'Cancelled' ? 'Cancelled (' + (item.cancelReason || 'No reason') + ')' : 'Active'}</td>
+                    <td>${item.status === 'Cancelled' ? `Cancelled (${item.cancelReason || 'No reason'})` : item.status}</td>
                 `;
                 itemsTableBody.appendChild(row);
             });
 
-            document.getElementById('modalSubtotal').textContent = '₹' + orderData.totalPrice;
-            document.getElementById('modalGiftWrapTotal').textContent = '₹' + orderData.giftWrapTotal;
-            document.getElementById('modalShipping').textContent = '₹' + orderData.shipping;
-            const discountElement = document.getElementById('modalDiscount');
-            if (discountElement) {
-                const modalDiscountRow = document.getElementById('modalDiscountRow');
-                if (parseFloat(orderData.discount) > 0) {
-                    modalDiscountRow.style.display = 'table-row';
-                    discountElement.textContent = '-₹' + orderData.discount;
-                } else {
-                    modalDiscountRow.style.display = 'none';
-                }
+            document.getElementById('modalSubtotal').textContent = formatCurrency(orderData.totalPrice);
+            document.getElementById('modalGiftWrapTotal').textContent = formatCurrency(orderData.giftWrapTotal);
+            document.getElementById('modalShipping').textContent = formatCurrency(orderData.shipping);
+            
+            const modalDiscountRow = document.getElementById('modalDiscountRow');
+            if (parseFloat(orderData.discount) > 0) {
+                modalDiscountRow.style.display = 'table-row';
+                document.getElementById('modalDiscount').textContent = `-${formatCurrency(orderData.discount)}`;
+            } else {
+                modalDiscountRow.style.display = 'none';
             }
-            document.getElementById('modalFinalAmount').textContent = '₹' + orderData.finalAmount;
+            
+            document.getElementById('modalFinalAmount').textContent = formatCurrency(orderData.finalAmount);
             document.getElementById('invoiceModal').classList.add('active');
         } catch (error) {
+            console.error('Error generating invoice preview:', error);
             showToast('Error generating invoice.', 'error');
         }
     }
@@ -1286,108 +1565,277 @@
             const doc = new jsPDF();
 
             doc.setFillColor(138, 106, 148);
-            doc.rect(0, 0, 210, 40, 'F');
-            doc.setFontSize(20);
+            doc.rect(0, 0, 210, 50, 'F');
+            doc.setFillColor(106, 76, 124);
+            doc.rect(0, 45, 210, 5, 'F');
+
             doc.setTextColor(255, 255, 255);
-            doc.text('Luxe.com', 20, 20);
-            doc.setFontSize(14);
-            doc.text('INVOICE', 190, 20, { align: 'right' });
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(28);
+            doc.text('LUXE', 20, 25);
+            doc.setFontSize(12);
+            doc.text('Luxury Perfume Store', 20, 35);
+
+            doc.setFontSize(24);
+            doc.text('INVOICE', 170, 25, { align: 'right' });
 
             doc.setTextColor(0, 0, 0);
-            let yOffset = 50;
-            doc.setFontSize(12);
-            doc.text('Order Details', 20, yOffset);
+            let yOffset = 70;
+
             doc.setDrawColor(138, 106, 148);
-            doc.line(20, yOffset + 2, 190, yOffset + 2);
-            yOffset += 10;
+            doc.setFillColor(248, 249, 250);
+            doc.roundedRect(15, yOffset - 10, 180, 45, 3, 3, 'FD');
+            
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Order Information', 20, yOffset);
+            doc.setFont('helvetica', 'normal');
             doc.setFontSize(10);
-            doc.text(`Order ID: ${orderData.orderId}`, 20, yOffset);
-            yOffset += 8;
-            doc.text(`Order Date: ${orderData.orderDate}`, 20, yOffset);
-            yOffset += 8;
-            if (orderData.invoiceDate && orderData.invoiceDate !== 'N/A') {
-                doc.text(`Invoice Date: ${orderData.invoiceDate}`, 20, yOffset);
-                yOffset += 8;
-            }
-            doc.text(`Status: ${orderData.status}`, 20, yOffset);
-            yOffset += 8;
-            doc.text(`Payment Method: ${orderData.paymentMethod}`, 20, yOffset);
-            yOffset += 8;
-            doc.text(`Delivery Method: ${orderData.deliveryMethod}`, 20, yOffset);
-            yOffset += 15;
+            
+            doc.text(`Order ID: ${orderData.orderId}`, 20, yOffset + 10);
+            doc.text(`Order Date: ${orderData.orderDate}`, 110, yOffset + 10);
+            doc.text(`Status: ${orderData.status}`, 20, yOffset + 20);
+            doc.text(`Payment Method: ${orderData.paymentMethod}`, 110, yOffset + 20);
+            
+            yOffset += 50;
 
-            doc.setFontSize(12);
+            doc.setFillColor(248, 249, 250);
+            doc.roundedRect(15, yOffset - 10, 180, 50, 3, 3, 'FD');
+            
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
             doc.text('Shipping Address', 20, yOffset);
-            doc.line(20, yOffset + 2, 190, yOffset + 2);
-            yOffset += 10;
+            doc.setFont('helvetica', 'normal');
             doc.setFontSize(10);
+            
             const addressLines = doc.splitTextToSize(orderData.address, 170);
-            addressLines.forEach(line => {
-                doc.text(line, 20, yOffset);
-                yOffset += 6;
+            addressLines.forEach((line, index) => {
+                doc.text(line, 20, yOffset + 10 + (index * 6));
             });
-            yOffset += 10;
 
-            doc.setFontSize(12);
-            doc.text('Order Summary', 20, yOffset);
-            doc.line(20, yOffset + 2, 190, yOffset + 2);
-            yOffset += 10;
-
-            const tableData = orderData.items.map(item => [
-                item.productName,
-                item.size,
-                item.quantity,
-                item.status === 'Cancelled' ? 'N/A' : `₹${item.price}`,
-                item.status === 'Cancelled' ? 'N/A' : `₹${item.totalPrice}`,
-                item.status === 'Cancelled' ? 'N/A' : item.isGiftWrapped,
-                item.status === 'Cancelled' ? `Cancelled (${item.cancelReason || 'No reason'})` : 'Active'
-            ]);
+            yOffset += 55;
 
             doc.autoTable({
                 startY: yOffset,
                 head: [['Product', 'Size', 'Quantity', 'Price', 'Total', 'Gift Wrap', 'Status']],
-                body: tableData,
+                body: orderData.items.map(item => [
+                    item.productName,
+                    item.size,
+                    item.quantity,
+                    item.status === 'Cancelled' ? 'N/A' : formatCurrency(item.price),
+                    item.status === 'Cancelled' ? 'N/A' : formatCurrency(item.totalPrice),
+                    item.status === 'Cancelled' ? 'N/A' : item.isGiftWrapped,
+                    item.status === 'Cancelled' ? `Cancelled (${item.cancelReason || 'No reason'})` : item.status
+                ]),
                 theme: 'grid',
-                styles: { fontSize: 8, cellPadding: 2 },
-                headStyles: { fillColor: [138, 106, 148], textColor: [255, 255, 255] },
-                margin: { left: 20, right: 20 }
-            });
-
-            yOffset = doc.lastAutoTable.finalY + 10;
-
-            const totalData = [
-                ['Subtotal', `₹${orderData.totalPrice}`],
-                ['Gift Wrap', `₹${orderData.giftWrapTotal}`],
-                ['Shipping', `₹${orderData.shipping}`]
-            ];
-            if (parseFloat(orderData.discount) > 0) {
-                totalData.push(['Discount', `-₹${orderData.discount}`]);
-            }
-            totalData.push(['Grand Total', `₹${orderData.finalAmount}`]);
-
-            doc.autoTable({
-                startY: yOffset,
-                body: totalData,
-                theme: 'grid',
-                styles: { fontSize: 8, cellPadding: 2 },
-                columnStyles: { 0: { halign: 'left' }, 1: { halign: 'right' } },
-                margin: { left: 120, right: 20 }
+                styles: {
+                    fontSize: 9,
+                    cellPadding: 5,
+                    lineColor: [224, 224, 224],
+                    lineWidth: 0.5,
+                },
+                headStyles: {
+                    fillColor: [138, 106, 148],
+                    textColor: [255, 255, 255],
+                    fontSize: 10,
+                    fontStyle: 'bold',
+                    halign: 'left'
+                },
+                columnStyles: {
+                    0: { cellWidth: 50 },
+                    1: { cellWidth: 20 },
+                    2: { cellWidth: 20, halign: 'right' },
+                    3: { cellWidth: 25, halign: 'right' },
+                    4: { cellWidth: 25, halign: 'right' },
+                    5: { cellWidth: 20 },
+                    6: { cellWidth: 30 }
+                },
+                margin: { left: 15, right: 15 }
             });
 
             yOffset = doc.lastAutoTable.finalY + 20;
 
-            doc.setFontSize(8);
-            doc.setTextColor(100, 100, 100);
-            doc.text('Thank you for shopping with Luxe! For any questions regarding your order, please contact our customer support.', 105, yOffset, { align: 'center' });
-            yOffset += 6;
-            doc.text('© 2025 Luxe. All rights reserved.', 105, yOffset, { align: 'center' });
+            doc.setFillColor(248, 249, 250);
+            doc.roundedRect(115, yOffset - 5, 80, 65, 3, 3, 'FD');
+            
+            doc.setFont('helvetica', 'normal');
+            doc.text('Subtotal:', 120, yOffset + 5);
+            doc.text(formatCurrency(orderData.totalPrice), 185, yOffset + 5, { align: 'right' });
+            
+            doc.text('Gift Wrap:', 120, yOffset + 15);
+            doc.text(formatCurrency(orderData.giftWrapTotal), 185, yOffset + 15, { align: 'right' });
+            
+            doc.text('Shipping:', 120, yOffset + 25);
+            doc.text(formatCurrency(orderData.shipping), 185, yOffset + 25, { align: 'right' });
+            
+            if (parseFloat(orderData.discount) > 0) {
+                doc.text('Discount:', 120, yOffset + 35);
+                doc.text(`-${formatCurrency(orderData.discount)}`, 185, yOffset + 35, { align: 'right' });
+            }
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('Grand Total:', 120, yOffset + 50);
+            doc.text(formatCurrency(orderData.finalAmount), 185, yOffset + 50, { align: 'right' });
 
-            doc.save(`Invoice_${orderData.orderId}.pdf`);
+            const pageHeight = doc.internal.pageSize.height;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(102, 102, 102);
+            doc.text('Thank you for shopping with Luxe!', 105, pageHeight - 30, { align: 'center' });
+            doc.text('For any questions regarding your order, please contact our customer support.', 105, pageHeight - 25, { align: 'center' });
+            doc.text('© 2025 Luxe. All rights reserved.', 105, pageHeight - 20, { align: 'center' });
+
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.text(`Page ${i} of ${pageCount}`, 105, pageHeight - 10, { align: 'center' });
+            }
+
+            doc.save(`Luxe_Invoice_${orderData.orderId}.pdf`);
             showToast('Invoice downloaded successfully!');
         } catch (error) {
+            console.error('Error generating invoice:', error);
             showToast('Failed to download invoice.', 'error');
         }
     }
+
+    let currentReturnItemId = null;
+
+    function showReturnItemModal(itemId) {
+        const item = orderData.items.find(i => i.itemId === itemId);
+        if (!item) {
+            showToast('Item not found.', 'error');
+            return;
+        }
+        if (item.status.includes('Return')) {
+            showToast('Return already requested for this item.', 'error');
+            return;
+        }
+        currentReturnItemId = itemId;
+        const summaryTable = document.getElementById('returnItemSummary');
+        summaryTable.innerHTML = `
+            <tr>
+                <td>${item.productName}</td>
+                <td>${item.size}</td>
+                <td>${item.quantity}</td>
+                <td>₹${item.totalPrice}</td>
+            </tr>
+        `;
+        document.getElementById('returnItemModal').classList.add('active');
+    }
+
+    function closeReturnItemModal() {
+        document.getElementById('returnItemModal').classList.remove('active');
+        currentReturnItemId = null;
+        document.getElementById('returnItemReason').value = '';
+        document.getElementById('returnItemComments').value = '';
+        const submitBtn = document.getElementById('returnItemSubmit');
+        submitBtn.innerHTML = 'Request Return';
+        submitBtn.classList.remove('btn-loading');
+        submitBtn.disabled = false;
+    }
+
+    document.getElementById('returnItemForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('returnItemSubmit');
+        if (submitBtn.dataset.submitting === 'true') {
+            console.log('Return item submission already in progress');
+            return;
+        }
+
+        if (!currentReturnItemId) {
+            showToast('No item selected for return.', 'error');
+            return;
+        }
+
+        const reason = document.getElementById('returnItemReason').value;
+        const comments = document.getElementById('returnItemComments').value;
+
+        if (!reason) {
+            showToast('Please select a return reason.', 'error');
+            return;
+        }
+
+        submitBtn.dataset.submitting = 'true';
+        submitBtn.innerHTML = '<span class="spinner"></span> Processing...';
+        submitBtn.classList.add('btn-loading');
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch(`/orders/details/${orderData.orderId}/return-item/${currentReturnItemId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reason, comments })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('Return request submitted successfully!', 'success');
+
+                const itemRow = document.querySelector(`tr[data-item-id="${currentReturnItemId}"]`);
+                if (itemRow) {
+                    const statusCell = itemRow.querySelector('.item-status');
+                    if (statusCell) statusCell.textContent = 'Return Requested';
+                    const actionCell = itemRow.querySelector('td:last-child');
+                    if (actionCell) {
+                        actionCell.innerHTML = '<button class="action-button btn-disabled" disabled>Return Requested</button>';
+                    }
+                }
+
+                const item = orderData.items.find(i => i.itemId === currentReturnItemId);
+                if (item) {
+                    item.status = 'Return Requested';
+                    item.returnReason = reason;
+                    item.totalPrice = '0.00';
+                }
+
+                orderData.totalPrice = result.order.totalPrice;
+                orderData.giftWrapTotal = result.order.giftWrapTotal;
+                orderData.finalAmount = result.order.finalAmount;
+                orderData.discount = result.order.discount;
+
+                document.getElementById('subtotal').textContent = `₹${result.order.totalPrice}`;
+                document.getElementById('giftWrapTotal').textContent = `₹${result.order.giftWrapTotal}`;
+                document.getElementById('finalAmount').textContent = `₹${result.order.finalAmount}`;
+
+                if (parseFloat(result.order.discount) > 0) {
+                    const discountRow = document.getElementById('discountRow');
+                    if (discountRow) {
+                        discountRow.style.display = 'table-row';
+                        document.getElementById('discount').textContent = `-₹${result.order.discount}`;
+                    }
+                }
+
+                if (result.allReturned) {
+                    orderData.status = 'Return Requested';
+                    const statusElement = document.querySelector('.status');
+                    if (statusElement) {
+                        statusElement.textContent = 'Return Requested';
+                        statusElement.className = 'status return-requested';
+                    }
+                }
+
+                closeReturnItemModal();
+            } else {
+                showToast(result.message || 'Failed to submit return request.', 'error');
+            }
+        } catch (error) {
+            console.error('Error submitting return request:', error);
+            showToast('An error occurred while processing your request.', 'error');
+        } finally {
+            submitBtn.dataset.submitting = 'false';
+            submitBtn.innerHTML = 'Request Return';
+            submitBtn.classList.remove('btn-loading');
+            submitBtn.disabled = false;
+        }
+    });
 </script>
 </body>
 </html>

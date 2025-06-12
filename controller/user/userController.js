@@ -9,6 +9,10 @@ const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const path = require('path');
+const Wallet = require('../../models/walletSchema');
+const { generateOtp } = require('../../helpers/otpHelper');
+const { sendVerificationEmail } = require('../../helpers/emailHelper');
+
 
 const pageNotFound = async (req, res) => {
     try {
@@ -22,19 +26,82 @@ const loadHomepage = async (req, res) => {
     try {
         const userId = req.session.user;
         const category = await Category.find({ isListed: true });
+        const activeOffers = await Offer.find({
+            status: 'Active',
+            endDate: { $gt: new Date() },
+        });
+
         const productData = await Product.find({
             isDeleted: false,
             productCategory: { $in: category.map(category => category._id) },
             'variants.quantity': { $gt: 0 }
         })
+            .populate('offers')
+            .populate('productBrand')
+            .populate('productCategory')
             .sort({ createdAt: -1 })
-            .limit(6);
+            .limit(Infinity);
+
+        let wishlistProductIds = [];
+        const products = productData.map(product => {
+            const basePrice = product.variants && product.variants.length > 0
+                ? product.variants[0].salePrice || product.variants[0].regularPrice
+                : 0;
+
+            let bestOffer = null;
+            let discountedPrice = basePrice;
+
+            const productOffers = activeOffers.filter(offer =>
+                offer.offerType === 'product' && offer.targetId.toString() === product._id.toString()
+            );
+            const categoryOffers = activeOffers.filter(offer =>
+                offer.offerType === 'categories' && product.productCategory && offer.targetId.toString() === product.productCategory._id.toString()
+            );
+            const brandOffers = activeOffers.filter(offer =>
+                offer.offerType === 'brand' && product.productBrand && offer.targetId.toString() === product.productBrand._id.toString()
+            );
+
+            const allOffers = [...productOffers, ...categoryOffers, ...brandOffers];
+            if (allOffers.length > 0) {
+                bestOffer = allOffers.reduce((best, offer) => (offer.discount > best.discount ? offer : best), allOffers[0]);
+                discountedPrice = basePrice - (basePrice * bestOffer.discount / 100);
+            }
+
+            if (!product.minSalePrice && basePrice > 0) {
+                product.minSalePrice = basePrice;
+                product.save().catch(err => console.error(`Error saving minSalePrice for product ${product._id}:`, err));
+            }
+
+            return {
+                _id: product._id,
+                productName: product.productName || 'Unnamed Product',
+                productBrand: product.productBrand ? product.productBrand : null,
+                productCategory: product.productCategory ? product.productCategory : null,
+                price: basePrice || 0,
+                discountedPrice: discountedPrice || basePrice,
+                productImage: product.productImage && product.productImage.length > 0 ? product.productImage : [],
+                status: product.status,
+                bestOffer: bestOffer,
+                variants: product.variants,
+            };
+        });
 
         if (userId) {
             const userData = await User.findById(userId);
-            res.render('user/home', { user: userData, products: productData });
+            const wishlist = await Wishlist.findOne({ user: userId });
+            if (wishlist) {
+                wishlistProductIds = wishlist.products.map(item => item.product.toString());
+            }
+            res.render('user/home', { 
+                user: userData, 
+                products: products,
+                wishlistProductIds
+            });
         } else {
-            res.render('user/home', { products: productData });
+            res.render('user/home', { 
+                products: products,
+                wishlistProductIds
+            });
         }
     } catch (error) {
         console.error('Home page error:', error);
@@ -62,63 +129,101 @@ const loadLogin = (req, res) => {
     }
 };
 
-function generateOtp() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-async function sendVerificationEmail(email, otp) {
+const generateReferralCode = async (firstName) => {
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.NODEMAILER_EMAIL,
-                pass: process.env.NODEMAILER_PASSWORD
-            }
-        });
-
-        const info = await transporter.sendMail({
-            from: process.env.NODEMAILER_EMAIL,
-            to: email,
-            subject: 'Verify your account',
-            text: `Your OTP is ${otp}`,
-            html: `<p>Your OTP is: <strong>${otp}</strong></p>`
-        });
-
-        return info.accepted.length > 0;
+        const baseCode = `${firstName.substring(0, 3).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+        
+        const existingUser = await User.findOne({ referalCode: baseCode });
+        if (existingUser) {
+            return generateReferralCode(firstName);
+        }
+        
+        return baseCode;
     } catch (error) {
-        console.error('Error sending email:', error);
-        return false;
+        console.error('Error generating referral code:', error);
+        throw error;
     }
-}
+};
 
 const signup = async (req, res) => {
     try {
-        const { firstName, lastName, email, password, confirmPassword } = req.body;
+        const { firstName, lastName, email, password, confirmPassword, referralCode } = req.body;
         if (password !== confirmPassword) {
-            return res.render('user/signup', { message: 'Passwords do not match' });
+            return res.status(400).json({
+                success: false,
+                message: 'Passwords do not match'
+            });
         }
 
         const findUser = await User.findOne({ email });
         if (findUser) {
-            return res.render('user/signup', { message: 'User with this email already exists' });
+            return res.status(400).json({
+                success: false,
+                message: 'User with this email already exists'
+            });
+        }
+
+        const newUserReferralCode = await generateReferralCode(firstName);
+
+        let referrer = null;
+        if (referralCode) {
+            referrer = await User.findOne({ referalCode: referralCode });
+            if (!referrer) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid referral code'
+                });
+            }
         }
 
         const otp = generateOtp();
         const emailSent = await sendVerificationEmail(email, otp);
 
         if (!emailSent) {
-            return res.render('user/signup', { message: 'Failed to send verification email' });
+            return res.status(400).json({
+                success: false,
+                message: 'Failed to send verification email'
+            });
         }
+        console.log('OTP :' , otp)
+
+        const wallet = new Wallet({
+            userId: null,
+            balance: 0,
+            currency: 'INR',
+            transactions: []
+        });
 
         req.session.userOtp = otp;
-        req.session.userData = { firstName, lastName, email, password };
-        req.session.otpExpires = Date.now() + 60 * 1000; 
+        req.session.userData = { 
+            firstName, 
+            lastName, 
+            email, 
+            password,
+            referalCode: newUserReferralCode,
+            referredBy: referrer ? referrer._id : null,
+            hasCompletedPurchase: false,
+            redeemed: false,
+            wallet: [wallet._id],
+            referralBonusAmount: 1000,
+            totalReferralEarnings: 0,
+            referralCount: 0
+        };
+        req.session.walletData = wallet;
+        req.session.otpExpires = Date.now() + 60 * 1000;
 
-        res.render('user/verifyotp', { userData: req.session.userData });
-        console.log('OTP sent:', otp);
+        return res.status(200).json({
+            success: true,
+            message: 'OTP sent successfully',
+            redirect: '/verifyotp'
+        });
+
     } catch (error) {
         console.error('Signup error:', error);
-        res.redirect('/pageNotFound');
+        return res.status(500).json({
+            success: false,
+            message: 'An error occurred during signup'
+        });
     }
 };
 
@@ -132,99 +237,116 @@ const securePassword = async (password) => {
 };
 
 const verifyOtp = async (req, res) => {
-
     try {
-   
         const { otp } = req.body;
-
-        console.log('Received OTP:', otp);
-        
-
-        if (!req.session.userOtp || !req.session.userData || !req.session.otpExpires) {
-            return res.status(400).json({
-                success: false,
-                message: 'Session data is missing or OTP has expired. Please request a new OTP.'
-            });
-        }
-
-        if (Date.now() > req.session.otpExpires) {
-            req.session.userOtp = null;
-            req.session.otpExpires = null;
-            return res.status(400).json({
-                success: false,
-                message: 'OTP has expired. Please request a new OTP.'
-            });
-        }
-        
-
-        if (otp !== req.session.userOtp) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid OTP. Please try again.'
-            });
-        }
-
-
         const userData = req.session.userData;
+        const sessionOtp = req.session.userOtp;
+        const otpExpires = req.session.otpExpires;
 
-        if (!userData.firstName || !userData.lastName || !userData.email || !userData.password) {
-            return res.json({
+        if (!userData || !sessionOtp || !otpExpires) {
+            return res.status(400).json({
                 success: false,
-                message: 'Incomplete user data. Please try again.'
+                message: 'Session expired. Please try again.'
             });
         }
 
-        const passwordHash = await securePassword(userData.password);
+        if (Date.now() > otpExpires) {
+            return res.status(400).json({
+                success: false,
+                message: 'OTP expired. Please request a new one.'
+            });
+        }
 
-        const saveUserData = new User({
+        if (otp !== sessionOtp) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid OTP'
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+        const newUser = new User({
             firstName: userData.firstName,
             lastName: userData.lastName,
             email: userData.email,
-            password: passwordHash
+            password: hashedPassword,
+            referalCode: userData.referalCode,
+            referredBy: userData.referredBy,
+            hasCompletedPurchase: false,
+            redeemed: false,
+            referralBonusAmount: userData.referralBonusAmount,
+            totalReferralEarnings: userData.totalReferralEarnings,
+            referralCount: userData.referralCount
         });
 
-        await saveUserData.save();
+        await newUser.save();
 
-        req.session.userOtp = null;
-        req.session.otpExpires = null;
+        const wallet = new Wallet({
+            userId: newUser._id,
+            balance: 0,
+            currency: 'INR',
+            transactions: []
+        });
 
-        return res.json({
+        await wallet.save();
+
+        newUser.wallet = [wallet._id];
+        await newUser.save();
+
+        delete req.session.userOtp;
+        delete req.session.userData;
+        delete req.session.otpExpires;
+        delete req.session.walletData;
+
+        return res.status(200).json({
             success: true,
-            message: 'OTP verified successfully.',
-            redirectUrl: '/login'
+            message: 'Registration successful',
+            redirect: '/login'
         });
-    
     } catch (error) {
-        console.error('Error verifying OTP:', error);
+        console.error('OTP verification error:', error);
         return res.status(500).json({
             success: false,
-            message: `An error occurred while verifying OTP. Please try again later. Details: ${error.message}`
+            message: 'Error verifying OTP. Please try again.'
         });
     }
 };
 
 const resendOtp = async (req, res) => {
     try {
-        const { email } = req.session.userData;
-        if (!email){
-            return res.status(400).json({ success: false, message: "Email not found in session" });
+        const userData = req.session.userData;
+        if (!userData || !userData.email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Session expired. Please try signing up again.'
+            });
         }
-        const otp = generateOtp();
-        req.session.userOtp = otp;
-        console.log('OTP:', otp);
-        req.session.otpExpires = Date.now() + 60 * 1000; 
-        const emailSent = await sendVerificationEmail(email, otp);
-        console.log(emailSent);
 
-        if (emailSent) {
-            console.log("Resend OTP:", otp);
-            res.status(200).json({ success: true, message: "OTP Resent Successfully"});
-        } else {
-            res.status(500).json({success: false, message: "Failed to resend OTP. Please try again"});
+        const otp = generateOtp();
+        const emailSent = await sendVerificationEmail(userData.email, otp);
+
+        if (!emailSent) {
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to send OTP. Please try again.'
+            });
         }
-    } catch (error){
-        console.error("Error resending OTP", error);
-        res.status(500).json({ success: false, message: "Internal Server Error. Please try again"});
+
+        req.session.userOtp = otp;
+        req.session.otpExpires = Date.now() + 60 * 1000; 
+        console.log('New OTP sent:', otp); 
+
+        return res.status(200).json({
+            success: true,
+            message: 'OTP sent successfully'
+        });
+    } catch (error) {
+        console.error('Resend OTP error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to resend OTP. Please try again.'
+        });
     }
 };
 
@@ -268,13 +390,14 @@ const logout = async (req, res) => {
 
 const loadShopPage = async (req, res) => {
   try {
-    const { brands, category, priceFrom, priceTo, sort } = req.query;
+    const { brands, category, priceFrom, priceTo, sort, page = 1 } = req.query;
+    const limit = 8;
+    const skip = (page - 1) * limit;
 
     let query = {
       isDeleted: false,
       status: 'listed',
       productImage: { $exists: true, $ne: [], $type: 'array' },
-      variants: { $exists: true, $ne: [], $type: 'array' },
     };
 
     const currentFilters = {
@@ -283,6 +406,7 @@ const loadShopPage = async (req, res) => {
       sort: sort || 'A-Z',
       minValue: priceFrom || '',
       maxValue: priceTo || '',
+      currentPage: parseInt(page),
     };
 
     if (brands) {
@@ -297,10 +421,15 @@ const loadShopPage = async (req, res) => {
       currentFilters.categoryf = selectedCategories;
     }
 
+    const totalProducts = await Product.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / limit);
+
     let products = await Product.find(query)
       .populate('productBrand', 'brandName offers')
       .populate('productCategory', 'name offers')
-      .populate('offers');
+      .populate('offers')
+      .skip(skip)
+      .limit(limit);
 
     const activeOffers = await Offer.find({
       status: 'Active',
@@ -309,7 +438,7 @@ const loadShopPage = async (req, res) => {
 
     products = products.map(product => {
       const basePrice = product.variants && product.variants.length > 0
-        ? (product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice)
+        ? product.variants[0].salePrice
         : 0;
 
       let bestOffer = null;
@@ -345,7 +474,8 @@ const loadShopPage = async (req, res) => {
         discountedPrice: discountedPrice || basePrice,
         image: product.productImage && product.productImage.length > 0 ? product.productImage[0] : '/img/placeholder.png',
         status: product.status,
-        offers: productOffers,
+        offers: bestOffer ? [bestOffer] : [],
+        bestOffer: bestOffer, 
         category: {
           ...product.productCategory,
           offers: categoryOffers,
@@ -354,6 +484,7 @@ const loadShopPage = async (req, res) => {
           ...product.productBrand,
           offers: brandOffers,
         },
+        variants: product.variants,
       };
     });
 
@@ -380,9 +511,15 @@ const loadShopPage = async (req, res) => {
 
     let wishlistProductIds = [];
     if (req.session.user) {
-      const wishlist = await Wishlist.findOne({ userId: req.session.user });
-      if (wishlist) {
-        wishlistProductIds = wishlist.products.map(item => item.productId.toString());
+      try {
+        const wishlist = await Wishlist.findOne({ userId: req.session.user });
+        if (wishlist && wishlist.products && Array.isArray(wishlist.products)) {
+          wishlistProductIds = wishlist.products
+            .filter(item => item && item.productId)
+            .map(item => item.productId.toString());
+        }
+      } catch (error) {
+        console.error('Error fetching wishlist:', error);
       }
     }
 
@@ -392,7 +529,16 @@ const loadShopPage = async (req, res) => {
       categories: categoriesList,
       user: req.session.user ? await User.findById(req.session.user) : null,
       currentFilters,
-      wishlistProductIds,
+      wishlistProductIds: wishlistProductIds || [],
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        hasNextPage: parseInt(page) < totalPages,
+        hasPrevPage: parseInt(page) > 1,
+        nextPage: parseInt(page) + 1,
+        prevPage: parseInt(page) - 1,
+        totalProducts,
+      },
     });
   } catch (error) {
     console.error('Error in loadShopPage:', error);
@@ -400,6 +546,69 @@ const loadShopPage = async (req, res) => {
   }
 };
 
+const loadReferrals = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        
+        if (!userId) {
+            return res.redirect('/login');
+        }
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.redirect('/login');
+        }
+
+        const wallet = await Wallet.findOne({ userId: user._id });
+
+        const referredUsers = await User.find({ referredBy: userId });
+        const completedReferrals = referredUsers.filter(user => user.hasCompletedPurchase);
+
+        const referralStats = {
+            totalReferrals: referredUsers.length,
+            pendingReferrals: referredUsers.length - completedReferrals.length,
+            completedReferrals: completedReferrals.length,
+            totalEarnings: user.totalReferralEarnings || 0,
+            referralBonus: user.referralBonusAmount || 100,
+            walletBalance: wallet ? wallet.balance : 0
+        };
+
+        const referralHistory = await Promise.all(referredUsers.map(async (referredUser) => {
+            const referralTransaction = wallet ? 
+                wallet.transactions.find(t => 
+                    t.method === 'ReferralBonus' && 
+                    t.description.includes(referredUser.firstName)
+                ) : null;
+
+            return {
+                userName: `${referredUser.firstName} ${referredUser.lastName}`,
+                email: referredUser.email,
+                joinDate: referredUser.createdOn,
+                status: referredUser.hasCompletedPurchase ? 'Completed' : 'Pending',
+                rewardAmount: referredUser.hasCompletedPurchase ? (user.referralBonusAmount || 100) : 0,
+                rewardDate: referralTransaction ? referralTransaction.date : null,
+                firstPurchaseDate: referredUser.firstPurchaseDate
+            };
+        }));
+
+        referralHistory.sort((a, b) => b.joinDate - a.joinDate);
+
+        res.render('user/userReferrals', {
+            user,
+            referralStats,
+            referralHistory,
+            wallet
+        });
+
+    } catch (error) {
+        console.error('Error in loadReferrals:', error);
+        res.status(500).render('error', { 
+            error: 'Internal server error',
+            message: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+    }
+};
 
 module.exports = {
     loadHomepage,
@@ -411,5 +620,6 @@ module.exports = {
     logout,
     verifyOtp,
     resendOtp,
-    loadShopPage
+    loadShopPage,
+    loadReferrals
 };

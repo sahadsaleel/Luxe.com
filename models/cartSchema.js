@@ -47,12 +47,13 @@ const cartSchema = new Schema({
     appliedOffer: {
       offerId: { type: Schema.Types.ObjectId, ref: 'Offer' },
       offerName: { type: String },
-      offerType: { type: String, enum: ['product', 'categories', 'brand'] }, // No default
+      offerType: { type: String, enum: ['product', 'categories', 'brand'] }, 
       discountPercentage: { type: Number, min: 0 },
       discountAmount: { type: Number, min: 0 },
       endDate: { type: Date }
     }
   }],
+  
   coupon: {
     code: { type: String, default: '' },
     discount: { type: Number, default: 0 },

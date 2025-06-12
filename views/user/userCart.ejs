@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="/css/userCart.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
   <style>
-    /* Offer badge styles */
     .offer-badge {
       position: absolute;
       top: 10px;
@@ -75,17 +74,6 @@
       font-size: 0.8rem;
       font-weight: 500;
       margin-top: 2px;
-    }
-    /* Countdown timer styles */
-    .countdown-timer {
-      background: #2d3436;
-      color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: bold;
-      margin-top: 4px;
-      text-align: center;
     }
     .timer-digit {
       background: #ff6b6b;
@@ -309,6 +297,61 @@
       border-radius: 4px;
       cursor: pointer;
     }
+    .item-total {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-top: 8px;
+      font-size: 1rem;
+      color: #2d3436;
+    }
+    .item-total .total-label {
+      margin-right: 8px;
+      font-weight: 500;
+    }
+    .item-total .total-value {
+      font-weight: bold;
+    }
+    .price-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .current-price {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #2d3436;
+    }
+    .original-price {
+      font-size: 0.9rem;
+      color: #636e72;
+      text-decoration: line-through;
+    }
+    .discount-percent {
+      background: #00b894;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    .savings-text {
+      color: #00b894;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .discount-row {
+      color: #00b894;
+    }
+    .savings-row {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed #e0e0e0;
+      font-weight: bold;
+      color: #00b894;
+    }
   </style>
 </head>
 <body>
@@ -367,25 +410,16 @@
                       <div class="item-price-container">
                         <div class="price-container">
                           <% if (item.offerApplied) { %>
-                            <span class="current-price">₹<%= item.discountedPrice.toFixed(2) %></span>
-                            <span class="original-price">₹<%= item.originalPrice.toFixed(2) %></span>
+                            <span class="current-price">₹<%= (item.discountedPrice * item.quantity || 0).toFixed(2) %></span>
+                            <span class="original-price">₹<%= (item.basePrice * item.quantity || 0).toFixed(2) %></span>
                             <span class="discount-percent"><%= item.offerApplied.discountPercentage %>% off</span>
                           <% } else { %>
-                            <span class="current-price">₹<%= item.originalPrice.toFixed(2) %></span>
+                            <span class="current-price">₹<%= (item.basePrice * item.quantity || 0).toFixed(2) %></span>
                           <% } %>
                         </div>
                         <% if (item.totalDiscount > 0) { %>
                           <div class="savings-text">
-                            You save ₹<%= item.totalDiscount.toFixed(2) %>
-                          </div>
-                        <% } %>
-                        <% if (item.offerApplied && item.offerApplied.discountPercentage >= 40) { %>
-                          <div class="countdown-timer" id="timer-<%= item._id %>">
-                            <span>Ends in: </span>
-                            <span class="timer-digit" id="days-<%= item._id %>">00</span>d
-                            <span class="timer-digit" id="hours-<%= item._id %>">00</span>h
-                            <span class="timer-digit" id="minutes-<%= item._id %>">00</span>m
-                            <span class="timer-digit" id="seconds-<%= item._id %>">00</span>s
+                            You save ₹<%= (item.totalDiscount || 0).toFixed(2) %>
                           </div>
                         <% } %>
                       </div>
@@ -451,10 +485,10 @@
           <span class="summary-label">Subtotal (<span id="summary-item-count"><%= cartItems.length %></span> items)</span>
           <span class="summary-value" id="subtotal-value">₹<%= subtotal.toFixed(2) %></span>
         </div>
-        <% if (typeof offerDiscountTotal !== 'undefined' && offerDiscountTotal > 0) { %>
-          <div class="summary-row">
+        <% if (offerDiscount > 0) { %>
+          <div class="summary-row discount-row">
             <span class="summary-label">Offer Discount</span>
-            <span class="summary-value" id="offer-discount-value">-₹<%= offerDiscountTotal.toFixed(2) %></span>
+            <span class="summary-value" id="offer-discount-value">-₹<%= offerDiscount.toFixed(2) %></span>
           </div>
         <% } %>
         <% if (giftWrapTotal > 0) { %>
@@ -464,7 +498,7 @@
           </div>
         <% } %>
         <% if (appliedCoupon) { %>
-          <div class="summary-row">
+          <div class="summary-row discount-row">
             <span class="summary-label">Coupon Discount (<%= appliedCoupon.code %>)</span>
             <span class="summary-value" id="coupon-discount-value">-₹<%= appliedCoupon.discount.toFixed(2) %></span>
           </div>
@@ -472,7 +506,7 @@
         <% if (totalSavings > 0) { %>
           <div class="savings-row">
             <span class="summary-label">Total Savings</span>
-            <span class="summary-value">₹<%= totalSavings.toFixed(2) %></span>
+            <span class="summary-value" id="total-savings-value">₹<%= totalSavings.toFixed(2) %></span>
           </div>
         <% } %>
         <div class="summary-row">
@@ -590,23 +624,218 @@
       document.getElementById('cart-item-count').textContent = cart.items.length;
       document.getElementById('summary-item-count').textContent = cart.items.length;
       document.getElementById('subtotal-value').textContent = `₹${Number(cart.subtotal).toFixed(2)}`;
-      const offerDiscountElement = document.getElementById('offer-discount-value');
-      if (offerDiscountElement) {
-        offerDiscountElement.textContent = `-₹${Number(cart.offerDiscountTotal).toFixed(2)}`;
+      
+      // Update offer discount
+      const offerDiscountRow = document.querySelector('.summary-row.discount-row');
+      if (cart.offerDiscount > 0) {
+        if (!offerDiscountRow) {
+          const newRow = document.createElement('div');
+          newRow.className = 'summary-row discount-row';
+          newRow.innerHTML = `
+            <span class="summary-label">Offer Discount</span>
+            <span class="summary-value" id="offer-discount-value">-₹${Number(cart.offerDiscount).toFixed(2)}</span>
+          `;
+          document.querySelector('.cart-summary').insertBefore(newRow, document.querySelector('.total-row'));
+        } else {
+          const offerDiscountValue = offerDiscountRow.querySelector('#offer-discount-value');
+          if (offerDiscountValue) {
+            offerDiscountValue.textContent = `-₹${Number(cart.offerDiscount).toFixed(2)}`;
+          }
+        }
+      } else if (offerDiscountRow) {
+        offerDiscountRow.remove();
       }
+      
+      // Update gift wrap total
       const giftWrapElement = document.getElementById('gift-wrap-value');
-      if (giftWrapElement) {
+      if (giftWrapElement && cart.giftWrapTotal > 0) {
         giftWrapElement.textContent = `₹${Number(cart.giftWrapTotal).toFixed(2)}`;
       }
-      const couponDiscountElement = document.getElementById('coupon-discount-value');
-      if (couponDiscountElement && cart.appliedCoupon) {
-        couponDiscountElement.textContent = `-₹${Number(cart.appliedCoupon.discount).toFixed(2)}`;
+      
+      // Update coupon discount
+      const couponRow = document.querySelector('.summary-row.discount-row:last-of-type');
+      const couponAppliedDiv = document.querySelector('.coupon-applied');
+      
+      // Remove existing coupon elements if no coupon is applied
+      if (!cart.appliedCoupon) {
+        if (couponRow) couponRow.remove();
+        if (couponAppliedDiv) couponAppliedDiv.remove();
+        
+        // Enable coupon inputs
+        const promoField = document.querySelector('.promo-field');
+        const applyBtn = document.getElementById('apply-coupon-btn');
+        const modalBtn = document.querySelector('.coupon-modal-btn');
+        
+        if (promoField) promoField.disabled = false;
+        if (applyBtn) applyBtn.disabled = false;
+        if (modalBtn) modalBtn.disabled = false;
+      } else {
+        // Update or add coupon discount row
+        if (!couponRow) {
+          const newRow = document.createElement('div');
+          newRow.className = 'summary-row discount-row';
+          newRow.innerHTML = `
+            <span class="summary-label">Coupon Discount (${cart.appliedCoupon.code})</span>
+            <span class="summary-value" id="coupon-discount-value">-₹${Number(cart.couponDiscount).toFixed(2)}</span>
+          `;
+          document.querySelector('.cart-summary').insertBefore(newRow, document.querySelector('.total-row'));
+        } else {
+          const couponDiscountValue = document.getElementById('coupon-discount-value');
+          if (couponDiscountValue) {
+            couponDiscountValue.textContent = `-₹${Number(cart.couponDiscount).toFixed(2)}`;
+          }
+        }
+
+        // Update or add coupon applied info
+        if (!couponAppliedDiv) {
+          const promoContent = document.querySelector('.promo-content');
+          if (promoContent) {
+            const newCouponApplied = document.createElement('div');
+            newCouponApplied.className = 'coupon-applied';
+            newCouponApplied.innerHTML = `
+              <div class="coupon-info">
+                <span class="coupon-code">${cart.appliedCoupon.code}</span>
+                <span class="coupon-discount">Discount: ₹${Number(cart.couponDiscount).toFixed(2)}</span>
+              </div>
+              <button class="coupon-remove" id="remove-coupon-btn">Remove</button>
+            `;
+            promoContent.appendChild(newCouponApplied);
+            
+            // Add event listener to new remove button
+            const newRemoveBtn = newCouponApplied.querySelector('#remove-coupon-btn');
+            if (newRemoveBtn) {
+              newRemoveBtn.addEventListener('click', removeCoupon);
+            }
+          }
+        } else {
+          const couponInfo = couponAppliedDiv.querySelector('.coupon-info');
+          if (couponInfo) {
+            couponInfo.innerHTML = `
+              <span class="coupon-code">${cart.appliedCoupon.code}</span>
+              <span class="coupon-discount">Discount: ₹${Number(cart.couponDiscount).toFixed(2)}</span>
+            `;
+          }
+        }
+
+        // Disable coupon inputs
+        const promoField = document.querySelector('.promo-field');
+        const applyBtn = document.getElementById('apply-coupon-btn');
+        const modalBtn = document.querySelector('.coupon-modal-btn');
+        
+        if (promoField) promoField.disabled = true;
+        if (applyBtn) applyBtn.disabled = true;
+        if (modalBtn) modalBtn.disabled = true;
       }
-      const savingsElement = document.querySelector('.savings-row .summary-value');
-      if (savingsElement) {
-        savingsElement.textContent = `₹${Number(cart.totalSavings).toFixed(2)}`;
+      
+      // Update total savings
+      const savingsRow = document.querySelector('.savings-row');
+      if (cart.totalSavings > 0) {
+        if (!savingsRow) {
+          const newRow = document.createElement('div');
+          newRow.className = 'savings-row';
+          newRow.innerHTML = `
+            <span class="summary-label">Total Savings</span>
+            <span class="summary-value" id="total-savings-value">₹${Number(cart.totalSavings).toFixed(2)}</span>
+          `;
+          document.querySelector('.cart-summary').insertBefore(newRow, document.querySelector('.total-row'));
+        } else {
+          document.getElementById('total-savings-value').textContent = `₹${Number(cart.totalSavings).toFixed(2)}`;
+        }
+      } else if (savingsRow) {
+        savingsRow.remove();
       }
+      
+      // Update final total
       document.getElementById('total-value').textContent = `₹${Number(cart.total).toFixed(2)}`;
+    }
+
+    // Quantity update function
+    async function updateQuantity(itemId, quantity, btn) {
+      try {
+        const response = await fetch('/cart/update-quantity', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ itemId, quantity }),
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          showToast(data.message, 'success');
+          updateCartSummary(data.cart);
+          
+          // If coupon was removed, update the UI accordingly
+          if (data.couponRemoved) {
+            const couponAppliedDiv = document.querySelector('.coupon-applied');
+            if (couponAppliedDiv) {
+              couponAppliedDiv.remove();
+            }
+            // Enable coupon inputs
+            document.querySelector('.promo-field').disabled = false;
+            document.getElementById('apply-coupon-btn').disabled = false;
+            document.querySelector('.coupon-modal-btn').disabled = false;
+          }
+          
+          const cartItem = btn.closest('.cart-item');
+          if (cartItem) {
+            const item = data.cart.items.find(item => item._id === itemId);
+            if (item) {
+              // Update quantity input
+              const quantityInput = cartItem.querySelector('.quantity-input');
+              if (quantityInput) {
+                quantityInput.value = item.quantity;
+              }
+
+              // Update price display
+              const priceContainer = cartItem.querySelector('.item-price-container');
+              if (priceContainer) {
+                const currentPrice = priceContainer.querySelector('.current-price');
+                const originalPrice = priceContainer.querySelector('.original-price');
+                const savingsText = priceContainer.querySelector('.savings-text');
+
+                if (item.offerApplied) {
+                  if (currentPrice) {
+                    currentPrice.textContent = `₹${(item.discountedPrice * item.quantity).toFixed(2)}`;
+                  }
+                  if (originalPrice) {
+                    originalPrice.textContent = `₹${(item.basePrice * item.quantity).toFixed(2)}`;
+                  }
+                  if (savingsText) {
+                    savingsText.textContent = `You save ₹${item.totalDiscount.toFixed(2)}`;
+                  }
+                } else {
+                  if (currentPrice) {
+                    currentPrice.textContent = `₹${(item.basePrice * item.quantity).toFixed(2)}`;
+                  }
+                }
+              }
+
+              // Update stock warning if needed
+              const itemMeta = cartItem.querySelector('.item-meta');
+              if (itemMeta) {
+                let lowStockWarning = itemMeta.querySelector('.low-stock-warning');
+                if (item.stockAvailable <= 5 && item.stockAvailable > 0) {
+                  if (!lowStockWarning) {
+                    lowStockWarning = document.createElement('div');
+                    lowStockWarning.className = 'low-stock-warning';
+                    itemMeta.appendChild(lowStockWarning);
+                  }
+                  lowStockWarning.textContent = `Only ${item.stockAvailable} left in stock!`;
+                } else if (lowStockWarning) {
+                  lowStockWarning.remove();
+                }
+              }
+            }
+          }
+        } else {
+          showToast(data.message || 'Failed to update quantity', 'error');
+          return false;
+        }
+        return true;
+      } catch (error) {
+        console.error('Error updating quantity:', error);
+        showToast('Error updating quantity', 'error');
+        return false;
+      }
     }
 
     // Load available coupons
@@ -626,7 +855,7 @@
             couponItem.innerHTML = `
               <div class="coupon-details">
                 <h3>${coupon.code}</h3>
-                <p>Discount: ${coupon.discount}%</p>
+                <p>Discount: ₹${coupon.discount}</p>
                 <p>Min Purchase: ₹${coupon.minPurchase.toFixed(2)}</p>
                 <p>Expires: ${new Date(coupon.expiryDate).toLocaleDateString()}</p>
               </div>
@@ -659,6 +888,12 @@
         return;
       }
 
+      const existingCoupon = document.querySelector('.coupon-applied');
+      if (existingCoupon) {
+        showToast('Please remove existing coupon before applying a new one', 'error');
+        return;
+      }
+
       try {
         const response = await fetch('/cart/apply-coupon', {
           method: 'POST',
@@ -666,9 +901,51 @@
           body: JSON.stringify({ couponCode: code }),
         });
         const data = await response.json();
+        
         if (data.success) {
           showToast(data.message, 'success');
-          window.location.reload();
+          if (data.cart) {
+            // Update the cart summary
+            document.getElementById('subtotal-value').textContent = `₹${data.cart.subtotal.toFixed(2)}`;
+            
+            const couponDiscountElement = document.getElementById('coupon-discount-value');
+            if (data.cart.appliedCoupon) {
+              if (!couponDiscountElement) {
+                const couponRow = document.createElement('div');
+                couponRow.className = 'summary-row discount-row';
+                couponRow.innerHTML = `
+                  <span class="summary-label">Coupon Discount (${data.cart.appliedCoupon.code})</span>
+                  <span class="summary-value" id="coupon-discount-value">-₹${data.cart.couponDiscount.toFixed(2)}</span>
+                `;
+                document.querySelector('.cart-summary').insertBefore(couponRow, document.querySelector('.total-row'));
+              } else {
+                couponDiscountElement.textContent = `-₹${data.cart.couponDiscount.toFixed(2)}`;
+              }
+
+              const promoContent = document.querySelector('.promo-content');
+              const couponAppliedDiv = document.createElement('div');
+              couponAppliedDiv.className = 'coupon-applied';
+              couponAppliedDiv.innerHTML = `
+                <div class="coupon-info">
+                  <span class="coupon-code">${data.cart.appliedCoupon.code}</span>
+                  <span class="coupon-discount">Discount: ₹${data.cart.couponDiscount.toFixed(2)}</span>
+                </div>
+                <button class="coupon-remove" id="remove-coupon-btn">Remove</button>
+              `;
+              promoContent.appendChild(couponAppliedDiv);
+
+              document.querySelector('.promo-field').disabled = true;
+              document.getElementById('apply-coupon-btn').disabled = true;
+              document.querySelector('.coupon-modal-btn').disabled = true;
+            }
+            
+            updateCartSummary(data.cart);
+          }
+          document.querySelector('.coupon-modal').style.display = 'none';
+          const removeBtn = document.getElementById('remove-coupon-btn');
+          if (removeBtn) {
+            removeBtn.addEventListener('click', removeCoupon);
+          }
         } else {
           showToast(data.message, 'error');
         }
@@ -678,7 +955,6 @@
       }
     }
 
-    // Remove coupon
     async function removeCoupon() {
       try {
         const response = await fetch('/cart/remove-coupon', {
@@ -686,8 +962,9 @@
           headers: { 'Content-Type': 'application/json' },
         });
         const data = await response.json();
+        
         if (data.success) {
-          showToast('Coupon removed', 'success');
+          showToast('Coupon removed successfully', 'success');
           window.location.reload();
         } else {
           showToast(data.message, 'error');
@@ -741,7 +1018,6 @@
         });
       }
 
-      // Coupon modal
       const couponModalBtn = document.querySelector('.coupon-modal-btn');
       const couponModal = document.querySelector('.coupon-modal');
       const couponModalClose = document.querySelector('.coupon-modal-close');
@@ -760,7 +1036,6 @@
         });
       }
 
-      // Apply coupon
       const applyCouponBtn = document.getElementById('apply-coupon-btn');
       if (applyCouponBtn) {
         applyCouponBtn.addEventListener('click', () => {
@@ -770,13 +1045,11 @@
         });
       }
 
-      // Remove coupon
       const removeCouponBtn = document.getElementById('remove-coupon-btn');
       if (removeCouponBtn) {
         removeCouponBtn.addEventListener('click', removeCoupon);
       }
 
-      // Quantity buttons with debouncing
       const quantityBtns = document.querySelectorAll('.quantity-btn');
       quantityBtns.forEach(btn => {
         btn.addEventListener('click', debounce(async () => {
@@ -785,7 +1058,6 @@
           const itemId = btn.getAttribute('data-item-id');
           const action = btn.getAttribute('data-action');
           const input = btn.parentElement.querySelector('.quantity-input');
-          const cartItem = btn.closest('.cart-item');
           let quantity = parseInt(input.value);
 
           btn.disabled = true;
@@ -795,10 +1067,8 @@
           const originalQuantity = quantity;
           if (action === 'increase' && quantity < 5) {
             quantity++;
-            input.value = quantity;
           } else if (action === 'decrease' && quantity > 1) {
             quantity--;
-            input.value = quantity;
           } else {
             showToast(action === 'increase' ? 'Maximum quantity is 5' : 'Minimum quantity is 1', 'error');
             btn.disabled = false;
@@ -806,55 +1076,13 @@
             return;
           }
 
-          try {
-            const response = await fetch('/cart/update-quantity', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ itemId, quantity }),
-            });
-            const data = await response.json();
-            if (data.success) {
-              showToast('Quantity updated', 'success');
-              updateCartSummary(data.cart);
-              const priceContainer = cartItem.querySelector('.item-price-container');
-              if (data.itemPrice) {
-                const item = data.cart.items.find(item => item._id === itemId);
-                const discountedPrice = item.offerApplied
-                  ? (data.itemPrice - (item.offerApplied.discountAmount || 0)).toFixed(2)
-                  : data.itemPrice.toFixed(2);
-                priceContainer.querySelector('.current-price').textContent = `₹${discountedPrice}`;
-                if (item.offerApplied) {
-                  priceContainer.querySelector('.original-price').textContent = `₹${data.itemPrice.toFixed(2)}`;
-                  if (item.offerApplied.discountPercentage >= 40 && item.offerApplied.endDate) {
-                    startCountdown(itemId, item.offerApplied.endDate);
-                  }
-                }
-                const lowStockWarning = cartItem.querySelector('.low-stock-warning');
-                if (item.stockAvailable <= 5 && item.stockAvailable > 0) {
-                  if (!lowStockWarning) {
-                    const warning = document.createElement('div');
-                    warning.className = 'low-stock-warning';
-                    warning.textContent = `Only ${item.stockAvailable} left in stock!`;
-                    cartItem.querySelector('.item-meta').appendChild(warning);
-                  } else {
-                    lowStockWarning.textContent = `Only ${item.stockAvailable} left in stock!`;
-                  }
-                } else if (lowStockWarning) {
-                  lowStockWarning.remove();
-                }
-              }
-            } else {
-              showToast(data.message || 'Failed to update quantity', 'error');
-              input.value = originalQuantity;
-            }
-          } catch (error) {
-            console.error('Error updating quantity:', error);
-            showToast('Error updating quantity', 'error');
+          const success = await updateQuantity(itemId, quantity, btn);
+          if (!success) {
             input.value = originalQuantity;
-          } finally {
-            btn.disabled = false;
-            if (siblingBtn) siblingBtn.disabled = false;
           }
+
+          btn.disabled = false;
+          if (siblingBtn) siblingBtn.disabled = false;
         }, 300));
       });
     });

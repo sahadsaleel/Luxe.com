@@ -1,51 +1,116 @@
 const User = require('../models/userSchema');
 
-const userAuth = (req, res, next) => {
-    if (req.session.user) {
-        User.findById(req.session.user)
-            .then(data => {
-                if (data && !data.isBlocked) {
-                    req.user = data;
-                    next();
-                } else {
-                    res.redirect('/login');
-                }
-            })
-            .catch(error => {
-                console.log("Error in user auth middleware", error);
-                res.status(500).send("Internal server error");
+const userAuth = async (req, res, next) => {
+    try {
+        if (!req.session || !req.session.user) {
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.status(401).json({ 
+                    success: false, 
+                    message: 'Please login to continue' 
+                });
+            }
+            return res.redirect('/login');
+        }
+
+        const user = await User.findById(req.session.user);
+        
+        if (!user) {
+            req.session.destroy();
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.status(401).json({ 
+                    success: false, 
+                    message: 'User not found' 
+                });
+            }
+            return res.redirect('/login');
+        }
+
+        if (user.isBlocked) {
+            req.session.destroy();
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.status(403).json({ 
+                    success: false, 
+                    message: 'Your account has been blocked. Please contact support.' 
+                });
+            }
+            return res.redirect('/login?blocked=true');
+        }
+
+        req.user = user;
+        next();
+    } catch (error) {
+        console.error('User auth middleware error:', error);
+        if (req.xhr || req.headers.accept?.includes('application/json')) {
+            return res.status(500).json({ 
+                success: false, 
+                message: 'Internal server error' 
             });
-    } else {
-        res.redirect('/login');
+        }
+        res.status(500).render('error', { message: 'Internal server error' });
     }
 };
 
-const adminAuth = (req, res, next) => {
-    if (req.session.adminId) {
-        User.findById(req.session.adminId)
-            .then(data => {
-                if (data && data.isAdmin && !data.isBlocked) {
-                    req.user = data;
-                    next();
-                } else {
-                    if (req.xhr || req.headers.accept.includes('json')) {
-                        return res.status(403).json({ message: 'Unauthorized: Admin access required' });
-                    }
-                    res.redirect('/admin/login');
-                }
-            })
-            .catch(error => {
-                console.log("Error in admin auth middleware", error);
-                if (req.xhr || req.headers.accept.includes('json')) {
-                    return res.status(500).json({ message: 'Internal server error' });
-                }
-                res.status(500).send('Internal server error');
-            });
-    } else {
-        if (req.xhr || req.headers.accept.includes('json')) {
-            return res.status(401).json({ message: 'Please log in as admin' });
+const adminAuth = async (req, res, next) => {
+    try {
+        if (!req.session || !req.session.adminId) {
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.status(401).json({ 
+                    success: false, 
+                    message: 'Please login as admin' 
+                });
+            }
+            return res.redirect('/admin/login');
         }
-        res.redirect('/admin/login');
+
+        const admin = await User.findById(req.session.adminId);
+        
+        if (!admin) {
+            req.session.destroy();
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.status(401).json({ 
+                    success: false, 
+                    message: 'Admin not found' 
+                });
+            }
+            return res.redirect('/admin/login');
+        }
+
+        if (!admin.isAdmin) {
+            req.session.destroy();
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.status(403).json({ 
+                    success: false, 
+                    message: 'Unauthorized: Admin access required' 
+                });
+            }
+            return res.redirect('/admin/login?unauthorized=true');
+        }
+
+        if (admin.isBlocked) {
+            req.session.destroy();
+            if (req.xhr || req.headers.accept?.includes('application/json')) {
+                return res.status(403).json({ 
+                    success: false, 
+                    message: 'Your account has been blocked' 
+                });
+            }
+            return res.redirect('/admin/login?blocked=true');
+        }
+
+        // Set both admin flags in session
+        req.session.admin = true;
+        req.session.isAdmin = true;
+        req.user = admin;
+        next();
+    } catch (error) {
+        console.error('Admin auth middleware error:', error);
+        if (req.xhr || req.headers.accept?.includes('application/json')) {
+            return res.status(500).json({ 
+                success: false, 
+                message: 'Internal server error' 
+            });
+        }
+        res.status(500).render('error', { message: 'Internal server error' });
     }
 };
 

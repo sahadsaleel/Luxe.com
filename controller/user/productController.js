@@ -39,7 +39,7 @@ const productViewPage = async (req, res) => {
     });
 
     const basePrice = product.variants && product.variants.length > 0
-      ? (product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice)
+      ? product.variants[0].salePrice
       : 0;
 
     let bestOffer = null;
@@ -62,7 +62,7 @@ const productViewPage = async (req, res) => {
     }
 
     const variants = product.variants.map(variant => {
-      const variantBasePrice = variant.salePrice > 0 ? variant.salePrice : variant.regularPrice;
+      const variantBasePrice = variant.salePrice;
       const variantDiscountedPrice = bestOffer ? variantBasePrice - (variantBasePrice * bestOffer.discount / 100) : variantBasePrice;
       return {
         ...variant.toObject(),

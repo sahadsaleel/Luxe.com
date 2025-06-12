@@ -15,6 +15,14 @@ const brandSchema = new Schema({
       cloudinaryPublicId: { 
         type: String,
       },
+      description: {
+        type: String,
+        required: true
+      },
+      isListed: {
+        type: Boolean,
+        default: true
+      },
       isBlocked: {
         type: Boolean,
         default: false,

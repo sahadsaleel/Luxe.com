@@ -28,7 +28,7 @@
             <div class="sidebar">
                 <div class="profile-brief">
                     <div class="profile-image">
-                        <img src="<%= user && user.profileImage ? user.profileImage : '/img/profile-image-placeholder.png' %>" alt="Profile Image">
+                        <img src="<%= user && user.profileImage ? user.profileImage : '/img/profile images.png' %>" alt="Profile Image">
                     </div>
                     <div class="profile-info">
                         <div class="profile-name"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : 'Guest' %></div>
@@ -45,6 +45,7 @@
                     <h3>Payments</h3>
                     <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
                     <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
+                    <li><a href="/referrals"><i class="fas fa-share-alt"></i> My Referrals</a></li>
                     <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign out</a></li>
                 </ul>
             </div>
@@ -56,11 +57,25 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <i class="fas fa-box"></i>
-                        <h2>Order History</h2>
+                        <div class="header-title">
+                            <i class="fas fa-box"></i>
+                            <h2>Order History</h2>
+                        </div>
+                        <div class="search-container">
+                            <form action="/orders" method="GET" class="search-form">
+                                <input type="text" name="search" value="<%= search %>" placeholder="Search orders...">
+        
+                                <button type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
                     <% if (orders && orders.length > 0) { %>
+                        <div class="order-summary">
+                            <p>Showing <%= (currentPage - 1) * 10 + 1 %> - <%= Math.min(currentPage * 10, totalOrders) %> of <%= totalOrders %> orders</p>
+                        </div>
                         <table class="orders-table">
                             <thead>
                                 <tr>
@@ -107,23 +122,58 @@
                         <% if (totalPages > 1) { %>
                             <div class="pagination">
                                 <% if (currentPage > 1) { %>
-                                    <a href="/orders?page=<%= currentPage - 1 %>"><i class="fas fa-chevron-left"></i></a>
+                                    <a href="/orders?page=<%= currentPage - 1 %>&search=<%= search %>&status=<%= status %>">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
                                 <% } %>
-                                <% for (let i = 1; i <= totalPages; i++) { %>
-                                    <a href="/orders?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+                                
+                                <% 
+                                let startPage = Math.max(1, currentPage - 2);
+                                let endPage = Math.min(totalPages, startPage + 4);
+                                if (endPage - startPage < 4) {
+                                    startPage = Math.max(1, endPage - 4);
+                                }
+                                %>
+
+                                <% if (startPage > 1) { %>
+                                    <a href="/orders?page=1&search=<%= search %>&status=<%= status %>">1</a>
+                                    <% if (startPage > 2) { %>
+                                        <span class="pagination-dots">...</span>
+                                    <% } %>
                                 <% } %>
+
+                                <% for (let i = startPage; i <= endPage; i++) { %>
+                                    <a href="/orders?page=<%= i %>&search=<%= search %>&status=<%= status %>" 
+                                       class="<%= currentPage === i ? 'active' : '' %>">
+                                        <%= i %>
+                                    </a>
+                                <% } %>
+
+                                <% if (endPage < totalPages) { %>
+                                    <% if (endPage < totalPages - 1) { %>
+                                        <span class="pagination-dots">...</span>
+                                    <% } %>
+                                    <a href="/orders?page=<%= totalPages %>&search=<%= search %>&status=<%= status %>">
+                                        <%= totalPages %>
+                                    </a>
+                                <% } %>
+
                                 <% if (currentPage < totalPages) { %>
-                                    <a href="/orders?page=<%= currentPage + 1 %>"><i class="fas fa-chevron-right"></i></a>
+                                    <a href="/orders?page=<%= currentPage + 1 %>&search=<%= search %>&status=<%= status %>">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
                                 <% } %>
-                            </div>
-                            <div class="pagination-info">
-                                Page <%= currentPage %> of <%= totalPages %>
                             </div>
                         <% } %>
                     <% } else { %>
                         <div class="no-orders">
-                            <p>No orders found. Start shopping now!</p>
-                            <a href="/shop" class="action-button">Shop Now</a>
+                            <% if (search || status) { %>
+                                <p>No orders found matching your search criteria.</p>
+                                <a href="/orders" class="action-button">Clear Filters</a>
+                            <% } else { %>
+                                <p>No orders found. Start shopping now!</p>
+                                <a href="/shop" class="action-button">Shop Now</a>
+                            <% } %>
                         </div>
                     <% } %>
                 </div>

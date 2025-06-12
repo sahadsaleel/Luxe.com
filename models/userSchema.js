@@ -66,10 +66,25 @@ const userSchema = new Schema({
         default: Date.now
     },
     referalCode: {
-        type: String
+        type: String,
+        unique: true
+    },
+    referredBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    },
+    hasCompletedPurchase: {
+        type: Boolean,
+        default: false
+    },
+    firstPurchaseDate: {
+        type: Date,
+        default: null
     },
     redeemed: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     redeemedUsers: [
         {
@@ -78,6 +93,18 @@ const userSchema = new Schema({
             required: true
         }
     ],
+    referralBonusAmount: {
+        type: Number,
+        default: 1000
+    },
+    totalReferralEarnings: {
+        type: Number,
+        default: 0
+    },
+    referralCount: {
+        type: Number,
+        default: 0
+    },
     searchHistory: [
         {
             category: {

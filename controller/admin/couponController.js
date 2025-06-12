@@ -58,16 +58,25 @@ const addCoupon = async (req, res) => {
       return res.status(403).json({ message: 'Admin access required' });
     }
 
-    const { name, code, discountValue, minimumPrice, usageLimit, isList, validFrom, expireOn } = req.body;
+    const { name, code, discountAmount, minimumPrice, usageLimit, isList, validFrom, expireOn } = req.body;
 
-    if (!name || !code || !discountValue || !minimumPrice || !usageLimit || isList === undefined || !validFrom || !expireOn) {
+    if (!name || !code || !discountAmount || !minimumPrice || !usageLimit || isList === undefined || !validFrom || !expireOn) {
       return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const validFromDate = new Date(validFrom);
+    validFromDate.setHours(0, 0, 0, 0);
+
+    if (validFromDate < today) {
+      return res.status(400).json({ message: 'Valid from date cannot be in the past' });
     }
 
     const couponData = {
       name: name.trim(),
       code: code.trim().toUpperCase(),
-      discountValue: parseFloat(discountValue),
+      discountAmount: parseFloat(discountAmount),
       minimumPrice: parseFloat(minimumPrice),
       usageLimit: parseInt(usageLimit, 10),
       isList: Boolean(isList),
@@ -75,11 +84,14 @@ const addCoupon = async (req, res) => {
       expireOn: new Date(expireOn)
     };
 
-    if (isNaN(couponData.discountValue) || couponData.discountValue <= 0 || couponData.discountValue > 100) {
-      return res.status(400).json({ message: 'Discount must be between 0 and 100%' });
+    if (isNaN(couponData.discountAmount) || couponData.discountAmount <= 0) {
+      return res.status(400).json({ message: 'Discount amount must be greater than 0' });
     }
     if (isNaN(couponData.minimumPrice) || couponData.minimumPrice < 0) {
       return res.status(400).json({ message: 'Minimum price cannot be negative' });
+    }
+    if (couponData.discountAmount >= couponData.minimumPrice) {
+      return res.status(400).json({ message: 'Discount amount cannot be greater than or equal to minimum cart value' });
     }
     if (isNaN(couponData.usageLimit) || couponData.usageLimit < 0) {
       return res.status(400).json({ message: 'Usage limit cannot be negative' });
@@ -108,7 +120,7 @@ const editCoupon = async (req, res) => {
     const couponData = {
       name: req.body.name?.trim(),
       code: req.body.code?.trim().toUpperCase(),
-      discountValue: parseFloat(req.body.discountValue),
+      discountAmount: parseFloat(req.body.discountAmount),
       minimumPrice: parseFloat(req.body.minimumPrice),
       usageLimit: parseInt(req.body.usageLimit, 10),
       isList: Boolean(req.body.isList),
@@ -120,11 +132,27 @@ const editCoupon = async (req, res) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    if (isNaN(couponData.discountValue) || couponData.discountValue <= 0 || couponData.discountValue > 100) {
-      return res.status(400).json({ message: 'Discount must be between 0 and 100%' });
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const validFromDate = new Date(couponData.validFrom);
+    validFromDate.setHours(0, 0, 0, 0);
+
+    const existingCoupon = await Coupon.findById(req.params.id);
+    const existingValidFrom = new Date(existingCoupon.validFrom);
+    existingValidFrom.setHours(0, 0, 0, 0);
+
+    if (validFromDate.getTime() !== existingValidFrom.getTime() && validFromDate < today) {
+      return res.status(400).json({ message: 'Valid from date cannot be in the past' });
+    }
+
+    if (isNaN(couponData.discountAmount) || couponData.discountAmount <= 0) {
+      return res.status(400).json({ message: 'Discount amount must be greater than 0' });
     }
     if (isNaN(couponData.minimumPrice) || couponData.minimumPrice < 0) {
       return res.status(400).json({ message: 'Minimum price cannot be negative' });
+    }
+    if (couponData.discountAmount >= couponData.minimumPrice) {
+      return res.status(400).json({ message: 'Discount amount cannot be greater than or equal to minimum cart value' });
     }
     if (isNaN(couponData.validFrom.getTime()) || isNaN(couponData.expireOn.getTime())) {
       return res.status(400).json({ message: 'Invalid date format' });
@@ -155,4 +183,10 @@ const deleteCoupon = async (req, res) => {
   }
 };
 
-module.exports = { getCoupons, getCouponById, addCoupon, editCoupon, deleteCoupon };
+module.exports = { 
+  getCoupons,
+  getCouponById,
+  addCoupon,
+  editCoupon,
+  deleteCoupon
+ };

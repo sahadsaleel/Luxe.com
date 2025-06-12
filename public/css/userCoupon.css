@@ -1,13 +1,13 @@
 :root {
-    --primary-color: #8a6a94;
-    --secondary-color: #7a5a84;
-    --accent-color: #9a7aa4;
-    --text-color: #333;
+    --primary-color: #046A38;
+    --secondary-color: #C4B7A6;
+    --accent-color: #B3A580;
+    --text-color: #2E2E2E;
     --light-text: #777;
-    --background: #f8f9fa;
-    --card-bg: #fff;
+    --background: #FFFFFF;
+    --card-bg: #FFFFFF;
     --border-radius: 12px;
-    --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --box-shadow: 0 4px 15px rgba(4, 106, 56, 0.1);
     --transition: all 0.3s ease;
 }
 

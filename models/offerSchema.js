@@ -21,7 +21,13 @@ const offerSchema = new Schema({
     type: Number,
     required: [true, "Discount percentage is required"],
     min: [1, "Discount must be at least 1%"],
-    max: [100, "Discount cannot exceed 100%"],
+    max: [80, "Discount cannot exceed 80%"],
+    validate: {
+      validator: function(value) {
+        return value <= 80;
+      },
+      message: "Maximum discount allowed is 80%"
+    }
   },
   startDate: {
     type: Date,

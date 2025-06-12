@@ -1,12 +1,12 @@
+const mongoose = require('mongoose');
 const User = require('../../models/userSchema');
 const Product = require('../../models/productSchema');
 const Cart = require('../../models/cartSchema');
 const Address = require('../../models/addressSchema');
 const Order = require('../../models/orderSchema');
-const mongoose = require('mongoose');
-
-
-
+const Offer = require('../../models/offerSchema');
+const Wallet = require('../../models/walletSchema');
+const adminOrderController = require('../admin/orderController');
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -52,26 +52,45 @@ const loadOrderSuccessPage = async (req, res) => {
             };
         });
 
+        const formatCurrency = (amount) => {
+            return `RS ${Number(amount).toFixed(2)}`;
+        };
+
         res.render('user/orderSuccess', {
             user: userData,
             order: {
-                orderId: order._id.toString(), 
-                customOrderId: order.orderId, 
-                orderDate: order.createdOn.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                orderId: order._id.toString(),
+                customOrderId: order.orderId,
+                orderDate: order.createdOn.toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }),
                 status: order.status,
                 paymentMethod: order.paymentMethod,
                 items: orderItems,
                 subtotal: order.totalPrice || 0,
                 giftWrapTotal: order.giftWrapTotal || 0,
                 shipping: order.shipping || 0,
-                discount: order.discount || 0,
+                discount: (order.discount || 0) + (order.offerDiscountTotal || 0),
                 finalAmount: order.finalAmount || 0,
                 address: order.addressDetails || {},
+                createdOn: order.createdOn,
+                deliveryMethod: order.deliveryMethod,
+                couponCode: order.couponCode,
+                totalSavings: order.totalSavings || 0
             },
+            formatCurrency
         });
     } catch (error) {
         console.error('Error loading order success page:', error);
-        res.redirect('/pageNotFound');
+        res.status(500).json({
+            success: false,
+            message: 'Failed to load order success page',
+            error: error.message
+        });
     }
 };
 
@@ -90,14 +109,24 @@ const loadMyOrdersPage = async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = 10;
         const skip = (page - 1) * limit;
+        const search = req.query.search || '';
+        const status = req.query.status || '';
 
-        const orders = await Order.find({ userId })
+        const query = { userId };
+        if (search) {
+            query.orderId = { $regex: search, $options: 'i' };
+        }
+        if (status) {
+            query.status = status;
+        }
+
+        const orders = await Order.find(query)
             .sort({ createdOn: -1 })
             .skip(skip)
             .limit(limit)
             .select('orderId createdOn status paymentMethod finalAmount');
 
-        const totalOrders = await Order.countDocuments({ userId });
+        const totalOrders = await Order.countDocuments(query);
         const totalPages = Math.ceil(totalOrders / limit);
 
         const formattedOrders = orders.map(order => ({
@@ -118,8 +147,12 @@ const loadMyOrdersPage = async (req, res) => {
             orders: formattedOrders,
             currentPage: page,
             totalPages: totalPages,
+            search: search,
+            status: status,
+            totalOrders: totalOrders
         });
     } catch (error) {
+        console.error('Error loading orders:', error);
         res.redirect('/pageNotFound');
     }
 };
@@ -170,12 +203,14 @@ const loadOrderDetailPage = async (req, res) => {
                 productImage: item.productId?.productImage?.[0] || '/img/placeholder.png',
                 variant: {
                     size: variant.size || 'N/A',
-                    regularPrice: variant.regularPrice || 0,
                     salePrice: variant.salePrice || 0,
                     quantity: variant.quantity || 0,
                 },
-                isCanceled: item.isCanceled || false,
+                isCanceled: item.status === 'Cancelled',
                 cancelReason: item.cancelReason || '',
+                status: item.status || 'Active',
+                returnRequestedOn: item.returnRequestedOn || null,
+                returnReason: item.returnReason || ''
             };
         });
 
@@ -184,6 +219,7 @@ const loadOrderDetailPage = async (req, res) => {
             user: user || order.userId || null,
         });
     } catch (err) {
+        console.error('Error loading order details:', err);
         res.redirect('/pageNotFound');
     }
 };
@@ -211,35 +247,59 @@ const cancelOrder = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Cancellation reason is required' });
         }
 
-        order.status = 'Cancelled';
-        order.refundStatus = order.paymentMethod === 'Cash On Delivery' ? 'Not Initiated' : 'Initiated';
-        order.cancelReason = reason.trim();
-        order.cancelComments = comments ? comments.trim() : '';
-        order.cancelRequestedOn = new Date();
-        order.cancelApprovedOn = new Date();
+        if (order.paymentMethod === 'razorpay' || order.paymentMethod === 'luxewallet') {
+            try {
+                const refundAmount = order.finalAmount;
+                const updatedWallet = await adminOrderController.processWalletRefund(userId, refundAmount, order._id, 'cancelled');
 
-        order.totalPrice = 0;
-        order.giftWrapTotal = 0;
-        order.finalAmount = 0;
-        order.discount = 0;
+                order.status = 'Cancelled';
+                order.cancelReason = reason.trim();
+                order.cancelComments = comments ? comments.trim() : '';
+                order.cancelRequestedOn = new Date();
+                order.cancelApprovedOn = new Date();
+                order.refundStatus = 'Completed';
+                order.refundAmount = refundAmount;
+                order.totalPrice = 0;
+                order.giftWrapTotal = 0;
+                order.finalAmount = 0;
+                order.discount = 0;
 
-        for (const item of order.orderedItems) {
-            item.status = 'Cancelled';
-            item.isCanceled = true;
-            item.cancelReason = reason.trim();
-            item.cancelComments = comments ? comments.trim() : '';
-            item.cancelRequestedOn = new Date();
-            item.cancelApprovedOn = new Date();
-
-            await Product.updateOne(
-                { _id: item.productId, 'variants._id': item.variantId },
-                { $inc: { 'variants.$.stock': item.quantity } }
-            );
+                for (const item of order.orderedItems) {
+                    item.status = 'Cancelled';
+                    await Product.updateOne(
+                        { _id: item.productId, 'variants._id': item.variantId },
+                        { $inc: { 'variants.$.stock': item.quantity } }
+                    );
+                }
+            } catch (refundError) {
+                console.error('Refund processing failed:', refundError);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Failed to process refund. Please contact support.',
+                    error: refundError.message
+                });
+            }
+        } else {
+            order.status = 'Cancel Request';
+            order.cancelReason = reason.trim();
+            order.cancelComments = comments ? comments.trim() : '';
+            order.cancelRequestedOn = new Date();
+            order.refundStatus = 'Not Initiated';
         }
 
         await order.save();
 
-       return res.status(200).json({ success: true, message: 'Order cancelled successfully' });
+        return res.status(200).json({
+            success: true,
+            message: order.status === 'Cancelled' ? 'Order cancelled and refund processed successfully' : 'Cancellation request submitted successfully',
+            order: {
+                status: order.status,
+                totalPrice: order.totalPrice.toFixed(2),
+                giftWrapTotal: order.giftWrapTotal.toFixed(2),
+                finalAmount: order.finalAmount.toFixed(2),
+                discount: order.discount.toFixed(2)
+            }
+        });
     } catch (err) {
         console.error('Error in cancelOrder:', err);
         res.status(500).json({ success: false, message: 'Internal server error' });
@@ -287,22 +347,59 @@ const cancelOrderItem = async (req, res) => {
         item.cancelComments = comments ? comments.trim() : '';
         item.cancelRequestedOn = new Date();
         item.cancelApprovedOn = new Date();
-        item.totalPrice = 0; 
 
+        const itemRefundAmount = item.totalPrice + (item.isGiftWrapped ? 100 : 0);
+        
         order.totalPrice = order.orderedItems.reduce((sum, i) => sum + (i.status === 'Cancelled' ? 0 : i.totalPrice), 0);
         order.giftWrapTotal = order.orderedItems.reduce((sum, i) => sum + (i.status === 'Cancelled' ? 0 : (i.isGiftWrapped ? 100 : 0)), 0);
-        order.finalAmount = order.totalPrice + order.giftWrapTotal + (order.shipping || 0) - (order.discount || 0);
+        
+        const cancelledItemsTotal = order.orderedItems.reduce((sum, i) => sum + (i.status === 'Cancelled' ? i.totalPrice : 0), 0);
+        const totalBeforeCancel = order.totalPrice + cancelledItemsTotal;
+        const discountRatio = cancelledItemsTotal / totalBeforeCancel;
+        const discountRefund = order.discount * discountRatio;
+        order.discount -= discountRefund;
+        
+        order.finalAmount = order.totalPrice + order.giftWrapTotal + (order.shipping || 0) - order.discount;
 
         const allCancelled = order.orderedItems.every(i => i.status === 'Cancelled');
-        if (allCancelled) {
-            order.status = 'Cancelled';
-            order.cancelRequestedOn = new Date();
-            order.cancelApprovedOn = new Date();
-            order.totalPrice = 0;
-            order.giftWrapTotal = 0;
-            order.finalAmount = 0;
-            order.discount = 0;
-            order.refundStatus = order.paymentMethod === 'Cash On Delivery' ? 'Not Initiated' : 'Initiated';
+
+        if (order.paymentMethod === 'razorpay' || order.paymentMethod === 'luxewallet') {
+            try {
+                const refundAmount = itemRefundAmount - discountRefund;
+                const updatedWallet = await adminOrderController.processWalletRefund(userId, refundAmount, order._id, 'cancelled');
+
+                item.refundStatus = 'Completed';
+                item.refundAmount = refundAmount;
+
+                if (allCancelled) {
+                    order.status = 'Cancelled';
+                    order.cancelRequestedOn = new Date();
+                    order.cancelApprovedOn = new Date();
+                    order.refundStatus = 'Completed';
+                    order.refundAmount = (order.refundAmount || 0) + refundAmount;
+                    order.totalPrice = 0;
+                    order.giftWrapTotal = 0;
+                    order.finalAmount = 0;
+                    order.discount = 0;
+                } else {
+                    order.refundStatus = 'Partially Completed';
+                    order.refundAmount = (order.refundAmount || 0) + refundAmount;
+                }
+            } catch (refundError) {
+                console.error('Refund processing failed:', refundError);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Failed to process refund. Please contact support.',
+                    error: refundError.message
+                });
+            }
+        } else {
+            if (allCancelled) {
+                order.status = 'Cancel Request';
+                order.cancelRequestedOn = new Date();
+                order.refundStatus = 'Not Initiated';
+            }
+            item.refundStatus = 'Not Initiated';
         }
 
         await Product.updateOne(
@@ -314,19 +411,18 @@ const cancelOrderItem = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: 'Item cancelled successfully',
-            allCancelled,
+            message: item.refundStatus === 'Completed' ? 'Item cancelled and refund processed successfully' : 'Item cancellation request submitted successfully',
             order: {
                 totalPrice: order.totalPrice.toFixed(2),
                 giftWrapTotal: order.giftWrapTotal.toFixed(2),
                 finalAmount: order.finalAmount.toFixed(2),
-                discount: order.discount.toFixed(2),
-                status: order.status
-            }
+                discount: order.discount.toFixed(2)
+            },
+            allCancelled
         });
     } catch (err) {
         console.error('Error in cancelOrderItem:', err);
-        res.status(500).json({ success: false, message: 'Server error while cancelling item' });
+        res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
 
@@ -349,14 +445,14 @@ const requestReturn = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Only delivered orders can be returned' });
         }
 
-        const deliveryDate = order.deliveredOn || order.updatedAt;
+        if (order.returnRequestedOn) {
+            return res.status(400).json({ success: false, message: 'Return already requested for this order' });
+        }
+
+        const deliveryDate = order.deliveryDate || order.createdOn;
         const daysSinceDelivery = Math.floor((new Date() - new Date(deliveryDate)) / (1000 * 60 * 60 * 24));
         if (daysSinceDelivery > 30) {
             return res.status(400).json({ success: false, message: 'Return period has expired (30 days after delivery)' });
-        }
-
-        if (order.returnRequestedOn) {
-            return res.status(400).json({ success: false, message: 'Return request already submitted' });
         }
 
         if (!reason || typeof reason !== 'string' || reason.trim().length === 0) {
@@ -367,13 +463,166 @@ const requestReturn = async (req, res) => {
         order.returnRequestedOn = new Date();
         order.returnReason = reason.trim();
         order.returnComments = comments ? comments.trim() : '';
-        order.refundStatus = order.paymentMethod === 'Cash On Delivery' ? 'Not Initiated' : 'Initiated';
+
+        order.orderedItems.forEach(item => {
+            if (item.status !== 'Cancelled' && !item.returnRequestedOn) {
+                item.status = 'Return Requested';
+                item.returnRequestedOn = new Date();
+                item.returnReason = reason.trim();
+                item.returnComments = comments ? comments.trim() : '';
+            }
+        });
 
         await order.save();
 
-        res.json({ success: true, message: 'Return request submitted successfully' });
+        return res.status(200).json({
+            success: true,
+            message: 'Return request submitted successfully'
+        });
     } catch (err) {
         console.error('Error in requestReturn:', err);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+const requestReturnItem = async (req, res) => {
+    try {
+        const { orderId, itemId } = req.params;
+        const { reason, comments } = req.body;
+        const userId = req.session.user;
+
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized: Please log in' });
+        }
+
+        if (!itemId || !isValidObjectId(itemId)) {
+            return res.status(400).json({ success: false, message: 'Invalid item ID' });
+        }
+
+        const order = await Order.findOne({ orderId, userId });
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        if (order.status !== 'Delivered') {
+            return res.status(400).json({ success: false, message: 'Only delivered orders can be returned' });
+        }
+
+        const item = order.orderedItems.find(i => i._id.toString() === itemId);
+        if (!item) {
+            return res.status(404).json({ success: false, message: 'Item not found in order' });
+        }
+
+        if (item.status === 'Cancelled' || item.status.includes('Return')) {
+            return res.status(400).json({ success: false, message: 'Item is already cancelled or return requested' });
+        }
+
+        const deliveryDate = order.deliveryDate || order.createdOn;
+        const daysSinceDelivery = Math.floor((new Date() - new Date(deliveryDate)) / (1000 * 60 * 60 * 24));
+
+    
+
+        if (daysSinceDelivery > 30) {
+            return res.status(400).json({ success: false, message: 'Return period has expired (30 days after delivery)' });
+        }
+
+        if (!reason || typeof reason !== 'string' || reason.trim().length === 0) {
+            return res.status(400).json({ success: false, message: 'Return reason is required' });
+        }
+
+        item.status = 'Return Requested';
+        item.returnRequestedOn = new Date();
+        item.returnReason = reason.trim();
+        item.returnComments = comments ? comments.trim() : '';
+        item.totalPrice = 0;
+
+        order.totalPrice = order.orderedItems.reduce((sum, i) => sum + (i.status === 'Cancelled' || i.status === 'Return Requested' ? 0 : i.totalPrice), 0);
+        order.giftWrapTotal = order.orderedItems.reduce((sum, i) => sum + ((i.status === 'Cancelled' || i.status === 'Return Requested') ? 0 : (i.isGiftWrapped ? 100 : 0)), 0);
+        order.finalAmount = order.totalPrice + order.giftWrapTotal + (order.shipping || 0) - (order.discount || 0);
+
+        const allReturnedOrCancelled = order.orderedItems.every(i => i.status === 'Cancelled' || i.status === 'Return Requested');
+        if (allReturnedOrCancelled) {
+            order.status = 'Return Requested';
+            order.returnRequestedOn = new Date();
+        }
+
+        await order.save();
+
+        return res.status(200).json({
+            success: true,
+            message: 'Return request for item submitted successfully',
+            order: {
+                totalPrice: order.totalPrice.toFixed(2),
+                giftWrapTotal: order.giftWrapTotal.toFixed(2),
+                finalAmount: order.finalAmount.toFixed(2),
+                discount: order.discount.toFixed(2)
+            },
+            allReturned: allReturnedOrCancelled
+        });
+    } catch (err) {
+        console.error('Error in requestReturnItem:', err);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+const updateOrderStatus = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const { newStatus } = req.body;
+        const userId = req.session.user;
+
+        if (!userId || !req.session.isAdmin) {
+            return res.status(401).json({ success: false, message: 'Unauthorized: Admin access required' });
+        }
+
+        const order = await Order.findOne({ orderId });
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        const validStatuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Requested', 'Return Approved', 'Partially Returned', 'Cancel Request'];
+        if (!validStatuses.includes(newStatus)) {
+            return res.status(400).json({ success: false, message: 'Invalid status' });
+        }
+
+        order.status = newStatus;
+
+        if (newStatus === 'Delivered' && !order.deliveryDate) {
+            order.deliveryDate = new Date();
+        }
+        if (newStatus !== 'Delivered' && order.deliveryDate) {
+            order.deliveryDate = null;
+        }
+        if (newStatus === 'Cancelled') {
+            order.cancelApprovedOn = new Date();
+            order.orderedItems.forEach(item => {
+                if (item.status !== 'Cancelled') {
+                    item.status = 'Cancelled';
+                    item.cancelApprovedOn = new Date();
+                }
+            });
+            order.totalPrice = 0;
+            order.giftWrapTotal = 0;
+            order.finalAmount = 0;
+            order.discount = 0;
+            order.refundStatus = order.paymentMethod === 'cash on delivery' ? 'Not Initiated' : 'Initiated';
+        }
+
+
+        await order.save();
+
+        return res.status(200).json({
+            success: true,
+            message: 'Order status updated successfully',
+            order: {
+                status: order.status,
+                deliveryDate: order.deliveryDate,
+                totalPrice: order.totalPrice.toFixed(2),
+                finalAmount: order.finalAmount.toFixed(2)
+            }
+        });
+    } catch (err) {
+        console.error('Error in updateOrderStatus:', err);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
@@ -385,4 +634,6 @@ module.exports = {
     cancelOrder,
     cancelOrderItem,
     requestReturn,
+    requestReturnItem,
+    updateOrderStatus
 };

@@ -1,0 +1,168 @@
+.referral-code-section {
+    padding: 20px;
+    text-align: center;
+}
+
+.referral-code {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.referral-code .code {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    letter-spacing: 2px;
+}
+
+.copy-btn {
+    background-color: #046A38;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.copy-btn:hover {
+    background-color: #088347;
+}
+
+.referral-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #046A38;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    color: #046A38;
+    font-size: 14px;
+}
+
+.referral-history {
+    padding: 20px;
+}
+
+.referral-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.referral-item:last-child {
+    border-bottom: none;
+}
+
+.referral-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.referral-user i {
+    font-size: 24px;
+    color: #8a6a94;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: bold;
+}
+
+.join-date {
+    font-size: 12px;
+    color: #666;
+}
+
+.referral-status {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+}
+
+.referral-status.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.referral-status.completed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.referral-reward {
+    text-align: right;
+}
+
+.reward-amount {
+    font-size: 18px;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.reward-date {
+    font-size: 12px;
+    color: #666;
+}
+
+.no-referrals {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .referral-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .referral-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .referral-status,
+    .referral-reward {
+        margin-top: 10px;
+    }
+
+    .referral-code {
+        flex-direction: column;
+    }
+
+    .copy-btn {
+        width: 100%;
+        justify-content: center;
+    }
+} 

@@ -1,54 +1,27 @@
-
-// const passport = require('passport');
-// const googleSrategy = require('passport-google-oauth20').Strategy; 
-// const user = require('../models/userSchema');
-// const env = require('dotenv').config();
-
-// passport.use(new googleSrategy({
-//     clientID: process.env.GOOGLE_CLIENT_ID,
-//     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//     callbackURL: '/auth/google/callback'
-// }, async (accessToken, refreshToken, profile, done) => {
-//     try {
-//         let user = await user.findOne({ googleId: profile.id });
-//         if (user) {
-//             return done(null, user);
-//         } else {
-//             user = new user({
-//                 name: profile.displayName,
-//                 email: profile.emails[0].value,
-//                 googleId: profile.id,
-//             });
-//             await user.save();
-//             return done(null, user);
-//         }
-//     } catch (error) {
-//         return done(error, null); 
-//     }
-// }));
-
-// passport.serializeUser((user, done) => {
-//     done(null, user.id);
-// });
-
-// passport.deserializeUser(async (id, done) => {
-//     try {
-//         const user = await user.findById(id);
-//         done(null, user);
-//     } catch (error) {
-//         done(error, null);
-//     }
-// });
-
-// module.exports = passport;
-
-
-
-
 const passport = require('passport');
 const googleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/userSchema');
 require('dotenv').config();
+
+// Function to generate referral code
+const generateReferralCode = async (firstName) => {
+    try {
+        // Create a base code using first name and random string
+        const baseCode = `${firstName.substring(0, 3).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+        
+        // Check if code exists
+        const existingUser = await User.findOne({ referalCode: baseCode });
+        if (existingUser) {
+            // If exists, try again with a different random string
+            return generateReferralCode(firstName);
+        }
+        
+        return baseCode;
+    } catch (error) {
+        console.error('Error generating referral code:', error);
+        throw error;
+    }
+};
 
 passport.use(new googleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -67,11 +40,16 @@ passport.use(new googleStrategy({
             const [firstName, ...lastNameParts] = profile.displayName.split(' ');
             const lastName = lastNameParts.join(' ') || ''; 
 
+            // Generate referral code for new user
+            const referralCode = await generateReferralCode(firstName);
+
             user = new User({
                 firstName,
                 lastName,
                 email: profile.emails && profile.emails[0] ? profile.emails[0].value : undefined,
-                googleId: profile.id
+                googleId: profile.id,
+                referalCode: referralCode,
+                redeemed: false
             });
             await user.save();
             return done(null, user);

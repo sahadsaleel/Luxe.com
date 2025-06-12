@@ -18,11 +18,10 @@ const CouponSchema = new Schema({
     maxlength: [20, 'Code cannot exceed 20 characters'],
     match: [/^[A-Z0-9]+$/, 'Code must contain only uppercase letters and numbers']
   },
-  discountValue: {
+  discountAmount: {
     type: Number,
-    required: [true, 'Discount percentage is required'],
-    min: [0, 'Discount cannot be negative'],
-    max: [100, 'Discount cannot exceed 100%']
+    required: [true, 'Discount amount is required'],
+    min: [0, 'Discount cannot be negative']
   },
   minimumPrice: {
     type: Number,
@@ -47,10 +46,6 @@ const CouponSchema = new Schema({
     default: 0,
     min: [0, 'Usage count cannot be negative']
   },
-  usedBy: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
   isList: {
     type: Boolean,
     default: true
@@ -77,6 +72,9 @@ CouponSchema.pre('save', function (next) {
   }
   if (this.validFrom > this.expireOn) {
     return next(new Error('Start date must be before expiry date'));
+  }
+  if (this.discountAmount >= this.minimumPrice) {
+    return next(new Error('Discount amount cannot be greater than or equal to minimum cart value'));
   }
   next();
 });

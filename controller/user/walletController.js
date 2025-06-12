@@ -15,7 +15,6 @@ const loadWalletPage = async (req, res) => {
     let wallet = await Wallet.findOne({ userId: req.user._id }).lean();
 
     if (!wallet) {
-      console.log('Creating new wallet for user:', req.user._id);
       wallet = await Wallet.create({
         userId: req.user._id,
         balance: 0,
@@ -26,19 +25,43 @@ const loadWalletPage = async (req, res) => {
       await User.findByIdAndUpdate(req.user._id, { wallet: [wallet._id] });
     }
 
-    const orders = await Order.find({ userId: req.user._id })
-      .populate('orderedItems.productId') 
-      .lean();
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10; 
+    const filter = req.query.filter || 'all';
+
+    let transactions = wallet.transactions || [];
+    transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    if (filter !== 'all') {
+      transactions = transactions.filter(t => t.type.toLowerCase() === filter.toLowerCase());
+    }
+
+    const totalTransactions = transactions.length;
+    const totalPages = Math.ceil(totalTransactions / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const paginatedTransactions = transactions.slice(startIndex, endIndex);
 
     const userData = {
       ...user,
       wallet: [wallet],
     };
 
-   res.render('user/userWallet', {
-        user: userData,
-        orders,
-        wallet, 
+    res.render('user/userWallet', {
+      user: userData,
+      wallet: {
+        ...wallet,
+        transactions: paginatedTransactions
+      },
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalTransactions,
+        hasNextPage: endIndex < totalTransactions,
+        hasPrevPage: page > 1,
+        filter
+      }
     });
 
   } catch (err) {

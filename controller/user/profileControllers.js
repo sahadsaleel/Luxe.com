@@ -2,9 +2,10 @@ const User = require('../../models/userSchema');
 const Address = require('../../models/addressSchema');
 const bcrypt = require('bcrypt');
 const cloudinary = require('../../config/cloudinary');
-const { sendOtpToEmail, generateOtp } = require('../../helpers/otpHelper');
 require('dotenv').config();
 const session = require('express-session');
+const { generateOtp } = require('../../helpers/otpHelper');
+const { sendOtpToEmail } = require('../../helpers/otpHelper');
 
 
 
@@ -27,113 +28,35 @@ const getForgotPassword = async (req, res) => {
 const forgotEmailValid = async (req, res) => {
     try {
         const { email } = req.body;
-        console.log(`Processing forgot password request for email: ${email}`);
 
         const user = await User.findOne({ email });
         if (!user) {
-            console.log(`User not found for email: ${email}`);
             return res.json({ success: false, message: 'User not found.' });
         }
 
-        if (req.session.otp && req.session.otpTimestamp) {
-            const timeSinceLastOtp = Date.now() - req.session.otpTimestamp;
-            if (timeSinceLastOtp < 30 * 1000) { 
-                console.log(`Cooldown active for email: ${email}. Time since last OTP: ${timeSinceLastOtp}ms`);
-                return res.json({ success: false, message: 'Please wait 30 seconds before requesting a new OTP.' });
-            }
-        }
+        const otp = generateOtp();
+        console.log('Generated OTP for forgot password:', otp);
 
-        const generatedOtp = generateOtp();
-        const emailSent = await sendOtpToEmail(email, generatedOtp);
-
+        const emailSent = await sendOtpToEmail(email, otp);
         if (!emailSent) {
-            console.log(`Failed to send OTP to email: ${email}`);
-            return res.status(500).json({ success: false, message: 'Failed to send OTP. Please try again.' });
+            return res.json({ success: false, message: 'Failed to send OTP. Please try again.' });
         }
 
-        req.session.resetEmail = email;
-        req.session.otp = generatedOtp;
-        req.session.otpTimestamp = Date.now();
+        req.session.resetPasswordData = {
+            email,
+            otp,
+            timestamp: Date.now(),
+            attempts: 0
+        };
 
-        console.log('Generated OTP:', generatedOtp);
-        console.log('Stored OTP session:', req.session.otp);
+        console.log('Forgot password OTP:', otp);
 
-        return res.json({ success: true, message: 'OTP sent to email.' });
+        return res.json({ success: true, message: 'OTP sent successfully.' });
     } catch (err) {
         console.error('Error in forgotEmailValid:', err.message, err.stack);
         return res.status(500).json({ success: false, message: 'Server error.' });
     }
 };
-
-
-const verifyOtp = async (req, res) => {
-    try {
-        const { otp } = req.body;
-        console.log('Received OTP :', otp);
-
-        if (!req.session.otp || !req.session.otpTimestamp) {
-            console.log('====OTP session expired or not found====');
-            return res.json({ success: false, message: 'OTP session expired. Please request a new OTP.' });
-        }
-
-        const currentTime = Date.now();
-        const otpAge = currentTime - req.session.otpTimestamp;
-        if (otpAge > 60 * 1000) {
-            console.log('===OTP has expired====');
-            req.session.otp = null;
-            req.session.otpTimestamp = null;
-            return res.json({ success: false, message: 'OTP has expired. Please request a new OTP.' });
-        }
-
-        if (!otp || !/^\d{6}$/.test(otp)) {
-            console.log('Invalid OTP format:', otp);
-            return res.json({ success: false, message: 'Please enter a valid 6-digit OTP.' });
-        }
-
-        if (otp.toString() === req.session.otp.toString()){
-            console.log('OTP verification successful.');
-            req.session.otpVerified = true;
-            req.session.otp = null;
-            req.session.otpTimestamp = null;
-            return res.json({ success: true, message: 'OTP verified successfully.' });
-        } else {
-            console.log('Invalid OTP entered');
-            return res.json({ success: false, message: 'Invalid OTP. Please try again.' });
-        }
-    } catch (err) {
-        console.error('Error in verifyOtp:', err.message, err.stack);
-        return res.status(500).json({ success: false, message: 'Server error while verifying OTP.' });
-    }
-};
-
-
-
-const resendOtp = async (req, res) => {
-    try {
-
-        let email = req.session?.resetEmail || req.session?.userData?.email;
-
-        if (!email) {
-            return res.status(400).json({ success: false, message: 'Session expired or email not found. Please start the process again.' });
-        }
-
-        const newOtp = generateOtp();
-        const emailSent = await sendOtpToEmail(email, newOtp);
-
-        if (!emailSent) {
-            return res.status(500).json({ success: false, message: 'Failed to send OTP. Please try again.' });
-        }
-
-        req.session.otp = newOtp;
-        req.session.otpTimestamp = Date.now(); 
-
-        return res.json({ success: true, message: 'New OTP sent to email.' });
-    } catch (err) {
-        console.error('Error in resendOtp:', err.message, err.stack);
-        return res.status(500).json({ success: false, message: 'Server error while resending OTP.' });
-    }
-};
-
 
 
 const getResetPassword = async (req, res) => {
@@ -150,8 +73,7 @@ const getResetPassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
     try {
-        const { newPassword } = req.body;
-        const email = req.session.resetEmail;
+        const { newPassword, email } = req.body;
 
         if (!email || !req.session.otpVerified) {
             return res.json({ success: false, message: 'Unauthorized request. Please verify OTP first.' });
@@ -545,16 +467,14 @@ module.exports = {
     getForgotPassword,
     getResetPassword,
     forgotEmailValid,
-    verifyOtp,
     resetPassword,
-    resendOtp,
     userProfile,
     updateProfile,
     removeProfileImage,
     changePassword,
     changeEmail,
     userAddress,
-    getAddress,
+    getAddress, 
     addAddress,
     editAddress,
     setDefaultAddress,

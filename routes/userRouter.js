@@ -7,22 +7,31 @@ const cartController = require('../controller/user/cartController');
 const orderController = require('../controller/user/orderController');
 const walletController = require('../controller/user/walletController');
 const couponController = require('../controller/user/couponController');
+const checkoutController = require('../controller/user/checkoutController');
+const otpController = require('../controller/user/otpController');
 const { uploadSingleImage } = require('../helpers/multer');
 const passport = require('passport');
 const { userAuth } = require('../middleware/auth');
+const returnCancelController = require('../controller/user/returnCancelController');
 
-// Authentication 
+// Authentication
 router.get('/', userController.loadHomepage);
 router.get('/signup', userController.loadSignup);
 router.get('/login', userController.loadLogin);
+router.get('/verifyotp', (req, res) => {
+    if (!req.session.userData) {
+        return res.redirect('/signup');
+    }
+    res.render('user/verifyotp', { userData: req.session.userData });
+});
 router.get('/logout', userController.logout);
-router.get('/verifyotp', userController.verifyOtp);
+
 router.post('/signup', userController.signup);
 router.post('/login', userController.login);
-router.post('/verifyotp', userController.verifyOtp);
-router.post('/resend-otp', userController.resendOtp);
+router.post('/verifyotp', otpController.verifySignupOtp);
+router.post('/resend-otp', otpController.resendSignupOtp);
 
-// Google OAuth 
+// Google OAuth
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
     '/google/callback',
@@ -33,21 +42,21 @@ router.get(
     }
 );
 
-// Password Reset 
+// Password Reset
 router.get('/forgot-password', profileControllers.getForgotPassword);
 router.post('/forgot-email-validation', profileControllers.forgotEmailValid);
-router.post('/verifyProfileOtp', profileControllers.verifyOtp);
+router.post('/verifyProfileOtp', otpController.verifyForgotPasswordOtp);
 router.post('/reset-password', profileControllers.resetPassword);
-router.post('/resend-reset-otp', profileControllers.resendOtp);
+router.post('/resend-reset-otp', otpController.resendForgotPasswordOtp);
 
-// Profile 
+// Profile
 router.get('/profile', userAuth, profileControllers.userProfile);
 router.post('/profile/update', userAuth, uploadSingleImage, profileControllers.updateProfile);
 router.post('/profile/removeImage', userAuth, uploadSingleImage, profileControllers.removeProfileImage);
 router.post('/profile/changePassword', userAuth, profileControllers.changePassword);
 router.post('/profile/changeEmail', userAuth, profileControllers.changeEmail);
 
-// Address 
+// Address
 router.get('/address', userAuth, profileControllers.userAddress);
 router.get('/address/:id', userAuth, profileControllers.getAddress);
 router.post('/address/add', userAuth, profileControllers.addAddress);
@@ -55,47 +64,53 @@ router.post('/address/edit/:id', userAuth, profileControllers.editAddress);
 router.post('/address/set-default/:id', userAuth, profileControllers.setDefaultAddress);
 router.delete('/address/delete/:id', userAuth, profileControllers.deleteAddress);
 
-// Product 
+// Product
 router.get('/shop', userController.loadShopPage);
 router.get('/productViewPage', productController.productViewPage);
 router.get('/search', productController.searchProduct);
 
-// Wishlist 
+// Wishlist
 router.get('/wishlist', userAuth, productController.loadWishlistPage);
 router.post('/wishlist/add/:productId', userAuth, productController.addToWishlist);
 router.post('/wishlist/remove/:productId', userAuth, productController.removeFromWishlist);
 
-// Cart 
+// Cart
 router.get('/cart', userAuth, cartController.loadCartPage);
 router.post('/cart/add', userAuth, cartController.addToCart);
 router.post('/cart/update-quantity', userAuth, cartController.updateCartQuantity);
 router.post('/cart/remove', userAuth, cartController.removeFromCart);
-// router.post('/wishlist/add', userAuth, cartController.addToWishlist);
+router.post('/cart/apply-coupon', userAuth, couponController.applyCoupon);
+router.post('/cart/remove-coupon', userAuth, couponController.removeCoupon);
 
 // Checkout
-router.get('/checkout', userAuth, cartController.loadCheckout);
-router.post('/checkout/submit', userAuth, cartController.submitCheckout);
+router.get('/checkout', userAuth, checkoutController.loadCheckout);
+router.post('/checkout/process', userAuth, checkoutController.processCheckout);
+router.post('/checkout/verify-payment', userAuth, checkoutController.verifyRazorpayPayment);
+router.get('/checkout/payment-failed', userAuth, checkoutController.showPaymentFailedPage);
 
 // Orders
-router.get('/order-success', userAuth, orderController.loadOrderSuccessPage);
+router.get('/orders/success', userAuth, orderController.loadOrderSuccessPage);
 router.get('/orders', userAuth, orderController.loadMyOrdersPage);
 router.get('/orders/details/:orderId', userAuth, orderController.loadOrderDetailPage);
-router.post('/orders/details/:orderId/cancel', userAuth, orderController.cancelOrder);
-router.post('/orders/details/:orderId/cancel-item/:itemId', userAuth, orderController.cancelOrderItem);
-router.post('/orders/details/:orderId/return', userAuth, orderController.requestReturn);
+
+// Return and Cancel routes
+router.post('/orders/details/:orderId/cancel', userAuth, returnCancelController.cancelOrder);
+router.post('/orders/details/:orderId/cancel-item/:itemId', userAuth, returnCancelController.cancelOrderItem);
+router.post('/orders/details/:orderId/return', userAuth, returnCancelController.requestReturn);
+router.post('/orders/details/:orderId/return-item/:itemId', userAuth, returnCancelController.requestReturnItem);
 
 // Wallet
 router.get('/wallet', userAuth, walletController.loadWalletPage);
 router.post('/return-product', userAuth, walletController.requestReturn);
-// router.post('/approve-return', userAuth, walletController.approveReturn);
 
 // Coupons
 router.get('/coupons', userAuth, couponController.loadCoupons);
-router.post('/cart/apply-coupon', userAuth, couponController.applyCoupon);
-router.post('/cart/remove-coupon', userAuth, couponController.removeCoupon);
 router.get('/coupons/available', userAuth, couponController.getAvailableCoupons);
 
-// Error 
+// Referrals
+router.get('/referrals', userAuth, userController.loadReferrals);
+
+// Error
 router.get('/pageNotFound', userController.pageNotFound);
 
 module.exports = router;

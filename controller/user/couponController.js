@@ -4,13 +4,12 @@ const Cart = require('../../models/cartSchema');
 
 
 
-
 const validateCoupon = async (coupon, userId, cart) => {
   const now = new Date();
   const subtotal = cart.items.reduce((sum, item) => {
     const itemPrice = Number(item.price) || 0;
     const isGiftWrapped = item.isGiftWrapped || false;
-    return sum + (isGiftWrapped ? itemPrice - 100 : itemPrice) * (item.quantity || 1);
+    return sum + (isGiftWrapped ? itemPrice + 100 : itemPrice) * (item.quantity || 1);
   }, 0);
 
   if (!coupon) {
@@ -25,14 +24,20 @@ const validateCoupon = async (coupon, userId, cart) => {
   if (coupon.usageLimit > 0 && coupon.usageCount >= coupon.usageLimit) {
     return { valid: false, message: 'Coupon usage limit reached' };
   }
-  if (coupon.usedBy.includes(userId)) {
-    return { valid: false, message: 'Coupon already used by this user' };
-  }
   if (subtotal < coupon.minimumPrice) {
     return { valid: false, message: `Minimum purchase of ₹${coupon.minimumPrice} required` };
   }
 
-  return { valid: true, coupon, subtotal };
+  const discountAmount = Number(coupon.discountAmount) || 0;
+  
+  const finalDiscount = Math.min(discountAmount, subtotal);
+
+  return { 
+    valid: true, 
+    coupon, 
+    subtotal,
+    discountAmount: finalDiscount
+  };
 };
 
 const loadCoupons = async (req, res) => {
@@ -53,7 +58,7 @@ const loadCoupons = async (req, res) => {
   } catch (error) {
     console.error('Error loading coupons:', error.message);
     res.status(500).render('error', {
-      message: 'Couldn’t load coupons. Please try again later.'
+      message: 'Couldn\'t load coupons. Please try again later.'
     });
   }
 };
@@ -74,9 +79,10 @@ const getAvailableCoupons = async (req, res) => {
 
     res.json(coupons.map(coupon => ({
       code: coupon.code,
-      discount: coupon.discountValue,
+      discount: Number(coupon.discountAmount) || 0,
       minPurchase: coupon.minimumPrice,
-      expiryDate: coupon.expireOn
+      expiryDate: coupon.expireOn,
+      description: `Flat ₹${coupon.discountAmount} OFF`
     })));
   } catch (error) {
     console.error('Error fetching coupons:', error);
@@ -107,11 +113,25 @@ const applyCoupon = async (req, res) => {
       return res.status(400).json({ success: false, message: validation.message });
     }
 
-    const discount = (validation.subtotal * validation.coupon.discountValue) / 100;
-    cart.coupon = { code: coupon.code, discount, couponId: coupon._id };
+    const discount = Math.round(validation.discountAmount);
+    if (isNaN(discount) || discount < 0) {
+      return res.status(400).json({ success: false, message: 'Invalid discount amount' });
+    }
+
+    cart.coupon = { 
+      code: coupon.code, 
+      discount: discount, 
+      couponId: coupon._id 
+    };
     await cart.save();
 
-    res.json({ success: true, message: `Coupon ${coupon.code} applied! You saved ₹${discount.toFixed(2)}` });
+    const cartSummary = await require('./cartController').calculateCartSummary(cart, userId);
+
+    res.json({ 
+      success: true, 
+      message: `Coupon ${coupon.code} applied! You saved ₹${discount.toFixed(2)}`,
+      cart: cartSummary
+    });
   } catch (error) {
     console.error('Error applying coupon:', error);
     res.status(500).json({ success: false, message: 'Failed to apply coupon' });
@@ -133,7 +153,13 @@ const removeCoupon = async (req, res) => {
     cart.coupon = {};
     await cart.save();
 
-    res.json({ success: true, message: 'Coupon removed successfully' });
+    const cartSummary = await require('./cartController').calculateCartSummary(cart, userId);
+
+    res.json({ 
+      success: true, 
+      message: 'Coupon removed successfully',
+      cart: cartSummary
+    });
   } catch (error) {
     console.error('Error removing coupon:', error);
     res.status(500).json({ success: false, message: 'Failed to remove coupon' });
@@ -144,5 +170,6 @@ module.exports = {
     loadCoupons,
     getAvailableCoupons,
     applyCoupon,
-    removeCoupon 
+    removeCoupon,
+    validateCoupon
 };

@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 
 const variantSchema = new mongoose.Schema({
   size: { type: String, required: true },
- 
   salePrice: { type: Number, default: 0 },
   quantity: { type: Number, required: true },
 });

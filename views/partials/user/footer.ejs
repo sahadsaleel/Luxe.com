@@ -1,10 +1,9 @@
-
 <style>
     
 /* Footer */
 footer {
-    background-color: #000000;
-    color: white;
+    background-color: #046A38;
+    color: #FFFFFF;
     padding: 40px 20px;
     margin-top: auto;
 }
@@ -12,12 +11,13 @@ footer {
 .footer-logo {
     display: flex;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
 }
 
 .footer-logo img {
     width: 100px;
     height: auto;
+    filter: brightness(0) invert(1);
 }
 
 .footer-container {
@@ -39,6 +39,7 @@ footer {
     margin-bottom: 20px;
     position: relative;
     padding-bottom: 10px;
+    color: #FFFFFF;
 }
 
 .footer-column h3::after {
@@ -48,11 +49,11 @@ footer {
     left: 0;
     width: 40px;
     height: 2px;
-    background-color: #fff;
+    background-color: #B3A580;
 }
 
 .who-we-are p {
-    color: #ccc;
+    color: #C4B7A6;
     line-height: 1.6;
     margin-bottom: 20px;
 }
@@ -64,13 +65,13 @@ footer {
 }
 
 .social-links a {
-    color: #ccc;
+    color: #C4B7A6;
     font-size: 18px;
     transition: color 0.3s;
 }
 
 .social-links a:hover {
-    color: #9c8164;
+    color: #B3A580;
 }
 
 .menu ul,
@@ -87,34 +88,35 @@ footer {
 .menu ul li a,
 .help ul li a {
     text-decoration: none;
-    color: #ccc;
+    color: #C4B7A6;
     transition: color 0.3s;
 }
 
 .menu ul li a:hover,
 .help ul li a:hover {
-    color: #9c8164;
+    color: #B3A580;
 }
 
 .care-visit p {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
-    color: #ccc;
+    margin-bottom: 15px;
+    color: #C4B7A6;
 }
 
 .care-visit i {
     margin-right: 10px;
     min-width: 20px;
+    color: #B3A580;
 }
 
 .footer-bottom {
     text-align: center;
-    padding-top: 20px;
-    border-top: 1px solid #333;
-    color: #999;
-    font-size: 12px;
+    padding-top: 30px;
     margin-top: 40px;
+    border-top: 1px solid rgba(196, 183, 166, 0.2);
+    color: #C4B7A6;
+    font-size: 14px;
 }
 
 /* Responsive Adjustments */
@@ -185,12 +187,17 @@ footer {
         text-align: center;
     }
 
+    .footer-column h3::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
     .social-links {
         justify-content: center;
     }
 
     .care-visit p {
-        text-align: left;
+        justify-content: center;
     }
 
     .hero-image {
@@ -208,7 +215,7 @@ footer {
 <body>
     <footer>
         <div class="footer-logo">
-            <img src="/img/footer Logo.png" alt="Luxe.com Logo">
+            <img src="/img/logo.png" alt="Luxe.com Logo">
         </div>
         <div class="footer-container">
             <div class="footer-column who-we-are">
@@ -224,10 +231,10 @@ footer {
             <div class="footer-column menu">
                 <h3>MENU</h3>
                 <ul>
-                    <li><a href="#">Shop</a></li>
-                    <li><a href="#">About</a></li>
+                    <li><a href="/shop">Shop</a></li>
+                    <li><a href="/about">About</a></li>
                     <li><a href="#">Journal</a></li>
-                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="/contact">Contact Us</a></li>
                 </ul>
             </div>
             <div class="footer-column help">
@@ -244,7 +251,7 @@ footer {
             <div class="footer-column care-visit">
                 <h3>CARE FOR A VISIT?</h3>
                 <p><i class="fas fa-map-marker-alt"></i> Kinfra Industrial Park, Kanjancherry, Kozhikode, Kerala</p>
-                <p><i class="fas fa-phone"></i> +91 1000000000</p>
+                <p><i class="fas fa-phone"></i> +91 6235724699</p>
                 <p><i class="fas fa-envelope"></i> sahad.luxe.com@gmail.com</p>
             </div>
         </div>

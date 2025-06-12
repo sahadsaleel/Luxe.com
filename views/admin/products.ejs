@@ -10,424 +10,78 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: #f9f9f9;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .search-bar {
-            flex-grow: 1;
-            max-width: 600px;
-            margin-right: 10px;
-        }
-        input[type="text"], select, textarea, input[type="number"] {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 100%;
-        }
-        .btn {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-        .btn-primary {
-            background-color: #7db87d;
-            color: rgb(0, 0, 0);
-        }
-        .btn-primary:hover {
-            background-color: #000000 !important;
-        }
-        .header1 {
-            justify-self: end;
-            padding: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        th {
-            background-color: #7db87d;
-            color: rgb(0, 0, 0);
-            text-align: left;
-            padding: 12px;
-        }
-        td {
-            padding: 12px;
-            border-bottom: 2px solid white;
-            background-color: #d3d3d3;
-            font-weight: 600;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .product-image {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            background-color: #f9f9f9;
-        }
-        .action-btn {
-            padding: 5px;
-            margin-right: 5px;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            overflow: auto;
-        }
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 80%;
-            max-width: 800px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            position: relative;
-        }
-        .close-btn {
-            float: right;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .image-upload {
-            border: 2px dashed #ccc;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-        }
-        .thumbnail-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-        .thumbnail {
-            position: relative;
-            width: 80px;
-            height: 80px;
-        }
-        .thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .remove-image {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: red;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            font-size: 12px;
-            line-height: 20px;
-            text-align: center;
-        }
-        .variant {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-        .variant input {
-            flex: 1;
-            min-width: 100px;
-        }
-        .remove-variant {
-            background: #d33;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .add-variant-btn {
-            background: #7db87d;
-            color: black;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .add-btn-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .error-message {
-            color: red;
-            font-size: 0.8em;
-            margin-top: 5px;
-            display: none;
-        }
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            table {
-                display: block;
-                overflow-x: auto;
-            }
-            .variant {
-                flex-direction: column;
-            }
-        }
-        .search-user-section {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-top: 30px;
-            padding-right: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .search-container {
-            position: relative;
-            margin-right: 15px;
-            flex: 1;
-            max-width: 300px;
-            min-width: 200px;
-        }
-        .search-input {
-            background-color: #7db87d;
-            border: none;
-            border-radius: 5px;
-            color: rgb(0, 0, 0);
-            padding: 12px 15px 12px 35px;
-            width: 100%;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-        .search-input::placeholder {
-            color: black;
-        }
-        .dropdown {
-            padding: 8px 12px;
-            border-radius: 4px;
-            background-color: white;
-            cursor: pointer;
-            width: 120px;
-            margin-left: 10px;
-        }
-        .dropdown select {
-            border: none;
-            background: transparent;
-            width: 100%;
-            cursor: pointer;
-            font-weight: 500;
-            outline: none;
-        }
-        .loading-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-        }
-        .loading-overlay .spinner-border {
-            width: 3rem;
-            height: 3rem;
-            color: #7db87d;
-        }
-        .btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-        .action-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 5px;
-            margin: 0 5px;
-            color: #333;
-            transition: color 0.3s ease;
-        }
-        .edit-btn svg, .delete-btn svg {
-            vertical-align: middle;
-        }
-        /* Crop Modal Styles */
-        .crop-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            overflow: auto;
-        }
-        .crop-modal-content {
-            background-color: #7db87d;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            position: relative;
-            text-align: center;
-        }
-        .crop-container {
-            max-width: 100%;
-            max-height: 400px;
-            margin-bottom: 20px;
-        }
-        .crop-container img {
-            max-width: 100%;
-            height: auto;
-        }
-        .crop-btn-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        .crop-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .crop-btn-confirm {
-            background-color: black;
-            color: white;
-        }
-        .crop-btn-cancel {
-            background-color: rgb(255, 0, 0);
-            color: white;
-        }
-        .mainCantainer {
-            padding: 40px;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/adminProduct.css">
 </head>
 <body>
     <%- include('../../views/partials/admin/header') %>
     
-    <div class="search-user-section">
+    <div class="header1">
         <div class="search-container">
-            <input type="text" placeholder="Search..." class="search-input" id="searchInput">
+            <input type="text" placeholder="Search products..." class="search-input" id="searchInput" value="<%= search || '' %>">
         </div>
         <div class="dropdown">
-            <select class="custom-select" id="sortSelect">
-                <option value="newest">Newest</option>
-                <option value="oldest">Oldest</option>
-                <option value="a-z">A-Z</option>
-                <option value="z-a">Z-A</option>
+            <select id="sortSelect" class="form-select">
+                <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest</option>
+                <option value="oldest" <%= sort === 'oldest' ? 'selected' : '' %>>Oldest</option>
+                <option value="a-z" <%= sort === 'a-z' ? 'selected' : '' %>>A-Z</option>
+                <option value="z-a" <%= sort === 'z-a' ? 'selected' : '' %>>Z-A</option>
             </select>
         </div>
-    </div>
-    
-    <div class="header1">
         <button class="btn btn-primary" id="addProductBtn">ADD NEW PRODUCT</button>
     </div>
 
-<div class="mainCantainer">
-    <table>
-        <thead>
-            <tr>
-                <th>PRODUCT IMAGE</th>
-                <th>PRODUCT NAME</th>
-                <th>CATEGORY</th>
-                <th>STOCK</th>
-                <th>PRICE</th>
-                <th>SALE PRICE</th>
-                <th>AVAILABLE VARIANTS</th>
-                <th>STATUS</th>
-                <th>ACTION</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% products.forEach(product =>{%>  
+    <div class="mainCantainer">
+        <table>
+            <thead>
                 <tr>
-                    <td> 
-                        <img src="<%= product.productImage && product.productImage.length > 0 ? product.productImage[0] : '/api/placeholder/50/50' %>" alt="<%= product.productName %>" class="product-image">
-                    </td>
-                    <td><%= product.productName %></td>
-                    <td><%= product.productCategory?.name || '-' %></td>
-                    <td><%= product.variants.reduce((sum, v) => sum + v.quantity, 0) %></td>
-                    <td><%= product.variants[0].regularPrice %> ₹</td>
-                    <td><%= product.variants[0].salePrice ? product.variants[0].salePrice + ' ₹' : '-' %></td>
-                    <td><%= product.variants.map(v => v.size).join(', ') %></td>
-                    <td><%= product.status %></td>
-                    <td>
-                        <button class="action-btn edit-btn" data-id="<%= product._id %>">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
-                        </button>
-                        <button class="action-btn delete-btn" data-id="<%= product._id %>">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                <line x1="10" y1="11" x2="10" y2="17"></line>
-                                <line x1="14" y1="11" x2="14" y2="17"></line>
-                            </svg>
-                        </button>
-                    </td>
+                    <th>PRODUCT IMAGE</th>
+                    <th>PRODUCT NAME</th>
+                    <th>CATEGORY</th>
+                    <th>VARIANTS & STOCK</th>
+                    <th>PRICE</th>
+                    <th>STATUS</th>
+                    <th>ACTION</th>
                 </tr>
-            <% }) %>
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                <% products.forEach(product =>{%>  
+                    <tr>
+                        <td> 
+                            <img src="<%= product.productImage && product.productImage.length > 0 ? product.productImage[0] : '/api/placeholder/50/50' %>" alt="<%= product.productName %>" class="product-image">
+                        </td>
+                        <td><%= product.productName %></td>
+                        <td><%= product.productCategory?.name || '-' %></td>
+                        <td>
+                            <% product.variants.forEach(variant => { %>
+                                <div class="variant-stock">
+                                    <span class="variant-size"><%= variant.size %>:</span>
+                                    <span class="variant-qty"><%= variant.quantity %> units</span>
+                                </div>
+                            <% }) %>
+                        </td>
+                        <td><%= product.variants[0].salePrice %> ₹</td>
+                        <td><%= product.status %></td>
+                        <td>
+                            <button class="action-btn edit-btn" data-id="<%= product._id %>">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <button class="action-btn delete-btn" data-id="<%= product._id %>">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
 
     
     <!-- Add Product Modal -->
@@ -489,9 +143,8 @@
                             <label>Variants</label>
                             <div id="addVariantsContainer">
                                 <div class="variant">
-                                    <input type="text" name="variantSize" placeholder="Size" class="variant-size">
-                                    <input type="number" name="variantRegularPrice" placeholder="Regular Price" class="variant-regular-price">
-                                    <input type="number" name="variantSalePrice" placeholder="Sale Price (optional)" class="variant-sale-price">
+                                    <input type="text" name="variantSize" placeholder="Size (e.g., 50 ML)" class="variant-size">
+                                    <input type="number" name="variantSalePrice" placeholder="Price" class="variant-sale-price">
                                     <input type="number" name="variantQuantity" placeholder="Quantity" class="variant-quantity">
                                     <button type="button" class="remove-variant">Remove</button>
                                 </div>
@@ -706,8 +359,7 @@
                 variantDiv.className = 'variant';
                 variantDiv.innerHTML = `
                     <input type="text" name="variantSize" placeholder="Size (e.g., 50 ML)" class="variant-size">
-                    <input type="number" name="variantRegularPrice" placeholder="Regular Price" class="variant-regular-price">
-                    <input type="number" name="variantSalePrice" placeholder="Sale Price (optional)" class="variant-sale-price">
+                    <input type="number" name="variantSalePrice" placeholder="Price" class="variant-sale-price">
                     <input type="number" name="variantQuantity" placeholder="Quantity" class="variant-quantity">
                     ${i === 0 ? '' : '<button type="button" class="remove-variant">Remove</button>'}
                 `;
@@ -853,8 +505,7 @@
                 variantDiv.className = 'variant';
                 variantDiv.innerHTML = `
                     <input type="text" name="variantSize" placeholder="Size (e.g., 50 ML)" class="variant-size">
-                    <input type="number" name="variantRegularPrice" placeholder="Regular Price" class="variant-regular-price">
-                    <input type="number" name="variantSalePrice" placeholder="Sale Price (optional)" class="variant-sale-price">
+                    <input type="number" name="variantSalePrice" placeholder="Price" class="variant-sale-price">
                     <input type="number" name="variantQuantity" placeholder="Quantity" class="variant-quantity">
                     <button type="button" class="remove-variant">Remove</button>
                 `;
@@ -928,8 +579,7 @@
                             variantDiv.className = 'variant';
                             variantDiv.innerHTML = `
                                 <input type="text" name="variantSize" placeholder="Size (e.g., 50 ML)" class="variant-size" value="${variant.size || ''}">
-                                <input type="number" name="variantRegularPrice" placeholder="Regular Price" class="variant-regular-price" value="${variant.regularPrice || ''}">
-                                <input type="number" name="variantSalePrice" placeholder="Sale Price (optional)" class="variant-sale-price" value="${variant.salePrice || ''}">
+                                <input type="number" name="variantSalePrice" placeholder="Price" class="variant-sale-price" value="${variant.salePrice || ''}">
                                 <input type="number" name="variantQuantity" placeholder="Quantity" class="variant-quantity" value="${variant.quantity || ''}">
                                 ${i === 0 ? '' : '<button type="button" class="remove-variant">Remove</button>'}
                             `;
@@ -965,7 +615,6 @@
             const status = form.querySelector(isEdit ? '#editStatus' : '#status').value.trim();
             const variants = Array.from(form.querySelectorAll('.variant')).map(variant => ({
                 size: variant.querySelector('.variant-size').value.trim(),
-                regularPrice: variant.querySelector('.variant-regular-price').value.trim(),
                 salePrice: variant.querySelector('.variant-sale-price').value.trim(),
                 quantity: variant.querySelector('.variant-quantity').value.trim()
             }));
@@ -1012,19 +661,11 @@
                     displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Size is required`);
                     isValid = false;
                 }
-                if (!variant.regularPrice) {
-                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Regular price is required`);
+                if (!variant.salePrice) {
+                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Price is required`);
                     isValid = false;
-                } else if (isNaN(variant.regularPrice) || parseFloat(variant.regularPrice) <= 0) {
-                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Regular price must be positive`);
-                    isValid = false;
-                }
-                if (variant.salePrice && (isNaN(variant.salePrice) || parseFloat(variant.salePrice) < 0)) {
-                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Sale price must be non-negative`);
-                    isValid = false;
-                }
-                if (variant.salePrice && parseFloat(variant.salePrice) >= parseFloat(variant.regularPrice)) {
-                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Sale price must be less than regular price`);
+                } else if (isNaN(variant.salePrice) || parseFloat(variant.salePrice) <= 0) {
+                    displayProductErrorMessage(form, isEdit ? 'editVariantError' : 'variantError', `Variant ${index + 1}: Price must be positive`);
                     isValid = false;
                 }
                 if (!variant.quantity) {
@@ -1061,7 +702,6 @@
                 const formData = new FormData(addProductForm);
                 const variants = Array.from(addVariantsContainer.querySelectorAll('.variant')).map(variant => ({
                     size: variant.querySelector('.variant-size').value.trim(),
-                    regularPrice: variant.querySelector('.variant-regular-price').value.trim(),
                     salePrice: variant.querySelector('.variant-sale-price').value.trim(),
                     quantity: variant.querySelector('.variant-quantity').value.trim()
                 }));
@@ -1124,7 +764,6 @@
                 const formData = new FormData(editProductForm);
                 const variants = Array.from(editVariantsContainer.querySelectorAll('.variant')).map(variant => ({
                     size: variant.querySelector('.variant-size').value.trim(),
-                    regularPrice: variant.querySelector('.variant-regular-price').value.trim(),
                     salePrice: variant.querySelector('.variant-sale-price').value.trim(),
                     quantity: variant.querySelector('.variant-quantity').value.trim()
                 }));

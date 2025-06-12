@@ -3,1222 +3,498 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Successful - Luxe.com</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/orderSuccess.css">
+    <title>Order Success - Luxe Fashion Store</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
+        :root {
+            --primary-color: #046A38;
+            --secondary-color: #C4B7A6;
+            --accent-color: #B3A580;
+            --text-color: #2d3436;
+            --light-text: #6c757d;
+            --background: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-radius: 12px;
+            --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        header {
-            background-color: #8a6a94;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 20px;
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .logo img {
-            width: 70px;
-            height: auto;
-        }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 20px;
-        }
-
-        .nav-links li a {
-            text-decoration: none;
-            color: #000;
-            font-weight: 500;
-        }
-
-        .header-icons {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .search-container {
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-
-        .search-container input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-right: none;
-            outline: none;
-            width: 300px;
-        }
-
-        .search-container button {
-            background-color: #000;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        .search-results {
-            position: absolute;
-            top: 40px;
-            left: 0;
-            width: 100%;
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 100;
-            display: none;
-        }
-
-        .search-results.active {
-            display: block;
-        }
-
-        .result-item {
-            display: block;
-            padding: 8px;
-            text-decoration: none;
-            color: black;
-        }
-
-        .result-item:hover {
-            background: #f0f0f0;
-        }
-
-        .result-item span {
-            display: block;
-        }
-
-        .no-results {
-            padding: 8px;
-            color: #666;
-        }
-
-        .icon {
-            cursor: pointer;
-            position: relative;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background-color: red;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 12px;
-        }
-
-        .dropdown {
-            position: relative;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: white;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-        }
-
-        .dropdown.active .dropdown-content {
-            display: block;
-        }
-
-        .dropdown-content a, .dropdown-content span {
-            display: block;
-            padding: 10px;
-            text-decoration: none;
-            color: #000;
-        }
-
-        .auth-links {
-            display: flex;
-            gap: 10px;
-        }
-
-        .auth-links a {
-            text-decoration: none;
-            color: #000;
-            font-weight: 500;
-        }
-
-        /* Footer Styles */
-        footer {
-            background-color: #000000;
-            color: white;
-            padding: 40px 20px;
-            margin-top: auto;
-        }
-
-        .footer-logo {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-
-        .footer-logo img {
-            width: 100px;
-            height: auto;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 40px;
-        }
-
-        .footer-column {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .footer-column h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .footer-column h3::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 40px;
-            height: 2px;
-            background-color: #fff;
-        }
-
-        .who-we-are p {
-            color: #ccc;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .social-links a {
-            color: #ccc;
-            font-size: 18px;
-            transition: color 0.3s;
-        }
-
-        .social-links a:hover {
-            color: #9c8164;
-        }
-
-        .menu ul,
-        .help ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .menu ul li,
-        .help ul li {
-            margin-bottom: 10px;
-        }
-
-        .menu ul li a,
-        .help ul li a {
-            text-decoration: none;
-            color: #ccc;
-            transition: color 0.3s;
-        }
-
-        .menu ul li a:hover,
-        .help ul li a:hover {
-            color: #9c8164;
-        }
-
-        .care-visit p {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            color: #ccc;
-        }
-
-        .care-visit i {
-            margin-right: 10px;
-            min-width: 20px;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #333;
-            color: #999;
-            font-size: 12px;
-            margin-top: 40px;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .nav-links {
-                margin: 20px 0;
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .header-icons {
-                width: 100%;
-                justify-content: flex-end;
-                gap: 10px;
-            }
-
-            .auth-links {
-                font-size: 13px;
-                gap: 5px;
-            }
-
-            .auth-links a {
-                padding: 3px 5px;
-            }
-
-            .dropdown-content {
-                min-width: 120px;
-            }
-
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .social-links {
-                justify-content: center;
-            }
-
-            .care-visit p {
-                text-align: left;
-            }
-
-            .footer-logo img {
-                width: 80px;
-            }
-        }
-
-        /* Ensure body takes full height */
-        html, body {
-            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-dark);
+            background-color: var(--background);
+            color: var(--text-color);
             line-height: 1.6;
         }
 
-        main {
-            flex: 1;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
 
-        /* Modal Styles */
+        .success-section {
+            text-align: center;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 40px;
+            margin-top: 30px;
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background-color: rgba(4, 106, 56, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+        }
+
+        .success-icon i {
+            font-size: 48px;
+            color: var(--primary-color);
+        }
+
+        .success-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            font-size: 18px;
+            color: var(--light-text);
+            margin-bottom: 30px;
+        }
+
+        .order-info {
+            background-color: rgba(4, 106, 56, 0.05);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+
+        .order-id {
+            font-size: 16px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .order-id span {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .copy-button {
+            background: none;
+            border: none;
+            color: var(--light-text);
+            cursor: pointer;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            color: var(--primary-color);
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #035c31;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(4, 106, 56, 0.1);
+        }
+
+        .btn-link {
+            background: none;
+            border: none;
+            color: var(--light-text);
+            text-decoration: underline;
+        }
+
+        .btn-link:hover {
+            color: var(--primary-color);
+        }
+
+        /* Invoice Modal Styles */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
         }
 
         .modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 800px;
-            border-radius: 8px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
             position: relative;
         }
 
-        .modal-close {
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .close-modal {
             position: absolute;
+            top: 20px;
             right: 20px;
-            top: 10px;
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .modal-close:hover,
-        .modal-close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .invoice-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .invoice-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             font-size: 24px;
-            font-weight: bold;
-            color: #8a6a94;
+            color: var(--light-text);
+            cursor: pointer;
+            background: none;
+            border: none;
         }
 
-        .invoice-logo {
-            font-size: 28px;
+        .close-modal:hover {
+            color: var(--text-color);
         }
 
-        .invoice-status {
-            margin-top: 10px;
-            font-size: 16px;
-            color: #555;
+        .modal-body {
+            padding: 20px;
         }
 
         .invoice-details {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            font-size: 14px;
-        }
-
-        .invoice-detail-col {
-            flex: 1;
-        }
-
-        .invoice-detail-label {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .invoice-detail-value {
-            color: #555;
-        }
-
-        .invoice-section {
-            margin-top: 20px;
-        }
-
-        .invoice-section-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #8a6a94;
-            border-bottom: 2px solid #8a6a94;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
-        }
-
-        .invoice-address {
-            margin-top: 10px;
-        }
-
-        .invoice-address-title {
-            font-weight: bold;
-            color: #333;
+            margin-bottom: 20px;
         }
 
         .invoice-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin: 20px 0;
         }
 
         .invoice-table th,
         .invoice-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
             text-align: left;
+            border-bottom: 1px solid #eaeaea;
         }
 
         .invoice-table th {
-            background-color: #8a6a94;
-            color: white;
+            background-color: rgba(4, 106, 56, 0.05);
+            font-weight: 600;
         }
 
-        .invoice-total-section {
-            margin-top: 20px;
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eaeaea;
+            text-align: right;
         }
 
-        .invoice-total-table {
-            width: 50%;
-            margin-left: auto;
-            border-collapse: collapse;
-        }
-
-        .invoice-total-table td {
-            padding: 5px;
-            border: 1px solid #ddd;
-        }
-
-        .invoice-footer {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 12px;
-            color: #555;
-        }
-
-        .invoice-note {
-            margin-bottom: 10px;
-        }
-
-        .invoice-download-area {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .btn-invoice-download {
-            background-color: #8a6a94;
+        .copy-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
             color: white;
             padding: 10px 20px;
-            border: none;
             border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
+            display: none;
+            z-index: 1001;
         }
 
-        .btn-invoice-download:hover {
-            background-color: #6b4e76;
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .success-section {
+                padding: 30px 20px;
+            }
+
+            .success-icon {
+                width: 100px;
+                height: 100px;
+            }
+
+            .success-icon i {
+                font-size: 40px;
+            }
+
+            .success-title {
+                font-size: 24px;
+            }
+
+            .success-message {
+                font-size: 16px;
+            }
+
+            .button-group {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="header-container">
-            <div class="logo">
-                <img src="/img/logo.png" alt="Luxe.com Logo">
-            </div>
-            <ul class="nav-links">
-                <li><a href="/">HOME</a></li>
-                <li><a href="/shop">SHOP</a></li>
-                <li><a href="#">+ CONTACT US</a></li>
-                <li><a href="#">ABOUT</a></li>
-            </ul>
-            <div class="header-icons">
-                <div class="search-container">
-                    <input type="text" id="searchInput" placeholder="Search...">
-                    <button>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </button>
-                    <div id="searchResults" class="search-results"></div>
-                </div>
-                <div class="icon">
-                    <a href="/wishlist" style="position: relative; display: inline-block; color: black;">
-                        <svg width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                    </a>
-                </div>
-                <a href="/cart" style="position: relative; display: inline-block; color: black;">
-                    <svg width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                        <line x1="3" y1="6" x2="21" y2="6"/>
-                        <path d="M16 10a4 4 0 0 1-8 0"/>
-                    </svg>
-                    <span style="position:absolute; top:-5px; right:-5px; background:black; color:white; border-radius:50%; padding:2px 5px; font-size:10px;">2</span>
-                </a>
-                <% if(locals.user) { %>
-                    <div class="dropdown">
-                        <div class="icon profile">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="11" />
-                                <path d="M12,14.9c-3.5,0-6.5,2-8,5c2,2.1,4.9,3.3,8,3.3s6-1.3,8-3.3C18.5,17,15.5,14.9,12,14.9z" />
-                                <circle cx="12" cy="8.7" r="3.6" />
-                            </svg>
-                        </div>
-                        <div class="dropdown-content">
-                            <span class="user-name"><%= locals.user.firstName %></span>
-                            <a href="/Profile">Profile</a>
-                            <a href="/logout">Logout</a>    
-                        </div>
-                    </div>
-                <% } else { %>
-                    <div class="icon profile">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color: black;" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="11" />
-                            <path d="M12,14.9c-3.5,0-6.5,2-8,5c2,2.1,4.9,3.3,8,3.3s6-1.3,8-3.3C18.5,17,15.5,14.9,12,14.9z" />
-                            <circle cx="12" cy="8.7" r="3.6" />
-                        </svg>
-                    </div>
-                    <div class="auth-links">
-                        <a href="/login" class="login">Login</a>
-                        <a href="/signup" class="signup">Sign Up</a>
-                    </div>
-                <% } %>
-            </div>
-        </div>
-    </header>
+    <%- include('../../views/partials/user/header') %>
 
-    <!-- Main Content -->
-    <main>
-        <div class="container">
-            <div id="order-confirmation-page">
-                <div class="breadcrumbs">
-                    <a href="/" class="breadcrumb-item">Home</a>
-                    <span class="breadcrumb-separator">/</span>
-                    <a href="/shop" class="breadcrumb-item">Shop</a>
-                    <span class="breadcrumb-separator">/</span>
-                    <a href="/cart" class="breadcrumb-item">Cart</a>
-                    <span class="breadcrumb-separator">/</span>
-                    <span class="breadcrumb-item active">Payment</span>
-                </div>
-                
-                <!-- Success header -->
-                <div class="success-header">
-                    <div class="checkmark-circle">
-                        <i class="fas fa-check" style="color: #8a6a94;"></i>
-                    </div>
-                    <h1>Order Successful!</h1>
-                    <p>Thank you for your purchase, <%= user.firstName %> <%= user.lastName %>.</p>
-                </div>
-                
-                <div class="order-content">
-                    <!-- Order Details -->
-                    <div class="order-section">
-                        <h2 class="section-title">Order Details</h2>
-                        <div class="order-info">
-                            <div class="info-item">
-                                <div class="info-label">Order ID</div>
-                                <div class="info-value"><%= order.orderId %></div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Order Date</div>
-                                <div class="info-value"><%= order.orderDate %></div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Payment Method</div>
-                                <div class="info-value"><%= order.paymentMethod %></div>
-                            </div>
-                            <% if (order.couponCode) { %>
-                                <div class="info-item">
-                                    <div class="info-label">Coupon Applied</div>
-                                    <div class="info-value"><%= order.couponCode %></div>
-                                </div>
-                            <% } %>
-                        </div>
-                    </div>
-                    
-                    <div class="order-section">
-                        <h2 class="section-title">Shipping Address</h2>
-                        <% if (order.address && Object.keys(order.address).length > 0) { %>
-                            <div class="address-container">
-                                <div class="address-box">
-                                    <div class="address-header">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <span>Delivery Location</span>
-                                    </div>
-                                    <div class="address-content">
-                                        <p><strong><%= order.address.name || 'N/A' %></strong></p>
-                                        <p><%= order.address.landMark || 'N/A' %></p>
-                                        <p><%= order.address.city || '' %>, <%= order.address.state || '' %> <%= order.address.pincode || '' %></p>
-                                        <p>Phone: <%= order.address.phone || 'N/A' %></p>
-                                        <% if (order.address.altPhone) { %>
-                                            <p>Alternate Phone: <%= order.address.altPhone %></p>
-                                        <% } %>
-                                    </div>
-                                </div>
-                            </div>
-                        <% } else { %>
-                            <div class="address-container">
-                                <div class="address-box">
-                                    <div class="address-header">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <span>Delivery Location</span>
-                                    </div>
-                                    <div class="address-content">
-                                        <p>No address provided</p>
-                                    </div>
-                                </div>
-                            </div>
-                        <% } %>
-                    </div>
-
-                    <!-- Order Items -->
-                    <div class="order-section">
-                        <h2 class="section-title">Order Items</h2>
-                        <table class="product-table">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Size</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% order.items.forEach(item => { %>
-                                    <tr>
-                                        <td class="product-name"><%= item.productName %></td>
-                                        <td><%= item.variant.size %></td>
-                                        <td><%= item.quantity %></td>
-                                        <td>Rs <%= item.price.toFixed(2) %></td>
-                                        <td>Rs <%= item.totalPrice.toFixed(2) %></td>
-                                    </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                        
-                        <!-- Order Summary -->
-                        <div class="order-summary">
-                            <div class="summary-row">
-                                <div class="summary-label">Subtotal:</div>
-                                <div class="summary-value">Rs <%= order.subtotal.toFixed(2) %></div>
-                            </div>
-                            <div class="summary-row">
-                                <div class="summary-label">Gift Wrap Total:</div>
-                                <div class="summary-value">Rs <%= order.giftWrapTotal.toFixed(2) %></div>
-                            </div>
-                            <div class="summary-row">
-                                <div class="summary-label">Shipping:</div>
-                                <div class="summary-value">Rs <%= order.shipping.toFixed(2) %></div>
-                            </div>
-                            <% if (order.discount && order.discount > 0) { %>
-                                <div class="summary-row">
-                                    <div class="summary-label">Discount (<%= order.couponCode || 'Coupon' %>):</div>
-                                    <div class="summary-value">-Rs <%= order.discount.toFixed(2) %></div>
-                                </div>
-                            <% } %>
-                            <div class="grand-total">
-                                <div>Total:</div>
-                                <div>Rs <%= order.finalAmount.toFixed(2) %></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Action Buttons -->
-                    <div class="actions">
-                        <button class="btn btn-primary" onclick="showInvoiceModal()">
-                            <i class="fas fa-download"></i> Download Invoice
-                        </button>
-                        <a href="/shop" class="btn btn-outline">
-                            <i class="fas fa-shopping-bag"></i> Continue Shopping
-                        </a>
-                    </div>
-                </div>
+    <div class="container">
+        <div class="success-section">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
             </div>
+            <h1 class="success-title">Order Successful!</h1>
+            <p class="success-message">Thank you for shopping with Luxe Store</p>
             
-            <!-- Payment Success Section (Optional) -->
-            <div id="payment-success-page" style="display: none;">
-                <div class="breadcrumbs">
-                    <a href="/" class="breadcrumb-item">Home</a>
-                    <span class="breadcrumb-separator">/</span>
-                    <a href="/shop" class="breadcrumb-item">Shop</a>
-                    <span class="breadcrumb-separator">/</span>
-                    <a href="/cart" class="breadcrumb-item">Cart</a>
-                    <span class="breadcrumb-separator">/</span>
-                    <span class="breadcrumb-item active">Payment</span>
-                </div>
-                
-                <div class="payment-icon-container">
-                    <div class="payment-icon">
-                        <i class="fas fa-receipt"></i>
-                    </div>
-                    <h2 class="payment-success-text">PAYMENT SUCCESSFUL!</h2>
-                    <p class="payment-success-subtext">Thank you for your purchase, <%= user.firstName %> <%= user.lastName %>.</p>
-                    
-                    <a href="/order-success?orderId=<%= order.orderId %>" class="btn btn-black">VIEW ORDER</a>
-                    
-                    <div class="secondary-action">
-                        <a href="/order-invoice?orderId=<%= order.orderId %>" class="receipt-link">View E-Receipt</a>
-                        <a href="/review?orderId=<%= order.orderId %>" class="review-btn">Write a review</a>
-                    </div>
-                </div>
+            <div class="order-info">
+                <p class="order-id">
+                    Order ID: <span><%= order.customOrderId %></span>
+                    <button class="copy-button" onclick="copyOrderId('<%= order.customOrderId %>')">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </p>
             </div>
 
-            <!-- Enhanced Invoice Modal -->
-            <div class="modal" id="invoiceModal">
-                <div class="modal-content">
-                    <span class="modal-close" onclick="closeInvoiceModal()">×</span>
-                    
-                    <div id="invoiceContent">
-                        <div class="invoice-header">
-                            <div class="invoice-title">
-                                <div class="invoice-logo">Luxe.com</div>
-                                <div>INVOICE</div>
-                            </div>
-                            <div id="modalStatus" class="invoice-status"></div>
-                            
-                            <div class="invoice-details">
-                                <div class="invoice-detail-col">
-                                    <div class="invoice-detail-label">Order ID</div>
-                                    <div id="modalOrderId" class="invoice-detail-value"></div>
-                                    
-                                    <div class="invoice-detail-label" style="margin-top: 10px;">Order Date</div>
-                                    <div id="modalOrderDate" class="invoice-detail-value"></div>
-                                    
-                                    <div class="invoice-detail-label" style="margin-top: 10px;">Invoice Date</div>
-                                    <div id="modalInvoiceDate" class="invoice-detail-value"></div>
-                                </div>
-                                
-                                <div class="invoice-detail-col">
-                                    <div class="invoice-detail-label">Payment Method</div>
-                                    <div id="modalPaymentMethod" class="invoice-detail-value"></div>
-                                    
-                                    <div class="invoice-detail-label" style="margin-top: 10px;">Delivery Method</div>
-                                    <div id="modalDeliveryMethod" class="invoice-detail-value"></div>
-                                    
-                                    <div class="invoice-detail-label" style="margin-top: 10px;">Status</div>
-                                    <div id="modalStatus" class="invoice-detail-value"></div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="invoice-body">
-                            <div class="invoice-section">
-                                <div class="invoice-section-title">Customer Information</div>
-                                <div class="invoice-address">
-                                    <div class="invoice-address-box">
-                                        <div class="invoice-address-title">Shipping Address</div>
-                                        <div id="modalAddress"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="invoice-section">
-                                <div class="invoice-section-title">Order Summary</div>
-                                <table class="invoice-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Product</th>
-                                            <th>Size</th>
-                                            <th>Quantity</th>
-                                            <th>Price</th>
-                                            <th>Total</th>
-                                            <th>Gift Wrap</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="modalItems"></tbody>
-                                </table>
-                                
-                                <div class="invoice-total-section">
-                                    <table class="invoice-total-table">
-                                        <tr>
-                                            <td>Subtotal</td>
-                                            <td id="modalSubtotal" style="text-align: right;"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Gift Wrap</td>
-                                            <td id="modalGiftWrapTotal" style="text-align: right;"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Shipping</td>
-                                            <td id="modalShipping" style="text-align: right;"></td>
-                                        </tr>
-                                        <% if (order.discount && order.discount > 0) { %>
-                                            <tr>
-                                                <td>Discount (<%= order.couponCode || 'Coupon' %>)</td>
-                                                <td id="modalDiscount" style="text-align: right;"></td>
-                                            </tr>
-                                        <% } %>
-                                        <tr>
-                                            <td>Grand Total</td>
-                                            <td id="modalFinalAmount" style="text-align: right;"></td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="invoice-footer">
-                            <div class="invoice-note">Thank you for shopping with Luxe! For any questions regarding your order, please contact our customer support.</div>
-                            <div>© 2025 Luxe. All rights reserved.</div>
-                        </div>
-                    </div>
-                    
-                    <div class="invoice-download-area">
-                        <button class="btn-invoice-download" onclick="downloadInvoice()">
-                            <i class="fas fa-file-pdf"></i> Download Invoice PDF
-                        </button>
-                    </div>
+            <div class="button-group">
+                <a href="/orders" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag"></i> View Order
+                </a>
+                <button onclick="openModal()" class="btn btn-secondary">
+                    <i class="fas fa-file-invoice"></i> View E-Receipt
+                </button>
+                <a href="/review/<%= order._id %>" class="btn btn-link">
+                    <i class="fas fa-star"></i> Write a Review
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div id="invoiceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Order Invoice</h3>
+                <button class="close-modal" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="invoice-details">
+                    <p><strong>Order ID:</strong> <%= order.customOrderId %></p>
+                    <p><strong>Date:</strong> <%= order.orderDate %></p>
+                    <p><strong>Time:</strong> <%= new Date(order.createdOn).toLocaleTimeString() %></p>
+                </div>
+
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% order.items.forEach(item => { %>
+                            <tr>
+                                <td><%= item.productName || 'Product' %></td>
+                                <td><%= item.quantity %></td>
+                                <td>₹<%= item.price.toFixed(2) %></td>
+                                <td>₹<%= item.totalPrice.toFixed(2) %></td>
+                            </tr>
+                        <% }) %>
+                        <tr>
+                            <td colspan="3"><strong>Subtotal</strong></td>
+                            <td><strong>₹<%= order.subtotal.toFixed(2) %></strong></td>
+                        </tr>
+                        <% if (order.giftWrapTotal > 0) { %>
+                            <tr>
+                                <td colspan="3">Gift Wrap Charges</td>
+                                <td>₹<%= order.giftWrapTotal.toFixed(2) %></td>
+                            </tr>
+                        <% } %>
+                        <% if (order.shipping > 0) { %>
+                            <tr>
+                                <td colspan="3">Shipping</td>
+                                <td>₹<%= order.shipping.toFixed(2) %></td>
+                            </tr>
+                        <% } %>
+                        <% if (order.discount > 0) { %>
+                            <tr>
+                                <td colspan="3">Discount</td>
+                                <td>-₹<%= order.discount.toFixed(2) %></td>
+                            </tr>
+                        <% } %>
+                        <tr>
+                            <td colspan="3"><strong>Total Amount</strong></td>
+                            <td><strong>₹<%= order.finalAmount.toFixed(2) %></strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="shipping-details">
+                    <h4>Shipping Address</h4>
+                    <p><%= order.address.name %></p>
+                    <p><%= order.address.landMark %></p>
+                    <p><%= order.address.city %>, <%= order.address.state %> <%= order.address.pincode %></p>
+                    <p>Phone: <%= order.address.phone %></p>
+                    <% if (order.address.altPhone) { %>
+                        <p>Alt Phone: <%= order.address.altPhone %></p>
+                    <% } %>
                 </div>
             </div>
-        </div>
-    </main>
-    
-    <!-- Footer -->
-    <footer>
-        <div class="footer-logo">
-            <img src="/img/footer Logo.png" alt="Luxe.com Logo">
-        </div>
-        <div class="footer-container">
-            <div class="footer-column who-we-are">
-                <h3>WHO WE ARE</h3>
-                <p>Bringing you the best of Beauty with the best of results of Naturals at the best prices guaranteed with Quality.</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-            <div class="footer-column menu">
-                <h3>MENU</h3>
-                <ul>
-                    <li><a href="#">Shop</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Journal</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-            </div>
-            <div class="footer-column help">
-                <h3>HELP</h3>
-                <ul>
-                    <li><a href="#">Shipping Information</a></li>
-                    <li><a href="#">Returns & Exchange</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">FAQs</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-column care-visit">
-                <h3>CARE FOR A VISIT?</h3>
-                <p><i class="fas fa-map-marker-alt"></i> Kinfra Industrial Park, Kanjancherry, Kozhikode, Kerala</p>
-                <p><i class="fas fa-phone"></i> +91 1000000000</p>
-                <p><i class="fas fa-envelope"></i> sahad.luxe.com@gmail.com</p>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="downloadInvoice()">
+                    <i class="fas fa-download"></i> Download Invoice
+                </button>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>Copyright © 2024 All rights reserved</p>
-        </div>
-    </footer>
-    
+    </div>
+
+    <div id="copyNotification" class="copy-notification">
+        Order ID copied to clipboard!
+    </div>
+
+    <%- include('../../views/partials/user/footer') %>
+
     <script>
-    function formatDate(dateStr) {
-        if (!dateStr || dateStr === 'N/A') return 'N/A';
-        const date = new Date(dateStr);
-        if (isNaN(date)) return dateStr;
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
-
-    const orderData = {
-        orderId: '<%= order.orderId %>',
-        orderDate: '<%= order.orderDate %>',
-        invoiceDate: '<%= order.invoiceDate ? order.invoiceDate : order.orderDate %>',
-        status: '<%= order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1).toLowerCase() : "Processing" %>',
-        paymentMethod: '<%= order.paymentMethod %>',
-        deliveryMethod: '<%= order.deliveryMethod ? order.deliveryMethod.charAt(0).toUpperCase() + order.deliveryMethod.slice(1) : "Standard" %>',
-        couponCode: '<%= order.couponCode || "" %>',
-        address: '<%= order.address.name %> (<%= order.address.addressType || "Home" %>), <%= order.address.landMark || "N/A" %>, <%= order.address.city || "" %>, <%= order.address.state || "" %> <%= order.address.pincode || "" %>, Phone: <%= order.address.phone || "N/A" %> <%= order.address.altPhone ? `, Alt: ${order.address.altPhone}` : "" %>',
-        subtotal: '<%= Number(order.subtotal).toFixed(2) %>',
-        giftWrapTotal: '<%= Number(order.giftWrapTotal).toFixed(2) %>',
-        shipping: '<%= Number(order.shipping).toFixed(2) %>',
-        discount: '<%= Number(order.discount || 0).toFixed(2) %>',
-        finalAmount: '<%= Number(order.finalAmount).toFixed(2) %>',
-        items: [
-            <% order.items.forEach((item, index) => { %>
-                {
-                    productName: '<%= item.productName %>',
-                    size: '<%= item.variant.size %>',
-                    quantity: '<%= item.quantity %>',
-                    price: '<%= Number(item.price).toFixed(2) %>',
-                    totalPrice: '<%= Number(item.totalPrice).toFixed(2) %>',
-                    isGiftWrapped: '<%= item.isGiftWrapped ? "Yes" : "No" %>'
-                }<%= index < order.items.length - 1 ? ',' : '' %>
-            <% }) %>
-        ]
-    };
-
-    function showOrderConfirmation() {
-        document.getElementById('order-confirmation-page').style.display = 'block';
-        document.getElementById('payment-success-page').style.display = 'none';
-    }
-
-    function showPaymentSuccess() {
-        document.getElementById('order-confirmation-page').style.display = 'none';
-        document.getElementById('payment-success-page').style.display = 'block';
-    }
-
-    // Check URL query parameter to determine which page to show
-    const urlParams = new URLSearchParams(window.location.search);
-    const showSuccess = urlParams.get('showSuccess');
-
-    if (showSuccess === 'true') {
-        showPaymentSuccess();
-    } else {
-        showOrderConfirmation();
-    }
-
-    function showInvoiceModal() {
-        document.getElementById('modalOrderId').textContent = orderData.orderId;
-        document.getElementById('modalOrderDate').textContent = formatDate(orderData.orderDate);
-        document.getElementById('modalInvoiceDate').textContent = formatDate(orderData.invoiceDate);
-        document.getElementById('modalStatus').textContent = orderData.status;
-        document.getElementById('modalPaymentMethod').textContent = orderData.paymentMethod;
-        document.getElementById('modalDeliveryMethod').textContent = orderData.deliveryMethod;
-        document.getElementById('modalAddress').textContent = orderData.address;
-
-        const itemsTableBody = document.getElementById('modalItems');
-        itemsTableBody.innerHTML = '';
-        orderData.items.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${item.productName}</td>
-                <td>${item.size}</td>
-                <td>${item.quantity}</td>
-                <td>Rs ${item.price}</td>
-                <td>Rs ${item.totalPrice}</td>
-                <td>${item.isGiftWrapped}</td>
-            `;
-            itemsTableBody.appendChild(row);
-        });
-
-        document.getElementById('modalSubtotal').textContent = 'Rs ' + orderData.subtotal;
-        document.getElementById('modalGiftWrapTotal').textContent = 'Rs ' + orderData.giftWrapTotal;
-        document.getElementById('modalShipping').textContent = 'Rs ' + orderData.shipping;
-        if (orderData.discount && orderData.discount > 0) {
-            document.getElementById('modalDiscount').textContent = '-Rs ' + orderData.discount;
-        }
-        document.getElementById('modalFinalAmount').textContent = 'Rs ' + orderData.finalAmount;
-        document.getElementById('invoiceModal').style.display = 'block';
-    }
-
-    function closeInvoiceModal() {
-        document.getElementById('invoiceModal').style.display = 'none';
-    }
-
-    function downloadInvoice() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        // Header
-        doc.setFontSize(24);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Luxe.com', 20, 20);
-        doc.setFontSize(16);
-        doc.text('INVOICE', 160, 20, { align: 'right' });
-
-        // Order Details
-        let yOffset = 40;
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Order Details', 20, yOffset);
-        yOffset += 10;
-
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Order ID: ${orderData.orderId}`, 20, yOffset);
-        yOffset += 8;
-        doc.text(`Order Date: ${formatDate(orderData.orderDate)}`, 20, yOffset);
-        yOffset += 8;
-        doc.text(`Invoice Date: ${formatDate(orderData.invoiceDate)}`, 20, yOffset);
-        yOffset += 8;
-        doc.text(`Status: ${orderData.status}`, 20, yOffset);
-        yOffset += 8;
-        doc.text(`Payment Method: ${orderData.paymentMethod}`, 20, yOffset);
-        yOffset += 8;
-        doc.text(`Delivery Method: ${orderData.deliveryMethod}`, 20, yOffset);
-        if (orderData.couponCode) {
-            yOffset += 8;
-            doc.text(`Coupon Code: ${orderData.couponCode}`, 20, yOffset);
-        }
-        yOffset += 15;
-
-        // Shipping Address
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Shipping Address', 20, yOffset);
-        yOffset += 10;
-
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        doc.text(orderData.address, 20, yOffset, { maxWidth: 170 });
-        yOffset += 25;
-
-        // Order Summary
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Order Summary', 20, yOffset);
-        yOffset += 10;
-
-        const items = orderData.items.map(item => [
-            item.productName,
-            item.size,
-            item.quantity,
-            `Rs ${item.price}`,
-            `Rs ${item.totalPrice}`,
-            item.isGiftWrapped
-        ]);
-        doc.autoTable({
-            startY: yOffset,
-            head: [['Product', 'Size', 'Quantity', 'Price', 'Total', 'Gift Wrap']],
-            body: items,
-            theme: 'grid',
-            styles: { fontSize: 9, cellPadding: 3 },
-            headStyles: {
-                fillColor: [200, 200, 200],
-                textColor: [0, 0, 0],
-                fontStyle: 'bold'
-            },
-            columnStyles: {
-                0: { cellWidth: 50 },
-                1: { cellWidth: 20 },
-                2: { cellWidth: 20 },
-                3: { cellWidth: 25 },
-                4: { cellWidth: 25 },
-                5: { cellWidth: 25 }
-            }
-        });
-
-        // Pricing Summary
-        yOffset = doc.lastAutoTable.finalY + 15;
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Pricing Summary', 20, yOffset);
-        yOffset += 10;
-
-        const pricingBody = [
-            ['Subtotal', `Rs ${orderData.subtotal}`],
-            ['Gift Wrap Total', `Rs ${orderData.giftWrapTotal}`],
-            ['Shipping', `Rs ${orderData.shipping}`],
-        ];
-        if (orderData.discount && orderData.discount > 0) {
-            pricingBody.push([`Discount (${orderData.couponCode || 'Coupon'})`, `-Rs ${orderData.discount}`]);
-        }
-        pricingBody.push(['Grand Total', `Rs ${orderData.finalAmount}`]);
-
-        doc.autoTable({
-            startY: yOffset,
-            body: pricingBody,
-            theme: 'grid',
-            styles: { fontSize: 10, cellPadding: 3 },
-            headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
-            columnStyles: {
-                0: { fontStyle: 'bold' },
-                1: { halign: 'right' }
-            }
-        });
-
-        // Footer
-        yOffset = doc.lastAutoTable.finalY + 20;
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'italic');
-        doc.text('Thank you for shopping with Luxe!', 105, yOffset, { align: 'center' });
-        doc.setFont('helvetica', 'normal');
-        doc.text('Contact us: support@luxe.com | +91 123-456-7890', 105, yOffset + 8, { align: 'center' });
-        doc.text('© 2025 Luxe. All rights reserved.', 105, yOffset + 16, { align: 'center' });
-
-        doc.save(`invoice_${orderData.orderId}.pdf`);
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        try {
-            const profileIcons = document.querySelectorAll('.icon.profile');
-            profileIcons.forEach(icon => {
-                icon.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const dropdown = icon.closest('.dropdown');
-                    if (dropdown) {
-                        dropdown.classList.toggle('active');
-                    }
-                });
-            });
-
-            document.addEventListener('click', () => {
-                const dropdowns = document.querySelectorAll('.dropdown');
-                dropdowns.forEach(dropdown => {
-                    dropdown.classList.remove('active');
-                });
-            });
-
-            const searchInput = document.getElementById('searchInput');
-            const searchResults = document.getElementById('searchResults');
-
-            searchInput?.addEventListener('input', async () => {
-                const query = searchInput.value.trim();
-                if (query.length < 3) {
-                    searchResults.classList.remove('active');
-                    searchResults.innerHTML = '';
-                    return;
-                }
-
-                try {
-                    const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
-                    const results = await response.json();
-
-                    searchResults.innerHTML = '';
-                    if (results.length === 0) {
-                        searchResults.innerHTML = '<div class="no-results">No results found</div>';
-                    } else {
-                        results.forEach(item => {
-                            const resultItem = document.createElement('a');
-                            resultItem.href = item.url;
-                            resultItem.className = 'result-item';
-                            resultItem.innerHTML = `
-                                <span>${item.name}</span>
-                                <span style="font-size: 12px; color: #666;">${item.category}</span>
-                            `;
-                            searchResults.appendChild(resultItem);
-                        });
-                    }
-                    searchResults.classList.add('active');
-                } catch (error) {
-                    console.error('Search error:', error);
-                    searchResults.innerHTML = '<div class="no-results">Error fetching results</div>';
-                    searchResults.classList.add('active');
-                }
-            });
-
-            searchInput?.addEventListener('blur', () => {
+        function copyOrderId(orderId) {
+            navigator.clipboard.writeText(orderId).then(() => {
+                const notification = document.getElementById('copyNotification');
+                notification.style.display = 'block';
                 setTimeout(() => {
-                    searchResults.classList.remove('active');
-                }, 200);
+                    notification.style.display = 'none';
+                }, 2000);
             });
-
-            searchInput?.addEventListener('focus', () => {
-                if (searchResults.innerHTML) {
-                    searchResults.classList.add('active');
-                }
-            });
-        } catch (error) {
-            console.error('Initialization error:', error);
         }
-    });
+
+        function openModal() {
+            document.getElementById('invoiceModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('invoiceModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('invoiceModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        async function downloadInvoice() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Add company logo/header
+                doc.setFontSize(24);
+                doc.setTextColor(4, 106, 56);
+                doc.text('LUXE PERFUMES STORE', 20, 20);
+                
+                doc.setFontSize(14);
+                doc.setTextColor(0, 0, 0);
+                doc.text('INVOICE', 20, 35);
+                
+                doc.setFontSize(10);
+                doc.text('Order ID: <%= order.customOrderId %>', 20, 45);
+                doc.text('Date: <%= order.orderDate %>', 20, 50);
+
+                // Add billing address
+                doc.setFontSize(12);
+                doc.text('Shipping Address:', 20, 70);
+                doc.setFontSize(10);
+                const address = [
+                    '<%= order.address.name %>',
+                    '<%= order.address.landMark %>',
+                    '<%= order.address.city %>, <%= order.address.state %> <%= order.address.pincode %>',
+                    'Phone: <%= order.address.phone %>'
+                ];
+                let y = 75;
+                address.forEach(line => {
+                    doc.text(line, 20, y);
+                    y += 5;
+                });
+
+                // Add items table
+                const tableData = [];
+                <% order.items.forEach(item => { %>
+                    tableData.push([
+                        '<%= item.productName || "Product" %>',
+                        '<%= item.quantity %>',
+                        '₹<%= item.price.toFixed(2) %>',
+                        '₹<%= item.totalPrice.toFixed(2) %>'
+                    ]);
+                <% }); %>
+
+                doc.autoTable({
+                    startY: 100,
+                    head: [['Item', 'Quantity', 'Price', 'Total']],
+                    body: tableData,
+                    theme: 'grid',
+                    styles: { fontSize: 8 },
+                    headStyles: { fillColor: [4, 106, 56] }
+                });
+
+                doc.save('invoice-<%= order.customOrderId %>.pdf');
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Failed to generate invoice. Please try again.');
+            }
+        }
     </script>
 </body>
 </html>

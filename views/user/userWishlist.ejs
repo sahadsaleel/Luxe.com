@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/css/userWishlist.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
   <%- include('../../views/partials/user/header') %>
@@ -30,11 +31,11 @@
       <div class="sidebar">
         <div class="profile-brief">
           <div class="profile-image">
-            <img src="<%= user && user.profileImage ? user.profileImage : '/img/profile images.png' %>" alt="Profile Image">
+            <img src="<%= (user && user.profileImage) ? user.profileImage : '/img/profile images.png' %>" alt="Profile Image">
           </div>
           <div class="profile-info">
-            <div class="profile-name"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : '' %></div>
-            <div class="profile-email"><%= user && user.email ? user.email : 'N/A' %></div>
+            <div class="profile-name"><%= (user && user.firstName && user.lastName) ? user.firstName + ' ' + user.lastName : '' %></div>
+            <div class="profile-email"><%= (user && user.email) ? user.email : 'N/A' %></div>
           </div>
         </div>
 
@@ -48,6 +49,7 @@
           <h3>Payments</h3>
           <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
           <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
+          <li><a href="/referrals"><i class="fas fa-share-alt"></i> My Referrals</a></li>
           <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
         </ul>
       </div>
@@ -82,14 +84,23 @@
                       <%= item.productId.variants[0].quantity > 0 ? 'In Stock' : 'Out of Stock' %>
                     </div>
                     <div class="actions">
-                      <button class="action-button" onclick="addToCart('<%= item.productId._id %>')" <%= item.productId.variants[0].quantity > 0 ? '' : 'disabled' %>>ADD TO BAG</button>
-                      <button class="remove-btn wishlist-btn" data-product-id="<%= item.productId._id %>" aria-label="Remove from wishlist">
+                      <button type="button" 
+                              class="action-button" 
+                              data-product-id="<%= item.productId._id %>" 
+                              data-variant-id="<%= item.productId.variants[0]._id %>"
+                              <%= item.productId.variants[0].quantity > 0 ? '' : 'disabled' %>>
+                        <i class="fas fa-shopping-cart"></i> ADD TO BAG
+                      </button>
+                      <button class="remove-btn wishlist-btn" 
+                              type="button"
+                              data-product-id="<%= item.productId._id %>" 
+                              aria-label="Remove from wishlist">
                         <i class="fa-solid fa-trash"></i>
                       </button>
                     </div>
                   </div>
                 <% } %>
-              <% }) %>
+              <% }); %>
             <% } else { %>
               <p>Your wishlist is empty.</p>
             <% } %>
@@ -101,10 +112,132 @@
 
   <div class="toast-container"></div>
   <%- include("../../views/partials/user/footer") %>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script src="/js/wishlist.js"></script>
   <script>
+    async function removeFromWishlist(productId) {
+      try {
+        const response = await fetch(`/wishlist/remove/${productId}`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify({ 
+            currentPageUrl: window.location.href 
+          }),
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            window.location.href = '/login';
+            return { success: false };
+          }
+          throw new Error('Network response was not ok');
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new TypeError("Oops, we haven't got JSON!");
+        }
+
+        const result = await response.json();
+        return result;
+      } catch (error) {
+        console.error('Error removing from wishlist:', error);
+        Toastify({
+          text: error.message || 'Failed to remove from wishlist. Please try again.',
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#dc3545",
+          stopOnFocus: true,
+          close: true
+        }).showToast();
+        return { success: false };
+      }
+    }
+
+    async function addToCart(productId, variantId, button) {
+      try {
+        const response = await fetch('/cart/add', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify({ 
+            productId: productId,
+            variantId: variantId,
+            quantity: 1
+          }),
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            window.location.href = '/login';
+            return;
+          }
+          throw new Error('Network response was not ok');
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new TypeError("Oops, we haven't got JSON!");
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+          // Show success toast for adding to cart
+          Toastify({
+            text: result.message || 'Added to cart successfully',
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#046A38",
+            stopOnFocus: true,
+            close: true
+          }).showToast();
+          
+          // Update cart count if function exists
+          if (typeof updateCartCount === 'function') {
+            updateCartCount();
+          }
+
+          const removeResult = await removeFromWishlist(productId);
+          if (removeResult.success) {
+            const itemElement = button.closest('.wishlist-item');
+            itemElement.style.transition = 'all 0.3s ease';
+            itemElement.style.opacity = '0';
+            itemElement.style.transform = 'translateX(20px)';
+            setTimeout(() => {
+              itemElement.remove();
+              if (!document.querySelector('.wishlist-item')) {
+                document.querySelector('.wishlist-items').innerHTML = '<p>Your wishlist is empty.</p>';
+              }
+            }, 300);
+          }
+        } else {
+          throw new Error(result.message || 'Failed to add to cart');
+        }
+      } catch (error) {
+        console.error('Error adding to cart:', error);
+        Toastify({
+          text: error.message || 'Failed to add to cart. Please try again.',
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#dc3545",
+          stopOnFocus: true,
+          close: true
+        }).showToast();
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.wishlist-btn').forEach(button => {
         button.addEventListener('click', () => {
@@ -123,30 +256,33 @@
         });
       });
 
-      async function addToCart(productId) {
-        try {
-          const response = await fetch('/addToCart', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ productId }),
-          });
-          const result = await response.json();
-          Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: result.message || 'Added to cart',
-            confirmButtonColor: '#8a6a94',
-          });
-        } catch (error) {
-          console.error('Error adding to cart:', error);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to add to cart. Please try again.',
-            confirmButtonColor: '#8a6a94',
-          });
-        }
-      }
+      document.querySelectorAll('.action-button').forEach(button => {
+        button.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const productId = button.getAttribute('data-product-id');
+          const variantId = button.getAttribute('data-variant-id');
+          
+          if (!productId || !variantId) {
+            Toastify({
+              text: 'Missing product or variant information',
+              duration: 3000,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "#dc3545",
+              stopOnFocus: true,
+              close: true
+            }).showToast();
+            return;
+          }
+          
+          button.disabled = true;
+          try {
+            await addToCart(productId, variantId, button);
+          } finally {
+            button.disabled = false;
+          }
+        });
+      });
     });
   </script>
 </body>

@@ -33,7 +33,6 @@ const getBrandPage = async (req, res) => {
 
 const addBrand = async (req, res) => {
   try {
-    // console.log('Received request add brand:', req.body, req.file);
     const { brandName, status } = req.body;
     const file = req.file;
 
@@ -204,7 +203,6 @@ const editBrand = async (req, res) => {
 
 const deleteBrand = async (req, res) => {
   try {
-    console.log('Received request to delete brand:', req.body);
     const { id } = req.body;
 
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {

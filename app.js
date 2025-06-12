@@ -7,9 +7,9 @@ const passport = require('./config/passport');
 const db = require('./config/db');
 const userRouter = require('./routes/userRouter');
 const adminRouter = require('./routes/adminRouter');
+const errorHandler = require('./middleware/errorHandling');
 const nocache = require('nocache');
 
- 
 dotenv.config();
 
 db().catch(error => {
@@ -19,7 +19,6 @@ db().catch(error => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-
 
 app.use(session({
     secret: process.env.SESSION_SECRET || 'default-secret',
@@ -55,20 +54,7 @@ app.use((req, res, next) => {
 app.use('/', nocache(), userRouter);
 app.use('/admin', nocache(), adminRouter);
 
-// Global error handler
-app.use((err, req, res, next) => {
-    console.error('Global error handler triggered:', {
-        stack: err.stack,
-        url: req.url,
-        method: req.method,
-        body: req.body
-    });
-    if (req.xhr || req.headers.accept?.includes('application/json')) {
-        return res.status(500).json({ error: 'Something went wrong!' });
-    }
-    res.status(500).send('Something went wrong!');
-});
-
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

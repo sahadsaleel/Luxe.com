@@ -1,15 +1,6 @@
-:root { --primary-color: 
-#8a6a94; --secondary-color: 
-#f50057; --light-gray: 
-#f8f9fa; --medium-gray: 
-#e9ecef; --dark-gray: 
-#6c757d; --border-color: 
-#dee2e6; --success-color: 
-#28a745; --error-color: 
-#dc3545; --shadow: 0 2px 10px rgba(0, 0, 0, 0.1); --transition: all 0.3s ease; }
+:root { --primary-color: #046A38; --secondary-color: #C4B7A6; --light-gray: #FFFFFF; --medium-gray: #f5f5f5; --dark-gray: #2E2E2E; --border-color: #C4B7A6; --success-color: #046A38; --error-color: #dc3545; --shadow: 0 2px 10px rgba(4, 106, 56, 0.1); --transition: all 0.3s ease; }
 
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; background-color: 
-#f9f9f9; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2E2E2E; line-height: 1.6; background-color: #FFFFFF; margin: 0; padding: 0; }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
 
@@ -124,7 +115,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333
 .promo-btn { padding: 0 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer; transition: var(--transition); }
 
 .promo-btn:hover { background-color: 
-#75597d; }
+#046A38; }
 
 .coupon-applied { margin-top: 15px; padding: 10px; background-color: 
 #e8f5e9; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
@@ -145,7 +136,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333
 .checkout-btn { width: 100%; padding: 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 4px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition); margin-top: 10px; }
 
 .checkout-btn:hover { background-color: 
-#75597d; }
+#046A38; }
 
 .secure-checkout { display: flex; justify-content: center; align-items: center; color: var(--dark-gray); font-size: 0.85rem; margin-top: 10px; gap: 5px; }
 

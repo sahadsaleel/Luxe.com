@@ -29,7 +29,7 @@
             <div class="sidebar">
                 <div class="profile-brief">
                     <div class="profile-image">
-                        <img src="<%= user && user.profileImage ? user.profileImage : '/api/placeholder/120/120' %>" alt="Profile Image">
+                        <img src="<%= user && user.profileImage ? user.profileImage : '/img/profile images.png' %>" alt="Profile Image">
                     </div>
                     <div class="profile-info">
                         <div class="profile-name"><%= user && user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : '' %></div>
@@ -49,6 +49,7 @@
                     <h3>Payments</h3>
                     <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
                     <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
+                    <li><a href="/referrals"><i class="fas fa-share-alt"></i> My Referrals</a></li>
                     <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
                 </ul>
             </div>
@@ -134,13 +135,13 @@
                         <div class="form-group">
                             <label class="form-label" for="phone">Phone Number *</label>
                             <input type="tel" class="form-control" id="phone" name="phone" required>
-                            <div class="error-message" id="phoneError">Please enter a valid 10-digit phone number.</div>
+                            <div class="error-message" id="phoneError">Phone number must start with 6, 7, 8, or 9 and be exactly 10 digits.</div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label" for="altPhone">Alternate Phone Number</label>
                             <input type="tel" class="form-control" id="altPhone" name="altPhone">
-                            <div class="error-message" id="altPhoneError">Please enter a valid 10-digit phone number.</div>
+                            <div class="error-message" id="altPhoneError">Phone number must start with 6, 7, 8, or 9 and be exactly 10 digits.</div>
                         </div>
                     </div>
 
@@ -272,7 +273,8 @@
             let isValid = true;
             const fields = [
                 { id: 'name', errorId: 'nameError', message: 'Please enter the full name.' },
-                { id: 'phone', errorId: 'phoneError', message: 'Please enter a valid 10-digit phone number.', pattern: /^[6-9]\d{9}$/ },
+                { id: 'phone', errorId: 'phoneError', message: 'Phone number must start with 6, 7, 8, or 9 and be exactly 10 digits.', pattern: /^[6-9]\d{9}$/ },
+                { id: 'altPhone', errorId: 'altPhoneError', message: 'Phone number must start with 6, 7, 8, or 9 and be exactly 10 digits.', pattern: /^[6-9]\d{9}$/ },
                 { id: 'addressType', errorId: 'addressTypeError', message: 'Please select an address type.' },
                 { id: 'landMark', errorId: 'landMarkError', message: 'Please enter a landmark.' },
                 { id: 'city', errorId: 'cityError', message: 'Please enter your city.' },
@@ -282,8 +284,15 @@
 
             fields.forEach(field => {
                 const input = document.getElementById(field.id);
+                if (!input) return; // Skip if element doesn't exist
                 const formGroup = input.closest('.form-group');
                 const errorElement = document.getElementById(field.errorId);
+
+                // For altPhone, only validate if it has a value
+                if (field.id === 'altPhone' && !input.value.trim()) {
+                    formGroup.classList.remove('invalid');
+                    return;
+                }
 
                 if (!input.value.trim() || (field.pattern && !field.pattern.test(input.value))) {
                     formGroup.classList.add('invalid');

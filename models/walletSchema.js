@@ -12,7 +12,13 @@ const walletSchema = new Schema({
     type: Number,
     required: true,
     default: 0,
-    min: 0
+    min: 0,
+    validate: {
+      validator: function(v) {
+        return v >= 0;
+      },
+      message: 'Balance cannot be negative'
+    }
   },
   currency: {
     type: String,
@@ -55,7 +61,13 @@ const walletSchema = new Schema({
     },
     amount: {
       type: Number,
-      required: true
+      required: true,
+      validate: {
+        validator: function(v) {
+          return v > 0;
+        },
+        message: 'Transaction amount must be positive'
+      }
     },
     type: {
       type: String,
@@ -64,13 +76,22 @@ const walletSchema = new Schema({
     },
     method: {
       type: String,
-      enum: ["Razorpay", "Cashback", "Refund", "OrderPayment", "ReferralBonus", "SignupBonus"],
-      required: false
+      enum: ["Razorpay", "Cashback", "Refund", "OrderPayment", "ReferralBonus", "SignupBonus", "CancelRefund", "ReturnRefund"],
+      required: true
     },
     status: {
       type: String,
       enum: ["Pending", "Completed", "Failed"],
       default: "Pending"
+    },
+    metadata: {
+      orderId: String,
+      orderItemId: String,
+      refundReason: String,
+      refundType: {
+        type: String,
+        enum: ["Cancel", "Return", "Admin", "Other"]
+      }
     },
     date: {
       type: Date,
@@ -88,6 +109,43 @@ const walletSchema = new Schema({
 }, {
   timestamps: true
 });
+
+// Pre-save hook to update lastUpdated
+walletSchema.pre('save', function(next) {
+  this.lastUpdated = new Date();
+  next();
+});
+
+// Method to add transaction
+walletSchema.methods.addTransaction = async function(transactionData) {
+  try {
+    // Validate transaction amount
+    if (!transactionData.amount || transactionData.amount <= 0) {
+      throw new Error('Invalid transaction amount');
+    }
+
+    // Calculate new balance
+    const newBalance = transactionData.type === 'Credit' 
+      ? this.balance + transactionData.amount
+      : this.balance - transactionData.amount;
+
+    // Check if debit would make balance negative
+    if (newBalance < 0) {
+      throw new Error('Insufficient balance for debit transaction');
+    }
+
+    // Add transaction
+    this.transactions.push(transactionData);
+    this.balance = newBalance;
+    this.lastUpdated = new Date();
+
+    await this.save();
+    return true;
+  } catch (error) {
+    console.error('Error adding transaction:', error);
+    throw error;
+  }
+};
 
 const Wallet = mongoose.model('wallet', walletSchema);
 module.exports = Wallet;

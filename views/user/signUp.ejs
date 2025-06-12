@@ -41,6 +41,10 @@
                   <div id="error5" class="error-message"></div>
                   <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Your Password" autocomplete="new-password" required>
                 </div>
+                <div class="form-group">
+                  <div id="error6" class="error-message"></div>
+                  <input type="text" id="referralCode" name="referralCode" placeholder="Referral Code (Optional)" value="<%= locals.prefillReferralCode || '' %>">
+                </div>
                 <p class="password-requirement">Use 8 or more characters with a mix of letters, numbers & symbols.</p>
                 <button type="submit" class="continue-btn">CREATE AN ACCOUNT</button>
               </form>
@@ -72,6 +76,7 @@
         const error3 = document.getElementById("error3");
         const error4 = document.getElementById("error4");
         const error5 = document.getElementById("error5");
+        const error6 = document.getElementById("error6");
 
         const loader = document.getElementById("loader");
 
@@ -184,29 +189,39 @@
                 lastName: lastName.value.trim(),
                 email: email.value.trim(),
                 password: password.value,
-                confirmPassword: confirmPassword.value
+                confirmPassword: confirmPassword.value,
+                referralCode: document.getElementById('referralCode').value.trim()
             };
 
             $.ajax({
                 type: 'POST',
                 url: '/signup',
-                data: formData,
-                dataType: 'html', 
+                data: JSON.stringify(formData),
+                contentType: 'application/json',
+                dataType: 'json',
                 success: function (response) {
                     loader.style.display = 'none';
 
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'OTP has been sent to your email.',
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 1500,
-                        timerProgressBar: true
-                    }).then(() => {
-                        document.open();
-                        document.write(response);
-                        document.close();
-                    });
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: response.message,
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            timerProgressBar: true
+                        }).then(() => {
+                            window.location.href = response.redirect;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#d33'
+                        });
+                    }
                 },
                 error: function (xhr, status, error) {
                     loader.style.display = 'none';
@@ -218,7 +233,9 @@
                             errorMessage = response.message;
                         }
                     } catch (e) {
+                        console.error('Error parsing error response:', e);
                     }
+
                     Swal.fire({
                         title: 'Error!',
                         text: errorMessage,

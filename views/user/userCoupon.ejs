@@ -47,6 +47,7 @@
                     <h3>Payments</h3>
                     <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
                     <li><a href="/coupons" class="active"><i class="fas fa-tag"></i> My Coupons</a></li>
+                    <li><a href="/referrals"><i class="fas fa-share-alt"></i> My Referrals</a></li>
                     <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
                 </ul>
             </div>
@@ -74,15 +75,14 @@
                                             </button>
                                         </div>
                                         <div class="coupon-info">
-                                            <h3><%= coupon.discountValue %>% Off</h3>
-
+                                            <h3>Flat ₹<%= coupon.discountAmount %> Off</h3>
                                             <p>Expires on: <%= new Date(coupon.expireOn).toLocaleDateString() %></p>
                                             <p>Min. Order: ₹<%= coupon.minimumPrice %></p>
                                         </div>
                                     </div>
                                     <div class="coupon-actions">
                                         <button class="action-button apply-btn" onclick="applyCoupon('<%= coupon.code %>')">Apply Coupon</button>
-                                        <button class="terms-btn" onclick="showTerms('Valid on orders above ₹<%= coupon.minimumPrice %>. Cannot be combined with other offers.')">Terms</button>
+                                        <button class="terms-btn" onclick="showTerms('Get flat ₹<%= coupon.discountAmount %> off on orders above ₹<%= coupon.minimumPrice %>. Cannot be combined with other offers.')">Terms</button>
                                     </div>
                                 </div>
                             <% }) %>
@@ -111,7 +111,7 @@
     </div>
 
     <%- include("../../views/partials/user/footer") %>
-    <!-- Keep the HTML exactly as provided, only update the JavaScript -->
+    
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
     function copyToClipboard(code) {

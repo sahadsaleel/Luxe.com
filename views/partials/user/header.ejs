@@ -13,9 +13,15 @@
         }
 
         header {
-            background-color: #8a6a94;
-            border-bottom: 1px solid #e0e0e0;
+            background-color: #FFFFFF;
+            border-bottom: 1px solid #C4B7A6;
             padding: 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(4, 106, 56, 0.1);
         }
 
         .header-container {
@@ -31,8 +37,6 @@
             height: auto;
         }
 
-        
-
         .nav-links {
             list-style: none;
             display: flex;
@@ -41,8 +45,13 @@
 
         .nav-links li a {
             text-decoration: none;
-            color: #000;
+            color: #2E2E2E;
             font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links li a:hover {
+            color: #046A38;
         }
 
         .header-icons {
@@ -58,32 +67,47 @@
         }
 
         .search-container input {
-            padding: 10px;
-            border: 1px solid #ccc;
+            padding: 10px 15px;
+            border: 1px solid #C4B7A6;
             border-right: none;
+            border-radius: 4px 0 0 4px;
             outline: none;
-            width: 300px;
+            width: 250px;
+            background: #FFFFFF;
+            transition: border-color 0.3s ease;
+            color: #2E2E2E;
+        }
+
+        .search-container input:focus {
+            border-color: #046A38;
         }
 
         .search-container button {
-            background-color: #000;
-            color: white;
+            background-color: #046A38;
+            color: #FFFFFF;
             border: none;
-            padding: 10px;
+            padding: 10px 15px;
+            border-radius: 0 4px 4px 0;
             cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-container button:hover {
+            background-color: #B3A580;
         }
 
         .search-results {
             position: absolute;
-            top: 40px;
+            top: 42px;
             left: 0;
             width: 100%;
-            background: white;
-            border: 1px solid #ccc;
+            background: #FFFFFF;
+            border: 1px solid #C4B7A6;
             border-radius: 4px;
-            max-height: 200px;
+            box-shadow: 0 4px 12px rgba(4, 106, 56, 0.15);
+            max-height: 300px;
             overflow-y: auto;
-            z-index: 100;
+            z-index: 1000;
             display: none;
         }
 
@@ -92,36 +116,62 @@
         }
 
         .result-item {
-            display: block;
-            padding: 8px;
+            display: flex;
+            align-items: center;
+            padding: 12px;
             text-decoration: none;
-            color: black;
+            color: #2E2E2E;
+            border-bottom: 1px solid #C4B7A6;
+            transition: background-color 0.3s ease;
         }
 
         .result-item:hover {
-            background: #f0f0f0;
+            background-color: rgba(4, 106, 56, 0.05);
         }
 
-        .result-item span {
+        .result-item img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .result-item-content {
+            flex: 1;
+        }
+
+        .result-item-content span {
             display: block;
+            margin-bottom: 4px;
         }
 
         .no-results {
-            padding: 8px;
-            color: #666;
+            padding: 15px;
+            text-align: center;
+            color: #2E2E2E;
         }
 
         .icon {
             cursor: pointer;
             position: relative;
+            color: #2E2E2E;
+        }
+
+        .icon svg {
+            transition: color 0.3s ease;
+        }
+
+        .icon:hover svg {
+            color: #046A38;
         }
 
         .cart-count {
             position: absolute;
             top: -8px;
             right: -8px;
-            background-color: red;
-            color: white;
+            background-color: #046A38;
+            color: #FFFFFF;
             border-radius: 50%;
             padding: 2px 6px;
             font-size: 12px;
@@ -135,32 +185,80 @@
             display: none;
             position: absolute;
             right: 0;
-            background-color: white;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: #FFFFFF;
+            border: 1px solid #C4B7A6;
+            box-shadow: 0 4px 12px rgba(4, 106, 56, 0.15);
+            border-radius: 4px;
             z-index: 100;
+            min-width: 180px;
         }
 
         .dropdown.active .dropdown-content {
             display: block;
         }
 
-        .dropdown-content a, .dropdown-content span {
+        .dropdown-content a, 
+        .dropdown-content span {
             display: block;
-            padding: 10px;
+            padding: 12px 16px;
             text-decoration: none;
-            color: #000;
+            color: #2E2E2E;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: rgba(4, 106, 56, 0.05);
+            color: #046A38;
         }
 
         .auth-links {
             display: flex;
-            gap: 10px;
+            gap: 15px;
         }
 
         .auth-links a {
             text-decoration: none;
-            color: #000;
+            color: #2E2E2E;
             font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border: 1px solid #C4B7A6;
+            border-radius: 4px;
+        }
+
+        .auth-links a:hover {
+            color: #046A38;
+            border-color: #046A38;
+            background-color: rgba(4, 106, 56, 0.05);
+        }
+
+        .user-name {
+            font-weight: 600;
+            border-bottom: 1px solid #C4B7A6;
+            color: #046A38;
+        }
+
+        body {
+            padding-top: 80px;
+        }
+
+        @media (max-width: 768px) {
+            .search-container input {
+                width: 180px;
+            }
+
+            .nav-links {
+                gap: 10px;
+            }
+
+            .auth-links {
+                gap: 8px;
+            }
+
+            .auth-links a {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -202,8 +300,6 @@
                     </svg>
                     <span style="position:absolute; top:-5px; right:-5px; background:black; color:white; border-radius:50%; padding:2px 5px; font-size:10px;">2</span>
                 </a>
-
-
                 <% if(locals.user) { %>
                     <div class="dropdown">
                         <div class="icon profile">
@@ -285,398 +381,11 @@
                             const price = product.variants[0]?.salePrice || product.variants[0]?.regularPrice;
                             return `
                                 <a href="/productViewPage?id=${product._id}" class="result-item">
-                                    <span>${product.productName}</span>
-                                    <span>${product.productBrand.brandName}</span>
-                                    <span>${price}₹</span>
-                                </a>
-                            `;
-                        }).join('');
-
-                        searchResults.innerHTML = resultsHtml;
-                        searchResults.classList.add('active');
-                    } catch (error) {
-                        console.error('Search error:', error);
-                        searchResults.innerHTML = '<p class="no-results">Error searching</p>';
-                        searchResults.classList.add('active');
-                    }
-                });
-            } catch (error) {
-                console.error('Error setting up header:', error);
-            }
-        });
-    </script>
-</body>
-</html>
-
-
-
-
-
-
-<!-- 
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxe.com</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        header {
-            background-color: #8a6a94;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 20px;
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .logo img {
-            width: 70px;
-            height: auto;
-        }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 20px;
-        }
-
-        .nav-links li a {
-            text-decoration: none;
-            color: #000;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links li a:hover {
-            color: #fff;
-        }
-
-        .header-icons {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .search-container {
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-
-        .search-container input {
-            padding: 10px 15px;
-            border: 1px solid #ccc;
-            border-right: none;
-            border-radius: 4px 0 0 4px;
-            outline: none;
-            width: 250px;
-            background: #fff;
-            transition: border-color 0.3s ease;
-        }
-
-        .search-container input:focus {
-            border-color: #6b4e7a;
-        }
-
-        .search-container button {
-            background-color: #6b4e7a;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 0 4px 4px 0;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .search-container button:hover {
-            background-color: #523c5e;
-        }
-
-        .search-results {
-            position: absolute;
-            top: 42px;
-            left: 0;
-            width: 100%;
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 1000;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            display: none;
-        }
-
-        .search-results.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .result-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            text-decoration: none;
-            color: #333;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background-color 0.2s ease;
-        }
-
-        .result-item:last-child {
-            border-bottom: none;
-        }
-
-        .result-item:hover {
-            background-color: #f8f0fb;
-        }
-
-        .result-item img {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
-
-        .result-item-content {
-            flex: 1;
-        }
-
-        .result-item-content .product-name {
-            font-weight: 600;
-            font-size: 14px;
-            color: #333;
-        }
-
-        .result-item-content .brand-name {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .result-item-content .price {
-            font-size: 13px;
-            font-weight: 500;
-            color: #6b4e7a;
-        }
-
-        .no-results {
-            padding: 15px;
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .icon {
-            cursor: pointer;
-            position: relative;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background-color: #d32f2f;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 12px;
-        }
-
-        .dropdown {
-            position: relative;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: white;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-        }
-
-        .dropdown.active .dropdown-content {
-            display: block;
-        }
-
-        .dropdown-content a, .dropdown-content span {
-            display: block;
-            padding: 10px;
-            text-decoration: none;
-            color: #000;
-            transition: background-color 0.2s ease;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #f8f0fb;
-        }
-
-        .auth-links {
-            display: flex;
-            gap: 10px;
-        }
-
-        .auth-links a {
-            text-decoration: none;
-            color: #000;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .auth-links a:hover {
-            color: #6b4e7a;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <div class="header-container">
-            <div class="logo">
-                <img src="/img/logo.png" alt="Luxe.com Logo">
-            </div>
-            <ul class="nav-links">
-                <li><a href="/">HOME</a></li>
-                <li><a href="/shop">SHOP</a></li>
-                <li><a href="#">BEST DEALS</a></li>
-                <li><a href="#">ABOUT</a></li>
-            </ul>
-            <div class="header-icons">
-                <div class="search-container">
-                    <input type="text" id="searchInput" placeholder="Search products...">
-                    <button>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </button>
-                    <div id="searchResults" class="search-results"></div>
-                </div>
-                <div class="icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                </div>
-                <div class="icon cart">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <path d="M16 10a4 4 0 0 1-8 0"></path>
-                    </svg>
-                    <span class="cart-count">2</span>
-                </div>
-                <% if(locals.user) { %>
-                    <div class="dropdown">
-                        <div class="icon profile">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="11" />
-                                <path d="M12,14.9c-3.5,0-6.5,2-8,5c2,2.1,4.9,3.3,8,3.3s6-1.3,8-3.3C18.5,17,15.5,14.9,12,14.9z" />
-                                <circle cx="12" cy="8.7" r="3.6" />
-                            </svg>
-                        </div>
-                        <div class="dropdown-content">
-                            <span class="user-name"><%= locals.user.firstName %></span>
-                            <a href="/userProfile">Profile</a>
-                            <a href="/logout">Logout</a>
-                        </div>
-                    </div>
-                <% } else { %>
-                    <div class="icon profile">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="11" />
-                            <path d="M12,14.9c-3.5,0-6.5,2-8,5c2,2.1,4.9,3.3,8,3.3s6-1.3,8-3.3C18.5,17,15.5,14.9,12,14.9z" />
-                            <circle cx="12" cy="8.7" r="3.6" />
-                        </svg>
-                    </div>
-                    <div class="auth-links">
-                        <a href="/login" class="login">Login</a>
-                        <a href="/signup" class="signup">Sign Up</a>
-                    </div>
-                <% } %>
-            </div>
-        </div>
-    </header>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                // Profile dropdown toggle
-                const profileIcons = document.querySelectorAll('.icon.profile');
-                profileIcons.forEach(icon => {
-                    icon.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const dropdown = icon.closest('.dropdown');
-                        if (dropdown) {
-                            dropdown.classList.toggle('active');
-                        }
-                    });
-                });
-
-                // Close dropdowns when clicking outside
-                document.addEventListener('click', (e) => {
-                    const dropdowns = document.querySelectorAll('.dropdown');
-                    dropdowns.forEach(dropdown => {
-                        if (!dropdown.contains(e.target)) {
-                            dropdown.classList.remove('active');
-                        }
-                    });
-                });
-
-                // Search functionality
-                const searchInput = document.getElementById('searchInput');
-                const searchResults = document.getElementById('searchResults');
-
-                searchInput.addEventListener('input', async () => {
-                    try {
-                        const query = searchInput.value.trim();
-
-                        // Clear results if no query
-                        if (!query) {
-                            searchResults.innerHTML = '';
-                            searchResults.classList.remove('active');
-                            return;
-                        }
-
-                        // Fetch search results from /search
-                        const response = await fetch(`/search?query=${encodeURIComponent(query)}`);
-                        const products = await response.json();
-
-                        // Show "No results" if empty
-                        if (!products || products.length === 0) {
-                            searchResults.innerHTML = '<p class="no-results">No products found</p>';
-                            searchResults.classList.add('active');
-                            return;
-                        }
-
-                        // Render product results
-                        const resultsHtml = products.map(product => {
-                            const price = product.variants[0]?.salePrice || product.variants[0]?.regularPrice;
-                            return `
-                                <a href="/productViewPage?id=${product._id}" class="result-item">
                                     <img src="${product.productImage[0] || '/img/placeholder.png'}" alt="${product.productName}">
                                     <div class="result-item-content">
-                                        <span class="product-name">${product.productName}</span>
-                                        <span class="brand-name">${product.productBrand.brandName}</span>
-                                        <span class="price">$${price}</span>
+                                        <span>${product.productName}</span>
+                                        <span>${product.productBrand.brandName}</span>
+                                        <span>${price}₹</span>
                                     </div>
                                 </a>
                             `;
@@ -691,7 +400,6 @@
                     }
                 });
 
-                // Clear search results when clicking outside
                 document.addEventListener('click', (e) => {
                     if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
                         searchResults.innerHTML = '';
@@ -705,4 +413,4 @@
         });
     </script>
 </body>
-</html>  -->
+</html>

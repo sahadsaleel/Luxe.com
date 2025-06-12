@@ -11,7 +11,7 @@ const offerController = require('../controller/admin/offerController');
 const { uploadSingleImage, uploadMultipleImages } = require('../helpers/multer');
 const { userAuth, adminAuth } = require('../middleware/auth');
 
-// Test Cloudinary upload
+
 router.post('/test-cloudinary', adminAuth, uploadSingleImage, async (req, res) => {
   try {
     if (!req.file) {
@@ -35,6 +35,7 @@ router.post('/login', adminController.login);
 router.get('/dashboard', adminAuth, adminController.loadDashboard);
 router.get('/pageerror', adminController.pageerror);
 router.get('/logout', adminController.logout);
+router.get('/sales', adminAuth, adminController.loadSales);
 
 // Customer management
 router.get('/customers', adminAuth, customerController.customerInfo);
@@ -61,11 +62,15 @@ router.post('/editProduct', adminAuth, uploadMultipleImages, productController.e
 router.get('/deleteProduct/:id', adminAuth, productController.deleteProduct);
 router.get('/getProduct/:id', adminAuth, productController.getProductById);
 
+
 // Order management
-router.get('/orders', adminAuth, orderController.loadOrderPage);
-router.get('/orders/:orderId', adminAuth, orderController.loadOrderDetailPage);
-router.post('/orders/:orderId/update-status', adminAuth, orderController.updateOrderStatus);
-router.post('/orders/approve-return/:orderId', adminAuth, orderController.approveReturn);
+router.get('/orders', adminAuth, orderController.loadAdminOrderPage);
+router.get('/orders/:orderId', adminAuth, orderController.loadAdminOrderDetailPage);
+router.post('/orders/:orderId/status', adminAuth, orderController.updateOrderStatus);
+router.post('/orders/:orderId/approve-return', adminAuth, orderController.approveReturn);
+router.post('/orders/:orderId/approve-cancel', adminAuth, orderController.approveCancel);
+router.post('/orders/:orderId/process-refund', adminAuth, orderController.processRefund);
+
 
 // Coupon management
 router.get('/coupons', adminAuth, couponController.getCoupons);

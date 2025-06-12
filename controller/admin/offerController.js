@@ -3,41 +3,45 @@ const Category = require("../../models/categorySchema");
 const Brand = require("../../models/brandSchema");
 const Offer = require("../../models/offerSchema");
 
-// Utility function to populate targetId based on offerType
+
+
 const populateTargetId = async (offer) => {
-  if (offer.offerType === "product") {
-    offer.targetId = await Product.findById(offer.targetId)
-      .select("productName")
-      .lean();
-  } else if (offer.offerType === "category") {
-    offer.targetId = await Category.findById(offer.targetId)
-      .select("name")
-      .lean();
-  } else if (offer.offerType === "brand") {
-    offer.targetId = await Brand.findById(offer.targetId)
-      .select("brandName")
-      .lean();
+  try {
+    if (offer.offerType === "product") {
+      offer.targetId = await Product.findById(offer.targetId)
+        .select("productName")
+        .lean();
+    } else if (offer.offerType === "categories") {
+      offer.targetId = await Category.findById(offer.targetId)
+        .select("name")
+        .lean();
+    } else if (offer.offerType === "brand") {
+      offer.targetId = await Brand.findById(offer.targetId)
+        .select("brandName")
+        .lean();
+    }
+    return offer;
+  } catch (error) {
+    console.error("Error in populateTargetId:", error);
+    return offer;
   }
-  return offer;
 };
 
 // Load offer page
 const offerPage = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = 10; // Increased limit for better UX
+    const limit = 10;
     const search = req.query.search || "";
     const sort = req.query.sort || "newest";
     const skip = limit * (page - 1);
 
-    // Fetch products, categories, and brands for dropdowns
     const [products, categories, brands] = await Promise.all([
-      Product.find({ isBlocked: false }).select("productName _id").lean(),
+      Product.find({ isDeleted: false }).select("productName _id").lean(),
       Category.find({ isListed: true }).select("name _id").lean(),
-      Brand.find({ isListed: true }).select("brandName _id").lean(),
+      Brand.find({ isBlocked: false }).select("brandName _id").lean(),
     ]);
 
-    // Build query for offers
     const query = search
       ? {
           $or: [
@@ -54,7 +58,6 @@ const offerPage = async (req, res) => {
       "z-a": { offerName: -1 },
     }[sort] || { createdAt: -1 };
 
-    // Fetch offers
     let offers = await Offer.find(query)
       .skip(skip)
       .limit(limit)
@@ -78,14 +81,15 @@ const offerPage = async (req, res) => {
     });
   } catch (error) {
     console.error("Error loading offer page:", error);
-    res.status(500).render("error", {
-      message: "Unable to load offers",
-      error: error.message,
+    res.status(500).json({
+      success: false,
+      message: "Failed to load offers page",
+      error: error.message
     });
   }
 };
 
-// Add new offer
+
 const addOffer = async (req, res) => {
   try {
     const { offerName, description, offerType, itemSelect, startDate, endDate, discount } = req.body;
@@ -101,7 +105,6 @@ const addOffer = async (req, res) => {
       return res.status(409).json({ success: false, message: "Offer name already exists" });
     }
 
-    // Validate targetId based on offerType
     const isValidTarget = await validateTargetId(offerType, itemSelect);
     if (!isValidTarget) {
       return res.status(400).json({ success: false, message: `Invalid ${offerType} ID` });
@@ -126,7 +129,6 @@ const addOffer = async (req, res) => {
   }
 };
 
-// Get single offer
 const getOffer = async (req, res) => {
   try {
     let offer = await Offer.findById(req.params.id).lean();
@@ -142,12 +144,11 @@ const getOffer = async (req, res) => {
   }
 };
 
-// Edit offer
+
 const editOffer = async (req, res) => {
   try {
     const { eofferId, eofferName, edescription, eofferType, eitemSelect, estartDate, eendDate, ediscount } = req.body;
 
-    // Validate required fields
     if (!eofferId || !eofferName || !edescription || !eofferType || !eitemSelect || !estartDate || !eendDate || !ediscount) {
       return res.status(400).json({ success: false, message: "All fields are required" });
     }
@@ -157,19 +158,16 @@ const editOffer = async (req, res) => {
       return res.status(404).json({ success: false, message: "Offer not found" });
     }
 
-    // Check for duplicate offer name
     const existingOffer = await Offer.findOne({ offerName: eofferName, _id: { $ne: eofferId } });
     if (existingOffer) {
       return res.status(409).json({ success: false, message: "Offer name already exists" });
     }
 
-    // Validate targetId
     const isValidTarget = await validateTargetId(eofferType, eitemSelect);
     if (!isValidTarget) {
       return res.status(400).json({ success: false, message: `Invalid ${eofferType} ID` });
     }
 
-    // Update offer
     offer.offerName = eofferName;
     offer.description = edescription;
     offer.offerType = eofferType;
@@ -186,7 +184,6 @@ const editOffer = async (req, res) => {
   }
 };
 
-// Disable offer
 const disableOffer = async (req, res) => {
   try {
     const { offerId } = req.body;
@@ -195,7 +192,7 @@ const disableOffer = async (req, res) => {
       return res.status(404).json({ success: false, message: "Offer not found" });
     }
 
-    offer.status = "Disabled";
+    offer.status = "Inactive";
     await offer.save();
     res.json({ success: true, message: "Offer disabled successfully" });
   } catch (error) {
@@ -204,13 +201,19 @@ const disableOffer = async (req, res) => {
   }
 };
 
-
 const enableOffer = async (req, res) => {
   try {
     const { offerId } = req.body;
     const offer = await Offer.findById(offerId);
     if (!offer) {
       return res.status(404).json({ success: false, message: "Offer not found" });
+    }
+
+    if (new Date(offer.endDate) < new Date()) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Cannot enable expired offer. Please update the end date first." 
+      });
     }
 
     offer.status = "Active";
@@ -224,8 +227,7 @@ const enableOffer = async (req, res) => {
 
 const getApplicableItems = async (req, res) => {
     try {
-      // console.log(req.params)
-        const { offerType } = req.params
+        const { offerType } = req.params;
         let items = [];
 
         switch (offerType.toLowerCase()) {
@@ -234,6 +236,10 @@ const getApplicableItems = async (req, res) => {
                 break;
             case "categories":
                 items = await Category.find({ isListed: true }).select("name _id").lean();
+                items = items.map(category => ({
+                    _id: category._id,
+                    name: category.name 
+                }));
                 break;
             case "brand":
                 items = await Brand.find({ isBlocked: false }).select("brandName _id").lean();
@@ -249,7 +255,7 @@ const getApplicableItems = async (req, res) => {
     }
 };
 
-// Utility function to validate targetId
+
 const validateTargetId = async (offerType, targetId) => {
   try {
     let model;

@@ -89,26 +89,21 @@ const addProduct = async (req, res) => {
     }
 
     const processedVariants = parsedVariants.map((variant, index) => {
-      const { size, regularPrice, salePrice, quantity } = variant;
-      if (!size || !regularPrice || !quantity) {
+      const { size, salePrice, quantity } = variant;
+      if (!size || !salePrice || !quantity) {
         throw new Error(`Missing fields in variant ${index + 1}`);
       }
-      const regularPriceNum = parseFloat(regularPrice);
-      const salePriceNum = salePrice ? parseFloat(salePrice) : 0;
+      const salePriceNum = parseFloat(salePrice);
       const quantityNum = parseInt(quantity);
-      if (isNaN(regularPriceNum) || regularPriceNum <= 0) {
-        throw new Error(`Invalid regular price in variant ${index + 1}`);
-      }
-      if (salePrice && (isNaN(salePriceNum) || salePriceNum < 0)) {
-        throw new Error(`Invalid sale price in variant ${index + 1}`);
+      
+      if (isNaN(salePriceNum) || salePriceNum <= 0) {
+        throw new Error(`Invalid price in variant ${index + 1}`);
       }
       if (isNaN(quantityNum) || quantityNum < 0) {
         throw new Error(`Invalid quantity in variant ${index + 1}`);
       }
-      if (salePriceNum > 0 && salePriceNum >= regularPriceNum) {
-        throw new Error(`Sale price must be less than regular price in variant ${index + 1}`);
-      }
-      return { size, regularPrice: regularPriceNum, salePrice: salePriceNum, quantity: quantityNum };
+      
+      return { size, salePrice: salePriceNum, quantity: quantityNum };
     });
 
     const images = [];
@@ -117,7 +112,15 @@ const addProduct = async (req, res) => {
         try {
           const result = await new Promise((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream(
-              { folder: 'product-images', width: 440, height: 440, crop: 'fill', quality: 'auto' },
+              { 
+                folder: 'product-images', 
+                width: 800, 
+                height: 800, 
+                crop: 'fill', 
+                quality: 'auto',
+                fetch_format: 'auto',
+                flags: 'preserve_transparency'
+              },
               (error, result) => {
                 if (error) reject(error);
                 else resolve(result);
@@ -187,26 +190,21 @@ const editProduct = async (req, res) => {
     }
 
     const processedVariants = parsedVariants.map((variant, index) => {
-      const { size, regularPrice, salePrice, quantity } = variant;
-      if (!size || !regularPrice || !quantity) {
+      const { size, salePrice, quantity } = variant;
+      if (!size || !salePrice || !quantity) {
         throw new Error(`Missing fields in variant ${index + 1}`);
       }
-      const regularPriceNum = parseFloat(regularPrice);
-      const salePriceNum = salePrice ? parseFloat(salePrice) : 0;
+      const salePriceNum = parseFloat(salePrice);
       const quantityNum = parseInt(quantity);
-      if (isNaN(regularPriceNum) || regularPriceNum <= 0) {
-        throw new Error(`Invalid regular price in variant ${index + 1}`);
-      }
-      if (salePrice && (isNaN(salePriceNum) || salePriceNum < 0)) {
-        throw new Error(`Invalid sale price in variant ${index + 1}`);
+      
+      if (isNaN(salePriceNum) || salePriceNum <= 0) {
+        throw new Error(`Invalid price in variant ${index + 1}`);
       }
       if (isNaN(quantityNum) || quantityNum < 0) {
         throw new Error(`Invalid quantity in variant ${index + 1}`);
       }
-      if (salePriceNum > 0 && salePriceNum >= regularPriceNum) {
-        throw new Error(`Sale price must be less than regular price in variant ${index + 1}`);
-      }
-      return { size, regularPrice: regularPriceNum, salePrice: salePriceNum, quantity: quantityNum };
+      
+      return { size, salePrice: salePriceNum, quantity: quantityNum };
     });
 
     let images = [];
@@ -230,7 +228,15 @@ const editProduct = async (req, res) => {
         try {
           const result = await new Promise((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream(
-              { folder: 'product-images', width: 440, height: 440, crop: 'fill', quality: 'auto' },
+              { 
+                folder: 'product-images', 
+                width: 800, 
+                height: 800, 
+                crop: 'fill', 
+                quality: 90,
+                fetch_format: 'auto',
+                flags: 'preserve_transparency'
+              },
               (error, result) => {
                 if (error) reject(error);
                 else resolve(result);

@@ -26,11 +26,9 @@ function generatePDF(element) {
     let heightLeft = pdfHeight;
     let position = 0;
 
-    // Add first page
     pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
     heightLeft -= pageHeight;
 
-    // Add extra pages if needed
     while (heightLeft > 0) {
       position -= pageHeight;
       pdf.addPage();

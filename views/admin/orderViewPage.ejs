@@ -11,7 +11,7 @@
     <div class="container">
         <div class="dashboard-header">
             <div class="logo-container">
-                <img src="/img/logo.png" alt="Logo" class="logo">
+                <img src="/img/footer Logo.png" alt="Logo" class="logo">
                 <div class="dropdown">
                     <button class="dropdown-toggle">Menu ▼</button>
                     <div class="dropdown-menu">
@@ -30,13 +30,25 @@
                 </div>
                 <div class="status-wrapper">
                     <select class="select-status" name="status">
-                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                        <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
-                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                        <option value="Canceled" <%= order.status === 'Canceled' ? 'selected' : '' %>>Canceled</option>
-                        <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
-                        <option value="Return Approved" <%= order.status === 'Return Approved' ? 'selected' : '' %>>Return Approved</option>
+                        <% 
+                        const statusOrder = {
+                            'Pending': ['Processing'],
+                            'Processing': ['Shipped', 'Cancel Request'],
+                            'Shipped': ['Delivered', 'Cancel Request'],
+                            'Delivered': ['Return Requested'],
+                            'Cancel Request': ['Cancelled'],
+                            'Return Requested': [],
+                            'Return Approved': [],
+                            'Cancelled': [],
+                            'Partially Returned': []
+                        };
+                        
+                        const allowedStatuses = statusOrder[order.status] || [];
+                        %>
+                        <option value="<%= order.status %>" selected><%= order.status %></option>
+                        <% allowedStatuses.forEach(status => { %>
+                            <option value="<%= status %>"><%= status %></option>
+                        <% }); %>
                     </select>
                     <button class="btn btn-primary update-btn" data-order-id="<%= order._id %>">
                         <span class="button-icon">✓</span>
@@ -56,15 +68,27 @@
                     </div>
                     <div class="info-item">
                         <div class="info-label">Order Date</div>
-                        <div class="info-value"><%= order.orderDate %></div>
+                        <div class="info-value"><%= order.createdOn ? new Date(order.createdOn).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'N/A' %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Delivery Date</div>
+                        <div class="info-value"><%= order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'N/A' %></div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Phone</div>
-                        <div class="info-value"><%= order.address.phone || 'N/A' %></div>
+                        <div class="info-value"><%= order.addressDetails.phone || 'N/A' %></div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Alternative Phone</div>
-                        <div class="info-value"><%= order.address.altPhone || 'N/A' %></div>
+                        <div class="info-value"><%= order.addressDetails.altPhone || 'N/A' %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Payment Method</div>
+                        <div class="info-value"><%= order.paymentMethod ? order.paymentMethod.charAt(0).toUpperCase() + order.paymentMethod.slice(1) : 'N/A' %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Delivery Method</div>
+                        <div class="info-value"><%= order.deliveryMethod ? order.deliveryMethod.charAt(0).toUpperCase() + order.deliveryMethod.slice(1) : 'N/A' %></div>
                     </div>
                 </div>
                 
@@ -72,22 +96,23 @@
                     <div class="address-icon">📍</div>
                     <div class="info-label">Shipping Address</div>
                     <div class="info-value">
-                        <%= order.address.name ? order.address.name + ', ' : '' %>
-                        <%= order.address.landMark ? order.address.landMark + ', ' : '' %>
-                        <%= order.address.city ? order.address.city + ', ' : '' %>
-                        <%= order.address.state ? order.address.state + ' - ' : '' %>
-                        <%= order.address.pincode || 'N/A' %>
+                        <%= order.addressDetails.name ? order.addressDetails.name + ', ' : '' %>
+                        <%= order.addressDetails.addressType ? `(${order.addressDetails.addressType}) ` : '' %>
+                        <%= order.addressDetails.landMark ? order.addressDetails.landMark + ', ' : '' %>
+                        <%= order.addressDetails.city ? order.addressDetails.city + ', ' : '' %>
+                        <%= order.addressDetails.state ? order.addressDetails.state + ' - ' : '' %>
+                        <%= order.addressDetails.pincode || 'N/A' %>
                     </div>
                 </div>
 
-                <% if (order.status === 'Return Requested' || order.status === 'Return Approved' ) { %>
+                <% if (order.status === 'Return Requested' || order.status === 'Return Approved') { %>
                     <div class="return-request-box">
                         <div class="return-icon">↩️</div>
                         <div class="info-label">Return Request Details</div>
                         <div class="info-grid">
                             <div class="info-item">
                                 <div class="info-label">Requested On</div>
-                                <div class="info-value"><%= order.returnRequestedOn ? order.returnRequestedOn.toLocaleDateString() : 'N/A' %></div>
+                                <div class="info-value"><%= order.returnRequestedOn ? new Date(order.returnRequestedOn).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'N/A' %></div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Reason</div>
@@ -101,8 +126,8 @@
                                 <div class="info-item">
                                     <select name="returnStatus" id="returnStatus">
                                         <option value="" selected>Select status</option>
-                                        <option value="approved">Approved</option>
-                                        <option value="rejected">Rejected</option>
+                                        <option value="approved">Approve Return</option>
+                                        <option value="rejected">Reject Return</option>
                                     </select>
                                     <button class="btn btn-primary approve-return-btn" data-order-id="<%= order._id %>">
                                         <span class="button-icon">✓</span>
@@ -110,6 +135,38 @@
                                     </button>
                                 </div>
                             <% } %>
+                        </div>
+                    </div>
+                <% } %>
+
+                <% if (order.status === 'Cancel Request') { %>
+                    <div class="return-request-box">
+                        <div class="return-icon">↩️</div>
+                        <div class="info-label">Cancellation Request Details</div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Requested On</div>
+                                <div class="info-value"><%= order.cancelRequestedOn ? new Date(order.cancelRequestedOn).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'N/A' %></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Reason</div>
+                                <div class="info-value"><%= order.cancelReason || 'N/A' %></div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Comments</div>
+                                <div class="info-value"><%= order.cancelComments || 'N/A' %></div>
+                            </div>
+                            <div class="info-item">
+                                <select name="cancelStatus" id="cancelStatus">
+                                    <option value="" selected>Select status</option>
+                                    <option value="approved">Approve Cancellation</option>
+                                    <option value="rejected">Reject Cancellation</option>
+                                </select>
+                                <button class="btn btn-primary approve-cancel-btn" data-order-id="<%= order._id %>">
+                                    <span class="button-icon">✓</span>
+                                    Process Status
+                                </button>
+                            </div>
                         </div>
                     </div>
                 <% } %>
@@ -129,25 +186,29 @@
                         <tr>
                             <th style="width: 80px">Product</th>
                             <th>Product Name</th>
+                            <th>Size</th>
                             <th>Quantity</th>
                             <th>Unit Price</th>
                             <th>Total Price</th>
+                            <th>Gift Wrap</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% order.items.forEach(item => { %>
+                        <% order.orderedItems.forEach(item => { %>
                             <tr>
                                 <td>
-                                    <img src="<%= item.productImage %>" alt="<%= item.productName %>" class="product-img">
+                                    <img src="<%= item.productImage || '/img/placeholder.png' %>" alt="<%= item.productName || 'Product' %>" class="product-img">
                                 </td>
-                                <td class="product-name"><%= item.productName %></td>
-                                <td><%= item.quantity %></td>
-                                <td>₹<%= item.unitPrice.toFixed(2) %></td>
-                                <td>₹<%= item.totalPrice.toFixed(2) %></td>
+                                <td class="product-name"><%= item.productName || 'N/A' %></td>
+                                <td><%= item.variant && item.variant.size ? item.variant.size : 'N/A' %></td>
+                                <td><%= item.quantity || 'N/A' %></td>
+                                <td>₹<%= Number(item.price || 0).toFixed(2) %></td>
+                                <td>₹<%= Number(item.totalPrice || 0).toFixed(2) %></td>
+                                <td><%= item.isGiftWrapped ? 'Yes' : 'No' %></td>
                                 <td>
-                                    <span class="badge badge-<%= order.status.toLowerCase().replace(' ', '-') %>">
-                                        <%= order.status %>
+                                    <span class="badge badge-<%= item.status.toLowerCase().replace(' ', '-') %>">
+                                        <%= item.status %>
                                     </span>
                                 </td>
                             </tr>
@@ -155,8 +216,26 @@
                     </tbody>
                 </table>
                 <div class="total-row">
-                    <span class="total-label">Total Amount:</span>
-                    <span class="total-value">₹<%= order.total.toFixed(2) %></span>
+                    <span class="total-label">Subtotal:</span>
+                    <span class="total-value">₹<%= Number(order.totalPrice || 0).toFixed(2) %></span>
+                </div>
+                <div class="total-row">
+                    <span class="total-label">Gift Wrap Total:</span>
+                    <span class="total-value">₹<%= Number(order.giftWrapTotal || 0).toFixed(2) %></span>
+                </div>
+                <div class="total-row">
+                    <span class="total-label">Shipping:</span>
+                    <span class="total-value">₹<%= Number(order.shipping || 0).toFixed(2) %></span>
+                </div>
+                <% if (order.discount > 0) { %>
+                    <div class="total-row">
+                        <span class="total-label">Discount:</span>
+                        <span class="total-value">-₹<%= Number(order.discount || 0).toFixed(2) %></span>
+                    </div>
+                <% } %>
+                <div class="total-row">
+                    <span class="total-label">Final Amount:</span>
+                    <span class="total-value">₹<%= Number(order.finalAmount || 0).toFixed(2) %></span>
                 </div>
             </div>
         </div>
@@ -178,15 +257,38 @@
         });
 
         document.querySelector('.update-btn').addEventListener('click', async () => {
-            const orderId = document.querySelector('.update-btn').dataset.orderId;
-            const status = document.querySelector('.select-status').value;
             try {
-                const response = await fetch(`/admin/orders/${orderId}/update-status`, {
+                const orderId = document.querySelector('.update-btn').dataset.orderId;
+                const statusSelect = document.querySelector('.select-status');
+                const currentStatus = statusSelect.options[0].value; // Current status is always the first option
+                const newStatus = statusSelect.value;
+
+                if (currentStatus === newStatus) {
+                    Toastify({
+                        text: 'Please select a different status',
+                        duration: 3000,
+                        gravity: 'top',
+                        position: 'right',
+                        className: 'Toastify__toast--warning',
+                        stopOnFocus: true,
+                    }).showToast();
+                    return;
+                }
+
+                console.log('Updating order status:', { orderId, currentStatus, newStatus });
+
+                const response = await fetch(`/admin/orders/${orderId}/status`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status }),
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId, newStatus })
                 });
+
                 const result = await response.json();
+                console.log('Update status response:', result);
+
                 if (result.success) {
                     Toastify({
                         text: 'Status updated successfully',
@@ -198,16 +300,10 @@
                     }).showToast();
                     setTimeout(() => location.reload(), 1000);
                 } else {
-                    Toastify({
-                        text: `Error updating status: ${result.error}`,
-                        duration: 3000,
-                        gravity: 'top',
-                        position: 'right',
-                        className: 'Toastify__toast--error',
-                        stopOnFocus: true,
-                    }).showToast();
+                    throw new Error(result.message || 'Failed to update status');
                 }
             } catch (error) {
+                console.error('Error updating status:', error);
                 Toastify({
                     text: `Error updating status: ${error.message}`,
                     duration: 3000,
@@ -222,21 +318,45 @@
         document.querySelectorAll('.approve-return-btn').forEach(button => {
             button.addEventListener('click', async () => {
                 const orderId = button.dataset.orderId;
-                const status = document.getElementById("returnStatus").value;
-                
+                const statusSelect = document.getElementById("returnStatus");
+                const status = statusSelect.value;
+
+                console.log('Processing return request:', {
+                    orderId,
+                    status,
+                    currentOrderStatus: document.querySelector('.select-status').value
+                });
+
+                if (!status) {
+                    Toastify({
+                        text: 'Please select a status (Approve or Reject)',
+                        duration: 3000,
+                        gravity: 'top',
+                        position: 'right',
+                        className: 'Toastify__toast--error',
+                        stopOnFocus: true,
+                    }).showToast();
+                    return;
+                }
+
                 try {
-                    const response = await fetch(`/admin/orders/approve-return/${orderId}`, {
+                    console.log('Sending return approval request...');
+                    const response = await fetch(`/admin/orders/${orderId}/approve-return`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
                         body: JSON.stringify({ status })
                     });
+
+                    console.log('Response status:', response.status);
                     const result = await response.json();
+                    console.log('Response data:', result);
+
                     if (result.success) {
-                        // if (status === 'rejected') {
-                        //     alert('Return rejected');
-                        // }
                         Toastify({
-                            text: status === 'rejected' ? 'Return rejected successfully' : 'Return approved successfully',
+                            text: status === 'rejected' ? 'Return rejected successfully' : 'Return approved and refund processed successfully',
                             duration: 3000,
                             gravity: 'top',
                             position: 'right',
@@ -255,8 +375,72 @@
                         }).showToast();
                     }
                 } catch (error) {
+                    console.error('Error processing return:', error);
                     Toastify({
-                        text: `Error processing return: ${error.message}`,
+                        text: `Error: ${error.message}`,
+                        duration: 3000,
+                        gravity: 'top',
+                        position: 'right',
+                        className: 'Toastify__toast--error',
+                        stopOnFocus: true,
+                    }).showToast();
+                }
+            });
+        });
+
+        document.querySelectorAll('.approve-cancel-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const orderId = button.dataset.orderId;
+                const status = document.getElementById("cancelStatus").value;
+
+                console.log('Processing cancellation request:', { orderId, status });
+
+                if (!status) {
+                    Toastify({
+                        text: 'Please select a status (Approve or Reject)',
+                        duration: 3000,
+                        gravity: 'top',
+                        position: 'right',
+                        className: 'Toastify__toast--error',
+                        stopOnFocus: true,
+                    }).showToast();
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/admin/orders/${orderId}/approve-cancel`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ status })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        Toastify({
+                            text: status === 'rejected' ? 'Cancellation rejected successfully' : 'Cancellation approved and refund processed successfully',
+                            duration: 3000,
+                            gravity: 'top',
+                            position: 'right',
+                            className: 'Toastify__toast--success',
+                            stopOnFocus: true,
+                        }).showToast();
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        Toastify({
+                            text: `Error processing cancellation: ${result.message}`,
+                            duration: 3000,
+                            gravity: 'top',
+                            position: 'right',
+                            className: 'Toastify__toast--error',
+                            stopOnFocus: true,
+                        }).showToast();
+                    }
+                } catch (error) {
+                    console.error('Error processing cancellation:', error);
+                    Toastify({
+                        text: `Error: ${error.message}`,
                         duration: 3000,
                         gravity: 'top',
                         position: 'right',
