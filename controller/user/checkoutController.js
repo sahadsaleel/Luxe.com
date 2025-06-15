@@ -9,6 +9,8 @@ const { createOrder, verifyPayment } = require('../../services/razorpayService')
 const { findBestOffer, calculateCartSummary } = require('./cartController');
 const { validateCoupon } = require('./couponController');
 
+
+
 const loadCheckout = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -196,7 +198,7 @@ const verifyRazorpayPayment = async (req, res) => {
                 redirect: '/checkout/payment-failed?error=Order not found'
             });
         }
-        
+
         order.payment = {
             method: 'razorpay',
             orderId: razorpay_order_id,
@@ -205,6 +207,17 @@ const verifyRazorpayPayment = async (req, res) => {
         };
         order.status = 'Processing';
         await order.save();
+
+        for (const item of order.orderedItems) {
+            const product = await Product.findById(item.productId);
+            if (!product) continue;
+
+            const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
+            if (!variant) continue;
+
+            variant.quantity -= item.quantity;
+            await product.save();
+        }
 
         const user = await User.findById(order.userId);
         if (user) {
@@ -232,6 +245,7 @@ const verifyRazorpayPayment = async (req, res) => {
     }
 };
 
+
 const processCheckout = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -253,14 +267,15 @@ const processCheckout = async (req, res) => {
             try {
                 const referrer = await User.findById(user.referredBy);
                 if (referrer) {
-                    let referrerWallet = await Wallet.findOne({ userId: referrer._id });
-                    if (!referrerWallet) {
-                        referrerWallet = new Wallet({
-                            userId: referrer._id,
-                            balance: 0,
-                            currency: 'INR',
-                            transactions: []
-                        });
+                    let referrerWallet = await Wallet.findOne({ userId: referrer._id }) || new Wallet({
+                        userId: referrer._id,
+                        balance: 0,
+                        currency: 'INR',
+                        transactions: []
+                    });
+
+                    if (!referrerWallet._id) {
+                        await referrerWallet.save();
                         referrer.wallet = [referrerWallet._id];
                         await referrer.save();
                     }
@@ -294,6 +309,7 @@ const processCheckout = async (req, res) => {
             path: 'items.productId',
             select: 'productName productImage variants category brand'
         });
+
         if (!cart || !cart.items.length) {
             return res.status(400).json({ success: false, message: 'Cart is empty' });
         }
@@ -323,7 +339,7 @@ const processCheckout = async (req, res) => {
         const orderedItems = await Promise.all(cart.items.map(async (item) => {
             const product = await Product.findById(item.productId);
             if (!product) return null;
-            
+
             const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
             if (!variant) return null;
 
@@ -333,7 +349,7 @@ const processCheckout = async (req, res) => {
 
             const basePrice = Number(variant.salePrice) || 0;
             const offer = await findBestOffer(product, item.variantId);
-            const finalPrice = offer 
+            const finalPrice = offer
                 ? basePrice - (basePrice * (offer.discountPercentage / 100))
                 : basePrice;
 
@@ -346,7 +362,7 @@ const processCheckout = async (req, res) => {
                 productId: item.productId._id,
                 variantId: item.variantId,
                 quantity: item.quantity,
-                basePrice: basePrice,
+                basePrice,
                 price: finalPrice,
                 giftWrapCharge: totalGiftWrapCharge,
                 totalPrice: totalPriceWithGiftWrap,
@@ -364,19 +380,13 @@ const processCheckout = async (req, res) => {
             return res.status(400).json({ success: false, message: 'No valid items in cart' });
         }
 
-        const subtotal = validOrderedItems.reduce((sum, item) => 
-            sum + (item.basePrice * item.quantity), 0);
-        const giftWrapTotal = validOrderedItems.reduce((sum, item) => 
-            sum + item.giftWrapCharge, 0);
-        const offerDiscountTotal = validOrderedItems.reduce((sum, item) => 
-            sum + (item.offerApplied ? item.offerApplied.discountAmount : 0), 0);
+        const subtotal = validOrderedItems.reduce((sum, item) => sum + (item.basePrice * item.quantity), 0);
+        const giftWrapTotal = validOrderedItems.reduce((sum, item) => sum + item.giftWrapCharge, 0);
+        const offerDiscountTotal = validOrderedItems.reduce((sum, item) => sum + (item.offerApplied ? item.offerApplied.discountAmount : 0), 0);
 
-        let couponDiscount = 0;
-        let couponCode = '';
-        let couponApplied = false;
-        let couponId = null;
+        let couponDiscount = 0, couponCode = '', couponApplied = false, couponId = null;
 
-        if (cart.coupon && cart.coupon.couponId) {
+        if (cart.coupon?.couponId) {
             const coupon = await Coupon.findById(cart.coupon.couponId);
             const validation = await validateCoupon(coupon, userId, cart);
             if (validation.valid) {
@@ -384,7 +394,7 @@ const processCheckout = async (req, res) => {
                 couponCode = coupon.code;
                 couponApplied = true;
                 couponId = coupon._id;
-                
+
                 coupon.usageCount += 1;
                 await coupon.save();
             }
@@ -396,6 +406,13 @@ const processCheckout = async (req, res) => {
 
         if (isNaN(finalAmount)) {
             throw new Error('Invalid order amount calculation');
+        }
+
+        if (paymentMethod === 'cash on delivery' && finalAmount < 1000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Cash on Delivery is not available for orders below ₹1000'
+            });
         }
 
         if (paymentMethod === 'luxewallet') {
@@ -481,14 +498,11 @@ const processCheckout = async (req, res) => {
         for (const item of validOrderedItems) {
             const product = await Product.findById(item.productId);
             if (!product) continue;
-            
             const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
             if (!variant) continue;
-            
             variant.quantity -= item.quantity;
             await product.save();
         }
-        
 
         cart.items = [];
         cart.coupon = {};
@@ -513,6 +527,7 @@ const processCheckout = async (req, res) => {
         });
     }
 };
+
 
 const createOrderInDatabase = async ({
   userId,

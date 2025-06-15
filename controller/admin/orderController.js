@@ -459,13 +459,11 @@ const requestReturn = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Return reason is required' });
         }
 
-        // Set return details at order level
         order.status = 'Return Requested';
         order.returnRequestedOn = new Date();
         order.returnReason = reason.trim();
         order.returnComments = comments ? comments.trim() : '';
 
-        // Set return details for each non-cancelled item
         order.orderedItems.forEach(item => {
             if (item.status !== 'Cancelled' && !item.returnRequestedOn) {
                 item.status = 'Return Requested';
@@ -882,6 +880,8 @@ const approveReturn = async (req, res) => {
 
 const approveCancel = async (req, res) => {
     try {
+        console.log("Session data:", req.session);
+
         const { orderId } = req.params;
         const { status } = req.body;
 
@@ -897,58 +897,56 @@ const approveCancel = async (req, res) => {
         if (order.status !== 'Cancel Request') {
             return res.status(400).json({
                 success: false,
-                message: `No cancellation request found for this order. Current status: ${order.status}`
+                message: `No cancellation request found. Current status: ${order.status}`
             });
         }
 
-        if (!status || !['approved', 'rejected'].includes(status.toLowerCase())) {
+        const normalizedStatus = status?.toLowerCase();
+        if (!['approved', 'rejected'].includes(normalizedStatus)) {
             return res.status(400).json({
                 success: false,
-                message: 'Invalid status. Must be either "approved" or "rejected"'
+                message: 'Invalid status. Must be either "approved" or "rejected".'
             });
         }
 
-        if (status.toLowerCase() === 'rejected') {
+        if (normalizedStatus === 'rejected') {
             order.status = 'Processing';
             order.refundStatus = 'Not Initiated';
         } else {
             const refundAmount = order.finalAmount;
 
-            try {
-                const updatedWallet = await processWalletRefund(order.userId, refundAmount, order._id, 'cancelled');
+            await processWalletRefund(order.userId, refundAmount, order._id, 'cancelled');
 
-                for (const item of order.orderedItems) {
-                    await Product.updateOne(
-                        { _id: item.productId, 'variants._id': item.variantId },
-                        { $inc: { 'variants.$.stock': item.quantity } }
-                    );
-                    item.status = 'Cancelled';
-                }
+            const stockUpdatePromises = order.orderedItems.map(item =>
+                Product.updateOne(
+                    { _id: item.productId, 'variants._id': item.variantId },
+                    { $inc: { 'variants.$.stock': item.quantity } }
+                )
+            );
+            await Promise.all(stockUpdatePromises);
 
-                order.status = 'Cancelled';
-                order.cancelApprovedOn = new Date();
-                order.refundAmount = refundAmount;
-                order.totalPrice = 0;
-                order.giftWrapTotal = 0;
-                order.finalAmount = 0;
-                order.discount = 0;
+            order.orderedItems.forEach(item => {
+                item.status = 'Cancelled';
+            });
 
-            } catch (refundError) {
-                console.error('Refund processing failed:', refundError);
-                return res.status(500).json({
-                    success: false,
-                    message: 'Failed to process refund. Please contact support.',
-                    error: refundError.message
-                });
-            }
+            order.status = 'Cancelled';
+            order.cancelApprovedOn = new Date();
+            order.refundAmount = refundAmount;
+            order.totalPrice = 0;
+            order.giftWrapTotal = 0;
+            order.finalAmount = 0;
+            order.discount = 0;
         }
 
         await order.save();
 
         return res.status(200).json({
             success: true,
-            message: status.toLowerCase() === 'rejected' ? 'Cancellation request rejected' : 'Order cancelled and refund processed successfully'
+            message: normalizedStatus === 'rejected'
+                ? 'Cancellation request rejected'
+                : 'Order cancelled and refund processed successfully'
         });
+
     } catch (error) {
         console.error('Approve Cancel Error:', error);
         return res.status(500).json({
@@ -957,7 +955,8 @@ const approveCancel = async (req, res) => {
             error: error.message
         });
     }
-};
+}
+
 
 const processRefund = async (req, res) => {
     try {

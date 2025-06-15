@@ -7,55 +7,69 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="/css/signUp.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <div class="logo">
             <img src="/img/logo.png" alt="luxe.com Logo" class="logo-img">
         </div>
-        <a href="#" class="contact-us">+ contact us</a>
+        <a href="#" class="contact-us">Contact Us</a>
     </header>
     <main>
-        <div class="signup-container">
-            <h1>CREATE LUXE.COM ACCOUNT</h1>
-            <a href="/login" class="login-link">Already have an account log in</a>
-            <div class="form-container">
-              <form id="signForm" onsubmit="return validateAndSubmitForm(event)">
-                <div class="form-group">
-                  <div id="error1" class="error-message"></div>
-                  <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+        <div class="signup-wrapper">
+            <div class="signup-container">
+                <h1>CREATE LUXE.COM ACCOUNT</h1>
+                <% if (message && message.trim() !== '') { %>
+                    <p class="error-message"><%= message %></p>
+                <% } %>
+                <a class="social-btn google-btn" href="/auth/google">
+                    <img src="/img/Google-Logo-PNG-HD-1.png" alt="Google Logo" class="google-logo">
+                    <span>Continue with Google</span>
+                </a>
+                <div class="or-separator">OR</div>
+                <p class="instruction">Continue with your email</p>
+                <p class="sub-instruction">Sign up with your email and password or log in if you already have an account.</p>
+                <div class="form-container">
+                    <form id="signForm" onsubmit="return validateAndSubmitForm(event)">
+                        <div class="form-group name-group">
+                            <div class="name-field">
+                                <div id="error1" class="error-message"></div>
+                                <input type="text" id="firstName" name="firstName" placeholder="First Name*" required>
+                            </div>
+                            <div class="name-field">
+                                <div id="error2" class="error-message"></div>
+                                <input type="text" id="lastName" name="lastName" placeholder="Last Name*" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div id="error3" class="error-message"></div>
+                            <input type="email" id="email" name="email" placeholder="Email Address*" required>
+                        </div>
+                        <div class="form-group">
+                            <div id="error4" class="error-message"></div>
+                            <input type="password" id="password" name="password" placeholder="Password*" autocomplete="new-password" required>
+                        </div>
+                        <div class="form-group">
+                            <div id="error5" class="error-message"></div>
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password*" autocomplete="new-password" required>
+                        </div>
+                        <div class="form-group">
+                            <div id="error6" class="error-message"></div>
+                            <input type="text" id="referralCode" name="referralCode" placeholder="Referral Code (Optional)" value="<%= locals.prefillReferralCode || '' %>">
+                        </div>
+                        <button type="submit" class="continue-btn">Create Account</button>
+                    </form>
                 </div>
-                <div class="form-group">
-                  <div id="error2" class="error-message"></div>
-                  <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+                <p class="create-account">Already have an account? <a href="/login">Log In</a></p>
+                <div class="footer-links">
+                    <a href="#">Help</a>
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
                 </div>
-                <div class="form-group">
-                  <div id="error3" class="error-message"></div>
-                  <input type="email" id="email" name="email" placeholder="Email Address" required>
-                </div>
-                <div class="form-group">
-                  <div id="error4" class="error-message"></div>
-                  <input type="password" id="password" name="password" placeholder="Password" autocomplete="new-password" required>
-                </div>
-                <div class="form-group">
-                  <div id="error5" class="error-message"></div>
-                  <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Your Password" autocomplete="new-password" required>
-                </div>
-                <div class="form-group">
-                  <div id="error6" class="error-message"></div>
-                  <input type="text" id="referralCode" name="referralCode" placeholder="Referral Code (Optional)" value="<%= locals.prefillReferralCode || '' %>">
-                </div>
-                <p class="password-requirement">Use 8 or more characters with a mix of letters, numbers & symbols.</p>
-                <button type="submit" class="continue-btn">CREATE AN ACCOUNT</button>
-              </form>
             </div>
             <div class="icons">
-              <img src="/img/image12.png" alt="Perfume Icon" class="icon">
-            </div>
-            <div class="footer-links">
-              <a href="#">Help</a>
-              <a href="#">Privacy</a>
-              <a href="#">Terms</a>
+                <img src="https://image.cdn2.seaart.me/2025-06-12/d155rhte878c73d64h0g-1/0d35117e8ff2eb8a6a432775dd98e90a_high.webp" alt="Perfume Icon" class="icon">
             </div>
         </div>
         <div class="loader" id="loader">
@@ -163,7 +177,6 @@
         function validateAndSubmitForm(event) {
             event.preventDefault();
 
-            // Perform all validations
             const isFirstNameValid = firstNameValidateChecking();
             const isLastNameValid = lastNameValidateChecking();
             const isEmailValid = emailValidateChecking();
@@ -180,10 +193,8 @@
                 return false;
             }
 
-            // Show loader
             loader.style.display = 'flex';
 
-            // Collect form data
             const formData = {
                 firstName: firstName.value.trim(),
                 lastName: lastName.value.trim(),

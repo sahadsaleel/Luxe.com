@@ -1,23 +1,18 @@
 const Product = require('../../models/productSchema');
-const Category = require('../../models/categorySchema')
+const Category = require('../../models/categorySchema');
 const mongoose = require('mongoose');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
 const Brand = require('../../models/brandSchema');
-const { queue } = require('sharp');
-
-
-
+const Order = require('../../models/orderSchema');
 
 const getProductPage = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 4;
     const skip = (page - 1) * limit;
-
     const search = req.query.search || '';
     const sort = req.query.sort || 'newest';
-
 
     let sortOption = { createdAt: -1 };
     if (sort === 'oldest') sortOption = { createdAt: 1 };
@@ -34,6 +29,36 @@ const getProductPage = async (req, res) => {
       .skip(skip)
       .limit(limit);
 
+    const productIds = productData.map(product => product._id);
+    const orderStats = await Order.aggregate([
+      { $match: { 'orderedItems.productId': { $in: productIds } } },
+      { $unwind: '$orderedItems' },
+      { $match: { 'orderedItems.productId': { $in: productIds } } },
+      {
+        $group: {
+          _id: '$orderedItems.productId',
+          cancelledCount: {
+            $sum: { $cond: [{ $eq: ['$orderedItems.status', 'Cancelled'] }, 1, 0] }
+          },
+          returnCount: {
+            $sum: { $cond: [{ $eq: ['$orderedItems.status', 'Return Approved'] }, 1, 0] }
+          }
+        }
+      }
+    ]);
+
+    const productStats = productData.map(product => {
+      const stats = orderStats.find(stat => stat._id.toString() === product._id.toString()) || {
+        cancelledCount: 0,
+        returnCount: 0
+      };
+      return {
+        ...product.toObject(),
+        cancelledCount: stats.cancelledCount,
+        returnCount: stats.returnCount
+      };
+    });
+
     const totalProduct = await Product.countDocuments({
       productName: { $regex: search, $options: 'i' },
       isDeleted: false
@@ -46,7 +71,7 @@ const getProductPage = async (req, res) => {
     res.render('admin/products', {
       cat: categories,
       brand: brands,
-      products: productData,
+      products: productStats,
       currentPage: page,
       totalPages: totalPages,
       totalProduct: totalProduct,
@@ -248,7 +273,7 @@ const editProduct = async (req, res) => {
             images.push(result.secure_url);
           }
         } catch (uploadError) {
-          console.error('Cloudinary upload error for file:', file.originalname, uploadError);
+          console.error('Cloudinary upload error for: ', file.originalname, uploadError);
           return res.status(500).json({ success: false, message: 'Failed to upload one or more images to Cloudinary' });
         }
       }
@@ -285,7 +310,6 @@ const editProduct = async (req, res) => {
   }
 };
 
-
 const deleteProduct = async (req, res) => {
   try {
       const productId = req.params.id;
@@ -310,7 +334,7 @@ const deleteProduct = async (req, res) => {
           }
       }
 
-      await Product.findByIdAndUpdate(productId,{isDeleted : true});
+      await Product.findByIdAndUpdate(productId, { isDeleted: true });
       return res.status(200).json({ success: true, message: 'Product deleted successfully' });
   } catch (error) {
       console.error('Error deleting product:', error.message);

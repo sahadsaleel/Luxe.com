@@ -205,7 +205,7 @@
                         </div>
                     </div>
 
-                    <!-- Order Summary (Moved to bottom) -->
+                    <!-- Order Summary-->
                     <div class="checkout-box">
                         <div class="box-header">
                             <h2>Order Summary</h2>
@@ -240,8 +240,7 @@
                                         <span class="summary-value" id="gift-wrap-value">₹<%= giftWrapTotal.toFixed(2) %></span>
                                     </div>
                                 <% } %>
-
-                                <!-- Coupon Section -->
+                                
                                 <div class="coupon-section">
                                     <input type="text" id="couponCode" placeholder="Enter coupon code" <%= appliedCoupon ? 'disabled' : '' %> value="<%= appliedCoupon ? appliedCoupon.code : '' %>">
                                     <% if (appliedCoupon) { %>
@@ -281,7 +280,7 @@
                                 <% } %>
 
                                 <div class="total-row">
-                                    <span class="total-label">Total Payable</span>
+                                    <span class="total-label">Total Payable :</span>
                                     <span class="total-value" id="total-value">₹<%= (subtotalAfterDiscount + shipping + giftWrapTotal).toFixed(2) %></span>
                                 </div>
 
@@ -413,44 +412,36 @@
                 const selectedDelivery = document.querySelector('input[name="deliveryMethod"]:checked');
                 if (!selectedDelivery) return;
 
-                // Get base subtotal (before any discounts)
                 const subtotal = parseFloat(document.getElementById('subtotal-value').textContent.replace('₹', '')) || 0;
                 
-                // Get gift wrap charges
                 const giftWrapTotal = document.getElementById('gift-wrap-value') 
                     ? parseFloat(document.getElementById('gift-wrap-value').textContent.replace('₹', '')) 
                     : 0;
                 
-                // Get offer discount
                 const offerDiscountElement = document.getElementById('offer-discount-value');
                 const offerDiscount = offerDiscountElement 
                     ? parseFloat(offerDiscountElement.textContent.replace('-₹', '')) || 0 
                     : 0;
                 
-                // Get coupon discount
                 const couponDiscountElement = document.getElementById('coupon-discount-value');
                 const couponDiscount = couponDiscountElement 
                     ? parseFloat(couponDiscountElement.textContent.replace('-₹', '')) || 0 
                     : 0;
 
-                // Calculate shipping based on delivery method
                 const shippingPrice = selectedDelivery.value === 'express' ? 99 : 0;
                 const shippingElement = document.getElementById('shipping-value');
                 if (shippingElement) {
                     shippingElement.textContent = shippingPrice === 0 ? 'FREE' : `₹${shippingPrice.toFixed(2)}`;
                 }
 
-                // Calculate total savings
                 const totalSavings = offerDiscount + couponDiscount;
                 const totalSavingsElement = document.getElementById('total-savings-value');
                 if (totalSavingsElement && totalSavings > 0) {
                     totalSavingsElement.textContent = `₹${totalSavings.toFixed(2)}`;
                 }
 
-                // Calculate subtotal after discounts
                 const subtotalAfterDiscount = subtotal - totalSavings;
 
-                // Calculate final total
                 const total = subtotalAfterDiscount + shippingPrice + giftWrapTotal;
                 const totalElement = document.getElementById('total-value');
                 if (totalElement) {

@@ -1,5 +1,6 @@
 const User = require('../../models/userSchema');
 const cloudinary = require('../../config/cloudinary');
+const Wallet = require('../../models/walletSchema'); 
 const { uploadSingleImage } = require('../../helpers/multer'); 
 
 
@@ -22,22 +23,28 @@ const customerInfo = async (req, res) => {
             .select('firstName email phone profileImage isBlocked _id') 
             .limit(limit)
             .skip((page - 1) * limit)
-            .exec();
+            .lean(); 
+            
+        const usersWithWallet = await Promise.all(userData.map(async (user) => {
+            const wallet = await Wallet.findOne({ userId: user._id }).lean();
+            return { ...user, wallet };
+        }));
 
         const count = await User.countDocuments(query);
+        const totalPages = Math.ceil(count / limit);
 
         if (req.headers.accept.includes('application/json')) {
             return res.json({
-                data: userData,
-                totalPages: Math.ceil(count / limit),
+                data: usersWithWallet,
+                totalPages: totalPages,
                 currentPage: page
             });
         }
 
         res.render('admin/customers', {
-            data: userData,
+            data: usersWithWallet,
             currentPage: page,
-            totalPages: Math.ceil(count / limit),
+            totalPages: totalPages,
             search: search
         });
     } catch (error) {
@@ -45,6 +52,7 @@ const customerInfo = async (req, res) => {
         res.redirect('/admin/pageerror');
     }
 };
+
 
 const customerBlocked = async (req, res) => {
     try {
@@ -88,9 +96,29 @@ const uploadProfileImage = async (req, res) => {
     }
 };
 
+
+const getWallet = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        const wallet = await Wallet.findOne({ userId: userId });
+
+        if (!wallet) {
+            return res.status(404).json({ message: 'Wallet not found for this user' });
+        }
+
+        res.json(wallet);
+    } catch (err) {
+        console.error('Error fetching wallet:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+
 module.exports = {
     customerInfo,
     customerBlocked,
     customerUnblocked,
-    uploadProfileImage 
+    uploadProfileImage,
+    getWallet
 };

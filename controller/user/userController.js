@@ -111,9 +111,11 @@ const loadHomepage = async (req, res) => {
 
 const loadSignup = async (req, res) => {
     try {
-        res.render('user/signup');
+        const message = req.query.message === 'blocked' ? 'User is blocked by admin' : 
+                        req.query.message ? req.query.message : null;
+        res.render('user/signup', { message });
     } catch (error) {
-        res.status(500).send('Server error');
+        res.render('user/signup', { message: 'An error occurred while loading the signup page' });
     }
 };
 
@@ -553,8 +555,8 @@ const loadReferrals = async (req, res) => {
         if (!userId) {
             return res.redirect('/login');
         }
-        const user = await User.findById(userId);
 
+        const user = await User.findById(userId);
         if (!user) {
             return res.redirect('/login');
         }
@@ -564,12 +566,14 @@ const loadReferrals = async (req, res) => {
         const referredUsers = await User.find({ referredBy: userId });
         const completedReferrals = referredUsers.filter(user => user.hasCompletedPurchase);
 
+        const REFERRAL_BONUS_AMOUNT = 1000;
+
         const referralStats = {
             totalReferrals: referredUsers.length,
             pendingReferrals: referredUsers.length - completedReferrals.length,
             completedReferrals: completedReferrals.length,
-            totalEarnings: user.totalReferralEarnings || 0,
-            referralBonus: user.referralBonusAmount || 100,
+            totalEarnings: completedReferrals.length * REFERRAL_BONUS_AMOUNT,
+            referralBonus: REFERRAL_BONUS_AMOUNT,
             walletBalance: wallet ? wallet.balance : 0
         };
 
@@ -585,7 +589,7 @@ const loadReferrals = async (req, res) => {
                 email: referredUser.email,
                 joinDate: referredUser.createdOn,
                 status: referredUser.hasCompletedPurchase ? 'Completed' : 'Pending',
-                rewardAmount: referredUser.hasCompletedPurchase ? (user.referralBonusAmount || 100) : 0,
+                rewardAmount: referredUser.hasCompletedPurchase ? REFERRAL_BONUS_AMOUNT : 0,
                 rewardDate: referralTransaction ? referralTransaction.date : null,
                 firstPurchaseDate: referredUser.firstPurchaseDate
             };
@@ -609,6 +613,7 @@ const loadReferrals = async (req, res) => {
         });
     }
 };
+
 
 module.exports = {
     loadHomepage,

@@ -62,7 +62,12 @@ body {
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    color: #94a3b8;
+    color: hsl(215, 20%, 65%);
+}
+.form-select option {
+    background: rgba(26, 26, 46, 1);
+    color: #e2e8f0;
+    padding: 10px;
 }
 
 .dropdown select {
@@ -582,5 +587,71 @@ label {
     .modal-content select {
         font-size: 12px;
         padding: 10px 12px;
+    }
+}
+/* Variant Stock Box */
+.variant-stock {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.variant-stock:hover {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: #667eea;
+    transform: translateY(-1px);
+}
+
+/* Variant Size */
+.variant-size {
+    font-weight: 600;
+    font-size: 13px;
+    color: #e2e8f0;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Variant Quantity */
+.variant-qty {
+    font-size: 13px;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .variant-stock {
+        padding: 6px 10px;
+        margin-bottom: 6px;
+    }
+
+    .variant-size,
+    .variant-qty {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .variant-stock {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 8px;
+    }
+
+    .variant-qty {
+        padding: 3px 6px;
     }
 }

@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const morgan = require('morgan');
 const path = require('path');
 const dotenv = require('dotenv');
 const session = require('express-session');
@@ -9,6 +10,7 @@ const userRouter = require('./routes/userRouter');
 const adminRouter = require('./routes/adminRouter');
 const errorHandler = require('./middleware/errorHandling');
 const nocache = require('nocache');
+
 
 dotenv.config();
 
@@ -49,6 +51,8 @@ app.use((req, res, next) => {
     res.locals.currentRoute = req.path;
     next();
 });
+
+app.use(morgan('dev'));
 
 // Routes
 app.use('/', nocache(), userRouter);

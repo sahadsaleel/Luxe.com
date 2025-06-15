@@ -56,7 +56,7 @@ body {
 }
 
 .table thead {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #667eea, #764ba2) ;
 }
 
 .table th {
@@ -64,10 +64,11 @@ body {
     text-align: center;
     font-weight: 600;
     font-size: 14px;
-    color: white;
+    color: rgb(0, 0, 0);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: sticky;
     top: 0;
+    background: linear-gradient(135deg, #667eea, #764ba2) 
 }
 
 .table td {
@@ -368,4 +369,59 @@ body {
         padding: 12px;
         font-size: 12px;
     }
+} 
+/* Form Inputs */
+.form-control {
+    padding: 12px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    background: rgba(20, 20, 40, 0.95);
+    color: #e2e8f0;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2), inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.form-control::placeholder {
+    color: #94a3b8;
+}
+
+/* Modal Select Styles */
+.modal-content select {
+    background: rgba(20, 20, 40, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: #e2e8f0;
+    padding: 12px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23e2e8f0" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+.modal-content select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2), inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content select:hover {
+    background: rgba(25, 25, 45, 1);
+    border-color: #667eea;
+}
+
+.modal-content select option {
+    background: rgba(20, 20, 40, 1);
+    color: #e2e8f0;
+    padding: 10px;
 }

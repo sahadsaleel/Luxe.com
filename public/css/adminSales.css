@@ -443,3 +443,46 @@ tr:nth-child(even):hover td {
         font-size: 18px;
     }
 }
+/* Export Dropdown Styling */
+.export-container {
+    margin-left: auto;
+    margin-top: 10px;
+}
+
+.export-select {
+    width: 220px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+    font-size: 14px;
+    font-weight: 600;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.41 0L6 4.58 10.59 0 12 1.41 6 7.41 0 1.41z' fill='%23e2e8f0'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 12px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.export-select:hover {
+    border-color: #667eea;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.export-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.export-select option {
+    background-color: #0f0f23;
+    color: #e2e8f0;
+    padding: 12px;
+}

@@ -5,7 +5,6 @@ const Order = require('../../models/orderSchema');
 const Wallet = require('../../models/walletSchema');
 const adminOrderController = require('../admin/orderController');
 
-
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const cancelOrder = async (req, res) => {
@@ -31,6 +30,17 @@ const cancelOrder = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Cancellation reason is required' });
         }
 
+        for (const item of order.orderedItems) {
+            item.status = 'Cancelled';
+            const result = await Product.updateOne(
+                { _id: item.productId, 'variants._id': item.variantId },
+                { $inc: { 'variants.$.quantity': item.quantity } }
+            );
+            if (result.matchedCount === 0) {
+                console.error(`Product or variant not found for productId: ${item.productId}, variantId: ${item.variantId}`);
+            }
+        }
+
         if (order.paymentMethod === 'razorpay' || order.paymentMethod === 'luxewallet') {
             try {
                 const refundAmount = order.finalAmount;
@@ -47,14 +57,6 @@ const cancelOrder = async (req, res) => {
                 order.giftWrapTotal = 0;
                 order.finalAmount = 0;
                 order.discount = 0;
-
-                for (const item of order.orderedItems) {
-                    item.status = 'Cancelled';
-                    await Product.updateOne(
-                        { _id: item.productId, 'variants._id': item.variantId },
-                        { $inc: { 'variants.$.stock': item.quantity } }
-                    );
-                }
             } catch (refundError) {
                 console.error('Refund processing failed:', refundError);
                 return res.status(500).json({
@@ -132,43 +134,22 @@ const cancelOrderItem = async (req, res) => {
         item.cancelRequestedOn = new Date();
         item.cancelApprovedOn = new Date();
 
-        const itemRefundAmount = item.totalPrice + (item.isGiftWrapped ? 100 : 0);
-        
-        order.totalPrice = order.orderedItems.reduce((sum, i) => sum + (i.status === 'Cancelled' ? 0 : i.totalPrice), 0);
-        order.giftWrapTotal = order.orderedItems.reduce((sum, i) => sum + (i.status === 'Cancelled' ? 0 : (i.isGiftWrapped ? 100 : 0)), 0);
-        
-        const cancelledItemsTotal = order.orderedItems.reduce((sum, i) => sum + (i.status === 'Cancelled' ? i.totalPrice : 0), 0);
-        const totalBeforeCancel = order.totalPrice + cancelledItemsTotal;
-        const discountRatio = cancelledItemsTotal / totalBeforeCancel;
-        const discountRefund = order.discount * discountRatio;
-        order.discount -= discountRefund;
-        
-        order.finalAmount = order.totalPrice + order.giftWrapTotal + (order.shipping || 0) - order.discount;
+        const itemGiftWrap = item.isGiftWrapped ? 100 : 0;
+        const itemTotal = item.totalPrice + itemGiftWrap;
 
-        const allCancelled = order.orderedItems.every(i => i.status === 'Cancelled');
+        const totalOrderValueBeforeDiscount = order.totalPrice + order.giftWrapTotal;
+        const itemShare = (item.totalPrice + itemGiftWrap) / totalOrderValueBeforeDiscount;
+        const discountRefund = order.discount * itemShare;
+
+        const itemRefundAmount = itemTotal - discountRefund;
 
         if (order.paymentMethod === 'razorpay' || order.paymentMethod === 'luxewallet') {
             try {
-                const refundAmount = itemRefundAmount - discountRefund;
-                const updatedWallet = await adminOrderController.processWalletRefund(userId, refundAmount, order._id, 'cancelled');
-
+                await adminOrderController.processWalletRefund(userId, itemRefundAmount, order._id, 'cancelled');
                 item.refundStatus = 'Completed';
-                item.refundAmount = refundAmount;
+                item.refundAmount = itemRefundAmount;
 
-                if (allCancelled) {
-                    order.status = 'Cancelled';
-                    order.cancelRequestedOn = new Date();
-                    order.cancelApprovedOn = new Date();
-                    order.refundStatus = 'Completed';
-                    order.refundAmount = (order.refundAmount || 0) + refundAmount;
-                    order.totalPrice = 0;
-                    order.giftWrapTotal = 0;
-                    order.finalAmount = 0;
-                    order.discount = 0;
-                } else {
-                    order.refundStatus = 'Partially Completed';
-                    order.refundAmount = (order.refundAmount || 0) + refundAmount;
-                }
+                order.refundAmount = (order.refundAmount || 0) + itemRefundAmount;
             } catch (refundError) {
                 console.error('Refund processing failed:', refundError);
                 return res.status(500).json({
@@ -178,23 +159,48 @@ const cancelOrderItem = async (req, res) => {
                 });
             }
         } else {
-            if (allCancelled) {
-                order.status = 'Cancel Request';
-                order.cancelRequestedOn = new Date();
-                order.refundStatus = 'Not Initiated';
-            }
             item.refundStatus = 'Not Initiated';
         }
-        await Product.updateOne(
+
+        const result = await Product.updateOne(
             { _id: item.productId, 'variants._id': item.variantId },
-            { $inc: { 'variants.$.stock': item.quantity } }
+            { $inc: { 'variants.$.quantity': item.quantity } }
         );
+        if (result.matchedCount === 0) {
+            console.error(`Product or variant not found for productId: ${item.productId}, variantId: ${item.variantId}`);
+        }
+
+        const activeItems = order.orderedItems.filter(i => i.status !== 'Cancelled');
+        order.totalPrice = activeItems.reduce((sum, i) => sum + i.totalPrice, 0);
+        order.giftWrapTotal = activeItems.reduce((sum, i) => sum + (i.isGiftWrapped ? 100 : 0), 0);
+        order.discount = activeItems.length === 0 ? 0 : order.discount * (order.totalPrice + order.giftWrapTotal) / totalOrderValueBeforeDiscount;
+        order.finalAmount = order.totalPrice + order.giftWrapTotal + (order.shipping || 0) - order.discount;
+
+        const allCancelled = order.orderedItems.every(i => i.status === 'Cancelled');
+        if (allCancelled) {
+            order.status = (order.paymentMethod === 'cash on delivery') ? 'Cancel Request' : 'Cancelled';
+            order.cancelRequestedOn = new Date();
+            order.cancelApprovedOn = new Date();
+            if (order.paymentMethod === 'razorpay' || order.paymentMethod === 'luxewallet') {
+                order.refundStatus = 'Completed';
+                order.totalPrice = 0;
+                order.giftWrapTotal = 0;
+                order.finalAmount = 0;
+                order.discount = 0;
+            } else {
+                order.refundStatus = 'Not Initiated';
+            }
+        } else {
+            if (order.paymentMethod === 'razorpay' || order.paymentMethod === 'luxewallet') {
+                order.refundStatus = 'Initiated';
+            }
+        }
 
         await order.save();
 
         return res.status(200).json({
             success: true,
-            message: item.refundStatus === 'Completed' ? 'Item cancelled and refund processed successfully' : 'Item cancellation request submitted successfully',
+            message: 'Item cancelled successfully',
             order: {
                 totalPrice: order.totalPrice.toFixed(2),
                 giftWrapTotal: order.giftWrapTotal.toFixed(2),
@@ -203,13 +209,14 @@ const cancelOrderItem = async (req, res) => {
             },
             allCancelled
         });
+
     } catch (err) {
         console.error('Error in cancelOrderItem:', err);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
 
-const requestReturn = async (req, res) => {
+const approveReturn = async (req, res) => {
     try {
         const { orderId } = req.params;
         const { reason, comments } = req.body;
@@ -228,8 +235,8 @@ const requestReturn = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Only delivered orders can be returned' });
         }
 
-        if (order.returnRequestedOn) {
-            return res.status(400).json({ success: false, message: 'Return already requested for this order' });
+        if (order.returnApprovedOn) {
+            return res.status(400).json({ success: false, message: 'Return already approved for this order' });
         }
 
         const deliveryDate = order.deliveryDate || order.createdOn;
@@ -242,33 +249,40 @@ const requestReturn = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Return reason is required' });
         }
 
-        order.status = 'Return Requested';
-        order.returnRequestedOn = new Date();
+        order.status = 'Return Approved';
+        order.returnApprovedOn = new Date();
         order.returnReason = reason.trim();
         order.returnComments = comments ? comments.trim() : '';
 
-        order.orderedItems.forEach(item => {
-            if (item.status !== 'Cancelled' && !item.returnRequestedOn) {
-                item.status = 'Return Requested';
-                item.returnRequestedOn = new Date();
+        for (const item of order.orderedItems) {
+            if (item.status !== 'Cancelled' && !item.returnApprovedOn) {
+                item.status = 'Return Approved';
+                item.returnApprovedOn = new Date();
                 item.returnReason = reason.trim();
                 item.returnComments = comments ? comments.trim() : '';
+                const result = await Product.updateOne(
+                    { _id: item.productId, 'variants._id': item.variantId },
+                    { $inc: { 'variants.$.quantity': item.quantity } }
+                );
+                if (result.matchedCount === 0) {
+                    console.error(`Product or variant not found for productId: ${item.productId}, variantId: ${item.variantId}`);
+                }
             }
-        });
+        }
 
         await order.save();
 
         return res.status(200).json({
             success: true,
-            message: 'Return request submitted successfully'
+            message: 'Return approval submitted successfully'
         });
     } catch (err) {
-        console.error('Error in requestReturn:', err);
+        console.error('Error in approveReturn:', err);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
 
-const requestReturnItem = async (req, res) => {
+const approveReturnItem = async (req, res) => {
     try {
         const { orderId, itemId } = req.params;
         const { reason, comments } = req.body;
@@ -297,7 +311,7 @@ const requestReturnItem = async (req, res) => {
         }
 
         if (item.status === 'Cancelled' || item.status.includes('Return')) {
-            return res.status(400).json({ success: false, message: 'Item is already cancelled or return requested' });
+            return res.status(400).json({ success: false, message: 'Item is already cancelled or return approved' });
         }
 
         const deliveryDate = order.deliveryDate || order.createdOn;
@@ -311,27 +325,35 @@ const requestReturnItem = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Return reason is required' });
         }
 
-        item.status = 'Return Requested';
-        item.returnRequestedOn = new Date();
+        item.status = 'Return Approved';
+        item.returnApprovedOn = new Date();
         item.returnReason = reason.trim();
         item.returnComments = comments ? comments.trim() : '';
         item.totalPrice = 0;
 
-        order.totalPrice = order.orderedItems.reduce((sum, i) => sum + (i.status === 'Cancelled' || i.status === 'Return Requested' ? 0 : i.totalPrice), 0);
-        order.giftWrapTotal = order.orderedItems.reduce((sum, i) => sum + ((i.status === 'Cancelled' || i.status === 'Return Requested') ? 0 : (i.isGiftWrapped ? 100 : 0)), 0);
+        const result = await Product.updateOne(
+            { _id: item.productId, 'variants._id': item.variantId },
+            { $inc: { 'variants.$.quantity': item.quantity } }
+        );
+        if (result.matchedCount === 0) {
+            console.error(`Product or variant not found for productId: ${item.productId}, variantId: ${item.variantId}`);
+        }
+
+        order.totalPrice = order.orderedItems.reduce((sum, i) => sum + (i.status === 'Cancelled' || i.status === 'Return Approved' ? 0 : i.totalPrice), 0);
+        order.giftWrapTotal = order.orderedItems.reduce((sum, i) => sum + ((i.status === 'Cancelled' || i.status === 'Return Approved') ? 0 : (i.isGiftWrapped ? 100 : 0)), 0);
         order.finalAmount = order.totalPrice + order.giftWrapTotal + (order.shipping || 0) - (order.discount || 0);
 
-        const allReturnedOrCancelled = order.orderedItems.every(i => i.status === 'Cancelled' || i.status === 'Return Requested');
+        const allReturnedOrCancelled = order.orderedItems.every(i => i.status === 'Cancelled' || i.status === 'Return Approved');
         if (allReturnedOrCancelled) {
-            order.status = 'Return Requested';
-            order.returnRequestedOn = new Date();
+            order.status = 'Return Approved';
+            order.returnApprovedOn = new Date();
         }
 
         await order.save();
 
         return res.status(200).json({
             success: true,
-            message: 'Return request for item submitted successfully',
+            message: 'Return approval for item submitted successfully',
             order: {
                 totalPrice: order.totalPrice.toFixed(2),
                 giftWrapTotal: order.giftWrapTotal.toFixed(2),
@@ -341,7 +363,7 @@ const requestReturnItem = async (req, res) => {
             allReturned: allReturnedOrCancelled
         });
     } catch (err) {
-        console.error('Error in requestReturnItem:', err);
+        console.error('Error in approveReturnItem:', err);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
@@ -349,6 +371,6 @@ const requestReturnItem = async (req, res) => {
 module.exports = {
     cancelOrder,
     cancelOrderItem,
-    requestReturn,
-    requestReturnItem
-}; 
+    approveReturn,
+    approveReturnItem
+};

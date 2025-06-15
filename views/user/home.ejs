@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />   
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <%- include('../../views/partials/user/header') %>
@@ -136,14 +138,14 @@
             </div>
         </div>
 
-        <h2 class="section-title">Our Premium Collection</h2>
+        <h2 class="section-title">Signature Essentials</h2>
 
         <div class="celebrity-products">
             <% if (products && products.length > 0) { %>
                 <div class="container">
                     <div class="row">
                         <% products.forEach(product => { %>
-                            <% if (product.status === 'listed') { %>
+                            <% if (product.status === 'listed' && product.price < 40000) { %>
                                 <div class="col-md-4 col-lg-3 mb-4">
                                     <div class="product-card">
                                         <div class="product-image-container">
@@ -157,7 +159,7 @@
                                             </a>
                                             <button class="btn-wishlist" onclick="toggleWishlist('<%= product._id %>', this)">
                                                 <i class="<%= wishlistProductIds && wishlistProductIds.includes(product._id.toString()) ? 'fa-solid' : 'fa-regular' %> fa-heart" 
-                                                   style="<%= wishlistProductIds && wishlistProductIds.includes(product._id.toString()) ? 'color: red;' : '' %>"></i>
+                                                style="<%= wishlistProductIds && wishlistProductIds.includes(product._id.toString()) ? 'color: red;' : '' %>"></i>
                                             </button>
                                         </div>
                                         <div class="product-info p-3">
@@ -191,7 +193,8 @@
                     <p>Try adjusting your filters or check back later.</p>
                 </div>
             <% } %>
-        </div>
+        </div> 
+
 
         <div class="flash-sale">
             <h2>Flash Sale On Products</h2>
@@ -220,7 +223,7 @@
                 <div class="container">
                     <div class="row">
                         <% products.forEach(product => { %>
-                            <% if (product.status === 'listed') { %>
+                            <% if (product.status === 'listed' && product.price > 40000) { %>
                                 <div class="col-md-4 col-lg-3 mb-4">
                                     <div class="product-card">
                                         <div class="product-image-container">
@@ -234,7 +237,7 @@
                                             </a>
                                             <button class="btn-wishlist" onclick="toggleWishlist('<%= product._id %>', this)">
                                                 <i class="<%= wishlistProductIds && wishlistProductIds.includes(product._id.toString()) ? 'fa-solid' : 'fa-regular' %> fa-heart" 
-                                                   style="<%= wishlistProductIds && wishlistProductIds.includes(product._id.toString()) ? 'color: red;' : '' %>"></i>
+                                                style="<%= wishlistProductIds && wishlistProductIds.includes(product._id.toString()) ? 'color: red;' : '' %>"></i>
                                             </button>
                                         </div>
                                         <div class="product-info p-3">
@@ -269,6 +272,7 @@
                 </div>
             <% } %>
         </div>
+
     </div>
     <%- include("../../views/partials/user/footer") %>   
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

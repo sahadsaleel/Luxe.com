@@ -189,11 +189,12 @@ body {
 }
 
 .data-table th {
-    background: rgba(102, 126, 234, 0.15);
+    background: #667EEA;
     font-weight: 600;
     position: sticky;
     top: 0;
 }
+
 
 .data-table tr:hover {
     background: rgba(255, 255, 255, 0.05);

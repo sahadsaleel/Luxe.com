@@ -40,11 +40,13 @@
                     <th>VARIANTS & STOCK</th>
                     <th>PRICE</th>
                     <th>STATUS</th>
+                    <th>CANCELLED</th>
+                    <th>RETURNED</th>
                     <th>ACTION</th>
                 </tr>
             </thead>
             <tbody>
-                <% products.forEach(product =>{%>  
+                <% products.forEach(product => { %>
                     <tr>
                         <td> 
                             <img src="<%= product.productImage && product.productImage.length > 0 ? product.productImage[0] : '/api/placeholder/50/50' %>" alt="<%= product.productName %>" class="product-image">
@@ -61,6 +63,8 @@
                         </td>
                         <td><%= product.variants[0].salePrice %> ₹</td>
                         <td><%= product.status %></td>
+                        <td><%= product.cancelledCount || 0 %></td>
+                        <td><%= product.returnCount || 0 %></td>
                         <td>
                             <button class="action-btn edit-btn" data-id="<%= product._id %>">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -83,7 +87,6 @@
         </table>
     </div>
 
-    
     <!-- Add Product Modal -->
     <div id="addProductModal" class="modal">
         <div class="modal-content">
@@ -854,9 +857,6 @@
             }
         }
         
-        const searchInput = document.getElementById('searchInput');
-        const sortSelect = document.getElementById('sortSelect');
-        
         async function fetchProducts(search = '', sort = 'newest') {
             try {
                 const response = await fetch(`/admin/products?search=${encodeURIComponent(search)}&sort=${sort}`, {
@@ -864,10 +864,18 @@
                         'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
                     }
                 });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch products');
+                }
                 const data = await response.text();
-                document.querySelector('tbody').innerHTML = new DOMParser()
-                    .parseFromString(data, 'text/html')
-                    .querySelector('tbody').innerHTML;
+                const parser = new DOMParser();
+                const newDoc = parser.parseFromString(data, 'text/html');
+                const newTbody = newDoc.querySelector('tbody');
+                if (newTbody) {
+                    document.querySelector('tbody').innerHTML = newTbody.innerHTML;
+                } else {
+                    console.error('No tbody found in fetched data');
+                }
             } catch (error) {
                 console.error('Error fetching products:', error);
             }

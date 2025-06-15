@@ -52,72 +52,89 @@
                             <td><%= data[i].email || 'N/A' %></td>
                             <td><%= data[i].phone || 'N/A' %></td>
                             <td>
-                                <% if (data[i].isBlocked) { %>
-                                    <button class="btn btn-success" style="width: 80px;">
-                                        <a href="/admin/unblockCustomer?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">
-                                            <i class="bi bi-unlock"></i> Unblock
-                                        </a>
+                                <div class="action-icons">
+                                    <button class="action-icon wallet-icon wallet-btn" data-user-id="<%= data[i]._id %>" title="View Wallet">
+                                        <i class="fas fa-wallet"></i>
                                     </button>
-                                <% } else { %>
-                                    <button class="btn btn-danger" style="width: 80px;">
-                                        <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">
-                                            <i class="bi bi-lock"></i> Block
+                                    <% if (data[i].isBlocked) { %>
+                                        <a href="/admin/unblockCustomer?id=<%= data[i]._id %>" class="action-icon unblock-icon" title="Unblock User">
+                                            <i class="fas fa-unlock"></i>
                                         </a>
-                                    </button>
-                                <% } %>
+                                    <% } else { %>
+                                        <a href="/admin/blockCustomer?id=<%= data[i]._id %>" class="action-icon block-icon" title="Block User">
+                                            <i class="fas fa-ban"></i>
+                                        </a>
+                                    <% } %>
+                                </div>
                             </td>
                         </tr>
                     <% } %>
                 <% } %>
             </tbody>
         </table>
+        <div id="walletModal" class="wallet-modal">
+            <div class="wallet-modal-content">
+                <div class="wallet-modal-header">
+                    <h3 class="wallet-modal-title">
+                        <i class="fas fa-wallet"></i>
+                        Customer Wallet Details
+                    </h3>
+                    <button class="close-modal">×</button>
+                </div>
+                <div class="wallet-modal-body">
+                    <div id="walletContent">
+                        <div class="loading-spinner">
+                            <div class="spinner"></div>
+                            <p>Loading wallet details...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <%- include('../../views/partials/admin/footer') %>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.querySelector('.search-input');
-            const sortSelect = document.querySelector('.dropdown select');
+            const sortSelect = document.querySelector('.custom-select');
             const tbody = document.querySelector('table tbody');
+            const walletModal = document.getElementById('walletModal');
+            const walletContent = document.getElementById('walletContent');
+            const closeModalButton = document.querySelector('.close-modal');
 
             let currentSearchTerm = '';
             let currentSortOption = 'a-z';
             let currentPage = new URLSearchParams(window.location.search).get('page') || 1;
 
             function debounce(func, delay) {
-                let timeoutId;
+                let timeout;
                 return (...args) => {
-                    clearTimeout(timeoutId);
-                    timeoutId = setTimeout(() => func(...args), delay);
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func(...args), delay);
                 };
             }
 
             async function updateTable(searchTerm = '', sortOption = 'a-z', page = 1) {
                 try {
                     const url = `/admin/customers?search=${encodeURIComponent(searchTerm)}&page=${page}`;
-                    const response = await fetch(url, {
-                        headers: { 'Accept': 'application/json' }
-                    });
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
+                    const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
                     const { data, totalPages, currentPage: serverPage } = await response.json();
                     const sortedData = [...data].sort((a, b) => {
-                        const nameA = a.firstName.toLowerCase();
-                        const nameB = b.firstName.toLowerCase();
+                        const nameA = (a.firstName || '').toLowerCase();
+                        const nameB = (b.firstName || '').toLowerCase();
                         switch (sortOption) {
-                            case 'a-z':
-                                return nameA.localeCompare(nameB);
-                            case 'z-a':
-                                return nameB.localeCompare(nameA);
-                            case 'newest':
-                                return new Date(b.createdAt) - new Date(a.createdAt);
-                            case 'oldest':
-                                return new Date(a.createdAt) - new Date(b.createdAt);
-                            default:
-                                return 0;
+                            case 'a-z': return nameA.localeCompare(nameB);
+                            case 'z-a': return nameB.localeCompare(nameA);
+                            case 'newest': return new Date(b.createdAt) - new Date(a.createdAt);
+                            case 'oldest': return new Date(a.createdAt) - new Date(b.createdAt);
+                            default: return 0;
                         }
                     });
+
                     tbody.innerHTML = sortedData.length === 0
                         ? '<tr><td colspan="5">No users found</td></tr>'
                         : sortedData.map(user => `
@@ -127,44 +144,117 @@
                                 <td>${user.email || 'N/A'}</td>
                                 <td>${user.phone || 'N/A'}</td>
                                 <td>
-                                    ${user.isBlocked ?
-                                        `<button class="btn btn-success" style="width: 80px;">
-                                            <a href="/admin/unblockCustomer?id=${user._id}" class="text-white" style="text-decoration: none;">
-                                                <i class="bi bi-unlock"></i> Unblock
-                                            </a>
-                                        </button>` :
-                                        `<button class="btn btn-danger" style="width: 80px;">
-                                            <a href="/admin/blockCustomer?id=${user._id}" class="text-white" style="text-decoration: none;">
-                                                <i class="bi bi-lock"></i> Block
-                                            </a>
-                                        </button>`
-                                    }
+                                    <div class="action-icons">
+                                        <button class="action-icon wallet-icon wallet-btn" data-user-id="${user._id}" title="View Wallet">
+                                            <i class="fas fa-wallet"></i>
+                                        </button>
+                                        ${user.isBlocked ? 
+                                            `<a href="/admin/unblockCustomer?id=${user._id}" class="action-icon unblock-icon" title="Unblock User">
+                                                <i class="fas fa-unlock"></i>
+                                            </a>` : 
+                                            `<a href="/admin/blockCustomer?id=${user._id}" class="action-icon block-icon" title="Block User">
+                                                <i class="fas fa-ban"></i>
+                                            </a>` }
+                                    </div>
                                 </td>
                             </tr>
                         `).join('');
+
                     window.history.pushState({}, '', `?search=${encodeURIComponent(searchTerm)}&page=${page}`);
                 } catch (error) {
-                    console.error('Error fetching data:', error);
+                    console.error('Error fetching table data:', error);
                     tbody.innerHTML = '<tr><td colspan="5">Error loading data</td></tr>';
                 }
+            }
+
+            async function openWalletModal(userId) {
+                walletModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+
+                walletContent.innerHTML = `
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>Loading wallet details...</p>
+                    </div>
+                `;
+
+                try {
+                    const response = await fetch(`/admin/wallet/${userId}`, { headers: { 'Accept': 'application/json' } });
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    const walletData = await response.json();
+                    displayWalletData(walletData);
+                } catch (error) {
+                    console.error('Error fetching wallet data:', error);
+                    walletContent.innerHTML = `
+                        <div class="no-transactions">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px; color: #f87171;"></i>
+                            <p>Error loading wallet data. Please try again.</p>
+                        </div>
+                    `;
+                }
+            }
+
+            function displayWalletData(walletData) {
+                const transactionsHtml = walletData.transactions?.length > 0
+                    ? walletData.transactions.map(transaction => `
+                        <div class="transaction-item ${transaction.type.toLowerCase()}">
+                            <div class="transaction-header">
+                                <span class="transaction-type">${transaction.type}</span>
+                                <span class="transaction-amount">
+                                    ${transaction.type === 'Credit' ? '+' : '-'}₹${transaction.amount.toFixed(2)}
+                                </span>
+                            </div>
+                            <div class="transaction-details">
+                                <span>${transaction.method}</span>
+                                <span>${new Date(transaction.date).toLocaleDateString()}</span>
+                            </div>
+                            ${transaction.description ? `<div style="font-size: 12px; color: #94a3b8; margin-top: 5px;">${transaction.description}</div>` : ''}
+                        </div>
+                    `).join('')
+                    : '<div class="no-transactions"><i class="fas fa-inbox" style="font-size: 24px; margin-bottom: 10px;"></i><p>No transactions found</p></div>';
+
+                walletContent.innerHTML = `
+                    <div class="wallet-balance-section">
+                        <div class="wallet-balance">₹${(walletData.balance || 0).toFixed(2)}</div>
+                        <div class="wallet-currency">Current Balance (${walletData.currency || 'INR'})</div>
+                    </div>
+                    <div class="transactions-section" style="max-height: 300px; overflow-y: auto;">
+                        <h4><i class="fas fa-history"></i> Recent Transactions</h4>
+                        ${transactionsHtml}
+                    </div>
+                `;
+            }
+
+            function closeWalletModal() {
+                walletModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
             }
 
             const debouncedSearch = debounce(() => {
                 currentSearchTerm = searchInput.value.trim();
                 currentSortOption = sortSelect.value.toLowerCase();
-                currentPage = 1; 
+                currentPage = 1;
                 updateTable(currentSearchTerm, currentSortOption, currentPage);
             }, 300);
 
-            if (searchInput) {
-                searchInput.addEventListener('input', debouncedSearch);
-            }
-            if (sortSelect) {
-                sortSelect.addEventListener('change', debouncedSearch);
-            }
+            searchInput.addEventListener('input', debouncedSearch);
+            sortSelect.addEventListener('change', debouncedSearch);
+
+            tbody.addEventListener('click', (event) => {
+                const button = event.target.closest('.wallet-btn');
+                if (button) {
+                    const userId = button.getAttribute('data-user-id');
+                    openWalletModal(userId);
+                }
+            });
+
+            closeModalButton.addEventListener('click', closeWalletModal);
+            window.onclick = (e) => { if (e.target === walletModal) closeWalletModal(); };
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeWalletModal(); });
 
             updateTable(currentSearchTerm, currentSortOption, currentPage);
         });
     </script>
+
 </body>
 </html>

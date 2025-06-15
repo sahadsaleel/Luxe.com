@@ -10,7 +10,7 @@ const walletSchema = new Schema({
   },
   balance: {
     type: Number,
-    required: true,
+    required: true,   
     default: 0,
     min: 0,
     validate: {
@@ -110,31 +110,25 @@ const walletSchema = new Schema({
   timestamps: true
 });
 
-// Pre-save hook to update lastUpdated
 walletSchema.pre('save', function(next) {
   this.lastUpdated = new Date();
   next();
 });
 
-// Method to add transaction
 walletSchema.methods.addTransaction = async function(transactionData) {
   try {
-    // Validate transaction amount
     if (!transactionData.amount || transactionData.amount <= 0) {
       throw new Error('Invalid transaction amount');
     }
 
-    // Calculate new balance
     const newBalance = transactionData.type === 'Credit' 
       ? this.balance + transactionData.amount
       : this.balance - transactionData.amount;
 
-    // Check if debit would make balance negative
     if (newBalance < 0) {
       throw new Error('Insufficient balance for debit transaction');
     }
 
-    // Add transaction
     this.transactions.push(transactionData);
     this.balance = newBalance;
     this.lastUpdated = new Date();

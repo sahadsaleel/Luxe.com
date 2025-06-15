@@ -291,17 +291,33 @@ body {
             }
         }
 
-/* Section Title */
 .section-title {
-    color: var(--text-color);
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 10px;
-    margin: 40px 20px 30px;
-    font-size: 24px;
-    font-weight: 600;
+    color: #333333; /* Deep, rich black */
+    border-bottom: 2px solid #bfa27c; /* Elegant gold tone */
+    padding-bottom: 15px;
+    margin: 60px 20px 40px;
+    font-size: 32px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: 'Playfair Display', serif; /* Luxury serif font */
     text-align: center;
+    position: relative;
 }
- /* Modern Features Section */
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 3px;
+    background-color: #bfa27c;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
         .features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

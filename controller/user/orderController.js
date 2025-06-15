@@ -206,6 +206,8 @@ const loadOrderDetailPage = async (req, res) => {
                     salePrice: variant.salePrice || 0,
                     quantity: variant.quantity || 0,
                 },
+                offerDiscount: item.offerDiscount || 0, 
+                offerPrice: (item.price || 0) - (item.offerDiscount || 0),
                 isCanceled: item.status === 'Cancelled',
                 cancelReason: item.cancelReason || '',
                 status: item.status || 'Active',

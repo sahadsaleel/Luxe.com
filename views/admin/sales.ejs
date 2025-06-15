@@ -2,400 +2,180 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Report Dashboard</title>
+    <title>Sales Report</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="/css/adminDashboard.css">
     <link rel="stylesheet" href="/css/adminSales.css">
 </head>
 <body>
-    <%- include('../../views/partials/admin/header') %>
-    <div class="container">
-        <div class="stats-grid">
-            <div class="stat-card" id="gross-sales-card">
-                <div class="stat-icon">₹</div>
-                <div class="stat-content">
-                    <h3>Gross Sales</h3>
-                    <div class="value">₹<%= stats.grossSales.toLocaleString('en-IN', { maximumFractionDigits: 2 }) %></div>
-                </div>
-            </div>
-            <div class="stat-card" id="coupons-redeemed-card">
-                <div class="stat-icon">🎫</div>
-                <div class="stat-content">
-                    <h3>Coupons Redeemed</h3>
-                    <div class="value"><%= stats.couponsRedeemed %></div>
-                </div>
-            </div>
-            <div class="stat-card" id="net-sales-card">
-                <div class="stat-icon">💰</div>
-                <div class="stat-content">
-                    <h3>Net Sales</h3>
-                    <div class="value">₹<%= stats.netSales.toLocaleString('en-IN', { maximumFractionDigits: 2 }) %></div>
-                </div>
-            </div>
-            <div class="stat-card" id="products-sold-card">
-                <div class="stat-icon">📦</div>
-                <div class="stat-content">
-                    <h3>Products Sold</h3>
-                    <div class="value"><%= stats.productsSold %></div>
-                </div>
+
+<%- include('../../views/partials/admin/header') %>
+
+<div class="container">
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">₹</div>
+            <div class="stat-content">
+                <h3>Gross Sales</h3>
+                <div class="value">₹<%= stats.grossSales.toLocaleString('en-IN', { maximumFractionDigits: 2 }) %></div>
             </div>
         </div>
 
-        <!-- Sales Report Table -->
-        <div class="report-section">
-            <div class="report-header">
-                <h2 class="report-title">Sales Report</h2>
-                <div class="report-controls">
-                    <div class="tab-group">
-                        <div class="tab <%= timeRange === 'daily' ? 'active' : '' %>" data-range="daily">Daily</div>
-                        <div class="tab <%= timeRange === 'weekly' ? 'active' : '' %>" data-range="weekly">Weekly</div>
-                        <div class="tab <%= timeRange === 'monthly' ? 'active' : '' %>" data-range="monthly">Monthly</div>
-                        <div class="tab <%= timeRange === 'yearly' ? 'active' : '' %>" data-range="yearly">Yearly</div>
-                        <div class="tab <%= timeRange === 'custom' ? 'active' : '' %>" data-range="custom">Custom</div>
-                    </div>
-                    <div class="date-range-container <%= timeRange === 'custom' ? 'show' : '' %>">
-                        <input type="date" id="startDate" class="date-input" value="<%= startDate.toISOString().split('T')[0] %>">
-                        <input type="date" id="endDate" class="date-input" value="<%= endDate.toISOString().split('T')[0] %>">
-                        <button class="apply-btn">Apply</button>
-                    </div>
-                    <button class="export-btn" onclick="toggleExportOptions()">
-                        <i class="fas fa-download"></i> Export
-                    </button>
-                </div>
+        <div class="stat-card">
+            <div class="stat-icon">🎫</div>
+            <div class="stat-content">
+                <h3>Coupons Redeemed</h3>
+                <div class="value"><%= stats.couponsRedeemed %></div>
             </div>
+        </div>
 
-            <div class="table-container">
-                <table>
-                    <thead>
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-content">
+                <h3>Net Sales</h3>
+                <div class="value">₹<%= stats.netSales.toLocaleString('en-IN', { maximumFractionDigits: 2 }) %></div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-content">
+                <h3>Products Sold</h3>
+                <div class="value"><%= stats.productsSold %></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Header -->
+    <div class="report-header">
+        <h2>Sales Report</h2>
+        <div class="tab-group">
+            <% ['daily', 'weekly', 'monthly', 'yearly', 'custom'].forEach(r => { %>
+                <div class="tab <%= timeRange === r ? 'active' : '' %>" data-range="<%= r %>"><%= r.charAt(0).toUpperCase() + r.slice(1) %></div>
+            <% }) %>
+        </div>
+
+        <div class="export-container">
+            <select id="exportSelect" class="export-select">
+                <option value="" selected disabled>Export Report</option>
+                <option value="pdf">Export as PDF</option>
+                <option value="excel">Export as Excel</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Custom Date -->
+    <div class="date-range-container <%= timeRange === 'custom' ? 'show' : '' %>">
+        <input type="date" id="startDate" value="<%= startDate.toISOString().split('T')[0] %>">
+        <input type="date" id="endDate" value="<%= endDate.toISOString().split('T')[0] %>">
+        <button id="applyBtn">Apply</button>
+    </div>
+
+    <!-- Sales Table -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Original Amount</th>
+                    <th>Offer Discount</th>
+                    <th>Coupon Discount</th>
+                    <th>Final Amount</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (orders.length > 0) { %>
+                    <% orders.forEach(order => { %>
                         <tr>
-                            <th>Customer</th>
-                            <th>Date</th>
-                            <th>Original Amount</th>
-                            <th>Offer Discount</th>
-                            <th>Coupon Discount</th>
-                            <th>Final Amount</th>
-                            <th>Payment</th>
-                            <th>Status</th>
+                            <td><%= order.userId ? `${order.userId.firstName} ${order.userId.lastName}` : 'N/A' %></td>
+                            <td><%= new Date(order.createdOn).toLocaleDateString('en-IN') %></td>
+                            <td>₹<%= order.totalPrice.toLocaleString('en-IN') %></td>
+                            <td><%= order.offerDiscountTotal > 0 ? `-₹${order.offerDiscountTotal.toLocaleString('en-IN')}` : 'No offer' %></td>
+                            <td><%= order.discount > 0 ? `-₹${order.discount.toLocaleString('en-IN')}` : 'No coupon' %></td>
+                            <td>₹<%= order.finalAmount.toLocaleString('en-IN') %></td>
+                            <td><%= order.paymentMethod %></td>
+                            <td><%= order.status %></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <% if (orders && orders.length > 0) { %>
-                            <% orders.forEach(order => { %>
-                                <tr>
-                                    <td>
-                                        <div class="customer-cell">
-                                            <div class="customer-avatar">
-                                                <%= order.customer.name.charAt(0) %>
-                                            </div>
-                                            <div>
-                                                <%= order.customer.name %>
-                                                <div style="font-size: 12px; color: #666;">#<%= order.customer.id %></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><%= new Date(order.date).toLocaleDateString('en-IN') %></td>
-                                    <td class="amount">₹<%= order.totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 }) %></td>
-                                    <td>
-                                        <% if (order.offerDiscountTotal > 0) { %>
-                                            <span class="discount-amount">-₹<%= order.offerDiscountTotal.toLocaleString('en-IN', { maximumFractionDigits: 2 }) %></span>
-                                        <% } else { %>
-                                            <span class="no-discount">No offer</span>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <% if (order.discount > 0) { %>
-                                            <span class="discount-amount">-₹<%= order.discount.toLocaleString('en-IN', { maximumFractionDigits: 2 }) %></span>
-                                        <% } else { %>
-                                            <span class="no-discount">No coupon</span>
-                                        <% } %>
-                                    </td>
-                                    <td class="amount">₹<%= order.finalAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 }) %></td>
-                                    <td><%= order.paymentMethod %></td>
-                                    <td>
-                                        <span class="status-badge <%= order.status.toLowerCase().replace(' ', '-') %>">
-                                            <%= order.status %>
-                                        </span>
-                                    </td>
-                                </tr>
-                            <% }); %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="8" style="text-align: center; padding: 40px; color: #666;">
-                                    No orders found for the selected time range
-                                </td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="8" class="no-data">No orders found</td></tr>
+                <% } %>
+            </tbody>
+        </table>
     </div>
 
-    <div id="exportMenu" style="display: none; position: absolute; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 8px;">
-        <div class="export-option" onclick="exportToExcel()" style="padding: 8px 16px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-            <i class="fas fa-file-excel"></i> Excel
-        </div>
-        <div class="export-option" onclick="exportToPDF()" style="padding: 8px 16px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-            <i class="fas fa-file-pdf"></i> PDF
-        </div>
-    </div>
+</div>
 
-    <%- include('../../views/partials/admin/footer') %>
+<%- include('../../views/partials/admin/footer') %>
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
-    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tabs = document.querySelectorAll('.tab');
-            const dateRangeContainer = document.querySelector('.date-range-container');
-            const applyBtn = document.querySelector('.apply-btn');
-            const startDateInput = document.getElementById('startDate');
-            const endDateInput = document.getElementById('endDate');
-            
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const range = this.dataset.range;
-                    if (range === 'custom' || range === undefined) {
-                        dateRangeContainer.classList.add('show');
-                    } else {
-                        dateRangeContainer.classList.remove('show');
-                        window.location.href = `/admin/sales?range=${range}`;
-                    }
-                    
-                    tabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-    
-            applyBtn.addEventListener('click', function() {
-                const startDate = startDateInput.value;
-                const endDate = endDateInput.value;
-                if (startDate && endDate) {
-                    window.location.href = `/admin/sales?range=custom&startDate=${startDate}&endDate=${endDate}`;
-                }
-            });
+<script>
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.onclick = () => {
+            const range = tab.dataset.range;
+            if (range === 'custom') {
+                document.querySelector('.date-range-container').classList.add('show');
+            } else {
+                window.location.href = `/admin/sales?range=${range}`;
+            }
+        }
+    });
+
+    document.getElementById('applyBtn').onclick = () => {
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        if (start && end) window.location.href = `/admin/sales?range=custom&startDate=${start}&endDate=${end}`;
+    };
+
+    document.getElementById('exportSelect').onchange = () => {
+        const selected = document.getElementById('exportSelect').value;
+        if (selected === 'pdf') exportToPDF();
+        if (selected === 'excel') exportToExcel();
+        document.getElementById('exportSelect').value = "";
+    };
+
+    function exportToExcel() {
+        const wb = XLSX.utils.book_new();
+        const wsData = [["Customer", "Date", "Original", "Offer", "Coupon", "Final", "Payment", "Status"]];
+        document.querySelectorAll('table tbody tr').forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length === 0) return;
+            wsData.push([...cells].map(td => td.innerText));
         });
-    
-        function toggleExportOptions() {
-            const exportMenu = document.getElementById('exportMenu');
-            exportMenu.style.display = exportMenu.style.display === 'none' ? 'block' : 'none';
-        }
-    
-        function exportToExcel() {
-            try {
-                const formatCurrency = (text) => {
-                    return text.replace('₹', 'RS ').trim();
-                };
-    
-                const stats = [
-                    ['Sales Statistics'],
-                    ['Metric', 'Value'],
-                    ['Gross Sales', formatCurrency(document.querySelector('#gross-sales-card .value').textContent)],
-                    ['Net Sales', formatCurrency(document.querySelector('#net-sales-card .value').textContent)],
-                    ['Products Sold', document.querySelector('#products-sold-card .value').textContent.trim()],
-                    ['Coupons Redeemed', document.querySelector('#coupons-redeemed-card .value').textContent.trim()],
-                    [], 
-                    ['Orders Details']
-                ];
-    
-                const orders = [];
-                orders.push(['Customer', 'Date', 'Original Amount', 'Offer Discount', 'Coupon Discount', 'Final Amount', 'Payment', 'Status']);
-    
-                const rows = document.querySelectorAll('table tbody tr');
-                rows.forEach(row => {
-                    if (row.querySelector('.no-data')) return;
-    
-                    try {
-                        const cells = Array.from(row.cells);
-                        if (cells.length >= 8) {
-                            const customerName = cells[0].textContent.trim();
-                            const originalAmount = formatCurrency(cells[2].textContent);
-                            const offerDiscount = cells[3].textContent.includes('-₹') ? formatCurrency(cells[3].textContent) : '0';
-                            const couponDiscount = cells[4].textContent.includes('-₹') ? formatCurrency(cells[4].textContent) : '0';
-                            const finalAmount = formatCurrency(cells[5].textContent);
-    
-                            orders.push([
-                                customerName,
-                                cells[1].textContent.trim(),
-                                originalAmount,
-                                offerDiscount,
-                                couponDiscount,
-                                finalAmount,
-                                cells[6].textContent.trim(),
-                                cells[7].textContent.trim()
-                            ]);
-                        }
-                    } catch (err) {
-                        console.error('Error processing row:', err);
-                    }
-                });
-    
-                const allData = [...stats, ...orders];
-    
-                const wb = XLSX.utils.book_new();
-                const ws = XLSX.utils.aoa_to_sheet(allData);
-    
-                ws['!cols'] = [
-                    { wch: 35 }, // Customer
-                    { wch: 15 }, // Date
-                    { wch: 15 }, // Original Amount
-                    { wch: 15 }, // Offer Discount
-                    { wch: 15 }, // Coupon Discount
-                    { wch: 15 }, // Final Amount
-                    { wch: 15 }, // Payment
-                    { wch: 15 }  // Status
-                ];
-    
-                XLSX.utils.book_append_sheet(wb, ws, "Sales Report");
-    
-                const timeRange = document.querySelector('.tab.active').textContent.trim().toLowerCase();
-                const fileName = `sales_report_${timeRange}_${new Date().toISOString().split('T')[0]}.xlsx`;
-    
-                XLSX.writeFile(wb, fileName);
-            } catch (error) {
-                console.error('Error generating Excel:', error);
-                alert('Error generating Excel file. Please check the console for details.');
-            }
-        }
-    
-        function exportToPDF() {
-            try {
-                if (typeof window.jspdf === 'undefined') {
-                    alert('PDF library not loaded. Please refresh the page and try again.');
-                    return;
-                }
-    
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF('p', 'mm', 'a4');
-    
-                doc.setFontSize(20);
-                doc.setTextColor(59, 130, 246);
-                doc.text('LUXE.COM', doc.internal.pageSize.width/2, 15, { align: 'center' });
-                
-                doc.setFontSize(16);
-                doc.setTextColor(0, 0, 0);
-                doc.text('Sales Report', doc.internal.pageSize.width/2, 25, { align: 'center' });
-    
-                const formatCurrency = (text) => {
-                    return text.replace('₹', 'RS ').trim();
-                };
-    
-                const stats = [
-                    ['Gross Sales:', formatCurrency(document.querySelector('#gross-sales-card .value').textContent)],
-                    ['Net Sales:', formatCurrency(document.querySelector('#net-sales-card .value').textContent)],
-                    ['Products Sold:', document.querySelector('#products-sold-card .value').textContent.trim()],
-                    ['Coupons Redeemed:', document.querySelector('#coupons-redeemed-card .value').textContent.trim()]
-                ];
-    
-                doc.autoTable({
-                    startY: 35,
-                    head: [['Metric', 'Value']],
-                    body: stats,
-                    theme: 'grid',
-                    headStyles: {
-                        fillColor: [59, 130, 246],
-                        textColor: [255, 255, 255],
-                        fontStyle: 'bold'
-                    },
-                    styles: {
-                        fontSize: 10,
-                        cellPadding: 5
-                    },
-                    columnStyles: {
-                        0: { cellWidth: 40 },
-                        1: { cellWidth: 40, halign: 'right' }
-                    }
-                });
-    
-                const orders = [];
-                const rows = document.querySelectorAll('table tbody tr');
-                
-                rows.forEach(row => {
-                    if (row.querySelector('.no-data')) return;
-                    
-                    try {
-                        const cells = Array.from(row.cells);
-                        if (cells.length >= 8) {
-                            const customerName = cells[0].textContent.trim();
-                            const originalAmount = formatCurrency(cells[2].textContent);
-                            const offerDiscount = cells[3].textContent.includes('-₹') ? formatCurrency(cells[3].textContent) : '0';
-                            const couponDiscount = cells[4].textContent.includes('-₹') ? formatCurrency(cells[4].textContent) : '0';
-                            const finalAmount = formatCurrency(cells[5].textContent);
-    
-                            orders.push([
-                                customerName,
-                                cells[1].textContent.trim(),
-                                originalAmount,
-                                offerDiscount,
-                                couponDiscount,
-                                finalAmount,
-                                cells[6].textContent.trim(),
-                                cells[7].textContent.trim()
-                            ]);
-                        }
-                    } catch (err) {
-                        console.error('Error processing row:', err);
-                    }
-                });
-    
-                if (orders.length > 0) {
-                    doc.autoTable({
-                        startY: doc.lastAutoTable.finalY + 10,
-                        head: [['Customer', 'Date', 'Original Amount', 'Offer Discount', 'Coupon Discount', 'Final Amount', 'Payment', 'Status']],
-                        body: orders,
-                        theme: 'grid',
-                        headStyles: {
-                            fillColor: [125, 184, 125],
-                            textColor: [255, 255, 255],
-                            fontStyle: 'bold'
-                        },
-                        styles: {
-                            fontSize: 8,
-                            cellPadding: 3
-                        },
-                        columnStyles: {
-                            0: { cellWidth: 35 },
-                            1: { cellWidth: 20 },
-                            2: { cellWidth: 20, halign: 'right' },
-                            3: { cellWidth: 20, halign: 'right' },
-                            4: { cellWidth: 20, halign: 'right' },
-                            5: { cellWidth: 20, halign: 'right' },
-                            6: { cellWidth: 20 },
-                            7: { cellWidth: 20 }
-                        }
-                    });
-                }
-    
-                const pageCount = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= pageCount; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setTextColor(128, 128, 128);
-                    doc.text(
-                        `Page ${i} of ${pageCount}`,
-                        doc.internal.pageSize.width / 2,
-                        doc.internal.pageSize.height - 10,
-                        { align: 'center' }
-                    );
-                    
-                    doc.text(
-                        'Generated by Luxe.com',
-                        14,
-                        doc.internal.pageSize.height - 10
-                    );
-                }
-    
-                const timeRange = document.querySelector('.tab.active').textContent.trim().toLowerCase();
-                const fileName = `sales_report_${timeRange}_${new Date().toISOString().split('T')[0]}.pdf`;
-                doc.save(fileName);
-    
-            } catch (error) {
-                console.error('Error generating PDF:', error);
-                alert('Error generating PDF. Please check the console for details.');
-            }
-        }
-    </script>
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        XLSX.utils.book_append_sheet(wb, ws, "Sales");
+        XLSX.writeFile(wb, `Sales_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+    }
+
+    function exportToPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        doc.setFontSize(16);
+        doc.text("LUXE.COM - Sales Report", 105, 15, { align: 'center' });
+
+        const rows = [];
+        document.querySelectorAll('table tbody tr').forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length === 0) return;
+            rows.push([...cells].map(td => td.innerText));
+        });
+
+        doc.autoTable({
+            head: [["Customer", "Date", "Original", "Offer", "Coupon", "Final", "Payment", "Status"]],
+            body: rows,
+            startY: 30,
+            styles: { fontSize: 8 }
+        });
+
+        doc.save(`Sales_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+    }
+</script>
 </body>
 </html>

@@ -25,8 +25,8 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>BRAND</th>
                     <th>LOGO</th>
+                    <th>BRAND NAME</th>
                     <th>STATUS</th>
                     <th>ACTIONS</th>
                 </tr>
@@ -196,7 +196,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Validation functions
         function validateForm(form, isEdit = false) {
             clearErrorMessages(form);
             const name = form.querySelector(isEdit ? '#editBrandName' : '#brandName').value.trim();
