@@ -153,6 +153,7 @@ body {
     grid-template-columns: 2fr 1fr;
     gap: 1.5rem;
     margin-bottom: 2rem;
+    padding-top: 30px;
 }
 
 .chart-card, .list-container {
@@ -162,11 +163,32 @@ body {
     padding: 1.5rem;
 }
 
+.chart-card {
+    position: relative;
+}
+
+.chart-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
 .chart-title, .list-title {
     font-size: 1.125rem;
     font-weight: 600;
     color: #f1f5f9;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-title i {
+    color: #667eea;
 }
 
 .table-wrapper {
@@ -195,7 +217,6 @@ body {
     top: 0;
 }
 
-
 .data-table tr:hover {
     background: rgba(255, 255, 255, 0.05);
 }
@@ -221,3 +242,4 @@ body {
         font-size: 0.875rem;
     }
 }
+

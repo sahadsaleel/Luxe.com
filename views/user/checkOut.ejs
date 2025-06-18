@@ -7,7 +7,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/checkout.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    
 </head>
 <body>
     <%- include('../../views/partials/user/header') %>
@@ -45,9 +44,9 @@
                                                     </div>
                                                 <% } %>
 
-                                                <div class="item-image">
-                                                    <img src="/img/placeholder.png" alt="Invalid Product" />
-                                                </div>
+                                               <div class="item-image">
+                                                    <img src="<%= item.productImage %>" alt="<%= item.productName || 'Product Image' %>" />
+                                               </div>
                                                 <div class="item-details">
                                                     <div class="item-top">
                                                         <div class="item-info">
@@ -180,7 +179,6 @@
                             </div>
                         </div>
 
-                        <!-- Payment Method -->
                         <div class="checkout-box">
                             <div class="box-header">
                                 <h2>Payment Method</h2>
@@ -300,7 +298,6 @@
         </div>
     </main>
 
-    <!-- Address Modal -->
     <div class="modal-overlay" id="addressModal">
         <div class="modal">
             <div class="modal-header">
@@ -320,19 +317,19 @@
                         <div class="form-group">
                             <label class="form-label" for="name">Full Name*</label>
                             <input type="text" class="form-control" id="name" name="name" required>
-                            <div class="error-message" id="nameError">Please enter the full name.</div>
+                            <div class="error-message" id="nameError"></div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label" for="phone">Phone Number *</label>
                             <input type="tel" class="form-control" id="phone" name="phone" required>
-                            <div class="error-message" id="phoneError">Please enter a valid phone number.</div>
+                            <div class="error-message" id="phoneError"></div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="altPhone">Alternate Phone Number *</label>
-                            <input type="tel" class="form-control" id="altPhone" name="altPhone" required>
-                            <div class="error-message" id="altPhoneError">Please enter a valid alternate phone number.</div>
+                            <label class="form-label" for="altPhone">Alternate Phone Number</label>
+                            <input type="tel" class="form-control" id="altPhone" name="altPhone">
+                            <div class="error-message" id="altPhoneError"></div>
                         </div>
                     </div>
 
@@ -349,31 +346,31 @@
                                 <option value="Work">Work</option>
                                 <option value="Other">Other</option>
                             </select>
-                            <div class="error-message" id="addressTypeError">Please select an address type.</div>
+                            <div class="error-message" id="addressTypeError"></div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label" for="landMark">Landmark *</label>
                             <input type="text" class="form-control" id="landMark" name="landMark" required>
-                            <div class="error-message" id="landMarkError">Please enter a landmark.</div>
+                            <div class="error-message" id="landMarkError"></div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label" for="city">City *</label>
                             <input type="text" class="form-control" id="city" name="city" required>
-                            <div class="error-message" id="cityError">Please enter your city.</div>
+                            <div class="error-message" id="cityError"></div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label" for="state">State *</label>
                             <input type="text" class="form-control" id="state" name="state" required>
-                            <div class="error-message" id="stateError">Please enter your state.</div>
+                            <div class="error-message" id="stateError"></div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label" for="pincode">Pincode *</label>
                             <input type="number" class="form-control" id="pincode" name="pincode" required>
-                            <div class="error-message" id="pincodeError">Please enter a valid pincode.</div>
+                            <div class="error-message" id="pincodeError"></div>
                         </div>
                     </div>
 
@@ -407,6 +404,24 @@
             const applyCouponBtn = document.getElementById('applyCouponBtn');
             const removeCouponBtn = document.getElementById('removeCouponBtn');
             const couponCodeInput = document.getElementById('couponCode');
+
+            const nameInput = document.getElementById('name');
+            const phoneInput = document.getElementById('phone');
+            const altPhoneInput = document.getElementById('altPhone');
+            const addressTypeInput = document.getElementById('addressType');
+            const landMarkInput = document.getElementById('landMark');
+            const cityInput = document.getElementById('city');
+            const stateInput = document.getElementById('state');
+            const pincodeInput = document.getElementById('pincode');
+
+            const nameError = document.getElementById('nameError');
+            const phoneError = document.getElementById('phoneError');
+            const altPhoneError = document.getElementById('altPhoneError');
+            const addressTypeError = document.getElementById('addressTypeError');
+            const landMarkError = document.getElementById('landMarkError');
+            const cityError = document.getElementById('cityError');
+            const stateError = document.getElementById('stateError');
+            const pincodeError = document.getElementById('pincodeError');
 
             function updateTotals() {
                 const selectedDelivery = document.querySelector('input[name="deliveryMethod"]:checked');
@@ -482,6 +497,14 @@
                 addressModal.classList.add('active');
                 document.body.style.overflow = 'hidden';
                 document.getElementById('modalTitle').textContent = title;
+
+                // Clear any previous error states
+                const formGroups = addressForm.querySelectorAll('.form-group');
+                formGroups.forEach(group => {
+                    group.classList.remove('invalid');
+                    const errorElement = group.querySelector('.error-message');
+                    if (errorElement) errorElement.textContent = '';
+                });
             }
 
             function closeAddressModal() {
@@ -489,7 +512,11 @@
                 document.body.style.overflow = '';
                 addressForm.reset();
                 const formGroups = addressForm.querySelectorAll('.form-group');
-                formGroups.forEach(group => group.classList.remove('invalid'));
+                formGroups.forEach(group => {
+                    group.classList.remove('invalid');
+                    const errorElement = group.querySelector('.error-message');
+                    if (errorElement) errorElement.textContent = '';
+                });
             }
 
             addAddressBtn?.addEventListener('click', () => openAddressModal('Add New Address'));
@@ -506,14 +533,14 @@
                         document.getElementById('modalTitle').textContent = 'Edit Address';
                         addressForm.action = `/address/edit/${addressId}`;
                         document.getElementById('addressId').value = addressId;
-                        document.getElementById('name').value = address.name;
-                        document.getElementById('phone').value = address.phone;
-                        document.getElementById('altPhone').value = address.altPhone;
-                        document.getElementById('addressType').value = address.addressType;
-                        document.getElementById('landMark').value = address.landMark;
-                        document.getElementById('city').value = address.city;
-                        document.getElementById('state').value = address.state;
-                        document.getElementById('pincode').value = address.pincode;
+                        document.getElementById('name').value = address.name || '';
+                        document.getElementById('phone').value = address.phone || '';
+                        document.getElementById('altPhone').value = address.altPhone || '';
+                        document.getElementById('addressType').value = address.addressType || '';
+                        document.getElementById('landMark').value = address.landMark || '';
+                        document.getElementById('city').value = address.city || '';
+                        document.getElementById('state').value = address.state || '';
+                        document.getElementById('pincode').value = address.pincode || '';
                         addressModal.classList.add('active');
                         document.body.style.overflow = 'hidden';
                     } catch (error) {
@@ -529,39 +556,192 @@
                 });
             });
 
-            function validateAddressForm() {
-                let isValid = true;
-                const fields = [
-                    { id: 'name', errorId: 'nameError', message: 'Please enter the full name.' },
-                    { id: 'phone', errorId: 'phoneError', message: 'Please enter a valid phone number.', pattern: /^\+?[6-9][\d\s-]{9,}$/ },
-                    { id: 'altPhone', errorId: 'altPhoneError', message: 'Please enter a valid alternate phone number.', pattern: /^\+?[6-9][\d\s-]{9,}$/ },
-                    { id: 'addressType', errorId: 'addressTypeError', message: 'Please select an address type.' },
-                    { id: 'landMark', errorId: 'landMarkError', message: 'Please enter a landmark.' },
-                    { id: 'city', errorId: 'cityError', message: 'Please enter your city.' },
-                    { id: 'state', errorId: 'stateError', message: 'Please enter your state.' },
-                    { id: 'pincode', errorId: 'pincodeError', message: 'Please enter a valid pincode.', pattern: /^[0-9]{6}$/ }
-                ];
+            function validateName() {
+                const value = nameInput.value.trim();
+                const namePattern = /^[A-Za-z\s]+$/;
+                const formGroup = nameInput.closest('.form-group');
 
-                fields.forEach(field => {
-                    const input = document.getElementById(field.id);
-                    const formGroup = input.closest('.form-group');
-                    const errorElement = document.getElementById(field.errorId);
-
-                    if (!input.value.trim() || (field.pattern && !field.pattern.test(input.value))) {
-                        formGroup.classList.add('invalid');
-                        errorElement.textContent = field.message;
-                        isValid = false;
-                    } else {
-                        formGroup.classList.remove('invalid');
-                    }
-                });
-
-                return isValid;
+                if (value === "") {
+                    nameError.textContent = "Full name is required";
+                    formGroup.classList.add('invalid');
+                    return false;
+                } else if (!namePattern.test(value)) {
+                    nameError.textContent = "Please enter a valid name (letters only)";
+                    formGroup.classList.add('invalid');
+                    return false;
+                } else {
+                    nameError.textContent = "";
+                    formGroup.classList.remove('invalid');
+                    return true;
+                }
             }
+
+            function validatePhone() {
+                const value = phoneInput.value.trim();
+                const phonePattern = /^[6-9]\d{9}$/;
+                const formGroup = phoneInput.closest('.form-group');
+
+                if (value === "") {
+                    phoneError.textContent = "Phone number is required";
+                    formGroup.classList.add('invalid');
+                    return false;
+                } else if (!phonePattern.test(value)) {
+                    phoneError.textContent = "Phone number must start with 6, 7, 8, or 9 and be exactly 10 digits";
+                    formGroup.classList.add('invalid');
+                    return false;
+                } else {
+                    phoneError.textContent = "";
+                    formGroup.classList.remove('invalid');
+                    return true;
+                }
+            }
+
+            function validateAltPhone() {
+                const value = altPhoneInput.value.trim();
+                const phonePattern = /^[6-9]\d{9}$/;
+                const formGroup = altPhoneInput.closest('.form-group');
+
+                if (value === "") {
+                    altPhoneError.textContent = "";
+                    formGroup.classList.remove('invalid');
+                    return true;
+                } else if (!phonePattern.test(value)) {
+                    altPhoneError.textContent = "Alternate phone number must start with 6, 7, 8, or 9 and be exactly 10 digits";
+                    formGroup.classList.add('invalid');
+                    return false;
+                } else {
+                    altPhoneError.textContent = "";
+                    formGroup.classList.remove('invalid');
+                    return true;
+                }
+            }
+
+            function validateAddressType() {
+                const value = addressTypeInput.value.trim();
+                const formGroup = addressTypeInput.closest('.form-group');
+
+                if (value === "") {
+                    addressTypeError.textContent = "Address type is required";
+                    formGroup.classList.add('invalid');
+                    return false;
+                } else {
+                    addressTypeError.textContent = "";
+                    formGroup.classList.remove('invalid');
+                    return true;
+                }
+            }
+
+            function validateLandMark() {
+                const value = landMarkInput.value.trim();
+                const formGroup = landMarkInput.closest('.form-group');
+
+                if (value === "") {
+                    landMarkError.textContent = "Landmark is required";
+                    formGroup.classList.add('invalid');
+                    return false;
+                } else {
+                    landMarkError.textContent = "";
+                    formGroup.classList.remove('invalid');
+                    return true;
+                }
+            }
+
+            function validateCity() {
+                const value = cityInput.value.trim();
+                const formGroup = cityInput.closest('.form-group');
+
+                if (value === "") {
+                    cityError.textContent = "City is required";
+                    formGroup.classList.add('invalid');
+                    return false;
+                } else {
+                    cityError.textContent = "";
+                    formGroup.classList.remove('invalid');
+                    return true;
+                }
+            }
+
+            function validateState() {
+                const value = stateInput.value.trim();
+                const formGroup = stateInput.closest('.form-group');
+
+                if (value === "") {
+                    stateError.textContent = "State is required";
+                    formGroup.classList.add('invalid');
+                    return false;
+                } else {
+                    stateError.textContent = "";
+                    formGroup.classList.remove('invalid');
+                    return true;
+                }
+            }
+
+            function validatePincode() {
+                const value = pincodeInput.value.trim();
+                const pincodePattern = /^[0-9]{6}$/;
+                const formGroup = pincodeInput.closest('.form-group');
+
+                if (value === "") {
+                    pincodeError.textContent = "Pincode is required";
+                    formGroup.classList.add('invalid');
+                    return false;
+                } else if (!pincodePattern.test(value)) {
+                    pincodeError.textContent = "Please enter a valid 6-digit pincode";
+                    formGroup.classList.add('invalid');
+                    return false;
+                } else {
+                    pincodeError.textContent = "";
+                    formGroup.classList.remove('invalid');
+                    return true;
+                }
+            }
+
+            function validateAddressForm() {
+                const isNameValid = validateName();
+                const isPhoneValid = validatePhone();
+                const isAltPhoneValid = validateAltPhone();
+                const isAddressTypeValid = validateAddressType();
+                const isLandMarkValid = validateLandMark();
+                const isCityValid = validateCity();
+                const isStateValid = validateState();
+                const isPincodeValid = validatePincode();
+
+                return isNameValid && isPhoneValid && isAltPhoneValid && isAddressTypeValid && isLandMarkValid && isCityValid && isStateValid && isPincodeValid;
+            }
+
+            nameInput.addEventListener('input', validateName);
+            phoneInput.addEventListener('input', validatePhone);
+            altPhoneInput.addEventListener('input', validateAltPhone);
+            addressTypeInput.addEventListener('input', validateAddressType);
+            landMarkInput.addEventListener('input', validateLandMark);
+            cityInput.addEventListener('input', validateCity);
+            stateInput.addEventListener('input', validateState);
+            pincodeInput.addEventListener('input', validatePincode);
 
             addressForm?.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                if (!validateAddressForm()) return;
+
+                // Trim all input values before validation
+                nameInput.value = nameInput.value.trim();
+                phoneInput.value = phoneInput.value.trim();
+                altPhoneInput.value = altPhoneInput.value.trim();
+                addressTypeInput.value = addressTypeInput.value.trim();
+                landMarkInput.value = landMarkInput.value.trim();
+                cityInput.value = cityInput.value.trim();
+                stateInput.value = stateInput.value.trim();
+                pincodeInput.value = pincodeInput.value.trim();
+
+                if (!validateAddressForm()) {
+                    Toastify({
+                        text: 'Please fix the errors in the form.',
+                        duration: 3000,
+                        gravity: 'top',
+                        position: 'right',
+                        backgroundColor: '#dc3545',
+                        stopOnFocus: true
+                    }).showToast();
+                    return;
+                }
 
                 try {
                     const formData = new FormData(addressForm);
@@ -574,7 +754,7 @@
                         state: data.state,
                         pincode: data.pincode,
                         phone: data.phone,
-                        altPhone: data.altPhone
+                        altPhone: data.altPhone || ''
                     };
 
                     const response = await fetch(addressForm.action, {
@@ -789,7 +969,6 @@
                     }, 2000);
                 });
             }
-
 
             function showToast(message, type = 'success') {
                 Toastify({

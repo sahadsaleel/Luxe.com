@@ -562,7 +562,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script>
-    // Initialize countdown timers for limited-time offers
     function startCountdown(itemId, endDate) {
       const timerElement = document.getElementById(`timer-${itemId}`);
       if (!timerElement || !endDate) return;
@@ -590,7 +589,6 @@
       }, 1000);
     }
 
-    // Initialize countdowns for items with limited-time offers
     <% cartItems.forEach(item => { %>
       <% if (item.offerApplied && item.offerApplied.discountPercentage >= 40 && item.offerApplied.endDate) { %>
         console.log('Starting countdown for item <%= item._id %> with endDate <%= item.offerApplied.endDate %>');
@@ -598,7 +596,6 @@
       <% } %>
     <% }) %>
 
-    // Debounce function to prevent rapid clicks
     function debounce(func, wait) {
       let timeout;
       return function (...args) {
@@ -607,7 +604,6 @@
       };
     }
 
-    // Show toast notifications
     function showToast(message, type) {
       Toastify({
         text: message,
@@ -619,13 +615,11 @@
       }).showToast();
     }
 
-    // Update cart summary dynamically
     function updateCartSummary(cart) {
       document.getElementById('cart-item-count').textContent = cart.items.length;
       document.getElementById('summary-item-count').textContent = cart.items.length;
       document.getElementById('subtotal-value').textContent = `₹${Number(cart.subtotal).toFixed(2)}`;
       
-      // Update offer discount
       const offerDiscountRow = document.querySelector('.summary-row.discount-row');
       if (cart.offerDiscount > 0) {
         if (!offerDiscountRow) {
@@ -646,22 +640,18 @@
         offerDiscountRow.remove();
       }
       
-      // Update gift wrap total
       const giftWrapElement = document.getElementById('gift-wrap-value');
       if (giftWrapElement && cart.giftWrapTotal > 0) {
         giftWrapElement.textContent = `₹${Number(cart.giftWrapTotal).toFixed(2)}`;
       }
       
-      // Update coupon discount
       const couponRow = document.querySelector('.summary-row.discount-row:last-of-type');
       const couponAppliedDiv = document.querySelector('.coupon-applied');
       
-      // Remove existing coupon elements if no coupon is applied
       if (!cart.appliedCoupon) {
         if (couponRow) couponRow.remove();
         if (couponAppliedDiv) couponAppliedDiv.remove();
         
-        // Enable coupon inputs
         const promoField = document.querySelector('.promo-field');
         const applyBtn = document.getElementById('apply-coupon-btn');
         const modalBtn = document.querySelector('.coupon-modal-btn');
@@ -670,7 +660,6 @@
         if (applyBtn) applyBtn.disabled = false;
         if (modalBtn) modalBtn.disabled = false;
       } else {
-        // Update or add coupon discount row
         if (!couponRow) {
           const newRow = document.createElement('div');
           newRow.className = 'summary-row discount-row';
@@ -686,7 +675,6 @@
           }
         }
 
-        // Update or add coupon applied info
         if (!couponAppliedDiv) {
           const promoContent = document.querySelector('.promo-content');
           if (promoContent) {
@@ -701,7 +689,6 @@
             `;
             promoContent.appendChild(newCouponApplied);
             
-            // Add event listener to new remove button
             const newRemoveBtn = newCouponApplied.querySelector('#remove-coupon-btn');
             if (newRemoveBtn) {
               newRemoveBtn.addEventListener('click', removeCoupon);
@@ -717,7 +704,6 @@
           }
         }
 
-        // Disable coupon inputs
         const promoField = document.querySelector('.promo-field');
         const applyBtn = document.getElementById('apply-coupon-btn');
         const modalBtn = document.querySelector('.coupon-modal-btn');
@@ -727,7 +713,6 @@
         if (modalBtn) modalBtn.disabled = true;
       }
       
-      // Update total savings
       const savingsRow = document.querySelector('.savings-row');
       if (cart.totalSavings > 0) {
         if (!savingsRow) {
@@ -745,11 +730,9 @@
         savingsRow.remove();
       }
       
-      // Update final total
       document.getElementById('total-value').textContent = `₹${Number(cart.total).toFixed(2)}`;
     }
 
-    // Quantity update function
     async function updateQuantity(itemId, quantity, btn) {
       try {
         const response = await fetch('/cart/update-quantity', {
@@ -768,7 +751,6 @@
             if (couponAppliedDiv) {
               couponAppliedDiv.remove();
             }
-            // Enable coupon inputs
             document.querySelector('.promo-field').disabled = false;
             document.getElementById('apply-coupon-btn').disabled = false;
             document.querySelector('.coupon-modal-btn').disabled = false;
@@ -936,7 +918,6 @@
       }
     }
 
-    // Remove item from cart
     async function removeFromCart(itemId) {
       if (!itemId) {
         showToast('Invalid item ID', 'error');
@@ -967,9 +948,7 @@
       }
     }
 
-    // Event listeners
     document.addEventListener('DOMContentLoaded', () => {
-      // Promo toggle
       const promoToggle = document.querySelector('.promo-toggle');
       const promoContent = document.querySelector('.promo-content');
       if (promoToggle && promoContent) {

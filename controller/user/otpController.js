@@ -143,7 +143,7 @@ const verifyForgotPasswordOtp = async (req, res) => {
             });
         }
 
-        if (Date.now() > resetData.timestamp + 60000) { // 60 seconds expiry
+        if (Date.now() > resetData.timestamp + 60000) { 
             delete req.session.resetPasswordData;
             return res.status(400).json({
                 success: false,

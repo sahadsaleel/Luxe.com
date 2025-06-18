@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <link rel="stylesheet" href="/css/adminDashboard.css">
@@ -21,7 +22,6 @@
     </div>
 
     <div class="main-content dashboard-content">
-
         <div class="top-bar">
             <div class="page-title">Admin Dashboard</div>
             <div>
@@ -33,19 +33,19 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-header">Revenue <i class="fas fa-rupee-sign"></i></div>
-                <div class="stat-value">₹<%= salesData[currentFilter].stats.revenue.toLocaleString('en-IN') %></div>
+                <div class="stat-value">₹<%= salesData[currentFilter]?.stats?.revenue?.toLocaleString('en-IN') || '0' %></div>
             </div>
             <div class="stat-card">
                 <div class="stat-header">Orders <i class="fas fa-shopping-cart"></i></div>
-                <div class="stat-value"><%= salesData[currentFilter].stats.orders %></div>
+                <div class="stat-value"><%= salesData[currentFilter]?.stats?.orders || '0' %></div>
             </div>
             <div class="stat-card">
                 <div class="stat-header">Customers <i class="fas fa-users"></i></div>
-                <div class="stat-value"><%= salesData[currentFilter].stats.customers %></div>
+                <div class="stat-value"><%= salesData[currentFilter]?.stats?.customers || '0' %></div>
             </div>
             <div class="stat-card">
                 <div class="stat-header">Growth <i class="fas fa-chart-line"></i></div>
-                <div class="stat-value"><%= salesData[currentFilter].stats.growth %>%</div>
+                <div class="stat-value"><%= salesData[currentFilter]?.stats?.growth || '0' %>%</div>
             </div>
         </div>
 
@@ -58,111 +58,175 @@
 
         <div class="list-container">
             <div class="list-title"><i class="fas fa-book"></i> Ledger Book</div>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Total Revenue</th>
-                        <th>Total Orders</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% ledgerData.forEach(entry => { %>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <td><%= entry._id %></td>
-                            <td>₹<%= entry.totalRevenue.toLocaleString('en-IN') %></td>
-                            <td><%= entry.totalOrders %></td>
+                            <th>Date</th>
+                            <th>Total Revenue</th>
+                            <th>Total Orders</th>
                         </tr>
-                    <% }) %>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <% ledgerData.forEach(entry => { %>
+                            <tr>
+                                <td><%= entry._id || '-' %></td>
+                                <td>₹<%= entry.totalRevenue?.toLocaleString('en-IN') || '0' %></td>
+                                <td><%= entry.totalOrders || '0' %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="chart-section">
             <div class="list-container">
                 <div class="list-title"><i class="fas fa-star"></i> Top 10 Products</div>
-                <table class="data-table">
-                    <thead>
-                        <tr><th>Rank</th><th>Product</th><th>Sales</th><th>Revenue</th></tr>
-                    </thead>
-                    <tbody>
-                        <% topProducts.forEach((p, i) => { %>
-                        <tr>
-                            <td><%= i+1 %></td><td><%= p.name %></td><td><%= p.sales %></td>
-                            <td>₹<%= p.revenue.toLocaleString('en-IN') %></td>
-                        </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Rank</th><th>Product</th><th>Sales</th><th>Revenue</th></tr>
+                        </thead>
+                        <tbody>
+                            <% topProducts.forEach((p, i) => { %>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td><%= p.name || '-' %></td>
+                                    <td><%= p.sales || '0' %></td>
+                                    <td>₹<%= p.revenue?.toLocaleString('en-IN') || '0' %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="list-container">
                 <div class="list-title"><i class="fas fa-list"></i> Top 10 Categories</div>
-                <table class="data-table">
-                    <thead>
-                        <tr><th>Rank</th><th>Category</th><th>Sales</th><th>Revenue</th></tr>
-                    </thead>
-                    <tbody>
-                        <% topCategories.forEach((c, i) => { %>
-                        <tr>
-                            <td><%= i+1 %></td><td><%= c.name %></td><td><%= c.sales %></td>
-                            <td>₹<%= c.revenue.toLocaleString('en-IN') %></td>
-                        </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Rank</th><th>Category</th><th>Sales</th><th>Revenue</th></tr>
+                        </thead>
+                        <tbody>
+                            <% topCategories.forEach((c, i) => { %>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td><%= c.name || '-' %></td>
+                                    <td><%= c.sales || '0' %></td>
+                                    <td>₹<%= c.revenue?.toLocaleString('en-IN') || '0' %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="list-container">
                 <div class="list-title"><i class="fas fa-tags"></i> Top 10 Brands</div>
-                <table class="data-table">
-                    <thead>
-                        <tr><th>Rank</th><th>Brand</th><th>Sales</th><th>Revenue</th></tr>
-                    </thead>
-                    <tbody>
-                        <% topBrands.forEach((b, i) => { %>
-                        <tr>
-                            <td><%= i+1 %></td><td><%= b.name %></td><td><%= b.sales %></td>
-                            <td>₹<%= b.revenue.toLocaleString('en-IN') %></td>
-                        </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Rank</th><th>Brand</th><th>Sales</th><th>Revenue</th></tr>
+                        </thead>
+                        <tbody>
+                            <% topBrands.forEach((b, i) => { %>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td><%= b.name || '-' %></td>
+                                    <td><%= b.sales || '0' %></td>
+                                    <td>₹<%= b.revenue?.toLocaleString('en-IN') || '0' %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-
     </div>
 
     <script>
-        const ctx = document.getElementById('salesChart').getContext('2d');
-        const salesChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: <%- JSON.stringify(salesData[currentFilter].labels) %>,
-                datasets: [{
-                    label: 'Sales Revenue',
-                    data: <%- JSON.stringify(salesData[currentFilter].data) %>,
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('salesChart')?.getContext('2d');
+            if (!ctx) return;
+
+            const datasets = [
+                {
+                    label: 'Current Period Sales',
+                    data: <%- JSON.stringify(salesData[currentFilter]?.data || []) %>,
                     borderColor: '#667eea',
                     backgroundColor: 'rgba(102, 126, 234, 0.2)',
                     borderWidth: 2,
                     tension: 0.4,
                     fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'top' },
-                    tooltip: {
-                        callbacks: {
-                            label: context => `₹${context.parsed.y.toLocaleString('en-IN')}`
+                }
+            ];
+
+            <% if (currentFilter === 'monthly' && salesData[currentFilter]?.prevData?.length) { %>
+                datasets.push({
+                    label: 'Previous Month Sales',
+                    data: <%- JSON.stringify(salesData[currentFilter].prevData) %>,
+                    borderColor: '#f56565',
+                    backgroundColor: 'rgba(245, 101, 101, 0.2)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                });
+            <% } %>
+
+            const salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: <%- JSON.stringify(salesData[currentFilter]?.labels || []) %>,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { 
+                            position: 'top',
+                            labels: {
+                                color: '#e2e8f0'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: context => `₹${context.parsed.y.toLocaleString('en-IN')}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Revenue (₹)',
+                                color: '#e2e8f0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#e2e8f0'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: '<%= currentFilter.charAt(0).toUpperCase() + currentFilter.slice(1) %> Period',
+                                color: '#e2e8f0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#e2e8f0'
+                            }
                         }
                     }
-                },
-                scales: {
-                    y: { beginAtZero: true }
                 }
-            }
+            });
         });
     </script>
 
@@ -170,28 +234,38 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         async function generateLedgerPDF() {
-            const { jsPDF } = window.jspdf;
-            const element = document.querySelector(".list-container");
-            const canvas = await html2canvas(element, { scale: 2 });
-            const imgData = canvas.toDataURL("image/png");
-            const pdf = new jsPDF("p", "mm", "a4");
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-            pdf.save("Ledger.pdf");
+            try {
+                const { jsPDF } = window.jspdf;
+                const element = document.querySelector(".list-container");
+                if (!element) throw new Error('Ledger container not found');
+                const canvas = await html2canvas(element, { scale: 2 });
+                const imgData = canvas.toDataURL("image/png");
+                const pdf = new jsPDF("p", "mm", "a4");
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+                pdf.save("Ledger.pdf");
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Failed to generate PDF. Please try again.');
+            }
         }
-    </script>
 
-    <script>
         function exportLedgerExcel() {
-            let table = document.querySelector('.list-container table').outerHTML;
-            let data_type = 'data:application/vnd.ms-excel';
-            let a = document.createElement('a');
-            a.href = data_type + ', ' + encodeURIComponent(table);
-            a.download = 'Ledger.xls';
-            a.click();
+            try {
+                const table = document.querySelector('.list-container table');
+                if (!table) throw new Error('Table not found');
+                const tableHTML = table.outerHTML.replace(/ /g, '%20');
+                const data_type = 'data:application/vnd.ms-excel';
+                const a = document.createElement('a');
+                a.href = data_type + ', ' + tableHTML;
+                a.download = 'Ledger.xls';
+                a.click();
+            } catch (error) {
+                console.error('Error exporting Excel:', error);
+                alert('Failed to export Excel. Please try again.');
+            }
         }
     </script>
-
 </body>
 </html>

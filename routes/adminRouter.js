@@ -9,7 +9,7 @@ const orderController = require('../controller/admin/orderController');
 const couponController = require('../controller/admin/couponController');
 const offerController = require('../controller/admin/offerController'); 
 const { uploadSingleImage, uploadMultipleImages } = require('../helpers/multer');
-const { userAuth, adminAuth } = require('../middleware/auth');
+const { adminAuth } = require('../middleware/auth');
 
 
 router.post('/test-cloudinary', adminAuth, uploadSingleImage, async (req, res) => {
@@ -29,7 +29,7 @@ router.post('/test-cloudinary', adminAuth, uploadSingleImage, async (req, res) =
   }
 });
 
-// Login management
+
 router.get('/login', adminController.loadLogin);
 router.post('/login', adminController.login);
 router.get('/dashboard', adminAuth, adminController.loadDashboard);

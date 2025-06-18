@@ -1,43 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My luxe.com Account</title>
-    <link rel="stylesheet" href="/css/login.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My luxe.com Account</title>
+  <link rel="stylesheet" href="/css/login.css"/>
+  <style>
+    .error-text {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="/img/logo.png" alt="luxe.com Logo" class="logo-img">
+  <header>
+    <div class="logo">
+      <img src="/img/logo.png" alt="luxe.com Logo" class="logo-img"/>
+    </div>
+    <a href="#" class="contact-us">+ contact us</a>
+  </header>
+
+  <main>
+    <div class="login-container">
+      <h1>MY LUXE.COM ACCOUNT</h1>
+      <% if (message && message.trim() !== '') { %>
+        <p class="error-message" style="color: red; margin-bottom: 10px;"><%= message %></p>
+      <% } %>
+
+      <a class="social-btn google-btn" href="/auth/google">
+        <img src="/img/Google-Logo-PNG-HD-1.png" alt="Google Logo" class="google-logo"/>
+        <span>Continue with Google</span>
+      </a>
+
+      <div class="or-separator">OR</div>
+      <p class="instruction">Continue with your email address</p>
+      <p class="sub-instruction">
+        Sign in with your email and password or create a profile if you are new.
+      </p>
+
+      <form id="loginForm" action="/login" method="POST" novalidate>
+        <div class="form-group">
+          <input type="email" id="email" name="email" placeholder="EMAIL*"/>
+          <div id="emailError" class="error-text"></div>
         </div>
-        <a href="#" class="contact-us">+ contact us</a>
-    </header>
-    <main>
-        <div class="login-container">
-            <h1>MY LUXE.COM ACCOUNT</h1>
-            <% if (message && message.trim() !== '') { %>
-                <p class="error-message" style="color: red; margin-bottom: 10px;"><%= message %></p>
-            <% } %>
-            <a class="social-btn google-btn" href="/auth/google">
-                <img src="/img/Google-Logo-PNG-HD-1.png" alt="Google Logo" class="google-logo">
-                <span>Continue with Google</span>
-            </a>
-            <div class="or-separator">OR</div>
-            <p class="instruction">Continue with your email address</p>
-            <p class="sub-instruction">Sign in with your email and password or create a profile if you are new.</p>
-            <form action="/login" method="POST">
-                <div class="form-group">
-                    <input type="email" id="email" name="email" placeholder="EMAIL*" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="password" name="password" placeholder="PASSWORD*" required>
-                </div>
-                <a href="/forgot-password" class="forgot-password">Forgot your password?</a>
-                <button type="submit" class="continue-btn">CONTINUE</button>
-            </form>
-            <p class="create-account">Don't have a My luxe.com account? <a href="/signup">Create an Account</a></p>
+        <div class="form-group">
+          <input type="password" id="password" name="password" placeholder="PASSWORD*"/>
+          <div id="passwordError" class="error-text"></div>
         </div>
-    </main>
+        <a href="/forgot-password" class="forgot-password">Forgot your password?</a>
+        <button type="submit" class="continue-btn">CONTINUE</button>
+      </form>
+
+      <p class="create-account">
+        Don't have a My luxe.com account? <a href="/signup">Create an Account</a>
+      </p>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const emailError = document.getElementById('emailError');
+      const passwordError = document.getElementById('passwordError');
+
+      emailError.textContent = '';
+      passwordError.textContent = '';
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      emailInput.value = email;
+      passwordInput.value = password;
+
+      let hasError = false;
+
+      if (email === '') {
+        emailError.textContent = 'Email is required.';
+        hasError = true;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailError.textContent = 'Please enter a valid email address.';
+        hasError = true;
+      }
+
+      if (password === '') {
+        passwordError.textContent = 'Password is required.';
+        hasError = true;
+      }
+
+      if (hasError) {
+        e.preventDefault(); 
+      }
+    });
+  </script>
 </body>
 </html>

@@ -89,14 +89,32 @@ const loadDashboard = async (req, res) => {
 
         const salesData = {};
 
+        function calculateGrowth(current, previous) {
+            if (previous === 0) return current > 0 ? 100 : 0;
+            return +(((current - previous) / previous) * 100).toFixed(2);
+        }
+
         for (const filter of filters) {
             let matchStage = { status: 'Delivered' };
+            let prevMatchStage = { status: 'Delivered' };
+
             const now = new Date();
+            const end = new Date(); 
+            const start = new Date();
 
-            if (filter === 'weekly') matchStage.createdOn = { $gte: new Date(now - 7 * 24 * 60 * 60 * 1000) };
-            else if (filter === 'monthly') matchStage.createdOn = { $gte: new Date(now.setMonth(now.getMonth() - 1)) };
-            else if (filter === 'yearly') matchStage.createdOn = { $gte: new Date(now.setFullYear(now.getFullYear() - 1)) };
+            if (filter === 'weekly') start.setDate(now.getDate() - 7);
+            else if (filter === 'monthly') start.setMonth(now.getMonth() - 1);
+            else if (filter === 'yearly') start.setFullYear(now.getFullYear() - 1);
 
+            matchStage.createdOn = { $gte: start, $lte: end };
+
+            const diff = end.getTime() - start.getTime();
+            const prevStart = new Date(start.getTime() - diff);
+            const prevEnd = new Date(start);
+
+            prevMatchStage.createdOn = { $gte: prevStart, $lt: prevEnd };
+
+            // Current period aggregation
             const aggregation = await Order.aggregate([
                 { $match: matchStage },
                 {
@@ -113,10 +131,31 @@ const loadDashboard = async (req, res) => {
                 { $sort: { _id: 1 } }
             ]);
 
+            // Previous period aggregation (only for monthly filter)
+            let prevAggregation = [];
+            if (filter === 'monthly') {
+                prevAggregation = await Order.aggregate([
+                    { $match: prevMatchStage },
+                    {
+                        $group: {
+                            _id: {
+                                $dateToString: {
+                                    format: '%Y-%m',
+                                    date: '$createdOn',
+                                }
+                            },
+                            totalSales: { $sum: '$finalAmount' }
+                        }
+                    },
+                    { $sort: { _id: 1 } }
+                ]);
+            }
+
             const labels = aggregation.map(item => item._id);
             const data = aggregation.map(item => item.totalSales);
+            const prevData = prevAggregation.map(item => item.totalSales);
 
-            const statsAggregation = await Order.aggregate([
+            const currentStats = await Order.aggregate([
                 { $match: matchStage },
                 {
                     $group: {
@@ -128,14 +167,27 @@ const loadDashboard = async (req, res) => {
                 }
             ]);
 
-            const revenue = statsAggregation[0]?.revenue || 0;
-            const orders = statsAggregation[0]?.orders || 0;
-            const customers = statsAggregation[0]?.customers?.length || 0;
+            const prevStats = await Order.aggregate([
+                { $match: prevMatchStage },
+                {
+                    $group: {
+                        _id: null,
+                        revenue: { $sum: '$finalAmount' }
+                    }
+                }
+            ]);
+
+            const revenue = currentStats[0]?.revenue || 0;
+            const orders = currentStats[0]?.orders || 0;
+            const customers = currentStats[0]?.customers?.length || 0;
+            const prevRevenue = prevStats[0]?.revenue || 0;
+            const growth = calculateGrowth(revenue, prevRevenue);
 
             salesData[filter] = {
                 labels,
                 data,
-                stats: { revenue, orders, customers, growth: 0 } 
+                prevData: filter === 'monthly' ? prevData : undefined,
+                stats: { revenue, orders, customers, growth }
             };
         }
 
@@ -246,6 +298,7 @@ const loadDashboard = async (req, res) => {
             { $sort: { sales: -1, revenue: -1 } },
             { $limit: 10 }
         ]);
+
         const ledgerData = await Order.aggregate([
             { $match: { status: 'Delivered' } },
             {
@@ -272,6 +325,7 @@ const loadDashboard = async (req, res) => {
         res.status(500).send('Error loading dashboard');
     }
 };
+
 
 
 const loadSales = async (req, res) => {

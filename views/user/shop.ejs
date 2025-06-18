@@ -11,128 +11,132 @@
 <body>
   <%- include('../../views/partials/user/header') %>
   <nav>
-    <button class="filter-button" id="filterBtn">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="4" y1="21" x2="4" y2="14"></line>
-        <line x1="4" y1="10" x2="4" y2="3"></line>
-        <line x1="12" y1="21" x2="12" y2="12"></line>
-        <line x1="12" y1="8" x2="12" y2="3"></line>
-        <line x1="20" y1="21" x2="20" y2="16"></line>
-        <line x1="20" y1="12" x2="20" y2="3"></line>
-        <line x1="1" y1="14" x2="7" y2="14"></line>
-        <line x1="9" y1="8" x2="15" y2="8"></line>
-        <line x1="17" y1="16" x2="23" y2="16"></line>
-      </svg>
-      FILTER
-    </button>
-    <button class="sort-button" id="sortBtn">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M11 5h10"></path>
-        <path d="M11 9h7"></path>
-        <path d="M11 13h4"></path>
-        <path d="M3 17l3 3 3-3"></path>
-        <path d="M6 18V5"></path>
-      </svg>
-      SORT
-    </button>
+    <div class="nav-container">
+      <button class="filter-button" id="filterBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="21" x2="4" y2="14"></line>
+          <line x1="4" y1="10" x2="4" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12" y2="3"></line>
+          <line x1="20" y1="21" x2="20" y2="16"></line>
+          <line x1="20" y1="12" x2="20" y2="3"></line>
+          <line x1="1" y1="14" x2="7" y2="14"></line>
+          <line x1="9" y1="8" x2="15" y2="8"></line>
+          <line x1="17" y1="16" x2="23" y2="16"></line>
+        </svg>
+        FILTER
+      </button>
+      <button class="sort-button" id="sortBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5h10"></path>
+          <path d="M11 9h7"></path>
+          <path d="M11 13h4"></path>
+          <path d="M3 17l3 3 3-3"></path>
+          <path d="M6 18V5"></path>
+        </svg>
+        SORT
+      </button>
+    </div>
   </nav>
   
-  <!-- Filter Modal Structure -->
-  <div class="modal filter-modal" id="filterModal">
-    <div class="modal-header">
-      <h2>SHOW FILTERS</h2>
-      <button class="close-button" id="closeFilterBtn">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="filter-section">
-        <div class="filter-title" data-target="brandOptions">
-          <span>BRANDS</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-            <polyline points="18 15 12 9 6 15"></polyline>
-          </svg>
+  <div class="modal filter-modal" id="filterModal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>SHOW FILTERS</h2>
+        <button class="close-button" id="closeFilterBtn">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="filter-section">
+          <div class="filter-title" data-target="brandOptions">
+            <span>BRANDS</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+          </div>
+          <div class="filter-options" id="brandOptions">
+            <% if (brands && Array.isArray(brands) && brands.length > 0) { %>
+              <% brands.forEach(brand => { %>
+                <label class="filter-option">
+                  <input type="checkbox" name="brandf" value="<%= brand._id %>" <%= currentFilters.brandf.includes(brand._id.toString()) ? 'checked' : '' %>>
+                  <%= brand.brandName %>
+                </label>
+              <% }) %>
+            <% } else { %>
+              <p>No listed brands available</p>
+            <% } %>
+          </div>
         </div>
-        <div class="filter-options" id="brandOptions">
-          <% if (brands && Array.isArray(brands) && brands.length > 0) { %>
-            <% brands.forEach(brand => { %>
-              <label class="filter-option">
-                <input type="checkbox" name="brandf" value="<%= brand._id %>" <%= currentFilters.brandf.includes(brand._id.toString()) ? 'checked' : '' %>>
-                <%= brand.brandName %>
-              </label>
-            <% }) %>
-          <% } else { %>
-            <p>No listed brands available</p>
-          <% } %>
+        
+        <div class="filter-section">
+          <div class="filter-title" data-target="categoryOptions">
+            <span>CATEGORY</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+          </div>
+          <div class="filter-options" id="categoryOptions">
+            <% if (categories && Array.isArray(categories) && categories.length > 0) { %>
+              <% categories.forEach(category => { %>
+                <label class="filter-option">
+                  <input type="checkbox" name="categoryf" value="<%= category._id %>" <%= currentFilters.categoryf.includes(category._id.toString()) ? 'checked' : '' %>>
+                  <%= category.name %>
+                </label>
+              <% }) %>
+            <% } else { %>
+              <p>No listed categories available</p>
+            <% } %>
+          </div>
         </div>
       </div>
       
-      <div class="filter-section">
-        <div class="filter-title" data-target="categoryOptions">
-          <span>CATEGORY</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-            <polyline points="18 15 12 9 6 15"></polyline>
-          </svg>
-        </div>
-        <div class="filter-options" id="categoryOptions">
-          <% if (categories && Array.isArray(categories) && categories.length > 0) { %>
-            <% categories.forEach(category => { %>
-              <label class="filter-option">
-                <input type="checkbox" name="categoryf" value="<%= category._id %>" <%= currentFilters.categoryf.includes(category._id.toString()) ? 'checked' : '' %>>
-                <%= category.name %>
-              </label>
-            <% }) %>
-          <% } else { %>
-            <p>No listed categories available</p>
-          <% } %>
-        </div>
+      <div class="button-container">
+        <button class="clear-button" id="clearFilters">CLEAR ALL</button>
+        <button class="show-button" id="applyFilters">SHOW PRODUCTS</button>
       </div>
-    </div>
-    
-    <div class="button-container">
-      <button class="clear-button" id="clearFilters">CLEAR ALL</button>
-      <button class="show-button" id="applyFilters">SHOW PRODUCTS</button>
     </div>
   </div>
 
-  <!-- Sort Modal Structure -->
-  <div class="modal sort-modal" id="sortModal">
-    <div class="modal-header">
-      <h2>SORT</h2>
-      <button class="close-button" id="closeSortBtn">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="sort-options">
-        <label class="filter-option">
-          <input type="radio" name="sort" value="A-Z" <%= currentFilters.sort === 'A-Z' || !currentFilters.sort ? 'checked' : '' %>>
-          A-Z Order
-        </label>
-        <label class="filter-option">
-          <input type="radio" name="sort" value="Z-A" <%= currentFilters.sort === 'Z-A' ? 'checked' : '' %>>
-          Z-A Order
-        </label>
-        <label class="filter-option">
-          <input type="radio" name="sort" value="price-low-high" <%= currentFilters.sort === 'price-low-high' ? 'checked' : '' %>>
-          Price: Low → High
-        </label>
-        <label class="filter-option">
-          <input type="radio" name="sort" value="price-high-low" <%= currentFilters.sort === 'price-high-low' ? 'checked' : '' %>>
-          Price: High → Low
-        </label>
+  <div class="modal sort-modal" id="sortModal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>SORT</h2>
+        <button class="close-button" id="closeSortBtn">×</button>
       </div>
-      
-      <div class="price-section">
-        <h3>PRICE RANGE</h3>
-        <div class="price-inputs">
-          <div>From</div>
-          <input type="number" class="price-input" id="minPrice" name="priceFrom" value="<%= currentFilters.minValue || '' %>" placeholder="Min">
-          <div>To</div>
-          <input type="number" class="price-input" id="maxPrice" name="priceTo" value="<%= currentFilters.maxValue || '' %>" placeholder="Max">
+      <div class="modal-body">
+        <div class="sort-options">
+          <label class="filter-option">
+            <input type="radio" name="sort" value="A-Z" <%= currentFilters.sort === 'A-Z' || !currentFilters.sort ? 'checked' : '' %>>
+            A-Z Order
+          </label>
+          <label class="filter-option">
+            <input type="radio" name="sort" value="Z-A" <%= currentFilters.sort === 'Z-A' ? 'checked' : '' %>>
+            Z-A Order
+          </label>
+          <label class="filter-option">
+            <input type="radio" name="sort" value="price-low-high" <%= currentFilters.sort === 'price-low-high' ? 'checked' : '' %>>
+            Price: Low → High
+          </label>
+          <label class="filter-option">
+            <input type="radio" name="sort" value="price-high-low" <%= currentFilters.sort === 'price-high-low' ? 'checked' : '' %>>
+            Price: High → Low
+          </label>
+        </div>
+        
+        <div class="price-section">
+          <h3>PRICE RANGE</h3>
+          <div class="price-inputs">
+            <div>From</div>
+            <input type="number" class="price-input" id="minPrice" name="priceFrom" value="<%= currentFilters.minValue || '' %>" placeholder="Min">
+            <div>To</div>
+            <input type="number" class="price-input" id="maxPrice" name="priceTo" value="<%= currentFilters.maxValue || '' %>" placeholder="Max">
+          </div>
         </div>
       </div>
-    </div>
-    
-    <div class="button-container">
-      <button class="clear-button" id="clearSort">CLEAR ALL</button>
-      <button class="show-button" id="applySort">SHOW PRODUCTS</button>
+      
+      <div class="button-container">
+        <button class="clear-button" id="clearSort">CLEAR ALL</button>
+        <button class="show-button" id="applySort">SHOW PRODUCTS</button>
+      </div>
     </div>
   </div>
 
@@ -140,9 +144,9 @@
   
   <div class="hero">
     <div class="hero-image">
-      <video width="320" height="240" autoplay muted loop playsinline>
+      <video width="100%" height="300" autoplay muted loop playsinline>
         <source src="https://videos.pexels.com/video-files/7815734/7815734-sd_640_360_25fps.mp4" type="video/mp4">
-        Your browser does not support the video tag.
+        <img src="/path/to/fallback-image.jpg" alt="Hero fallback image">
       </video>
     </div> 
   </div>
@@ -183,7 +187,7 @@
                             data-product-id="<%= product._id %>"
                             data-variants='<%= JSON.stringify(product.variants[0]._id) %>'>
                       <span class="button-text">Add to bag</span>
-                      <div class="loading-spinner" style="display: none;">
+                      <div class="loading-spinner">
                         <i class="fas fa-spinner fa-spin"></i>
                       </div>
                     </button>
@@ -200,7 +204,6 @@
         </div>
       <% } %>
 
-      <!-- Pagination UI -->
       <% if (pagination && pagination.totalPages > 1) { %>
         <div class="pagination-container">
           <div class="pagination">
@@ -271,28 +274,31 @@
     <% }) %>
 
     async function fetchProducts(page = 1) {
-      const brands = Array.from(document.querySelectorAll('#filterModal input[name="brandf"]:checked'))
-        .map(input => input.value);
-      const categories = Array.from(document.querySelectorAll('#filterModal input[name="categoryf"]:checked'))
-        .map(input => input.value);
-      let priceFrom = document.querySelector('#sortModal input[name="priceFrom"]').value;
-      let priceTo = document.querySelector('#sortModal input[name="priceTo"]').value;
-      const sortOption = document.querySelector('#sortModal input[name="sort"]:checked').value;
+      try {
+        const brands = Array.from(document.querySelectorAll('#filterModal input[name="brandf"]:checked')).map(input => input.value);
+        const categories = Array.from(document.querySelectorAll('#filterModal input[name="categoryf"]:checked')).map(input => input.value);
+        let priceFrom = document.querySelector('#sortModal input[name="priceFrom"]').value;
+        let priceTo = document.querySelector('#sortModal input[name="priceTo"]').value;
+        const sortOption = document.querySelector('#sortModal input[name="sort"]:checked')?.value || 'A-Z';
 
-      priceFrom = priceFrom ? parseFloat(priceFrom) : '';
-      priceTo = priceTo ? parseFloat(priceTo) : '';
-      if (priceFrom && isNaN(priceFrom)) priceFrom = '';
-      if (priceTo && isNaN(priceTo)) priceTo = '';
+        priceFrom = priceFrom ? parseFloat(priceFrom) : '';
+        priceTo = priceTo ? parseFloat(priceTo) : '';
+        if (priceFrom && isNaN(priceFrom)) priceFrom = '';
+        if (priceTo && isNaN(priceTo)) priceTo = '';
 
-      const query = new URLSearchParams();
-      if (brands.length > 0) query.append('brands', brands.join(','));
-      if (categories.length > 0) query.append('category', categories.join(','));
-      if (priceFrom !== '') query.append('priceFrom', priceFrom);
-      if (priceTo !== '') query.append('priceTo', priceTo);
-      if (sortOption) query.append('sort', sortOption);
-      query.append('page', page);
+        const query = new URLSearchParams();
+        if (brands.length > 0) query.append('brands', brands.join(','));
+        if (categories.length > 0) query.append('category', categories.join(','));
+        if (priceFrom !== '') query.append('priceFrom', priceFrom);
+        if (priceTo !== '') query.append('priceTo', priceTo);
+        if (sortOption) query.append('sort', sortOption);
+        query.append('page', page);
 
-      window.location.href = `/shop?${query.toString()}`;
+        window.location.href = `/shop?${query.toString()}`;
+      } catch (error) {
+        console.error('Error in fetchProducts:', error);
+        showToast('Failed to apply filters. Please try again.', 'error');
+      }
     }
 
     async function toggleWishlist(productId, button) {
@@ -338,46 +344,22 @@
       }
     }
 
-    function showToast(message, icon = 'success') {
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: icon,
-        title: message,
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-      });
-    }
-
     async function addToCart(productId, button) {
-      console.log("product", productId);
       try {
-        if (!button) {
-          console.error('Button element not found');
-          return;
-        }
+        if (!button) throw new Error('Button element not found');
 
         const buttonText = button.querySelector('.button-text');
         const loadingSpinner = button.querySelector('.loading-spinner');
         
-        if (!buttonText || !loadingSpinner) {
-          console.error('Button elements not found');
-          showToast('Something went wrong. Please try again.', 'error');
-          return;
-        }
-
-        const btnText = buttonText;
-        const spinner = loadingSpinner;
+        if (!buttonText || !loadingSpinner) throw new Error('Button elements not found');
 
         button.disabled = true;
-        btnText.style.display = 'none';
-        spinner.style.display = 'block';
+        buttonText.style.display = 'none';
+        loadingSpinner.style.display = 'inline-block';
 
         let variantId;
         try {
           const variantsData = button.getAttribute('data-variants');
-          console.log(variantsData);
           variantId = variantsData ? JSON.parse(variantsData) : null;
         } catch (e) {
           console.error('Error parsing variants:', e);
@@ -434,49 +416,45 @@
       } finally {
         if (button) {
           button.disabled = false;
-          const btnText = button.querySelector('.button-text');
-          const spinner = button.querySelector('.loading-spinner');
-          if (btnText) btnText.style.display = 'block';
-          if (spinner) spinner.style.display = 'none';
+          button.querySelector('.button-text').style.display = 'inline';
+          button.querySelector('.loading-spinner').style.display = 'none';
         }
       }
     }
 
+    function showToast(message, icon = 'success') {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: icon,
+        title: message,
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
+    }
+
+    function toggleModal(modalId, show) {
+      const modal = document.querySelector(modalId);
+      const backdrop = document.querySelector('#modalBackdrop');
+      if (show) {
+        modal.style.display = 'flex';
+        backdrop.classList.add('show');
+      } else {
+        modal.style.display = 'none';
+        backdrop.classList.remove('show');
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      async function fetchProducts(page = 1) {
-        const brands = Array.from(document.querySelectorAll('#filterModal input[name="brandf"]:checked'))
-          .map(input => input.value);
-        const categories = Array.from(document.querySelectorAll('#filterModal input[name="categoryf"]:checked'))
-          .map(input => input.value);
-        let priceFrom = document.querySelector('#sortModal input[name="priceFrom"]').value;
-        let priceTo = document.querySelector('#sortModal input[name="priceTo"]').value;
-        const sortOption = document.querySelector('#sortModal input[name="sort"]:checked').value;
-
-        priceFrom = priceFrom ? parseFloat(priceFrom) : '';
-        priceTo = priceTo ? parseFloat(priceTo) : '';
-        if (priceFrom && isNaN(priceFrom)) priceFrom = '';
-        if (priceTo && isNaN(priceTo)) priceTo = '';
-
-        const query = new URLSearchParams();
-        if (brands.length > 0) query.append('brands', brands.join(','));
-        if (categories.length > 0) query.append('category', categories.join(','));
-        if (priceFrom !== '') query.append('priceFrom', priceFrom);
-        if (priceTo !== '') query.append('priceTo', priceTo);
-        if (sortOption) query.append('sort', sortOption);
-        query.append('page', page);
-
-        window.location.href = `/shop?${query.toString()}`;
-      }
-
-      function changePage(page) {
-        fetchProducts(page);
-      }
-
-      window.changePage = changePage;
+      document.querySelector('#filterBtn').addEventListener('click', () => toggleModal('#filterModal', true));
+      document.querySelector('#sortBtn').addEventListener('click', () => toggleModal('#sortModal', true));
+      document.querySelector('#closeFilterBtn').addEventListener('click', () => toggleModal('#filterModal', false));
+      document.querySelector('#closeSortBtn').addEventListener('click', () => toggleModal('#sortModal', false));
 
       document.querySelector('#applyFilters').addEventListener('click', () => {
         fetchProducts(1);
-        closeModal('#filterModal');
+        toggleModal('#filterModal', false);
       });
 
       document.querySelector('#clearFilters').addEventListener('click', () => {
@@ -486,7 +464,7 @@
 
       document.querySelector('#applySort').addEventListener('click', () => {
         fetchProducts(1);
-        closeModal('#sortModal');
+        toggleModal('#sortModal', false);
       });
 
       document.querySelector('#clearSort').addEventListener('click', () => {
@@ -495,32 +473,18 @@
         document.querySelector('#sortModal input[name="priceTo"]').value = '';
         fetchProducts(1);
       });
-    });
 
-    function closeModal(modalId) {
-      document.querySelector(modalId).style.display = 'none';
-    }
-
-    document.querySelector('#filterBtn').addEventListener('click', () => {
-      document.querySelector('#filterModal').style.display = 'block';
-    });
-    document.querySelector('#sortBtn').addEventListener('click', () => {
-      document.querySelector('#sortModal').style.display = 'block';
-    });
-    document.querySelector('#closeFilterBtn').addEventListener('click', () => {
-      closeModal('#filterModal');
-    });
-    document.querySelector('#closeSortBtn').addEventListener('click', () => {
-      closeModal('#sortModal');
-    });
-    document.querySelectorAll('.filter-title').forEach(title => {
-      title.addEventListener('click', () => {
-        const targetId = title.getAttribute('data-target');
-        const target = document.querySelector(`#${targetId}`);
-        target.classList.toggle('show');
-        const arrow = title.querySelector('.arrow-icon');
-        arrow.classList.toggle('rotate');
+      document.querySelectorAll('.filter-title').forEach(title => {
+        title.addEventListener('click', () => {
+          const targetId = title.getAttribute('data-target');
+          const target = document.querySelector(`#${targetId}`);
+          target.classList.toggle('show');
+          const arrow = title.querySelector('.arrow-icon');
+          arrow.classList.toggle('rotate');
+        });
       });
+
+      window.changePage = (page) => fetchProducts(page);
     });
   </script>
 </body>

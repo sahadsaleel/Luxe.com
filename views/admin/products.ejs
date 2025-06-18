@@ -40,8 +40,6 @@
                     <th>VARIANTS & STOCK</th>
                     <th>PRICE</th>
                     <th>STATUS</th>
-                    <th>CANCELLED</th>
-                    <th>RETURNED</th>
                     <th>ACTION</th>
                 </tr>
             </thead>
@@ -63,8 +61,6 @@
                         </td>
                         <td><%= product.variants[0].salePrice %> ₹</td>
                         <td><%= product.status %></td>
-                        <td><%= product.cancelledCount || 0 %></td>
-                        <td><%= product.returnCount || 0 %></td>
                         <td>
                             <button class="action-btn edit-btn" data-id="<%= product._id %>">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

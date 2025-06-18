@@ -98,10 +98,12 @@ router.post('/orders/details/:orderId/cancel', userAuth, returnCancelController.
 router.post('/orders/details/:orderId/cancel-item/:itemId', userAuth, returnCancelController.cancelOrderItem);
 router.post('/orders/details/:orderId/return', userAuth, returnCancelController.approveReturn);
 router.post('/orders/details/:orderId/return-item/:itemId', userAuth, returnCancelController.approveReturnItem);
+router.post('/orders/details/:orderId/request-return/:itemId', userAuth, returnCancelController.requestReturnItem);
+
 
 // Wallet
 router.get('/wallet', userAuth, walletController.loadWalletPage);
-router.post('/return-product', userAuth, walletController.requestReturn);
+// router.post('/return-product', userAuth, walletController.requestReturn);
 
 // Coupons
 router.get('/coupons', userAuth, couponController.loadCoupons);

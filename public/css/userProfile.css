@@ -43,7 +43,6 @@ body {
     color: var(--primary-color);
 }
 
-/* Breadcrumb */
 .breadcrumb-container {
     padding: 15px 0;
     background-color: #fff;
@@ -265,7 +264,7 @@ body {
     font-weight: 500;
 }
 
-/* Modal styles */
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -326,7 +325,7 @@ body {
 }
 
 .close-btn:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(0, 0, 0, 0.05) ;
     color: var(--text-color);
 }
 
@@ -455,19 +454,22 @@ body {
 
 .action-button {
     display: inline-block;
-    background-color: transparent;
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-    border-radius: 8px;
-    padding: 8px 20px;
-    font-size: 14px;
-    font-weight: 600;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 12px;
     cursor: pointer;
-    transition: var(--transition);
+    font-size: 14px;
+    color: #333;
+    transition: all 0.3s;
+    align-self: flex-start;
+    margin-top: 8px;
 }
 
 .action-button:hover {
-    background-color: rgba(67, 97, 238, 0.1);
+    background-color: var(--primary-color);
+    color: white;
+    border-color: #28a745;
 }
 
 .save-btn {
@@ -586,6 +588,7 @@ body {
         margin: 0 6px;
     }
 }
+
 .form-group.invalid .form-control {
     border-color: #dc3545;
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
@@ -616,8 +619,9 @@ body {
 }
 
 .action-button:hover {
-    background-color: #8a6a94;
-    color: #000000;
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
 }
 
 /* Google login note */
@@ -665,6 +669,7 @@ body {
 #emailChangeForm .invalid .error-message {
     display: block;
 }
+
 .profile-actions {
     display: flex;
     gap: 10px;

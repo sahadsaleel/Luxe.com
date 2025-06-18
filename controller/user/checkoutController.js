@@ -408,12 +408,22 @@ const processCheckout = async (req, res) => {
             throw new Error('Invalid order amount calculation');
         }
 
-        if (paymentMethod === 'cash on delivery' && finalAmount < 1000) {
-            return res.status(400).json({
-                success: false,
-                message: 'Cash on Delivery is not available for orders below ₹1000'
-            });
+        if (paymentMethod === 'cash on delivery') {
+            if (finalAmount < 1000) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Cash on Delivery is not available for orders below ₹1000'
+                });
+            }
+
+            if (finalAmount > 10000) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Cash on Delivery is not available for orders above ₹10,000'
+                });
+            }
         }
+
 
         if (paymentMethod === 'luxewallet') {
             const wallet = await Wallet.findOne({ userId });

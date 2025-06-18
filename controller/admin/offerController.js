@@ -27,7 +27,6 @@ const populateTargetId = async (offer) => {
   }
 };
 
-// Load offer page
 const offerPage = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;

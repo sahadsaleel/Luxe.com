@@ -774,24 +774,29 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
+
 const approveReturn = async (req, res) => {
+    console.log('Received request for /admin/orders/:orderId/approve-return', req.params.orderId);
     try {
         const { orderId } = req.params;
         const { status } = req.body;
 
         if (!req.session.admin && !req.session.isAdmin) {
+            console.log('Unauthorized access attempt:', req.session);
             return res.status(401).json({ success: false, message: 'Unauthorized: Admin access required' });
         }
 
-        const order = await Order.findById(orderId);
+        const order = await Order.findOne({ _id: orderId });
+        console.log('Order found:', order ? order.orderId || order._id : null);
         if (!order) {
-            return res.status(404).json({ success: false, message: 'Order not found' });
+            return res.status(404).json({ success: false, message: 'Order not found' }); // Ensure this is the final response
         }
 
-        if (order.status !== 'Return Requested') {
+        const anyRequested = order.orderedItems.some(item => item.status === 'Return Requested');
+        if (!anyRequested) {
             return res.status(400).json({
                 success: false,
-                message: `No return request found for this order. Current status: ${order.status}`
+                message: `No return request found for this order.`
             });
         }
 
@@ -828,18 +833,20 @@ const approveReturn = async (req, res) => {
             });
         } else {
             try {
-                if (finalRefundAmount > 0) {
+                if (finalRefundAmount > 0 && ['razorpay', 'luxewallet'].includes(order.paymentMethod)) {
                     const updatedWallet = await processWalletRefund(
                         order.userId.toString(), 
                         finalRefundAmount, 
                         order._id, 
                         'returned'
                     );
+                } else if (finalRefundAmount > 0) {
+                    console.log('Refund not processed for payment method:', order.paymentMethod);
                 }
 
                 order.status = 'Return Approved';
                 order.refundAmount = (order.refundAmount || 0) + finalRefundAmount;
-                order.refundStatus = 'Completed';
+                order.refundStatus = finalRefundAmount > 0 ? 'Completed' : 'Not Applicable';
                 order.returnApprovedOn = new Date();
 
                 for (const item of order.orderedItems) {
@@ -851,7 +858,6 @@ const approveReturn = async (req, res) => {
                         );
                     }
                 }
-
             } catch (error) {
                 console.error('Refund processing failed:', error);
                 return res.status(500).json({
@@ -869,7 +875,7 @@ const approveReturn = async (req, res) => {
             message: status.toLowerCase() === 'approved' ? 'Return approved and refund processed successfully' : 'Return request rejected'
         });
     } catch (error) {
-        console.error('Approve Return Error:', error);
+        console.error('Approve Return Error:', error.message, error.stack);
         return res.status(500).json({
             success: false,
             message: 'Server error',
@@ -877,6 +883,7 @@ const approveReturn = async (req, res) => {
         });
     }
 };
+
 
 const approveCancel = async (req, res) => {
     try {

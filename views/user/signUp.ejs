@@ -33,30 +33,30 @@
                 <div class="form-container">
                     <form id="signForm" onsubmit="return validateAndSubmitForm(event)">
                         <div class="form-group name-group">
-                            <div class="name-field">
-                                <div id="error1" class="error-message"></div>
+                            <div class="form-group name-field">
                                 <input type="text" id="firstName" name="firstName" placeholder="First Name*" required>
+                                <div id="error1" class="error-message"></div>
                             </div>
-                            <div class="name-field">
-                                <div id="error2" class="error-message"></div>
+                            <div class="form-group name-field">
                                 <input type="text" id="lastName" name="lastName" placeholder="Last Name*" required>
+                                <div id="error2" class="error-message"></div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <div id="error3" class="error-message"></div>
                             <input type="email" id="email" name="email" placeholder="Email Address*" required>
+                            <div id="error3" class="error-message"></div>
                         </div>
                         <div class="form-group">
-                            <div id="error4" class="error-message"></div>
                             <input type="password" id="password" name="password" placeholder="Password*" autocomplete="new-password" required>
+                            <div id="error4" class="error-message"></div>
                         </div>
                         <div class="form-group">
-                            <div id="error5" class="error-message"></div>
                             <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password*" autocomplete="new-password" required>
+                            <div id="error5" class="error-message"></div>
                         </div>
                         <div class="form-group">
-                            <div id="error6" class="error-message"></div>
                             <input type="text" id="referralCode" name="referralCode" placeholder="Referral Code (Optional)" value="<%= locals.prefillReferralCode || '' %>">
+                            <div id="error6" class="error-message"></div>
                         </div>
                         <button type="submit" class="continue-btn">Create Account</button>
                     </form>
@@ -84,6 +84,7 @@
         const email = document.getElementById("email");
         const password = document.getElementById("password");
         const confirmPassword = document.getElementById("confirmPassword");
+        const referralCode = document.getElementById("referralCode");
 
         const error1 = document.getElementById("error1");
         const error2 = document.getElementById("error2");
@@ -97,10 +98,14 @@
         function firstNameValidateChecking() {
             const firstNameVal = firstName.value.trim();
             const namePattern = /^[A-Za-z\s]+$/;
-            const formGroup = firstName.parentElement;
+            const formGroup = firstName.closest('.form-group');
 
-            if (firstNameVal === "" || !namePattern.test(firstNameVal)) {
-                error1.innerHTML = "Please enter a valid first name";
+            if (firstNameVal === "") {
+                error1.innerHTML = "First name is required";
+                formGroup.classList.add("invalid");
+                return false;
+            } else if (!namePattern.test(firstNameVal)) {
+                error1.innerHTML = "Please enter a valid first name (letters only)";
                 formGroup.classList.add("invalid");
                 return false;
             } else {
@@ -113,10 +118,14 @@
         function lastNameValidateChecking() {
             const lastNameVal = lastName.value.trim();
             const namePattern = /^[A-Za-z\s]+$/;
-            const formGroup = lastName.parentElement;
+            const formGroup = lastName.closest('.form-group');
 
-            if (lastNameVal === "" || !namePattern.test(lastNameVal)) {
-                error2.innerHTML = "Please enter a valid last name";
+            if (lastNameVal === "") {
+                error2.innerHTML = "Last name is required";
+                formGroup.classList.add("invalid");
+                return false;
+            } else if (!namePattern.test(lastNameVal)) {
+                error2.innerHTML = "Please enter a valid last name (letters only)";
                 formGroup.classList.add("invalid");
                 return false;
             } else {
@@ -129,10 +138,14 @@
         function emailValidateChecking() {
             const emailVal = email.value.trim();
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const formGroup = email.parentElement;
+            const formGroup = email.closest('.form-group');
 
-            if (!emailPattern.test(emailVal)) {
-                error3.innerHTML = "Invalid email format";
+            if (emailVal === "") {
+                error3.innerHTML = "Email is required";
+                formGroup.classList.add("invalid");
+                return false;
+            } else if (!emailPattern.test(emailVal)) {
+                error3.innerHTML = "Please enter a valid email address";
                 formGroup.classList.add("invalid");
                 return false;
             } else {
@@ -143,19 +156,23 @@
         }
 
         function passwordValidateChecking() {
-            const passwordVal = password.value;
-            const confirmPasswordVal = confirmPassword.value;
+            const passwordVal = password.value.trim();
+            const confirmPasswordVal = confirmPassword.value.trim();
             const alpha = /[A-Za-z]/;
             const digit = /\d/;
-            const passwordGroup = password.parentElement;
-            const confirmPasswordGroup = confirmPassword.parentElement;
+            const passwordGroup = password.closest('.form-group');
+            const confirmPasswordGroup = confirmPassword.closest('.form-group');
 
-            if (passwordVal.length < 8) {
-                error4.innerHTML = "Should contain at least 8 characters";
+            if (passwordVal === "") {
+                error4.innerHTML = "Password is required";
+                passwordGroup.classList.add("invalid");
+                return false;
+            } else if (passwordVal.length < 8) {
+                error4.innerHTML = "Password must be at least 8 characters";
                 passwordGroup.classList.add("invalid");
                 return false;
             } else if (!alpha.test(passwordVal) || !digit.test(passwordVal)) {
-                error4.innerHTML = "Should contain both letters and numbers";
+                error4.innerHTML = "Password must contain both letters and numbers";
                 passwordGroup.classList.add("invalid");
                 return false;
             } else {
@@ -163,7 +180,11 @@
                 passwordGroup.classList.remove("invalid");
             }
 
-            if (passwordVal !== confirmPasswordVal) {
+            if (confirmPasswordVal === "") {
+                error5.innerHTML = "Confirm password is required";
+                confirmPasswordGroup.classList.add("invalid");
+                return false;
+            } else if (passwordVal !== confirmPasswordVal) {
                 error5.innerHTML = "Passwords do not match";
                 confirmPasswordGroup.classList.add("invalid");
                 return false;
@@ -174,15 +195,39 @@
             }
         }
 
+        function referralCodeValidateChecking() {
+            const referralCodeVal = referralCode.value.trim();
+            const referralPattern = /^[A-Za-z0-9]{0,10}$/;
+            const formGroup = referralCode.closest('.form-group');
+
+            if (referralCodeVal && !referralPattern.test(referralCodeVal)) {
+                error6.innerHTML = "Invalid referral code (alphanumeric, max 10 characters)";
+                formGroup.classList.add("invalid");
+                return false;
+            } else {
+                error6.innerHTML = "";
+                formGroup.classList.remove("invalid");
+                return true;
+            }
+        }
+
         function validateAndSubmitForm(event) {
             event.preventDefault();
+
+            firstName.value = firstName.value.trim();
+            lastName.value = lastName.value.trim();
+            email.value = email.value.trim();
+            password.value = password.value.trim();
+            confirmPassword.value = confirmPassword.value.trim();
+            referralCode.value = referralCode.value.trim();
 
             const isFirstNameValid = firstNameValidateChecking();
             const isLastNameValid = lastNameValidateChecking();
             const isEmailValid = emailValidateChecking();
             const isPasswordValid = passwordValidateChecking();
+            const isReferralCodeValid = referralCodeValidateChecking();
 
-            if (!isFirstNameValid || !isLastNameValid || !isEmailValid || !isPasswordValid) {
+            if (!isFirstNameValid || !isLastNameValid || !isEmailValid || !isPasswordValid || !isReferralCodeValid) {
                 Swal.fire({
                     title: 'Error!',
                     text: 'Please fix the errors in the form.',
@@ -196,12 +241,12 @@
             loader.style.display = 'flex';
 
             const formData = {
-                firstName: firstName.value.trim(),
-                lastName: lastName.value.trim(),
-                email: email.value.trim(),
+                firstName: firstName.value,
+                lastName: lastName.value,
+                email: email.value,
                 password: password.value,
                 confirmPassword: confirmPassword.value,
-                referralCode: document.getElementById('referralCode').value.trim()
+                referralCode: referralCode.value
             };
 
             $.ajax({
@@ -261,7 +306,7 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            if (!firstName || !lastName || !email || !password || !confirmPassword) {
+            if (!firstName || !lastName || !email || !password || !confirmPassword || !referralCode) {
                 return;
             }
 
@@ -270,6 +315,7 @@
             email.addEventListener("input", emailValidateChecking);
             password.addEventListener("input", passwordValidateChecking);
             confirmPassword.addEventListener("input", passwordValidateChecking);
+            referralCode.addEventListener("input", referralCodeValidateChecking);
         });
     </script>
 </body>

@@ -1764,24 +1764,31 @@
         submitBtn.disabled = true;
 
         try {
-            const response = await fetch(`/orders/details/${orderData.orderId}/return-item/${currentReturnItemId}`, {
+            console.log(`Submitting return request for order: ${orderData.orderId}, item: ${currentReturnItemId}`);
+            const response = await fetch(`/orders/details/${orderData.orderId}/request-return/${currentReturnItemId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ reason, comments })
             });
 
+            console.log('Response status:', response.status);
+            console.log('Response headers:', [...response.headers.entries()]);
+
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                const errorText = await response.text();
+                console.log('Error response:', errorText);
+                throw new Error(`HTTP error! Status: ${response.status}, Body: ${errorText}`);
             }
 
             const result = await response.json();
+            console.log('Parsed response:', result);
 
             if (result.success) {
                 showToast('Return request submitted successfully!', 'success');
 
                 const itemRow = document.querySelector(`tr[data-item-id="${currentReturnItemId}"]`);
                 if (itemRow) {
-                    const statusCell = itemRow.querySelector('.item-status');
+                    const statusCell = itemRow.querySelector('.nickname-item-status');
                     if (statusCell) statusCell.textContent = 'Return Requested';
                     const actionCell = itemRow.querySelector('td:last-child');
                     if (actionCell) {
@@ -1796,20 +1803,24 @@
                     item.totalPrice = '0.00';
                 }
 
-                orderData.totalPrice = result.order.totalPrice;
-                orderData.giftWrapTotal = result.order.giftWrapTotal;
-                orderData.finalAmount = result.order.finalAmount;
-                orderData.discount = result.order.discount;
+                if (result.order) {
+                    orderData.totalPrice = Number(result.order.totalPrice).toFixed(2);
+                    orderData.giftWrapTotal = Number(result.order.giftWrapTotal).toFixed(2);
+                    orderData.finalAmount = Number(result.order.finalAmount).toFixed(2);
+                    orderData.discount = Number(result.order.discount || 0).toFixed(2);
 
-                document.getElementById('subtotal').textContent = `₹${result.order.totalPrice}`;
-                document.getElementById('giftWrapTotal').textContent = `₹${result.order.giftWrapTotal}`;
-                document.getElementById('finalAmount').textContent = `₹${result.order.finalAmount}`;
+                    document.getElementById('subtotal').textContent = `₹${orderData.totalPrice}`;
+                    document.getElementById('giftWrapTotal').textContent = `₹${orderData.giftWrapTotal}`;
+                    document.getElementById('finalAmount').textContent = `₹${orderData.finalAmount}`;
 
-                if (parseFloat(result.order.discount) > 0) {
                     const discountRow = document.getElementById('discountRow');
                     if (discountRow) {
-                        discountRow.style.display = 'table-row';
-                        document.getElementById('discount').textContent = `-₹${result.order.discount}`;
+                        if (parseFloat(orderData.discount) > 0) {
+                            document.getElementById('discount').textContent = `-₹${orderData.discount}`;
+                            discountRow.style.display = 'table-row';
+                        } else {
+                            discountRow.style.display = 'none';
+                        }
                     }
                 }
 
@@ -1827,8 +1838,8 @@
                 showToast(result.message || 'Failed to submit return request.', 'error');
             }
         } catch (error) {
-            console.error('Error submitting return request:', error);
-            showToast('An error occurred while processing your request.', 'error');
+            console.error('Error submitting return request:', error.message, error.stack);
+            showToast(`Error: ${error.message || 'Failed to process return request.'}`, 'error');
         } finally {
             submitBtn.dataset.submitting = 'false';
             submitBtn.innerHTML = 'Request Return';
