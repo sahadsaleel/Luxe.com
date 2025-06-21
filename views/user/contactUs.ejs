@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Luxe.com</title>
+    <link rel="stylesheet" href="/css/contactUs.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+<body>
+    <%- include('../../views/partials/user/header') %>
+    <div class="nav-dots">
+        <div class="dot active" data-section="hero"></div>
+        <div class="dot" data-section="contact"></div>
+        <div class="dot" data-section="locations"></div>
+        <div class="dot" data-section="faq"></div>
+        <div class="dot" data-section="cta"></div>
+    </div>
+
+    <section class="header" id="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Contact Us</h1>
+            <p class="hero-subtitle">We're Here to Help You Find Your Perfect Scent</p>
+        </div>
+    </section>
+
+    <section class="section" id="contact">
+        <div class="container">
+            <h2 class="section-title">Get in Touch</h2>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h3>Let's Connect</h3>
+                    <p>Whether you're seeking your signature fragrance, need assistance with your order, or have questions about our collections, our <span class="highlight">fragrance specialists</span> are here to provide personalized guidance.</p>
+                    <p>Experience the art of luxury perfumery with Luxe.com's dedicated customer service team, available to help you discover the perfect scent that tells your unique story.</p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="contact-icon">📞</div>
+                            <div class="contact-text">
+                                <div class="contact-label">Phone</div>
+                                <div class="contact-value">+91 6235724699</div>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">✉️</div>
+                            <div class="contact-text">
+                                <div class="contact-label">Email</div>
+                                <div class="contact-value">sahad.luxe.com@gmail.com</div>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">📍</div>
+                            <div class="contact-text">
+                                <div class="contact-label">Address</div>
+                                <div class="contact-value">Kinfra Industrial Park,<br>Kanjancherry, Kozhikode, Kerala</div>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">🕒</div>
+                            <div class="contact-text">
+                                <div class="contact-label">Hours</div>
+                                <div class="contact-value">Mon - Sat: 10:00 AM - 8:00 PM<br>Sunday: 11:00 AM - 6:00 PM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <div class="success-message" id="successMessage">
+                        <strong>Thank you for your message!</strong><br>
+                        Our fragrance specialists will contact you within 24 hours to assist with your inquiry.
+                    </div>
+                    
+                    <form id="contactForm" action="/contact" method="POST" novalidate>
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name <span class="required">*</span></label>
+                                <input type="text" id="firstName" name="firstName" required>
+                                <div class="error-message" id="firstNameError">Please enter your first name</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name <span class="required">*</span></label>
+                                <input type="text" id="lastName" name="lastName" required>
+                                <div class="error-message" id="lastNameError">Please enter your last name</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                            <div class="error-message" id="emailError">Please enter a valid email address</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number (Optional)</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210">
+                            <div class="error-message" id="phoneError">Please enter a valid phone number</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inquiry">Inquiry Type <span class="required">*</span></label>
+                            <select id="inquiry" name="inquiry" required>
+                                <option value="">-- Select an option --</option>
+                                <option value="fragrance-consultation">Fragrance Consultation</option>
+                                <option value="order-support">Order Support</option>
+                                <option value="custom-perfume">Custom Perfume Services</option>
+                                <option value="wholesale">Wholesale Inquiries</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <div class="error-message" id="inquiryError">Please select an inquiry type</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Your Message <span class="required">*</span></label>
+                            <textarea id="message" name="message" rows="5" placeholder="Tell us how we can help you discover your perfect fragrance..." required></textarea>
+                            <div class="error-message" id="messageError">Please enter your message</div>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <div class="spinner" id="spinner" style="display: none;"></div>
+                            <span id="buttonText">Send Message</span>
+                        </button>
+
+                        <div class="success-message" id="successMessage">
+                            <strong>Thank you!</strong> Your message has been sent. Our team will get back to you shortly.
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="locations">
+        <div class="location-container">
+            <div class="container">
+                <h2 class="section-title">Visit Our Boutiques</h2>
+                <div class="location-grid">
+                    <div class="location-card">
+                        <div class="location-icon">🏢</div>
+                        <h3 class="location-title">Luxe Flagship Store</h3>
+                        <p class="location-address">Marine Drive, Thrissur<br>Kerala 680001, India</p>
+                        <p class="location-hours">Mon-Sat: 10AM-8PM | Sun: 11AM-6PM</p>
+                        <div class="location-map" id="map-thrissur"></div>
+                    </div>
+                    <div class="location-card">
+                        <div class="location-icon">🛍️</div>
+                        <h3 class="location-title">Kochi Boutique</h3>
+                        <p class="location-address">MG Road, Ernakulam<br>Kochi 682035, India</p>
+                        <p class="location-hours">Mon-Sat: 10AM-9PM | Sun: 12PM-7PM</p>
+                        <div class="location-map" id="map-kochi"></div>
+                    </div>
+                    <div class="location-card">
+                        <div class="location-icon">✨</div>
+                        <h3 class="location-title">Bangalore Showroom</h3>
+                        <p class="location-address">Brigade Road<br>Bangalore 560001, India</p>
+                        <p class="location-hours">Mon-Sun: 10AM-9PM</p>
+                        <div class="location-map" id="map-bangalore"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="faq">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-intro">
+                <p>Find answers to common questions about our fragrances, services, and ordering process. Our goal is to make your luxury perfume experience seamless and delightful.</p>
+            </div>
+            
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">How do I choose the right fragrance for me?</div>
+                    <div class="faq-answer">
+                        <p>Our fragrance specialists offer personalized consultations to help you discover scents that complement your personality and preferences. We recommend trying samples first or visiting our boutiques for a guided experience.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Do you offer custom perfume services?</div>
+                    <div class="faq-answer">
+                        <p>Yes, we create bespoke fragrances tailored to your unique preferences. Our master perfumers work with you to develop a signature scent that's exclusively yours. Contact us to learn more about this premium service.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">What is your return and exchange policy?</div>
+                    <div class="faq-answer">
+                        <p>We offer a 30-day return policy for unopened products. For opened fragrances, we provide exchanges within 14 days if you're not completely satisfied. Your satisfaction with our luxury perfumes is our priority.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">How long do your fragrances last?</div>
+                    <div class="faq-answer">
+                        <p>Our luxury perfumes are crafted with the finest ingredients and typically last 6-8 hours on the skin. Longevity varies by fragrance type and individual skin chemistry. We also offer concentrated parfum options for extended wear.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Do you ship internationally?</div>
+                    <div class="faq-answer">
+                        <p>Yes, we offer worldwide shipping to most countries. International orders typically arrive within 7-14 business days, depending on your location. Shipping costs and times are calculated at checkout.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Can I visit a store to sample fragrances?</div>
+                    <div class="faq-answer">
+                        <p>Absolutely! Our boutiques in Thrissur, Kochi, and Bangalore welcome you to explore our full range of fragrances. Our staff will guide you through the collection to find your perfect scent.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section" id="cta">
+        <div class="container">
+            <h2 class="cta-title">Discover Your Signature Scent</h2>
+            <p class="cta-text">Explore our exclusive collection of luxury fragrances and let us help you find the scent that defines you.</p>
+            <a href="/shop" class="cta-button">Shop Now</a>
+        </div>
+    </section>
+    <%- include("../../views/partials/user/footer") %>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" async defer></script>
+    <script>
+        async function fetchCsrfToken() {
+            const csrfInput = document.querySelector('input[name="_csrf"]');
+            if (csrfInput && csrfInput.value) return csrfInput.value;
+
+            try {
+                const response = await fetch('/csrf-token');
+                if (!response.ok) throw new Error('CSRF fetch failed');
+                const { csrfToken } = await response.json();
+                if (csrfInput) csrfInput.value = csrfToken;
+                return csrfToken;
+            } catch (err) {
+                console.error('CSRF token error:', err);
+                Toastify({
+                    text: "❌ Security error. Please refresh.",
+                    duration: 5000,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#dc3545"
+                }).showToast();
+                return null;
+            }
+        }
+
+        const form = document.getElementById('contactForm');
+        const spinner = document.getElementById('spinner');
+        const buttonText = document.getElementById('buttonText');
+        const successMessage = document.getElementById('successMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            let isValid = true;
+
+            ['firstName', 'lastName', 'email', 'inquiry', 'message'].forEach(field => {
+                const input = document.getElementById(field);
+                const error = document.getElementById(`${field}Error`);
+                input.classList.remove('error');
+                error.classList.remove('show');
+            });
+
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const inquiry = document.getElementById('inquiry').value;
+            const message = document.getElementById('message').value.trim();
+
+            if (!firstName) {
+                document.getElementById('firstName').classList.add('error');
+                document.getElementById('firstNameError').classList.add('show');
+                isValid = false;
+            }
+            if (!lastName) {
+                document.getElementById('lastName').classList.add('error');
+                document.getElementById('lastNameError').classList.add('show');
+                isValid = false;
+            }
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('email').classList.add('error');
+                document.getElementById('emailError').classList.add('show');
+                isValid = false;
+            }
+            if (phone && !/^\+?[\d\s-]{10,}$/.test(phone)) {
+                document.getElementById('phone').classList.add('error');
+                document.getElementById('phoneError').classList.add('show');
+                isValid = false;
+            }
+            if (!inquiry) {
+                document.getElementById('inquiry').classList.add('error');
+                document.getElementById('inquiryError').classList.add('show');
+                isValid = false;
+            }
+            if (!message) {
+                document.getElementById('message').classList.add('error');
+                document.getElementById('messageError').classList.add('show');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                Toastify({
+                    text: "⚠️ Please correct the highlighted errors before submitting.",
+                    duration: 5000,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#ffc107"
+                }).showToast();
+                return;
+            }
+
+            const csrfToken = await fetchCsrfToken();
+            if (!csrfToken) return;
+
+            spinner.style.display = 'inline-block';
+            buttonText.textContent = 'Sending...';
+            form.querySelector('.submit-btn').disabled = true;
+
+            try {
+                const response = await fetch('/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'CSRF-Token': csrfToken
+                    },
+                    body: JSON.stringify({ firstName, lastName, email, phone, inquiry, message, _csrf: csrfToken })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    Toastify({
+                        text: "✅ Your message was sent successfully!",
+                        duration: 5000,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "#046A38"
+                    }).showToast();
+                    form.reset();
+                    successMessage.classList.remove('show');
+                } else {
+                    Toastify({
+                        text: result.message || "❌ Failed to send message. Try again.",
+                        duration: 5000,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "#dc3545"
+                    }).showToast();
+                }
+            } catch (err) {
+                console.error('Submission error:', err);
+                Toastify({
+                    text: "❌ Something went wrong. Please try later.",
+                    duration: 5000,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#dc3545"
+                }).showToast();
+            } finally {
+                spinner.style.display = 'none';
+                buttonText.textContent = 'Send Message';
+                form.querySelector('.submit-btn').disabled = false;
+            }
+        });
+
+        const dots = document.querySelectorAll('.dot');
+        const sections = document.querySelectorAll('section');
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const sectionId = dot.getAttribute('data-section');
+                document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            dots.forEach(dot => {
+                dot.classList.remove('active');
+                if (dot.getAttribute('data-section') === current) {
+                    dot.classList.add('active');
+                }
+            });
+        });
+
+        const animateElements = document.querySelectorAll('.section-title, .contact-info, .contact-form, .location-card, .faq-item, .faq-intro');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        animateElements.forEach(el => observer.observe(el));
+
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const isActive = question.classList.contains('active');
+
+                faqQuestions.forEach(q => {
+                    q.classList.remove('active');
+                    q.nextElementSibling.classList.remove('active');
+                    q.nextElementSibling.style.maxHeight = '0';
+                });
+
+                if (!isActive) {
+                    question.classList.add('active');
+                    answer.classList.add('active');
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                }
+            });
+        });
+
+        function initMap() {
+            const locations = [
+                { id: 'map-thrissur', position: { lat: 10.5276, lng: 76.2144 }, title: 'Luxe Flagship Store' },
+                { id: 'map-kochi', position: { lat: 9.9312, lng: 76.2673 }, title: 'Kochi Boutique' },
+                { id: 'map-bangalore', position: { lat: 12.9716, lng: 77.5946 }, title: 'Bangalore Showroom' }
+            ];
+
+            locations.forEach(location => {
+                const mapElement = document.getElementById(location.id);
+                const map = new google.maps.Map(mapElement, {
+                    center: location.position,
+                    zoom: 15,
+                    styles: [
+                        {
+                            featureType: "all",
+                            elementType: "all",
+                            stylers: [
+                                { saturation: -20 },
+                                { lightness: 40 }
+                            ]
+                        }
+                    ]
+                });
+
+                new google.maps.Marker({
+                    position: location.position,
+                    map: map,
+                    title: location.title
+                });
+
+                observer.observe(mapElement);
+            });
+        }
+
+        window.initMap = initMap;
+    </script>
+
+</body>
+</html>

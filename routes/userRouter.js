@@ -9,6 +9,7 @@ const walletController = require('../controller/user/walletController');
 const couponController = require('../controller/user/couponController');
 const checkoutController = require('../controller/user/checkoutController');
 const otpController = require('../controller/user/otpController');
+const contactController = require('../controller/user/contactController')
 const { uploadSingleImage } = require('../helpers/multer');
 const passport = require('passport');
 const { userAuth } = require('../middleware/auth');
@@ -103,7 +104,6 @@ router.post('/orders/details/:orderId/request-return/:itemId', userAuth, returnC
 
 // Wallet
 router.get('/wallet', userAuth, walletController.loadWalletPage);
-// router.post('/return-product', userAuth, walletController.requestReturn);
 
 // Coupons
 router.get('/coupons', userAuth, couponController.loadCoupons);
@@ -111,6 +111,30 @@ router.get('/coupons/available', userAuth, couponController.getAvailableCoupons)
 
 // Referrals
 router.get('/referrals', userAuth, userController.loadReferrals);
+
+// About & Contact Routes
+router.get('/about', contactController.loadAbout);
+router.get('/contact', contactController.loadContactUs);
+router.post('/contact', contactController.handleContactForm);
+
+
+// CSRF Token Route 
+router.get('/csrf-token', (req, res) => {
+    try {
+        if (!req.csrfToken) {
+            throw new Error('CSRF token not available');
+        }
+        res.json({ csrfToken: req.csrfToken() });
+    } catch (error) {
+        console.error('Error fetching CSRF token:', {
+            message: error.message,
+            stack: error.stack,
+            url: req.originalUrl
+        });
+        res.status(500).json({ success: false, message: 'Failed to fetch security token' });
+    }
+});
+
 
 // Error
 router.get('/pageNotFound', userController.pageNotFound);

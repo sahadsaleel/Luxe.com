@@ -13,6 +13,7 @@
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.6.0",
     "connect-mongo": "^5.1.0",
+    "csurf": "^1.11.0",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
@@ -30,6 +31,7 @@
     "pdfkit": "^0.17.1",
     "razorpay": "^2.9.6",
     "sharp": "^0.34.1",
-    "streamifier": "^0.1.1"
+    "streamifier": "^0.1.1",
+    "winston": "^3.17.0"
   }
 }

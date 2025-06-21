@@ -396,21 +396,21 @@
 
     /* Hero Section */
     .hero {
-      margin: 40px 0;
-      border-radius: 20px;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      border-radius: 0;
       overflow: hidden;
-      box-shadow: var(--shadow-medium);
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
     }
 
     .hero video {
       width: 100%;
-      height: 300px;
+      height: 100%;
       object-fit: cover;
-      margin-top: 82px;
+      display: block;
     }
+
 
     .hero img {
       width: 100%;

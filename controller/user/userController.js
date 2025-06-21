@@ -22,6 +22,8 @@ const pageNotFound = async (req, res) => {
     }
 };
 
+
+
 const loadHomepage = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -626,5 +628,5 @@ module.exports = {
     verifyOtp,
     resendOtp,
     loadShopPage,
-    loadReferrals
+    loadReferrals,
 };

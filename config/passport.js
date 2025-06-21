@@ -3,16 +3,13 @@ const googleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/userSchema');
 require('dotenv').config();
 
-// Function to generate referral code
+
 const generateReferralCode = async (firstName) => {
     try {
-        // Create a base code using first name and random string
         const baseCode = `${firstName.substring(0, 3).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
         
-        // Check if code exists
         const existingUser = await User.findOne({ referalCode: baseCode });
         if (existingUser) {
-            // If exists, try again with a different random string
             return generateReferralCode(firstName);
         }
         
@@ -36,11 +33,9 @@ passport.use(new googleStrategy({
             }
             return done(null, user);
         } else {
-            // Split displayName into firstName and lastName
             const [firstName, ...lastNameParts] = profile.displayName.split(' ');
             const lastName = lastNameParts.join(' ') || ''; 
 
-            // Generate referral code for new user
             const referralCode = await generateReferralCode(firstName);
 
             user = new User({

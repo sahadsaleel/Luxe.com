@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Luxe.com</title>
+    <link rel="stylesheet" href="/css/about.css">
+</head>
+<body>
+     <%- include('../../views/partials/user/header') %>
+    <div class="nav-dots">
+        <div class="dot active" data-section="hero"></div>
+        <div class="dot" data-section="story"></div>
+        <div class="dot" data-section="values"></div>
+        <div class="dot" data-section="team"></div>
+    </div>
+
+    <section class="header" id="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">About Luxe.com</h1>
+            <p class="hero-subtitle">Redefining Luxury Fragrance Since 2025</p>
+        </div>
+    </section>
+
+    <section class="section" id="story">
+        <div class="container">
+            <h2 class="section-title">Our Story</h2>
+            <div class="story-grid">
+                <div class="story-text">
+                    <p>Founded in Kerala, India, <span class="highlight">Luxe.com</span> is one of the world's leading luxury perfume brands. Following the House's centenary vision, Luxe.com forges ahead, continuing to redefine luxury while celebrating creativity, Indian craftsmanship, and innovation.</p>
+                    <p>Luxe.com is part of the global luxury group Kering, which manages renowned Houses in fashion, leather goods, jewelry, and eyewear. Our fragrances capture the essence of timeless elegance and contemporary sophistication.</p>
+                    <p>Discover the stories behind the House's collections, exclusively crafted for the discerning connoisseur who appreciates the art of fine perfumery.</p>
+                </div>
+                <div class="story-image">
+                    <div class="image-placeholder"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="values">
+        <div class="values-container">
+            <div class="container">
+                <h2 class="section-title">Our Values</h2>
+                <div class="values-grid">
+                    <div class="value-card">
+                        <div class="value-icon">🌸</div>
+                        <h3 class="value-title">Artisanal Mastery</h3>
+                        <p class="value-description">Each fragrance is meticulously crafted by master perfumers, blending rare ingredients sourced from around the world to create olfactory masterpieces.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon">🌿</div>
+                        <h3 class="value-title">Sustainable Luxury</h3>
+                        <p class="value-description">We are committed to responsible sourcing and sustainable practices, ensuring our luxury doesn't compromise the world we cherish.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon">✨</div>
+                        <h3 class="value-title">Timeless Innovation</h3>
+                        <p class="value-description">Combining traditional Indian perfumery techniques with modern innovation to create fragrances that transcend time and trends.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="team">
+        <div class="container">
+            <h2 class="section-title">Our Perfumers</h2>
+            <div class="team-intro">
+                <p>Behind every exquisite fragrance stands a team of master perfumers, scent designers, and fragrance visionaries. United by our shared passion for olfactory excellence, we bring together centuries of perfumery wisdom and an unwavering dedication to creating fragrances that tell your unique story.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="cta-title">Discover Your Signature Scent</h2>
+            <p class="cta-text">Let our fragrance experts help you find the perfect perfume that captures your essence.</p>
+            <a href="/shop" class="cta-button">Explore Collections</a>
+        </div>
+    </section>
+    <%- include("../../views/partials/user/footer") %>
+    <script>
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section-title, .story-text, .story-image, .value-card, .team-intro').forEach(el => {
+            observer.observe(el);
+        });
+
+        const dots = document.querySelectorAll('.dot');
+        const sections = document.querySelectorAll('section');
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const targetSection = document.getElementById(dot.dataset.section);
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    const activeDot = document.querySelector(`[data-section="${entry.target.id}"]`);
+                    if (activeDot) activeDot.classList.add('active');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        sections.forEach(section => {
+            sectionObserver.observe(section);
+        });
+
+        setTimeout(() => {
+            const cards = document.querySelectorAll('.value-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    if (card.getBoundingClientRect().top < window.innerHeight) {
+                        card.classList.add('animate');
+                    }
+                }, index * 200);
+            });
+        }, 1000);
+
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.5;
+            const hero = document.querySelector('.header::before');
+            if (hero) {
+                document.querySelector('.header').style.transform = `translateY(${rate}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
