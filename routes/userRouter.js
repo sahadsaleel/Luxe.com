@@ -42,7 +42,7 @@ router.get(
     passport.authenticate('google', { failureRedirect: '/login?message=blocked' }),
     (req, res) => {
         req.session.user = req.user._id;
-        res.redirect('/home');
+        res.redirect('/');
     }
 );
 
