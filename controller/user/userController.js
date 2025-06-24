@@ -115,9 +115,9 @@ const loadSignup = async (req, res) => {
     try {
         const message = req.query.message === 'blocked' ? 'User is blocked by admin' : 
                         req.query.message ? req.query.message : null;
-        res.render('user/signup', { message });
+        res.render('user/signUp', { message });
     } catch (error) {
-        res.render('user/signup', { message: 'An error occurred while loading the signup page' });
+        res.render('user/signUp', { message: 'An error occurred while loading the signup page' });
     }
 };
 
@@ -373,7 +373,7 @@ const login = async (req, res) => {
         }
 
         req.session.user = findUser._id;
-        res.redirect('/');
+        res.redirect('/home');
     } catch (error) {
         res.render("user/login", { message: "login failed, please try again" });
     }
@@ -385,7 +385,7 @@ const logout = async (req, res) => {
             if (err) {
                 return res.redirect('/pageNotFound');
             }
-            res.redirect('/');
+            res.redirect('/home');
         });
     } catch (error) {
         res.redirect('/pageNotFound');

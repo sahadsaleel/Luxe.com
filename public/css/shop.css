@@ -334,6 +334,13 @@
       align-items: center;
     }
 
+    .price-inputs {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap; 
+    }
+
     .price-input {
       padding: 12px 16px;
       border: 2px solid rgba(196, 183, 166, 0.3);
@@ -341,7 +348,9 @@
       font-size: 0.95rem;
       transition: all 0.3s ease;
       background: var(--background-color);
+      width: 300px;
     }
+
 
     .price-input:focus {
       outline: none;

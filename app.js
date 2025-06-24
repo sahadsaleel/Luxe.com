@@ -49,14 +49,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'Uploads')));
 app.use('/uploads', express.static('public/uploads/products'));
 
 
-app.use((req, res, next) => {
-    res.locals.currentRoute = req.path;
-    res.locals.csrfToken = req.csrfToken ? req.csrfToken() : null; 
-    next();
-});
-
-app.use(csrfProtection);
-
 app.use(morgan('dev'));
 
 // Routes

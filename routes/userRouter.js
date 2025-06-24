@@ -14,9 +14,12 @@ const { uploadSingleImage } = require('../helpers/multer');
 const passport = require('passport');
 const { userAuth } = require('../middleware/auth');
 const returnCancelController = require('../controller/user/returnCancelController');
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: false });
+
 
 // Authentication
-router.get('/', userController.loadHomepage);
+router.get('/home', userController.loadHomepage);
 router.get('/signup', userController.loadSignup);
 router.get('/login', userController.loadLogin);
 router.get('/verifyotp', (req, res) => {
@@ -39,7 +42,7 @@ router.get(
     passport.authenticate('google', { failureRedirect: '/login?message=blocked' }),
     (req, res) => {
         req.session.user = req.user._id;
-        res.redirect('/');
+        res.redirect('/home');
     }
 );
 
@@ -114,26 +117,11 @@ router.get('/referrals', userAuth, userController.loadReferrals);
 
 // About & Contact Routes
 router.get('/about', contactController.loadAbout);
-router.get('/contact', contactController.loadContactUs);
-router.post('/contact', contactController.handleContactForm);
-
-
-// CSRF Token Route 
-router.get('/csrf-token', (req, res) => {
-    try {
-        if (!req.csrfToken) {
-            throw new Error('CSRF token not available');
-        }
-        res.json({ csrfToken: req.csrfToken() });
-    } catch (error) {
-        console.error('Error fetching CSRF token:', {
-            message: error.message,
-            stack: error.stack,
-            url: req.originalUrl
-        });
-        res.status(500).json({ success: false, message: 'Failed to fetch security token' });
-    }
-});
+router.get('/contact', csrfProtection, (req, res, next) => {
+  res.locals.csrfToken = req.csrfToken(); 
+  next();
+}, contactController.loadContactUs);
+router.post('/contact', csrfProtection, contactController.handleContactForm);
 
 
 // Error
