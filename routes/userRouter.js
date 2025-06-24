@@ -19,14 +19,14 @@ const csrfProtection = csrf({ cookie: false });
 
 
 // Authentication
-router.get('/home', userController.loadHomepage);
+router.get('/', userController.loadHomepage);
 router.get('/signup', userController.loadSignup);
 router.get('/login', userController.loadLogin);
 router.get('/verifyotp', (req, res) => {
     if (!req.session.userData) {
         return res.redirect('/signup');
     }
-    res.render('user/verifyotp', { userData: req.session.userData });
+    res.render('user/verifyOtp', { userData: req.session.userData });
 });
 router.get('/logout', userController.logout);
 

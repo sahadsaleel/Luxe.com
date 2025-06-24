@@ -219,7 +219,7 @@ const signup = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: 'OTP sent successfully',
-            redirect: '/verifyotp'
+            redirect: '/verifyOtp'
         });
 
     } catch (error) {
@@ -373,7 +373,7 @@ const login = async (req, res) => {
         }
 
         req.session.user = findUser._id;
-        res.redirect('/home');
+        res.redirect('/');
     } catch (error) {
         res.render("user/login", { message: "login failed, please try again" });
     }
@@ -385,7 +385,7 @@ const logout = async (req, res) => {
             if (err) {
                 return res.redirect('/pageNotFound');
             }
-            res.redirect('/home');
+            res.redirect('/');
         });
     } catch (error) {
         res.redirect('/pageNotFound');
