@@ -22,7 +22,7 @@ const csrfProtection = csrf({ cookie: false });
 router.get('/', userController.loadHomepage);
 router.get('/signup', userController.loadSignup);
 router.get('/login', userController.loadLogin);
-router.get('/verifyotp', (req, res) => {
+router.get('/verifyOtp', (req, res) => {
     if (!req.session.userData) {
         return res.redirect('/signup');
     }
