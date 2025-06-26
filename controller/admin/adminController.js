@@ -17,11 +17,17 @@ const pageerror = async (req,res)=>{
 
 
 const loadLogin = (req, res) => {
-    if (req.session.admin) {
-        return res.redirect('/dashboard');
+    try {
+        if (req.session.admin) {
+            return res.redirect('/dashboard');
+        }
+        res.status(200).render('admin/login', { message: null });
+    } catch (error) {
+        console.error('Error loading login page:', error);
+        res.status(500).send('Internal Server Error');
     }
-    res.render('admin/login', { message: null });
 };
+
 
 const login = async (req, res) => {
     try {
@@ -114,7 +120,6 @@ const loadDashboard = async (req, res) => {
 
             prevMatchStage.createdOn = { $gte: prevStart, $lt: prevEnd };
 
-            // Current period aggregation
             const aggregation = await Order.aggregate([
                 { $match: matchStage },
                 {
@@ -131,7 +136,6 @@ const loadDashboard = async (req, res) => {
                 { $sort: { _id: 1 } }
             ]);
 
-            // Previous period aggregation (only for monthly filter)
             let prevAggregation = [];
             if (filter === 'monthly') {
                 prevAggregation = await Order.aggregate([
