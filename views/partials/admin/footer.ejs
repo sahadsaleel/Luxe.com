@@ -1,5 +1,4 @@
 <style>
-   /* Pagination container */
 .pagination {
     display: flex;
     justify-content: center;
@@ -9,7 +8,6 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* Pagination links */
 .pagination a {
     display: inline-flex;
     justify-content: center;
@@ -27,14 +25,12 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Hover effect for links */
 .pagination a:hover:not(.active) {
     background: rgba(102, 126, 234, 0.1);
     border-color: #667eea;
     color: #ffffff;
 }
 
-/* Active page */
 .pagination a.active {
     background: linear-gradient(135deg, #667eea, #764ba2);
     border-color: transparent;
@@ -44,7 +40,6 @@
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-/* Disabled state */
 .pagination span.disabled {
     display: inline-flex;
     justify-content: center;
@@ -59,12 +54,10 @@
     cursor: not-allowed;
 }
 
-/* Previous/Next arrows */
 .pagination a[href*="page="]:not(.active) {
     font-size: 16px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 576px) {
     .pagination {
         gap: 8px;
@@ -79,23 +72,48 @@
 </style>
 
 <% if (typeof currentPage !== 'undefined' && typeof totalPages !== 'undefined') { %>
+  <div class="pagination">
+    <% if (currentPage > 1) { %>
+      <a href="?page=<%= currentPage - 1 %>">&laquo;</a>
+    <% } else { %>
+      <span class="disabled">&laquo;</span>
+    <% } %>
 
-    <div class="pagination">
-        <% if (currentPage > 1) { %>
-            <a href="?page=<%= currentPage - 1 %>">&laquo;</a>
-        <% } else { %>
-            <span class="disabled">&laquo;</span>
+    <% if (totalPages <= 5) { %>
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <a href="?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+      <% } %>
+    <% } else { %>
+      <% if (currentPage > 2) { %>
+        <a href="?page=1">1</a>
+        <% if (currentPage > 3) { %>
+          <span class="disabled">...</span>
         <% } %>
-  
-        <% for (let i = 1; i <= totalPages; i++) { %>
-            <a href="?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
-        <% } %>
-  
-        <% if (currentPage < totalPages) { %>
-            <a href="?page=<%= currentPage + 1 %>">&raquo;</a>
-        <% } else { %>
-            <span class="disabled">&raquo;</span>
-        <% } %>
-    </div>
-  <% } %>
+      <% } %>
+
+      <% 
+        const startPage = Math.max(2, currentPage - 1);
+        const endPage = Math.min(totalPages - 1, currentPage + 1);
+      %>
+
+      <% for (let i = startPage; i <= endPage; i++) { %>
+        <a href="?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+      <% } %>
+
+      <% if (currentPage < totalPages - 2) { %>
+        <span class="disabled">...</span>
+        <a href="?page=<%= totalPages %>"><%= totalPages %></a>
+      <% } else if (currentPage === totalPages - 2) { %>
+        <a href="?page=<%= totalPages %>"><%= totalPages %></a>
+      <% } %>
+    <% } %>
+
+    <% if (currentPage < totalPages) { %>
+      <a href="?page=<%= currentPage + 1 %>">&raquo;</a>
+    <% } else { %>
+      <span class="disabled">&raquo;</span>
+    <% } %>
+  </div>
+<% } %>
+
   

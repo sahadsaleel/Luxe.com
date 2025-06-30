@@ -51,10 +51,34 @@
 
         <div class="chart-section">
             <div class="chart-card">
-                <div class="chart-title"><i class="fas fa-chart-bar"></i> Sales Chart</div>
-                <canvas id="salesChart"></canvas>
+                <div class="chart-header">
+                    <h3 class="chart-title"><i class="fas fa-chart-bar"></i> Sales Chart</h3>
+                    <div class="chart-controls">
+                        <button class="chart-btn <%= currentFilter === 'weekly' ? 'active' : '' %>" onclick="window.location.href='/admin/dashboard?filter=weekly'">Weekly</button>
+                        <button class="chart-btn <%= currentFilter === 'monthly' ? 'active' : '' %>" onclick="window.location.href='/admin/dashboard?filter=monthly'">Monthly</button>
+                        <button class="chart-btn <%= currentFilter === 'yearly' ? 'active' : '' %>" onclick="window.location.href='/admin/dashboard?filter=yearly'">Yearly</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+                <div class="chart-stats">
+                    <div class="chart-stat">
+                        <div class="chart-stat-value">₹<%= salesData[currentFilter]?.stats?.revenue?.toLocaleString('en-IN') || '0' %></div>
+                        <div class="chart-stat-label">Total Revenue</div>
+                    </div>
+                    <div class="chart-stat">
+                        <div class="chart-stat-value"><%= salesData[currentFilter]?.stats?.orders || '0' %></div>
+                        <div class="chart-stat-label">Total Orders</div>
+                    </div>
+                    <div class="chart-stat">
+                        <div class="chart-stat-value"><%= salesData[currentFilter]?.stats?.growth || '0' %>%</div>
+                        <div class="chart-stat-label">Growth Rate</div>
+                    </div>
+                </div>
             </div>
         </div>
+
 
         <div class="list-container">
             <div class="list-title"><i class="fas fa-book"></i> Ledger Book</div>
@@ -159,19 +183,30 @@
                     backgroundColor: 'rgba(102, 126, 234, 0.2)',
                     borderWidth: 2,
                     tension: 0.4,
-                    fill: true
+                    fill: true,
+                    pointRadius: 4,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#667eea',
+                    pointBorderWidth: 2
                 }
             ];
 
-            <% if (currentFilter === 'monthly' && salesData[currentFilter]?.prevData?.length) { %>
+            <% if (salesData[currentFilter]?.prevData?.length) { %>
                 datasets.push({
-                    label: 'Previous Month Sales',
+                    label: '<%= currentFilter === "monthly" ? "Previous Month Sales" : "Previous Period Sales" %>',
                     data: <%- JSON.stringify(salesData[currentFilter].prevData) %>,
                     borderColor: '#f56565',
                     backgroundColor: 'rgba(245, 101, 101, 0.2)',
                     borderWidth: 2,
                     tension: 0.4,
-                    fill: true
+                    fill: true,
+                    pointRadius: 4,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#f56565',
+
+                    pointBorderWidth: 2
                 });
             <% } %>
 
@@ -183,14 +218,26 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: { 
                             position: 'top',
                             labels: {
-                                color: '#e2e8f0'
+                                color: '#e2e8f0',
+                                font: {
+                                    size: 14,
+                                    weight: '600'
+                                },
+                                padding: 20
                             }
                         },
                         tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#e2e8f0',
+                            borderColor: 'rgba(102, 126, 234, 0.3)',
+                            borderWidth: 1,
+                            padding: 12,
                             callbacks: {
                                 label: context => `₹${context.parsed.y.toLocaleString('en-IN')}`
                             }
@@ -202,28 +249,46 @@
                             title: {
                                 display: true,
                                 text: 'Revenue (₹)',
-                                color: '#e2e8f0'
+                                color: '#e2e8f0',
+                                font: {
+                                    size: 14,
+                                    weight: '600'
+                                }
                             },
                             grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                drawBorder: false
                             },
                             ticks: {
-                                color: '#e2e8f0'
+                                color: '#e2e8f0',
+                                callback: value => `₹${value.toLocaleString('en-IN')}`,
+                                maxTicksLimit: 8
                             }
                         },
                         x: {
                             title: {
                                 display: true,
                                 text: '<%= currentFilter.charAt(0).toUpperCase() + currentFilter.slice(1) %> Period',
-                                color: '#e2e8f0'
+                                color: '#e2e8f0',
+                                font: {
+                                    size: 14,
+                                    weight: '600'
+                                }
                             },
                             grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
+                                display: false
                             },
                             ticks: {
-                                color: '#e2e8f0'
+                                color: '#e2e8f0',
+                                maxRotation: 45,
+                                minRotation: 45,
+                                maxTicksLimit: 10
                             }
                         }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutCubic'
                     }
                 }
             });

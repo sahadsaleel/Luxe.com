@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,485 +9,565 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
   <%- include('../../views/partials/user/header') %>
-  <nav>
-    <div class="nav-container">
-      <button class="filter-button" id="filterBtn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="4" y1="21" x2="4" y2="14"></line>
-          <line x1="4" y1="10" x2="4" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="12"></line>
-          <line x1="12" y1="8" x2="12" y2="3"></line>
-          <line x1="20" y1="21" x2="20" y2="16"></line>
-          <line x1="20" y1="12" x2="20" y2="3"></line>
-          <line x1="1" y1="14" x2="7" y2="14"></line>
-          <line x1="9" y1="8" x2="15" y2="8"></line>
-          <line x1="17" y1="16" x2="23" y2="16"></line>
-        </svg>
-        FILTER
-      </button>
-      <button class="sort-button" id="sortBtn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11 5h10"></path>
-          <path d="M11 9h7"></path>
-          <path d="M11 13h4"></path>
-          <path d="M3 17l3 3 3-3"></path>
-          <path d="M6 18V5"></path>
-        </svg>
-        SORT
-      </button>
-    </div>
-  </nav>
-  
-  <div class="modal filter-modal" id="filterModal" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>SHOW FILTERS</h2>
-        <button class="close-button" id="closeFilterBtn">×</button>
+    <nav>
+      <div class="nav-container">
+        <button class="filter-button" id="filterBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="21" x2="4" y2="14"></line>
+            <line x1="4" y1="10" x2="4" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12" y2="3"></line>
+            <line x1="20" y1="21" x2="20" y2="16"></line>
+            <line x1="20" y1="12" x2="20" y2="3"></line>
+            <line x1="1" y1="14" x2="7" y2="14"></line>
+            <line x1="9" y1="8" x2="15" y2="8"></line>
+            <line x1="17" y1="16" x2="23" y2="16"></line>
+          </svg>
+          FILTER
+        </button>
+        <button class="sort-button" id="sortBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 5h10"></path>
+            <path d="M11 9h7"></path>
+            <path d="M11 13h4"></path>
+            <path d="M3 17l3 3 3-3"></path>
+            <path d="M6 18V5"></path>
+          </svg>
+          SORT
+        </button>
       </div>
-      <div class="modal-body">
-        <div class="filter-section">
-          <div class="filter-title" data-target="brandOptions">
-            <span>BRANDS</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-              <polyline points="18 15 12 9 6 15"></polyline>
-            </svg>
-          </div>
-          <div class="filter-options" id="brandOptions">
-            <% if (brands && Array.isArray(brands) && brands.length > 0) { %>
-              <% brands.forEach(brand => { %>
-                <label class="filter-option">
-                  <input type="checkbox" name="brandf" value="<%= brand._id %>" <%= currentFilters.brandf.includes(brand._id.toString()) ? 'checked' : '' %>>
-                  <%= brand.brandName %>
-                </label>
-              <% }) %>
-            <% } else { %>
-              <p>No listed brands available</p>
-            <% } %>
-          </div>
-        </div>
-        
-        <div class="filter-section">
-          <div class="filter-title" data-target="categoryOptions">
-            <span>CATEGORY</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-              <polyline points="18 15 12 9 6 15"></polyline>
-            </svg>
-          </div>
-          <div class="filter-options" id="categoryOptions">
-            <% if (categories && Array.isArray(categories) && categories.length > 0) { %>
-              <% categories.forEach(category => { %>
-                <label class="filter-option">
-                  <input type="checkbox" name="categoryf" value="<%= category._id %>" <%= currentFilters.categoryf.includes(category._id.toString()) ? 'checked' : '' %>>
-                  <%= category.name %>
-                </label>
-              <% }) %>
-            <% } else { %>
-              <p>No listed categories available</p>
-            <% } %>
-          </div>
-        </div>
-      </div>
-      
-      <div class="button-container">
-        <button class="clear-button" id="clearFilters">CLEAR ALL</button>
-        <button class="show-button" id="applyFilters">SHOW PRODUCTS</button>
-      </div>
-    </div>
-  </div>
+    </nav>
 
-  <div class="modal sort-modal" id="sortModal" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>SORT</h2>
-        <button class="close-button" id="closeSortBtn">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="sort-options">
-          <label class="filter-option">
-            <input type="radio" name="sort" value="A-Z" <%= currentFilters.sort === 'A-Z' || !currentFilters.sort ? 'checked' : '' %>>
-            A-Z Order
-          </label>
-          <label class="filter-option">
-            <input type="radio" name="sort" value="Z-A" <%= currentFilters.sort === 'Z-A' ? 'checked' : '' %>>
-            Z-A Order
-          </label>
-          <label class="filter-option">
-            <input type="radio" name="sort" value="price-low-high" <%= currentFilters.sort === 'price-low-high' ? 'checked' : '' %>>
-            Price: Low → High
-          </label>
-          <label class="filter-option">
-            <input type="radio" name="sort" value="price-high-low" <%= currentFilters.sort === 'price-high-low' ? 'checked' : '' %>>
-            Price: High → Low
-          </label>
+    <div class="modal filter-modal" id="filterModal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>SHOW FILTERS</h2>
+          <button class="close-button" id="closeFilterBtn">×</button>
         </div>
-        
-        <div class="price-section">
-          <h3>PRICE RANGE</h3>
-          <div class="price-inputs">
-            <div>From</div>
-            <input type="number" class="price-input" id="minPrice" name="priceFrom" value="<%= currentFilters.minValue || '' %>" placeholder="Min">
-            <div>To</div>
-            <input type="number" class="price-input" id="maxPrice" name="priceTo" value="<%= currentFilters.maxValue || '' %>" placeholder="Max">
-          </div>
-        </div>
-
-      </div>
-      
-      <div class="button-container">
-        <button class="clear-button" id="clearSort">CLEAR ALL</button>
-        <button class="show-button" id="applySort">SHOW PRODUCTS</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="modalBackdrop"></div>
-  
-  <div class="hero">
-    <div class="hero-image">
-      <video width="100%" height="300" autoplay muted loop playsinline>
-        <source src="https://videos.pexels.com/video-files/7815734/7815734-sd_640_360_25fps.mp4" type="video/mp4">
-        <img src="/path/to/fallback-image.jpg" alt="Hero fallback image">
-      </video>
-    </div> 
-  </div>
-
-  <div class="main-content">
-    <div class="celebrity-products">
-      <% if (products && products.length > 0) { %>
-        <div class="container">
-          <div class="row">
-            <% products.forEach(product => { %>
-              <div class="col-md-4 col-lg-3 mb-4">
-                <div class="product-card">
-                  <div class="product-image-container">
-                    <% if (product.bestOffer) { %>
-                      <div class="offer-badge <%= product.bestOffer.offerType %> <%= product.bestOffer.discount >= 40 ? 'limited-time' : '' %>">
-                        <%= product.bestOffer.discount %>% OFF
-                      </div>
-                    <% } %>
-                    <a href="/productViewPage?id=<%= product.id %>">
-                      <img src="<%= product.image %>" alt="<%= product.name %>">
-                    </a>
-                    <button class="btn-wishlist" onclick="toggleWishlist('<%= product.id %>', this)">
-                      <i class="<%= wishlistProductIds.includes(product.id.toString()) ? 'fa-solid' : 'fa-regular' %> fa-heart" 
-                         style="<%= wishlistProductIds.includes(product.id.toString()) ? 'color: red;' : '' %>"></i>
-                    </button>
-                  </div>
-                  <div class="product-info p-3">
-                    <h3 class="product-title"><%= product.name %></h3>
-                    <div class="price-container">
-                      <span class="current-price">₹<%= Math.round(product.discountedPrice) %></span>
-                      <% if (product.discountedPrice < product.price) { %>
-                        <span class="original-price">₹<%= product.price %></span>
-                        <span class="discount-percent"><%= Math.round((product.price - product.discountedPrice) / product.price * 100) %>% off</span>
+        <div class="modal-body">
+          <div class="filter-section">
+            <div class="filter-title" data-target="brandOptions">
+              <span>BRANDS</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
+                <polyline points="18 15 12 9 6 15"></polyline>
+              </svg>
+            </div>
+            <div class="filter-options" id="brandOptions">
+              <% if (brands && Array.isArray(brands) && brands.length> 0) { %>
+                <% brands.forEach(brand=> { %>
+                  <label class="filter-option">
+                    <input type="checkbox" name="brandf" value="<%= brand._id %>"
+                      <%=currentFilters.brandf.includes(brand._id.toString()) ? 'checked' : '' %>>
+                    <%= brand.brandName %>
+                  </label>
+                  <% }) %>
+                    <% } else { %>
+                      <p>No listed brands available</p>
                       <% } %>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-title" data-target="categoryOptions">
+              <span>CATEGORY</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
+                <polyline points="18 15 12 9 6 15"></polyline>
+              </svg>
+            </div>
+            <div class="filter-options" id="categoryOptions">
+              <% if (categories && Array.isArray(categories) && categories.length> 0) { %>
+                <% categories.forEach(category=> { %>
+                  <label class="filter-option">
+                    <input type="checkbox" name="categoryf" value="<%= category._id %>"
+                      <%=currentFilters.categoryf.includes(category._id.toString()) ? 'checked' : '' %>>
+                    <%= category.name %>
+                  </label>
+                  <% }) %>
+                    <% } else { %>
+                      <p>No listed categories available</p>
+                      <% } %>
+            </div>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button class="clear-button" id="clearFilters">CLEAR ALL</button>
+          <button class="show-button" id="applyFilters">SHOW PRODUCTS</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal sort-modal" id="sortModal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>SORT</h2>
+          <button class="close-button" id="closeSortBtn">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="sort-options">
+            <label class="filter-option">
+              <input type="radio" name="sort" value="A-Z" <%=currentFilters.sort==='A-Z' || !currentFilters.sort
+                ? 'checked' : '' %>>
+              A-Z Order
+            </label>
+            <label class="filter-option">
+              <input type="radio" name="sort" value="Z-A" <%=currentFilters.sort==='Z-A' ? 'checked' : '' %>>
+              Z-A Order
+            </label>
+            <label class="filter-option">
+              <input type="radio" name="sort" value="price-low-high" <%=currentFilters.sort==='price-low-high'
+                ? 'checked' : '' %>>
+              Price: Low → High
+            </label>
+            <label class="filter-option">
+              <input type="radio" name="sort" value="price-high-low" <%=currentFilters.sort==='price-high-low'
+                ? 'checked' : '' %>>
+              Price: High → Low
+            </label>
+          </div>
+
+          <div class="price-section">
+            <h3>PRICE RANGE</h3>
+            <div class="price-inputs">
+              <div>From</div>
+              <input type="number" class="price-input" id="minPrice" name="priceFrom"
+                value="<%= currentFilters.minValue || '' %>" placeholder="Min">
+              <div>To</div>
+              <input type="number" class="price-input" id="maxPrice" name="priceTo"
+                value="<%= currentFilters.maxValue || '' %>" placeholder="Max">
+            </div>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button class="clear-button" id="clearSort">CLEAR ALL</button>
+          <button class="show-button" id="applySort">SHOW PRODUCTS</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+
+    <div class="hero">
+      <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="6000">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <video autoplay muted loop playsinline class="d-block w-100">
+              <source src="https://r2---sn-5np5oxu-jv3z.googlevideo.com/videoplayback?expire=1751313010&ei=EpZiaL_-L-KfzPsPzrz0uA8&ip=176.6.129.48&id=o-AH9NYyFc2VjUbO4myACd6gMEWM3J5Mkf-hviLDOqjYf-&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&rms=au%2Cau&bui=AY1jyLNai6iqnKY4Y7mJMywIRVB9zaPkvVPz6Schv4fGnnAEiaZpZmhydJ05wgr6C4TTQmUKj5pauWdF&spc=l3OVKRgDH8agkHGDuhndC1K4mGqgFs2lpRBW4gb3IDVGKSH2YmHMNag&vprv=1&svpuc=1&mime=video%2Fmp4&ns=kgwtLqlDirSJJ5TXXUXXy-EQ&rqh=1&cnr=14&ratebypass=yes&dur=20.897&lmt=1675061736365597&fexp=51331020&c=MWEB&sefc=1&txp=6219224&n=HXSDSeeignUDfg&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgdwxmve4EYitB2n0SubFAn2fXteV-LcxJX0KBLeqWS80CIQDzQPOTrHW18hX2_UUyXR-lZ-TGB5rGSFs842q5Vqm_aw%3D%3D&pot=MnR0goKupEWAZHS-0-HAXS9aZJgGkCeazMuGqxBmAnO62ivdpu1ub8AxYZ0lst5fHvYGEC0DAI4qkTa8tqruAmyRCwIC7M6ubjxvCpIYzaYCNZPeDQQanU1GiHpua88zRQUS8eHJpNC4CmAtnplxsEWhXSQn7g==&cms_redirect=yes&met=1751291418,&mh=RT&mip=202.164.149.48&mm=31&mn=sn-5np5oxu-jv3z&ms=au&mt=1751291130&mv=m&mvi=2&pcm2cms=yes&pl=24&lsparams=met,mh,mip,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRAIgHAWQJyD6pVwfzso43EgEm7KaaSbk1FIHycltwe2V4H8CIDaWBFYIc58K-HY629QDC7HVG4bIJNO2fvQGrVgXBfmi" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="hero-overlay">
+              <h1>Discover Timeless Elegance</h1>
+              <p>Explore our exquisite collection of luxury fragrances</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://www.xerjoff.com/img/purpleAccentodeDesk.jpg" class="d-block w-100" alt="Luxury Perfume 2">
+            <div class="hero-overlay">
+              <h1>Unleash Your Signature Scent</h1> 
+              <p>Craft your unique essence with Xerjoff</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://www.xerjoff.com/img/slideBlackMoonlightDesk1.jpg" class="d-block w-100" alt="Luxury Perfume 3">
+            <div class="hero-overlay">
+              <h1>Craft Your Essence</h1>
+              <p>Experience the art of Italian perfumery</p>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+        <div class="slideshow-nav">
+          <span class="dot" data-bs-target="#carouselExampleFade" data-bs-slide-to="0"></span>
+          <span class="dot" data-bs-target="#carouselExampleFade" data-bs-slide-to="1"></span>
+          <span class="dot" data-bs-target="#carouselExampleFade" data-bs-slide-to="2"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="celebrity-products">
+        <% if (products && products.length> 0) { %>
+          <div class="container">
+            <div class="row">
+              <% products.forEach(product=> { %>
+                <div class="col-md-4 col-lg-3 mb-4">
+                  <div class="product-card">
+                    <div class="product-image-container">
+                      <% if (product.bestOffer) { %>
+                        <div
+                          class="offer-badge <%= product.bestOffer.offerType %> <%= product.bestOffer.discount >= 40 ? 'limited-time' : '' %>">
+                          <%= product.bestOffer.discount %>% OFF
+                        </div>
+                        <% } %>
+                          <a href="/productViewPage?id=<%= product.id %>">
+                            <img src="<%= product.image %>" alt="<%= product.name %>">
+                          </a>
+                          <button class="btn-wishlist" onclick="toggleWishlist('<%= product.id %>', this)">
+                            <i class="<%= wishlistProductIds.includes(product.id.toString()) ? 'fa-solid' : 'fa-regular' %> fa-heart"
+                              style="<%= wishlistProductIds.includes(product.id.toString()) ? 'color: red;' : '' %>"></i>
+                          </button>
                     </div>
-                    <button class="add-to-cart" 
-                            onclick="addToCart('<%= product.id %>', this)" 
-                            data-product-id="<%= product._id %>"
-                            data-variants='<%= JSON.stringify(product.variants[0]._id) %>'>
-                      <span class="button-text">Add to bag</span>
-                      <div class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i>
+                    <div class="product-info p-3">
+                      <h3 class="product-title">
+                        <%= product.name %>
+                      </h3>
+                      <div class="price-container">
+                        <span class="current-price">₹<%= Math.round(product.discountedPrice) %></span>
+                        <% if (product.discountedPrice < product.price) { %>
+                          <span class="original-price">₹<%= product.price %></span>
+                          <span class="discount-percent">
+                            <%= Math.round((product.price - product.discountedPrice) / product.price * 100) %>% off
+                          </span>
+                          <% } %>
                       </div>
-                    </button>
+                      <button class="add-to-cart" onclick="addToCart('<%= product.id %>', this)"
+                        data-product-id="<%= product._id %>"
+                        data-variants='<%= JSON.stringify(product.variants[0]._id) %>'>
+                        <span class="button-text">Add to bag</span>
+                        <div class="loading-spinner">
+                          <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            <% }) %>
+                <% }) %>
+            </div>
           </div>
-        </div>
-      <% } else { %>
-        <div class="no-products">
-          <h3>No products found</h3>
-          <p>Try adjusting your filters or check back later.</p>
-        </div>
-      <% } %>
-
-      <% if (pagination && pagination.totalPages > 1) { %>
-        <div class="pagination-container">
-          <div class="pagination">
-            <% if (pagination.hasPrevPage) { %>
-              <a href="#" class="page-link" onclick="changePage(<%= pagination.prevPage %>)">
-                <i class="fas fa-chevron-left"></i>
-              </a>
+          <% } else { %>
+            <div class="no-products">
+              <h3>No products found</h3>
+              <p>Try adjusting your filters or check back later.</p>
+            </div>
             <% } %>
 
-            <% for(let i = 1; i <= pagination.totalPages; i++) { %>
-              <a href="#" 
-                class="page-link <%= i === pagination.currentPage ? 'active' : '' %>"
-                onclick="changePage(<%= i %>)">
-                <%= i %>
-              </a>
-            <% } %>
+              <% if (pagination && pagination.totalPages> 1) { %>
+                <div class="pagination-container">
+                  <div class="pagination">
+                    <% if (pagination.hasPrevPage) { %>
+                      <a href="#" class="page-link" onclick="changePage(<%= pagination.prevPage %>)">
+                        <i class="fas fa-chevron-left"></i>
+                      </a>
+                      <% } %>
 
-            <% if (pagination.hasNextPage) { %>
-              <a href="#" class="page-link" onclick="changePage(<%= pagination.nextPage %>)">
-                <i class="fas fa-chevron-right"></i>
-              </a>
-            <% } %>
-          </div>
-          <div class="pagination-info">
-            Showing <%= (pagination.currentPage - 1) * 8 + 1 %>-<%= Math.min(pagination.currentPage * 8, pagination.totalProducts) %> 
-            of <%= pagination.totalProducts %> products
-          </div>
-        </div>
-      <% } %>
+                        <% for(let i=1; i <=pagination.totalPages; i++) { %>
+                          <a href="#" class="page-link <%= i === pagination.currentPage ? 'active' : '' %>"
+                            onclick="changePage(<%= i %>)">
+                            <%= i %>
+                          </a>
+                          <% } %>
+
+                            <% if (pagination.hasNextPage) { %>
+                              <a href="#" class="page-link" onclick="changePage(<%= pagination.nextPage %>)">
+                                <i class="fas fa-chevron-right"></i>
+                              </a>
+                              <% } %>
+                  </div>
+                  <div class="pagination-info">
+                    Showing <%= (pagination.currentPage - 1) * 8 + 1 %>-<%= Math.min(pagination.currentPage * 8,
+                        pagination.totalProducts) %>
+                        of <%= pagination.totalProducts %> products
+                  </div>
+                </div>
+                <% } %>
+      </div>
     </div>
-  </div>
-  
-  <%- include("../../views/partials/user/footer") %>
-  
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script>
-    function startCountdown(productId, endDate) {
-      const timerElement = document.getElementById(`timer-${productId}`);
-      if (!timerElement) return;
 
-      const timer = setInterval(() => {
-        const now = new Date().getTime();
-        const end = new Date(endDate).getTime();
-        const distance = end - now;
+    <%- include("../../views/partials/user/footer") %>
 
-        if (distance < 0) {
-          clearInterval(timer);
-          timerElement.innerHTML = "EXPIRED";
-          return;
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script>
+        function startCountdown(productId, endDate) {
+          const timerElement = document.getElementById(`timer-${productId}`);
+          if (!timerElement) return;
+
+          const timer = setInterval(() => {
+            const now = new Date().getTime();
+            const end = new Date(endDate).getTime();
+            const distance = end - now;
+
+            if (distance < 0) {
+              clearInterval(timer);
+              timerElement.innerHTML = "EXPIRED";
+              return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById(`days-${productId}`).textContent = days.toString().padStart(2, '0');
+            document.getElementById(`hours-${productId}`).textContent = hours.toString().padStart(2, '0');
+            document.getElementById(`minutes-${productId}`).textContent = minutes.toString().padStart(2, '0');
+            document.getElementById(`seconds-${productId}`).textContent = seconds.toString().padStart(2, '0');
+          }, 1000);
         }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        document.getElementById(`days-${productId}`).textContent = days.toString().padStart(2, '0');
-        document.getElementById(`hours-${productId}`).textContent = hours.toString().padStart(2, '0');
-        document.getElementById(`minutes-${productId}`).textContent = minutes.toString().padStart(2, '0');
-        document.getElementById(`seconds-${productId}`).textContent = seconds.toString().padStart(2, '0');
-      }, 1000);
-    }
 
     <% products.forEach(product => { %>
       <% if (product.status === 'listed' && product.bestOffer && product.bestOffer.discount >= 40) { %>
-        startCountdown('<%= product.id %>', '<%= product.bestOffer.endDate %>');
+            startCountdown('<%= product.id %>', '<%= product.bestOffer.endDate %>');
       <% } %>
     <% }) %>
 
-    async function fetchProducts(page = 1) {
-      try {
-        const brands = Array.from(document.querySelectorAll('#filterModal input[name="brandf"]:checked')).map(input => input.value);
-        const categories = Array.from(document.querySelectorAll('#filterModal input[name="categoryf"]:checked')).map(input => input.value);
-        let priceFrom = document.querySelector('#sortModal input[name="priceFrom"]').value;
-        let priceTo = document.querySelector('#sortModal input[name="priceTo"]').value;
-        const sortOption = document.querySelector('#sortModal input[name="sort"]:checked')?.value || 'A-Z';
+          async function fetchProducts(page = 1) {
+            try {
+              const brands = Array.from(document.querySelectorAll('#filterModal input[name="brandf"]:checked')).map(input => input.value);
+              const categories = Array.from(document.querySelectorAll('#filterModal input[name="categoryf"]:checked')).map(input => input.value);
+              let priceFrom = document.querySelector('#sortModal input[name="priceFrom"]').value;
+              let priceTo = document.querySelector('#sortModal input[name="priceTo"]').value;
+              const sortOption = document.querySelector('#sortModal input[name="sort"]:checked')?.value || 'A-Z';
 
-        priceFrom = priceFrom ? parseFloat(priceFrom) : '';
-        priceTo = priceTo ? parseFloat(priceTo) : '';
-        if (priceFrom && isNaN(priceFrom)) priceFrom = '';
-        if (priceTo && isNaN(priceTo)) priceTo = '';
+              priceFrom = priceFrom ? parseFloat(priceFrom) : '';
+              priceTo = priceTo ? parseFloat(priceTo) : '';
+              if (priceFrom && isNaN(priceFrom)) priceFrom = '';
+              if (priceTo && isNaN(priceTo)) priceTo = '';
 
-        const query = new URLSearchParams();
-        if (brands.length > 0) query.append('brands', brands.join(','));
-        if (categories.length > 0) query.append('category', categories.join(','));
-        if (priceFrom !== '') query.append('priceFrom', priceFrom);
-        if (priceTo !== '') query.append('priceTo', priceTo);
-        if (sortOption) query.append('sort', sortOption);
-        query.append('page', page);
+              const query = new URLSearchParams();
+              if (brands.length > 0) query.append('brands', brands.join(','));
+              if (categories.length > 0) query.append('category', categories.join(','));
+              if (priceFrom !== '') query.append('priceFrom', priceFrom);
+              if (priceTo !== '') query.append('priceTo', priceTo);
+              if (sortOption) query.append('sort', sortOption);
+              query.append('page', page);
 
-        window.location.href = `/shop?${query.toString()}`;
-      } catch (error) {
-        console.error('Error in fetchProducts:', error);
-        showToast('Failed to apply filters. Please try again.', 'error');
-      }
-    }
-
-    async function toggleWishlist(productId, button) {
-      try {
-        const icon = button.querySelector('i');
-        const isInWishlist = icon.classList.contains('fa-solid');
-        button.disabled = true;
-
-        const url = isInWishlist ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'same-origin',
-        });
-
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-
-        if (result.success) {
-          if (isInWishlist) {
-            icon.classList.remove('fa-solid', 'fa-heart');
-            icon.classList.add('fa-regular', 'fa-heart');
-            icon.style.color = '';
-            showToast('Removed from wishlist', 'success');
-          } else {
-            icon.classList.remove('fa-regular', 'fa-heart');
-            icon.classList.add('fa-solid', 'fa-heart');
-            icon.style.color = 'red';
-            showToast('Added to wishlist', 'success');
-          }
-        } else {
-          if (result.message.includes('log in')) {
-            window.location.href = '/login';
-          } else {
-            showToast(result.message, 'error');
-          }
-        }
-      } catch (error) {
-        console.error('Error toggling wishlist:', error);
-        showToast('Failed to update wishlist. Please try again.', 'error');
-      } finally {
-        button.disabled = false;
-      }
-    }
-
-    async function addToCart(productId, button) {
-      try {
-        if (!button) throw new Error('Button element not found');
-
-        const buttonText = button.querySelector('.button-text');
-        const loadingSpinner = button.querySelector('.loading-spinner');
-        
-        if (!buttonText || !loadingSpinner) throw new Error('Button elements not found');
-
-        button.disabled = true;
-        buttonText.style.display = 'none';
-        loadingSpinner.style.display = 'inline-block';
-
-        let variantId;
-        try {
-          const variantsData = button.getAttribute('data-variants');
-          variantId = variantsData ? JSON.parse(variantsData) : null;
-        } catch (e) {
-          console.error('Error parsing variants:', e);
-          variantId = null;
-        }
-
-        const response = await fetch('/cart/add', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            productId: productId,
-            variantId,
-            quantity: 1,
-            isGiftWrapped: false,
-          }),
-          credentials: 'same-origin',
-        });
-
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          window.location.href = '/login';
-          return;
-        }
-
-        const result = await response.json();
-
-        if (result.success) {
-          showToast('Added to bag successfully!', 'success');
-          if (result.cartCount) {
-            const cartCountElement = document.getElementById('cartCount');
-            if (cartCountElement) {
-              cartCountElement.textContent = result.cartCount;
+              window.location.href = `/shop?${query.toString()}`;
+            } catch (error) {
+              console.error('Error in fetchProducts:', error);
+              showToast('Failed to apply filters. Please try again.', 'error');
             }
           }
-          if (result.isMaxQuantity) {
-            window.location.href = '/cart';
+
+        async function toggleWishlist(productId, button) {
+          try {
+            const icon = button.querySelector('i');
+            const isInWishlist = icon.classList.contains('fa-solid');
+            button.disabled = true;
+
+            const url = isInWishlist ? `/wishlist/remove/${productId}` : `/wishlist/add/${productId}`;
+            const response = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'same-origin',
+            });
+
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            const result = await response.json();
+
+            if (result.success) {
+              if (isInWishlist) {
+                icon.classList.remove('fa-solid', 'fa-heart');
+                icon.classList.add('fa-regular', 'fa-heart');
+                icon.style.color = '';
+                showToast('Removed from wishlist', 'success');
+              } else {
+                icon.classList.remove('fa-regular', 'fa-heart');
+                icon.classList.add('fa-solid', 'fa-heart');
+                icon.style.color = '#046A38';
+                showToast('Added to wishlist', 'success');
+              }
+            } else {
+              if (result.message.includes('log in')) {
+                window.location.href = '/login';
+              } else {
+                showToast(result.message, 'error');
+              }
+            }
+          } catch (error) {
+            console.error('Error toggling wishlist:', error);
+            showToast('Failed to update wishlist. Please try again.', 'error');
+          } finally {
+            button.disabled = false;
           }
-        } else {
-          if (result.message && result.message.includes('log in')) {
-            window.location.href = '/login';
+        }
+
+        async function addToCart(productId, button) {
+          try {
+            if (!button) throw new Error('Button element not found');
+
+            const buttonText = button.querySelector('.button-text');
+            const loadingSpinner = button.querySelector('.loading-spinner');
+
+            if (!buttonText || !loadingSpinner) throw new Error('Button elements not found');
+
+            button.disabled = true;
+            buttonText.style.display = 'none';
+            loadingSpinner.style.display = 'inline-block';
+
+            let variantId;
+            try {
+              const variantsData = button.getAttribute('data-variants');
+              variantId = variantsData ? JSON.parse(variantsData) : null;
+            } catch (e) {
+              console.error('Error parsing variants:', e);
+              variantId = null;
+            }
+
+            const response = await fetch('/cart/add', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                productId: productId,
+                variantId,
+                quantity: 1,
+                isGiftWrapped: false,
+              }),
+              credentials: 'same-origin',
+            });
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+              window.location.href = '/login';
+              return;
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+              showToast('Added to bag successfully!', 'success');
+              if (result.cartCount) {
+                const cartCountElement = document.getElementById('cartCount');
+                if (cartCountElement) {
+                  cartCountElement.textContent = result.cartCount;
+                }
+              }
+              if (result.isMaxQuantity) {
+                window.location.href = '/cart';
+              }
+            } else {
+              if (result.message && result.message.includes('log in')) {
+                window.location.href = '/login';
+              } else {
+                showToast(result.message || 'Failed to add to cart', 'error');
+              }
+            }
+          } catch (error) {
+            console.error('Error adding to cart:', error);
+            if (error instanceof SyntaxError && error.message.includes('Unexpected token')) {
+              window.location.href = '/login';
+              return;
+            }
+            showToast('Failed to add to cart. Please try again.', 'error');
+          } finally {
+            if (button) {
+              button.disabled = false;
+              button.querySelector('.button-text').style.display = 'inline';
+              button.querySelector('.loading-spinner').style.display = 'none';
+            }
+          }
+        }
+
+        function showToast(message, icon = 'success') {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: icon,
+            title: message,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+          });
+        }
+
+        function toggleModal(modalId, show) {
+          const modal = document.querySelector(modalId);
+          const backdrop = document.querySelector('#modalBackdrop');
+          if (show) {
+            modal.style.display = 'flex';
+            backdrop.classList.add('show');
           } else {
-            showToast(result.message || 'Failed to add to cart', 'error');
+            modal.style.display = 'none';
+            backdrop.classList.remove('show');
           }
         }
-      } catch (error) {
-        console.error('Error adding to cart:', error);
-        if (error instanceof SyntaxError && error.message.includes('Unexpected token')) {
-          window.location.href = '/login';
-          return;
-        }
-        showToast('Failed to add to cart. Please try again.', 'error');
-      } finally {
-        if (button) {
-          button.disabled = false;
-          button.querySelector('.button-text').style.display = 'inline';
-          button.querySelector('.loading-spinner').style.display = 'none';
-        }
-      }
-    }
 
-    function showToast(message, icon = 'success') {
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: icon,
-        title: message,
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-      });
-    }
+        document.addEventListener('DOMContentLoaded', () => {
+          document.querySelector('#filterBtn').addEventListener('click', () => toggleModal('#filterModal', true));
+          document.querySelector('#sortBtn').addEventListener('click', () => toggleModal('#sortModal', true));
+          document.querySelector('#closeFilterBtn').addEventListener('click', () => toggleModal('#filterModal', false));
+          document.querySelector('#closeSortBtn').addEventListener('click', () => toggleModal('#sortModal', false));
 
-    function toggleModal(modalId, show) {
-      const modal = document.querySelector(modalId);
-      const backdrop = document.querySelector('#modalBackdrop');
-      if (show) {
-        modal.style.display = 'flex';
-        backdrop.classList.add('show');
-      } else {
-        modal.style.display = 'none';
-        backdrop.classList.remove('show');
-      }
-    }
+          document.querySelector('#applyFilters').addEventListener('click', () => {
+            fetchProducts(1);
+            toggleModal('#filterModal', false);
+          });
 
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelector('#filterBtn').addEventListener('click', () => toggleModal('#filterModal', true));
-      document.querySelector('#sortBtn').addEventListener('click', () => toggleModal('#sortModal', true));
-      document.querySelector('#closeFilterBtn').addEventListener('click', () => toggleModal('#filterModal', false));
-      document.querySelector('#closeSortBtn').addEventListener('click', () => toggleModal('#sortModal', false));
+          document.querySelector('#clearFilters').addEventListener('click', () => {
+            document.querySelectorAll('#filterModal input[type="checkbox"]').forEach(input => input.checked = false);
+            fetchProducts(1);
+          });
 
-      document.querySelector('#applyFilters').addEventListener('click', () => {
-        fetchProducts(1);
-        toggleModal('#filterModal', false);
-      });
+          document.querySelector('#applySort').addEventListener('click', () => {
+            fetchProducts(1);
+            toggleModal('#sortModal', false);
+          });
 
-      document.querySelector('#clearFilters').addEventListener('click', () => {
-        document.querySelectorAll('#filterModal input[type="checkbox"]').forEach(input => input.checked = false);
-        fetchProducts(1);
-      });
+          document.querySelector('#clearSort').addEventListener('click', () => {
+            document.querySelector('#sortModal input[name="sort"][value="A-Z"]').checked = true;
+            document.querySelector('#sortModal input[name="priceFrom"]').value = '';
+            document.querySelector('#sortModal input[name="priceTo"]').value = '';
+            fetchProducts(1);
+          });
 
-      document.querySelector('#applySort').addEventListener('click', () => {
-        fetchProducts(1);
-        toggleModal('#sortModal', false);
-      });
+          document.querySelectorAll('.filter-title').forEach(title => {
+            title.addEventListener('click', () => {
+              const targetId = title.getAttribute('data-target');
+              const target = document.querySelector(`#${targetId}`);
+              target.classList.toggle('show');
+              const arrow = title.querySelector('.arrow-icon');
+              arrow.classList.toggle('rotate');
+            });
+          });
 
-      document.querySelector('#clearSort').addEventListener('click', () => {
-        document.querySelector('#sortModal input[name="sort"][value="A-Z"]').checked = true;
-        document.querySelector('#sortModal input[name="priceFrom"]').value = '';
-        document.querySelector('#sortModal input[name="priceTo"]').value = '';
-        fetchProducts(1);
-      });
+          window.changePage = (page) => fetchProducts(page);
 
-      document.querySelectorAll('.filter-title').forEach(title => {
-        title.addEventListener('click', () => {
-          const targetId = title.getAttribute('data-target');
-          const target = document.querySelector(`#${targetId}`);
-          target.classList.toggle('show');
-          const arrow = title.querySelector('.arrow-icon');
-          arrow.classList.toggle('rotate');
+          const media = [
+            'https://youtu.be/HgeETSB5n5U',
+            'https://www.xerjoff.com/img/purpleAccentodeDesk.jpg',
+            'https://www.xerjoff.com/img/slideBlackMoonlightDesk1.jpg'
+          ];
+          media.forEach(src => {
+            if (src.endsWith('.mp4')) {
+              const video = document.createElement('video');
+              video.src = src;
+              video.preload = 'auto';
+            } else {
+              const img = new Image();
+              img.src = src;
+            }
+          });
+
+          // Initialize first carousel item as active
+          document.querySelector('.carousel-item').classList.add('active');
+
+          // Add Bootstrap carousel dot navigation functionality
+          document.querySelectorAll('.slideshow-nav .dot').forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+              const carousel = document.querySelector('#carouselExampleFade');
+              const bsCarousel = new bootstrap.Carousel(carousel);
+              bsCarousel.to(index);
+            });
+          });
         });
-      });
-
-      window.changePage = (page) => fetchProducts(page);
-    });
-  </script>
+      </script>
 </body>
+
 </html>

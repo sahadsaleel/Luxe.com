@@ -108,9 +108,13 @@ const loadDashboard = async (req, res) => {
             const end = new Date(); 
             const start = new Date();
 
-            if (filter === 'weekly') start.setDate(now.getDate() - 7);
-            else if (filter === 'monthly') start.setMonth(now.getMonth() - 1);
-            else if (filter === 'yearly') start.setFullYear(now.getFullYear() - 1);
+            if (filter === 'weekly') {
+                start.setDate(now.getDate() - 7);
+            } else if (filter === 'monthly') {
+                start.setMonth(now.getMonth() - 1);
+            } else if (filter === 'yearly') {
+                start.setFullYear(now.getFullYear() - 1);
+            }
 
             matchStage.createdOn = { $gte: start, $lte: end };
 
@@ -126,7 +130,7 @@ const loadDashboard = async (req, res) => {
                     $group: {
                         _id: {
                             $dateToString: {
-                                format: filter === 'weekly' ? '%Y-%m-%d' : filter === 'monthly' ? '%Y-%m' : '%Y',
+                                format: filter === 'weekly' ? '%Y-%m-%d' : filter === 'monthly' ? '%Y-%m-%d' : '%Y-%m',
                                 date: '$createdOn',
                             }
                         },
@@ -136,24 +140,21 @@ const loadDashboard = async (req, res) => {
                 { $sort: { _id: 1 } }
             ]);
 
-            let prevAggregation = [];
-            if (filter === 'monthly') {
-                prevAggregation = await Order.aggregate([
-                    { $match: prevMatchStage },
-                    {
-                        $group: {
-                            _id: {
-                                $dateToString: {
-                                    format: '%Y-%m',
-                                    date: '$createdOn',
-                                }
-                            },
-                            totalSales: { $sum: '$finalAmount' }
-                        }
-                    },
-                    { $sort: { _id: 1 } }
-                ]);
-            }
+            const prevAggregation = await Order.aggregate([
+                { $match: prevMatchStage },
+                {
+                    $group: {
+                        _id: {
+                            $dateToString: {
+                                format: filter === 'weekly' ? '%Y-%m-%d' : filter === 'monthly' ? '%Y-%m-%d' : '%Y-%m',
+                                date: '$createdOn',
+                            }
+                        },
+                        totalSales: { $sum: '$finalAmount' }
+                    }
+                },
+                { $sort: { _id: 1 } }
+            ]);
 
             const labels = aggregation.map(item => item._id);
             const data = aggregation.map(item => item.totalSales);
@@ -190,7 +191,7 @@ const loadDashboard = async (req, res) => {
             salesData[filter] = {
                 labels,
                 data,
-                prevData: filter === 'monthly' ? prevData : undefined,
+                prevData,
                 stats: { revenue, orders, customers, growth }
             };
         }

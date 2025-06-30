@@ -3,43 +3,6 @@ const User = require('../../models/userSchema');
 const Cart = require('../../models/cartSchema');
 
 
-
-const validateCoupon = async (coupon, userId, cart) => {
-  const now = new Date();
-  const subtotal = cart.items.reduce((sum, item) => {
-    const itemPrice = Number(item.price) || 0;
-    const isGiftWrapped = item.isGiftWrapped || false;
-    return sum + (isGiftWrapped ? itemPrice + 100 : itemPrice) * (item.quantity || 1);
-  }, 0);
-
-  if (!coupon) {
-    return { valid: false, message: 'Invalid or expired coupon' };
-  }
-  if (!coupon.isActive) {
-    return { valid: false, message: 'Coupon is not active' };
-  }
-  if (now < coupon.validFrom || now > coupon.expireOn) {
-    return { valid: false, message: 'Coupon has expired or is not yet valid' };
-  }
-  if (coupon.usageLimit > 0 && coupon.usageCount >= coupon.usageLimit) {
-    return { valid: false, message: 'Coupon usage limit reached' };
-  }
-  if (subtotal < coupon.minimumPrice) {
-    return { valid: false, message: `Minimum purchase of ₹${coupon.minimumPrice} required` };
-  }
-
-  const discountAmount = Number(coupon.discountAmount) || 0;
-  
-  const finalDiscount = Math.min(discountAmount, subtotal);
-
-  return { 
-    valid: true, 
-    coupon, 
-    subtotal,
-    discountAmount: finalDiscount
-  };
-};
-
 const loadCoupons = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -164,6 +127,42 @@ const removeCoupon = async (req, res) => {
     console.error('Error removing coupon:', error);
     res.status(500).json({ success: false, message: 'Failed to remove coupon' });
   }
+};
+
+const validateCoupon = async (coupon, userId, cart) => {
+  const now = new Date();
+  const subtotal = cart.items.reduce((sum, item) => {
+    const itemPrice = Number(item.price) || 0;
+    const isGiftWrapped = item.isGiftWrapped || false;
+    return sum + (isGiftWrapped ? itemPrice + 100 : itemPrice) * (item.quantity || 1);
+  }, 0);
+
+  if (!coupon) {
+    return { valid: false, message: 'Invalid or expired coupon' };
+  }
+  if (!coupon.isActive) {
+    return { valid: false, message: 'Coupon is not active' };
+  }
+  if (now < coupon.validFrom || now > coupon.expireOn) {
+    return { valid: false, message: 'Coupon has expired or is not yet valid' };
+  }
+  if (coupon.usageLimit > 0 && coupon.usageCount >= coupon.usageLimit) {
+    return { valid: false, message: 'Coupon usage limit reached' };
+  }
+  if (subtotal < coupon.minimumPrice) {
+    return { valid: false, message: `Minimum purchase of ₹${coupon.minimumPrice} required` };
+  }
+
+  const discountAmount = Number(coupon.discountAmount) || 0;
+  
+  const finalDiscount = Math.min(discountAmount, subtotal);
+
+  return { 
+    valid: true, 
+    coupon, 
+    subtotal,
+    discountAmount: finalDiscount
+  };
 };
 
 module.exports = { 

@@ -601,10 +601,6 @@
                   <%= product.variants.every(variant => variant.quantity === 0) ? 'disabled' : '' %>>
             Add to bag
           </button>
-          <button class="btn btn-buy-now" 
-                  <%= product.variants.every(variant => variant.quantity === 0) ? 'disabled' : '' %>>
-            Buy now
-          </button>
         </div>
       </div>
       <div class="product-info mt-4">
@@ -798,7 +794,7 @@
         } else {
           icon.classList.remove('fa-regular', 'fa-heart');
           icon.classList.add('fa-solid', 'fa-heart');
-          icon.style.color = 'red';
+          icon.style.color = '#046A38';
           showToast('Added to wishlist', 'success');
         }
       } else {
@@ -969,14 +965,12 @@
       }
     });
 
-    // Initialize quantity buttons based on default selected size
     const defaultSize = document.querySelector('input[name="size"]:checked')?.value;
     if (defaultSize) {
       const defaultVariant = variants.find(v => v.size.toString() === defaultSize);
       updateQuantityButtons(defaultVariant.quantity);
     }
 
-    // Countdown Timer Logic
     <% if (bestOffer && bestOffer.discount >= 40) { %>
       const endDate = new Date('<%= bestOffer.endDate %>').getTime();
       const timerElement = document.getElementById('timer-<%= product._id %>');

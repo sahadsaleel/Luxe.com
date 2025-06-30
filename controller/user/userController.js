@@ -394,8 +394,8 @@ const logout = async (req, res) => {
 
 const loadShopPage = async (req, res) => {
   try {
-    const { brands, category, priceFrom, priceTo, sort, page = 1 } = req.query;
-    const limit = 8;
+    const { brands, category, priceFrom, priceTo, sort, page = 1, ajax } = req.query;
+    const limit = 16;
     const skip = (page - 1) * limit;
 
     let query = {
@@ -479,10 +479,10 @@ const loadShopPage = async (req, res) => {
         image: product.productImage && product.productImage.length > 0 ? product.productImage[0] : '/img/placeholder.png',
         status: product.status,
         offers: bestOffer ? [bestOffer] : [],
-        bestOffer: bestOffer, 
+        bestOffer: bestOffer,
         category: {
           ...product.productCategory,
-          offers: categoryOffers,
+          offers: categoryOffers, 
         },
         brand: {
           ...product.productBrand,
@@ -527,7 +527,7 @@ const loadShopPage = async (req, res) => {
       }
     }
 
-    res.render('user/shop', {
+    const responseData = {
       products,
       brands: brandsList,
       categories: categoriesList,
@@ -543,10 +543,25 @@ const loadShopPage = async (req, res) => {
         prevPage: parseInt(page) - 1,
         totalProducts,
       },
-    });
+    };
+
+    if (ajax === 'true') {
+      res.json({
+        success: true,
+        products: responseData.products,
+        wishlistProductIds: responseData.wishlistProductIds,
+        pagination: responseData.pagination,
+      });
+    } else {
+      res.render('user/shop', responseData);
+    }
   } catch (error) {
     console.error('Error in loadShopPage:', error);
-    res.redirect('/pageNotFound');
+    if (ajax === 'true') {
+      res.status(500).json({ success: false, message: 'Failed to load products' });
+    } else {
+      res.redirect('/pageNotFound');
+    }
   }
 };
 
@@ -616,6 +631,23 @@ const loadReferrals = async (req, res) => {
     }
 };
 
+const cartQuantityMiddleware = async (req, res, next) => {
+  try {
+    if (req.session.user) {
+      const cart = await Cart.findOne({ userId: req.session.user._id });
+      const quantity = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
+      res.locals.cartQuantity = quantity;
+    } else {
+      res.locals.cartQuantity = 0;
+    }
+    next();
+  } catch (error) {
+    console.error('Cart quantity error:', error);
+    res.locals.cartQuantity = 0;
+    next();
+  }
+};
+
 
 module.exports = {
     loadHomepage,
@@ -629,4 +661,5 @@ module.exports = {
     resendOtp,
     loadShopPage,
     loadReferrals,
+    cartQuantityMiddleware
 };

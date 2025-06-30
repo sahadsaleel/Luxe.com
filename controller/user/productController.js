@@ -154,7 +154,6 @@ const productViewPage = async (req, res) => {
   }
 };
 
-
 const searchProduct = async (req, res) => {
   try {
     const { query } = req.query;
@@ -163,35 +162,24 @@ const searchProduct = async (req, res) => {
       return res.json([]);
     }
 
+    const [categoryIds, brandIds] = await Promise.all([
+      Category.find({ name: { $regex: query, $options: 'i' } }).distinct('_id'),
+      Brand.find({ brandName: { $regex: query, $options: 'i' } }).distinct('_id'),
+    ]);
+
     const products = await Product.find({
-      $and: [
-        { status: 'listed' },
-        { isDeleted: false },
-        {
-          $or: [
-            { productName: { $regex: query, $options: 'i' } },
-            {
-              productCategory: {
-                $in: await Category.find({
-                  name: { $regex: query, $options: 'i' },
-                }).distinct('_id'),
-              },
-            },
-            {
-              productBrand: {
-                $in: await Brand.find({
-                  brandName: { $regex: query, $options: 'i' },
-                }).distinct('_id'),
-              },
-            },
-          ],
-        },
+      status: 'listed',
+      isDeleted: false,
+      $or: [
+        { productName: { $regex: query, $options: 'i' } },
+        { productCategory: { $in: categoryIds } },
+        { productBrand: { $in: brandIds } },
       ],
     })
       .populate('productCategory', 'name')
       .populate('productBrand', 'brandName')
       .select('productName productImage productCategory productBrand variants')
-      .limit(10);
+      .limit(20);
 
     res.json(products);
   } catch (error) {
@@ -199,6 +187,7 @@ const searchProduct = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 const addToWishlist = async (req, res) => {
   try {

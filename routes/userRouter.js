@@ -70,6 +70,7 @@ router.delete('/address/delete/:id', userAuth, profileControllers.deleteAddress)
 
 // Product
 router.get('/shop', userController.loadShopPage);
+router.get('/shop/load-more', userController.loadShopPage);
 router.get('/productViewPage', productController.productViewPage);
 router.get('/search', productController.searchProduct);
 
@@ -80,6 +81,7 @@ router.post('/wishlist/remove/:productId', userAuth, productController.removeFro
 
 // Cart
 router.get('/cart', userAuth, cartController.loadCartPage);
+router.get('/cart/quantity', userAuth, cartController.getCartQuantity);
 router.post('/cart/add', userAuth, cartController.addToCart);
 router.post('/cart/update-quantity', userAuth, cartController.updateCartQuantity);
 router.post('/cart/remove', userAuth, cartController.removeFromCart);
@@ -115,6 +117,7 @@ router.get('/coupons/available', userAuth, couponController.getAvailableCoupons)
 // Referrals
 router.get('/referrals', userAuth, userController.loadReferrals);
 
+
 // About & Contact Routes
 router.get('/about', contactController.loadAbout);
 router.get('/contact', csrfProtection, (req, res, next) => {
@@ -126,5 +129,6 @@ router.post('/contact', csrfProtection, contactController.handleContactForm);
 
 // Error
 router.get('/pageNotFound', userController.pageNotFound);
+
 
 module.exports = router;

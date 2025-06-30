@@ -39,7 +39,7 @@ const CouponSchema = new Schema({
   usageLimit: {
     type: Number,
     min: [0, 'Usage limit cannot be negative'],
-    default: 0 // 0 means unlimited
+    default: 0 
   },
   usageCount: {
     type: Number,

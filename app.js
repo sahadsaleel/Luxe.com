@@ -11,6 +11,7 @@ const adminRouter = require('./routes/adminRouter');
 const errorHandler = require('./middleware/errorHandling');
 const nocache = require('nocache');
 const csrf = require('csurf');
+const cartQuantityMiddleware = require('./middleware/cartQuantity'); 
 
 dotenv.config();
 
@@ -51,12 +52,15 @@ app.use('/uploads', express.static('public/uploads/products'));
 
 app.use(morgan('dev'));
 
+app.use(cartQuantityMiddleware);
+
 // Routes
 app.use('/', nocache(), userRouter);
 app.use('/admin', nocache(), adminRouter);
 
 // Error handling
 app.use(errorHandler);
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -420,11 +420,28 @@ const removeFromCart = async (req, res) => {
   }
 };
 
+
+const getCartQuantity = async (req, res) => {
+  try {
+    if (!req.session.user) return res.json({ quantity: 0 });
+
+    const cart = await Cart.findOne({ userId: req.session.user });
+    const quantity = cart ? cart.items.reduce((acc, item) => acc + item.quantity, 0) : 0;
+
+    res.json({ quantity });
+  } catch (error) {
+    console.error('Error fetching cart quantity:', error);
+    res.status(500).json({ quantity: 0 });
+  }
+};
+
+
 module.exports = {
   addToCart,
   loadCartPage,
   updateCartQuantity,
   removeFromCart,
   findBestOffer, 
-  calculateCartSummary 
+  calculateCartSummary,
+  getCartQuantity
 };

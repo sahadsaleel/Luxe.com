@@ -30,20 +30,22 @@
                     <div id="searchResults" class="search-results"></div>
                 </div>
                 <div class="icon">
-                    <a href="/wishlist" style="position: relative; display: inline-block; color: black;">
-                        <svg width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                    </a>
-                </div>
-                <a href="/cart" style="position: relative; display: inline-block; color: black;">
+                <a href="/wishlist" style="position: relative; display: inline-block; color: black;">
                     <svg width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                </a>
+                </div>
+                <div class="icon">
+                    <a href="/cart" style="position: relative; display: inline-block; color: black;">
+                        <svg width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
                         <line x1="3" y1="6" x2="21" y2="6"/>
                         <path d="M16 10a4 4 0 0 1-8 0"/>
-                    </svg>
-                    <span style="position:absolute; top:-5px; right:-5px; background:black; color:white; border-radius:50%; padding:2px 5px; font-size:10px;">2</span>
-                </a>
+                        </svg>
+                        <span id="cartCount" style="position:absolute; top:-5px; right:-5px; background:#046A38; color:white; border-radius:50%; padding:3px 7px; font-size:10px; display: none;">0</span>
+                    </a>
+                </div>
                 <% if(locals.user) { %>
                     <div class="dropdown">
                         <div class="icon profile">
@@ -77,6 +79,16 @@
     </header>
 
     <script>
+        function debounce(func, delay) {
+            let timeoutId;
+            return function (...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    func.apply(this, args);
+                }, delay);
+            };
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             try {
                 const profileIcons = document.querySelectorAll('.icon.profile');
@@ -102,7 +114,7 @@
                 const searchInput = document.getElementById('searchInput');
                 const searchResults = document.getElementById('searchResults');
 
-                searchInput.addEventListener('input', async () => {
+                const fetchSearchResults = debounce(async () => {
                     try {
                         const query = searchInput.value.trim();
 
@@ -122,13 +134,13 @@
                         }
 
                         const resultsHtml = products.map(product => {
-                            const price = product.variants[0]?.salePrice || product.variants[0]?.regularPrice;
+                            const price = product.variants?.[0]?.salePrice || product.variants?.[0]?.regularPrice || '';
                             return `
                                 <a href="/productViewPage?id=${product._id}" class="result-item">
-                                    <img src="${product.productImage[0] || '/img/placeholder.png'}" alt="${product.productName}">
+                                    <img src="${product.productImage?.[0] || '/img/placeholder.png'}" alt="${product.productName}">
                                     <div class="result-item-content">
                                         <span>${product.productName}</span>
-                                        <span>${product.productBrand.brandName}</span>
+                                        <span>${product.productBrand?.brandName || ''}</span>
                                         <span>${price}₹</span>
                                     </div>
                                 </a>
@@ -142,7 +154,9 @@
                         searchResults.innerHTML = '<p class="no-results">Error searching</p>';
                         searchResults.classList.add('active');
                     }
-                });
+                }, 300);
+
+                searchInput.addEventListener('input', fetchSearchResults);
 
                 document.addEventListener('click', (e) => {
                     if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
@@ -151,10 +165,36 @@
                         searchInput.value = '';
                     }
                 });
+
             } catch (error) {
                 console.error('Error setting up header:', error);
             }
         });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            async function updateCartCount() {
+                try {
+                    const response = await fetch('/cart/quantity');
+                    const data = await response.json();
+                    const cartCountEl = document.getElementById('cartCount');
+
+                    if (cartCountEl) {
+                        if (data.quantity > 0) {
+                            cartCountEl.textContent = data.quantity;
+                            cartCountEl.style.display = 'inline-block';
+                        } else {
+                            cartCountEl.style.display = 'none';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch cart quantity:', error);
+                }
+            }
+
+            updateCartCount();
+            setInterval(updateCartCount, 1000);
+        });
     </script>
+
 </body>
 </html>
