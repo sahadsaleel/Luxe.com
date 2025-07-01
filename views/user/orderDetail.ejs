@@ -51,7 +51,7 @@
                     <li><a href="/address"><i class="fas fa-address-book"></i> Address Book</a></li>
                     <h3>Orders & Wishlist</h3>
                     <li><a href="/orders" class="active"><i class="fas fa-box"></i> My Orders</a></li>
-                    <li><a href="/wishlist"><i class="fas fa-heart"></i> My Wishlist</a></li>
+                    <li><a href="/wishlist"><i class honom fa-heart"></i> My Wishlist</a></li>
                     <h3>Payments</h3>
                     <li><a href="/wallet"><i class="fas fa-wallet"></i> My Wallet</a></li>
                     <li><a href="/coupons"><i class="fas fa-tag"></i> My Coupons</a></li>
@@ -103,8 +103,8 @@
                                         </td>
                                         <td><%= item.variant && item.variant.size ? item.variant.size : 'N/A' %></td>
                                         <td><%= item.quantity || 'N/A' %></td>
-                                        <td>₹<%= Number(item.price || 0).toFixed(2) %></td>
-                                        <td>₹<%= Number(item.totalPrice || 0).toFixed(2) %></td>
+                                        <td>Rs <%= Number(item.price || 0).toFixed(2) %></td>
+                                        <td>Rs <%= Number(item.totalPrice || 0).toFixed(2) %></td>
                                         <td><%= item.isGiftWrapped ? 'Yes' : 'No' %></td>
                                         <td class="item nickname-item-status">
                                             <% if (item.status === 'Cancelled') { %>
@@ -210,25 +210,25 @@
                             <table class="pricing-table">
                                 <tr>
                                     <td>Subtotal</td>
-                                    <td id="subtotal">₹<%= order.totalPrice.toFixed(2) %></td>
+                                    <td id="subtotal">Rs <%= order.totalPrice.toFixed(2) %></td>
                                 </tr>
                                 <tr>
                                     <td>Gift Wrap Total</td>
-                                    <td id="giftWrapTotal">₹<%= Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : (item.isGiftWrapped ? 100 : 0)), 0)).toFixed(2) %></td>
+                                    <td id="giftWrapTotal">Rs <%= Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : (item.isGiftWrapped ? 100 : 0)), 0)).toFixed(2) %></td>
                                 </tr>
                                 <tr>
                                     <td>Shipping</td>
-                                    <td id="shipping">₹<%= Number(order.shipping || 0).toFixed(2) %></td>
+                                    <td id="shipping">Rs <%= Number(order.shipping || 0).toFixed(2) %></td>
                                 </tr>
                                 <% if (order.discount > 0) { %>
                                     <tr id="discountRow">
                                         <td>Discount</td>
-                                        <td id="discount">-₹<%= Number(order.discount).toFixed(2) %></td>
+                                        <td id="discount">-Rs <%= Number(order.discount).toFixed(2) %></td>
                                     </tr>
                                 <% } %>
                                 <tr>
                                     <td>Final Amount</td>
-                                    <td id="finalAmount">₹<%= order.finalAmount.toFixed(2) %></td>
+                                    <td id="finalAmount">Rs <%= order.finalAmount.toFixed(2) %></td>
                                 </tr>
                             </table>
                         </div>
@@ -275,7 +275,7 @@
                                 </thead>
                                 <tbody id="cancelOrderSummary"></tbody>
                             </table>
-                            <p><strong>Total Amount: </strong>₹<%= Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : item.totalPrice), 0)).toFixed(2) %></p>
+                            <p><strong>Total Amount: </strong>Rs <%= Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : item.totalPrice), 0)).toFixed(2) %></p>
                         </div>
                     <% } %>
                     <div class="form-group">
@@ -372,7 +372,7 @@
                                 </thead>
                                 <tbody id="returnOrderSummary"></tbody>
                             </table>
-                            <p><strong>Total Amount: </strong>₹<%= Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : item.totalPrice), 0)).toFixed(2) %></p>
+                            <p><strong>Total Amount: </strong>Rs <%= Number(order.orderedItems.reduce((sum, item) => sum + (item.isCanceled ? 0 : item.totalPrice), 0)).toFixed(2) %></p>
                         </div>
                     <% } %>
                     <div class="form-group">
@@ -636,7 +636,7 @@
                     <td>${item.productName}</td>
                     <td>${item.size}</td>
                     <td>${item.quantity}</td>
-                    <td>₹${item.totalPrice}</td>
+                    <td>Rs ${item.totalPrice}</td>
                 `;
                 summaryTable.appendChild(row);
             }
@@ -673,7 +673,7 @@
                 <td>${item.productName}</td>
                 <td>${item.size}</td>
                 <td>${item.quantity}</td>
-                <td>₹${item.totalPrice}</td>
+                <td>Rs ${item.totalPrice}</td>
             </tr>
         `;
         document.getElementById('cancelItemModal').classList.add('active');
@@ -704,7 +704,7 @@
                     <td>${item.productName}</td>
                     <td>${item.size}</td>
                     <td>${item.quantity}</td>
-                    <td>₹${item.totalPrice}</td>
+                    <td>Rs ${item.totalPrice}</td>
                 `;
                 summaryTable.appendChild(row);
             }
@@ -772,9 +772,9 @@
                     const actionCell = row.querySelector('td:last-child');
                     actionCell.innerHTML = `<button class="action-button btn-disabled" disabled>Cancelled</button>`;
                 });
-                document.getElementById('subtotal').textContent = '₹0.00';
-                document.getElementById('giftWrapTotal').textContent = '₹0.00';
-                document.getElementById('finalAmount').textContent = '₹0.00';
+                document.getElementById('subtotal').textContent = 'Rs 0.00';
+                document.getElementById('giftWrapTotal').textContent = 'Rs 0.00';
+                document.getElementById('finalAmount').textContent = 'Rs 0.00';
                 const discountRow = document.getElementById('discountRow');
                 if (discountRow) {
                     discountRow.style.display = 'none';
@@ -859,7 +859,7 @@
                     const statusCell = itemRow.querySelector('.item-status');
                     if (statusCell) statusCell.textContent = `Cancelled (${reason})`;
                     const totalCell = itemRow.querySelector('td:nth-child(5)');
-                    if (totalCell) totalCell.textContent = '₹0.00';
+                    if (totalCell) totalCell.textContent = 'Rs 0.00';
                     const actionCell = itemRow.querySelector('td:last-child');
                     if (actionCell) {
                         actionCell.innerHTML = `<button class="action-button btn-disabled" disabled>Cancelled</button>`;
@@ -876,15 +876,15 @@
                 orderData.finalAmount = result.order.finalAmount;
                 orderData.discount = result.order.discount;
 
-                document.getElementById('subtotal').textContent = `₹${result.order.totalPrice}`;
-                document.getElementById('giftWrapTotal').textContent = `₹${result.order.giftWrapTotal}`;
-                document.getElementById('finalAmount').textContent = `₹${result.order.finalAmount}`;
+                document.getElementById('subtotal').textContent = `Rs ${result.order.totalPrice}`;
+                document.getElementById('giftWrapTotal').textContent = `Rs ${result.order.giftWrapTotal}`;
+                document.getElementById('finalAmount').textContent = `Rs ${result.order.finalAmount}`;
 
                 const discountRow = document.getElementById('discountRow');
                 if (discountRow) {
                     const discountElement = document.getElementById('discount');
                     if (parseFloat(result.order.discount) > 0 && discountElement) {
-                        discountElement.textContent = `-₹${result.order.discount}`;
+                        discountElement.textContent = `-Rs ${result.order.discount}`;
                         discountRow.style.display = 'table-row';
                     } else {
                         discountRow.style.display = 'none';
@@ -983,7 +983,7 @@
     });
 
     function formatCurrency(amount) {
-        return `RS ${Number(amount).toFixed(2)}`;
+        return `Rs ${Number(amount).toFixed(2)}`;
     }
 
     function showInvoiceModal() {
@@ -1056,135 +1056,103 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            doc.setFillColor(138, 106, 148);
-            doc.rect(0, 0, 210, 50, 'F');
-            doc.setFillColor(106, 76, 124);
-            doc.rect(0, 45, 210, 5, 'F');
-
-            doc.setTextColor(255, 255, 255);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(28);
-            doc.text('LUXE', 20, 25);
-            doc.setFontSize(12);
-            doc.text('Luxury Perfume Store', 20, 35);
-
-            doc.setFontSize(24);
-            doc.text('INVOICE', 170, 25, { align: 'right' });
-
+            // Header Section
+            doc.setFontSize(26);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(4, 106, 56);
+            doc.text('Luxe Perfumes Store', 20, 20);
+            
+            doc.setFontSize(14);
             doc.setTextColor(0, 0, 0);
-            let yOffset = 70;
-
-            doc.setDrawColor(138, 106, 148);
-            doc.setFillColor(248, 249, 250);
-            doc.roundedRect(15, yOffset - 10, 180, 45, 3, 3, 'FD');
+            doc.setFont("helvetica", "normal");
+            doc.text('INVOICE', 20, 35);
             
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Order Information', 20, yOffset);
-            doc.setFont('helvetica', 'normal');
+            // Invoice Details (Left-aligned)
             doc.setFontSize(10);
-            
-            doc.text(`Order ID: ${orderData.orderId}`, 20, yOffset + 10);
-            doc.text(`Order Date: ${orderData.orderDate}`, 110, yOffset + 10);
-            doc.text(`Status: ${orderData.status}`, 20, yOffset + 20);
-            doc.text(`Payment Method: ${orderData.paymentMethod}`, 110, yOffset + 20);
-            
-            yOffset += 50;
+            doc.text(`Order ID: ${orderData.orderId}`, 20, 45);
+            doc.text(`Date: ${orderData.orderDate}`, 20, 50);
+            doc.text(`Time: ${new Date().toLocaleTimeString()}`, 20, 55);
 
-            doc.setFillColor(248, 249, 250);
-            doc.roundedRect(15, yOffset - 10, 180, 50, 3, 3, 'FD');
-            
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(11);
-            doc.text('Shipping Address', 20, yOffset);
-            doc.setFont('helvetica', 'normal');
+            // Company Information (Right-aligned)
             doc.setFontSize(10);
-            
-            const addressLines = doc.splitTextToSize(orderData.address, 170);
-            addressLines.forEach((line, index) => {
-                doc.text(line, 20, yOffset + 10 + (index * 6));
+            doc.setTextColor(100, 100, 100);
+            const companyInfo = [
+                'Luxe Perfumes Store',
+                '123 Elegance Avenue',
+                'Mumbai, MH 400001, India',
+                'Phone: +91 22 1234 5678',
+                'Email: support@luxeperfumes.com'
+            ];
+            let yCompany = 20;
+            companyInfo.forEach(line => {
+                doc.text(line, 190, yCompany, { align: 'right' });
+                yCompany += 5;
             });
 
-            yOffset += 55;
+            // Shipping Address
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont("helvetica", "bold");
+            doc.text('Shipping Address:', 20, 70);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            const address = orderData.address.split(', ').filter(line => line && line !== 'N/A');
+            let yAddress = 75;
+            address.forEach(line => {
+                doc.text(line, 20, yAddress);
+                yAddress += 5;
+            });
+
+            // Items Table
+            const tableData = orderData.items.map(item => [
+                item.productName,
+                item.quantity,
+                item.status === 'Cancelled' ? 'N/A' : `Rs ${Number(item.price).toFixed(2)}`,
+                item.status === 'Cancelled' ? 'N/A' : `Rs ${Number(item.totalPrice).toFixed(2)}`
+            ]);
+
+            // Additional Charges and Totals
+            const additionalRows = [
+                ['Subtotal', '', '', `Rs ${Number(orderData.totalPrice).toFixed(2)}`]
+            ];
+            if (parseFloat(orderData.giftWrapTotal) > 0) {
+                additionalRows.push(['Gift Wrap Charges', '', '', `Rs ${Number(orderData.giftWrapTotal).toFixed(2)}`]);
+            }
+            if (parseFloat(orderData.shipping) > 0) {
+                additionalRows.push(['Shipping', '', '', `Rs ${Number(orderData.shipping).toFixed(2)}`]);
+            }
+            if (parseFloat(orderData.discount) > 0) {
+                additionalRows.push(['Discount', '', '', `-Rs ${Number(orderData.discount).toFixed(2)}`]);
+            }
+            additionalRows.push(['Total Amount', '', '', `Rs ${Number(orderData.finalAmount).toFixed(2)}`]);
 
             doc.autoTable({
-                startY: yOffset,
-                head: [['Product', 'Size', 'Quantity', 'Price', 'Total', 'Gift Wrap', 'Status']],
-                body: orderData.items.map(item => [
-                    item.productName,
-                    item.size,
-                    item.quantity,
-                    item.status === 'Cancelled' ? 'N/A' : formatCurrency(item.price),
-                    item.status === 'Cancelled' ? 'N/A' : formatCurrency(item.totalPrice),
-                    item.status === 'Cancelled' ? 'N/A' : item.isGiftWrapped,
-                    item.status === 'Cancelled' ? `Cancelled (${item.cancelReason || 'No reason'})` : item.status
-                ]),
+                startY: yAddress + 10,
+                head: [['Item', 'Quantity', 'Price', 'Total']],
+                body: [...tableData, ...additionalRows],
                 theme: 'grid',
-                styles: {
-                    fontSize: 9,
-                    cellPadding: 5,
-                    lineColor: [224, 224, 224],
-                    lineWidth: 0.5,
-                },
-                headStyles: {
-                    fillColor: [138, 106, 148],
-                    textColor: [255, 255, 255],
-                    fontSize: 10,
-                    fontStyle: 'bold',
-                    halign: 'left'
-                },
+                styles: { fontSize: 8, cellPadding: 3, textColor: [0, 0, 0], font: "helvetica" },
+                headStyles: { fillColor: [4, 106, 56], textColor: [255, 255, 255], fontStyle: 'bold' },
                 columnStyles: {
-                    0: { cellWidth: 50 },
-                    1: { cellWidth: 20 },
-                    2: { cellWidth: 20, halign: 'right' },
-                    3: { cellWidth: 25, halign: 'right' },
-                    4: { cellWidth: 25, halign: 'right' },
-                    5: { cellWidth: 20 },
-                    6: { cellWidth: 30 }
+                    0: { cellWidth: 80 },
+                    1: { cellWidth: 30, halign: 'center' },
+                    2: { cellWidth: 30, halign: 'right' },
+                    3: { cellWidth: 30, halign: 'right' }
                 },
-                margin: { left: 15, right: 15 }
+                margin: { left: 20, right: 20 }
             });
 
-            yOffset = doc.lastAutoTable.finalY + 20;
+            // Footer Section
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(8);
+            doc.setTextColor(100, 100, 100);
+            doc.setFont("helvetica", "normal");
+            doc.text('Thank you for your purchase!', 20, finalY);
+            doc.text('For any concerns, contact us at support@luxeperfumes.com or +91 22 1234 5678', 20, finalY + 5);
+            doc.text('Terms: Payment due upon receipt. All sales are final.', 20, finalY + 15);
 
-            doc.setFillColor(248, 249, 250);
-            doc.roundedRect(115, yOffset - 5, 80, 65, 3, 3, 'FD');
-            
-            doc.setFont('helvetica', 'normal');
-            doc.text('Subtotal:', 120, yOffset + 5);
-            doc.text(formatCurrency(orderData.totalPrice), 185, yOffset + 5, { align: 'right' });
-            
-            doc.text('Gift Wrap:', 120, yOffset + 15);
-            doc.text(formatCurrency(orderData.giftWrapTotal), 185, yOffset + 15, { align: 'right' });
-            
-            doc.text('Shipping:', 120, yOffset + 25);
-            doc.text(formatCurrency(orderData.shipping), 185, yOffset + 25, { align: 'right' });
-            
-            if (parseFloat(orderData.discount) > 0) {
-                doc.text('Discount:', 120, yOffset + 35);
-                doc.text(`-${formatCurrency(orderData.discount)}`, 185, yOffset + 35, { align: 'right' });
-            }
-            
-            doc.setFont('helvetica', 'bold');
-            doc.text('Grand Total:', 120, yOffset + 50);
-            doc.text(formatCurrency(orderData.finalAmount), 185, yOffset + 50, { align: 'right' });
-
-            const pageHeight = doc.internal.pageSize.height;
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(9);
-            doc.setTextColor(102, 102, 102);
-            doc.text('Thank you for shopping with Luxe!', 105, pageHeight - 30, { align: 'center' });
-            doc.text('For any questions regarding your order, please contact our customer support.', 105, pageHeight - 25, { align: 'center' });
-            doc.text('© 2025 Luxe. All rights reserved.', 105, pageHeight - 20, { align: 'center' });
-
-            const pageCount = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= pageCount; i++) {
-                doc.setPage(i);
-                doc.setFontSize(8);
-                doc.text(`Page ${i} of ${pageCount}`, 105, pageHeight - 10, { align: 'center' });
-            }
-
-            doc.save(`Luxe_Invoice_${orderData.orderId}.pdf`);
+            // Save the PDF
+            doc.save(`invoice-${orderData.orderId}.pdf`);
             showToast('Invoice downloaded successfully!');
         } catch (error) {
             console.error('Error generating invoice:', error);

@@ -1,4 +1,4 @@
- .order-details-content {
+.order-details-content {
             padding: 20px;
         }
         .order-header {
@@ -172,18 +172,20 @@
             background-color: #c82333;
         }
         .btn-back {
-            background-color: #f0f0f0;
+            background-color: #c9c9c9;
             color: #333;
+            text-decoration: none;
+            font-weight: 600;
         }
         .btn-back:hover {
             background-color: #e0e0e0;
         }
         .btn-invoice {
-            background-color: #2874f0;
+            background-color: #2874f0 !important;
             color: #fff;
         }
         .btn-invoice:hover {
-            background-color: #1a5dc7;
+            background-color: #1a5dc7 !important;
         }
         .btn-disabled, .action-button.btn-disabled {
             background-color: #ccc;
@@ -191,7 +193,7 @@
         }
         .btn-loading {
             background-color: #999;
-            cursor: not-allowedNotifier('cursor', 'not-allowed');
+            cursor: not-allowed;
             display: flex;
             align-items: center;
             gap: 5px;
@@ -502,4 +504,4 @@
         }
         .order-details-content {
             padding: 20px;
-        }
+        } 

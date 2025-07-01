@@ -152,7 +152,6 @@
             color: var(--primary-color);
         }
 
-        /* Invoice Modal Styles */
         .modal {
             display: none;
             position: fixed;

@@ -159,17 +159,14 @@
       <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="6000">
         <div class="carousel-inner">
           <div class="carousel-item active">
-            <video autoplay muted loop playsinline class="d-block w-100">
-              <source src="https://r2---sn-5np5oxu-jv3z.googlevideo.com/videoplayback?expire=1751313010&ei=EpZiaL_-L-KfzPsPzrz0uA8&ip=176.6.129.48&id=o-AH9NYyFc2VjUbO4myACd6gMEWM3J5Mkf-hviLDOqjYf-&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&rms=au%2Cau&bui=AY1jyLNai6iqnKY4Y7mJMywIRVB9zaPkvVPz6Schv4fGnnAEiaZpZmhydJ05wgr6C4TTQmUKj5pauWdF&spc=l3OVKRgDH8agkHGDuhndC1K4mGqgFs2lpRBW4gb3IDVGKSH2YmHMNag&vprv=1&svpuc=1&mime=video%2Fmp4&ns=kgwtLqlDirSJJ5TXXUXXy-EQ&rqh=1&cnr=14&ratebypass=yes&dur=20.897&lmt=1675061736365597&fexp=51331020&c=MWEB&sefc=1&txp=6219224&n=HXSDSeeignUDfg&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgdwxmve4EYitB2n0SubFAn2fXteV-LcxJX0KBLeqWS80CIQDzQPOTrHW18hX2_UUyXR-lZ-TGB5rGSFs842q5Vqm_aw%3D%3D&pot=MnR0goKupEWAZHS-0-HAXS9aZJgGkCeazMuGqxBmAnO62ivdpu1ub8AxYZ0lst5fHvYGEC0DAI4qkTa8tqruAmyRCwIC7M6ubjxvCpIYzaYCNZPeDQQanU1GiHpua88zRQUS8eHJpNC4CmAtnplxsEWhXSQn7g==&cms_redirect=yes&met=1751291418,&mh=RT&mip=202.164.149.48&mm=31&mn=sn-5np5oxu-jv3z&ms=au&mt=1751291130&mv=m&mvi=2&pcm2cms=yes&pl=24&lsparams=met,mh,mip,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRAIgHAWQJyD6pVwfzso43EgEm7KaaSbk1FIHycltwe2V4H8CIDaWBFYIc58K-HY629QDC7HVG4bIJNO2fvQGrVgXBfmi" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
+           <img src="https://www.xerjoff.com/img/purpleAccentodeDesk.jpg" class="d-block w-100" alt="Luxury Perfume 1">
             <div class="hero-overlay">
               <h1>Discover Timeless Elegance</h1>
               <p>Explore our exquisite collection of luxury fragrances</p>
             </div>
           </div>
           <div class="carousel-item">
-            <img src="https://www.xerjoff.com/img/purpleAccentodeDesk.jpg" class="d-block w-100" alt="Luxury Perfume 2">
+            <img src="https://www.xerjoff.com/img/slidep33BlankDesk.jpg" class="d-block w-100" alt="Luxury Perfume 2">
             <div class="hero-overlay">
               <h1>Unleash Your Signature Scent</h1> 
               <p>Craft your unique essence with Xerjoff</p>
@@ -540,8 +537,8 @@
           window.changePage = (page) => fetchProducts(page);
 
           const media = [
-            'https://youtu.be/HgeETSB5n5U',
             'https://www.xerjoff.com/img/purpleAccentodeDesk.jpg',
+            'https://www.xerjoff.com/img/slidep33BlankDesk.jpg',
             'https://www.xerjoff.com/img/slideBlackMoonlightDesk1.jpg'
           ];
           media.forEach(src => {
@@ -555,10 +552,8 @@
             }
           });
 
-          // Initialize first carousel item as active
           document.querySelector('.carousel-item').classList.add('active');
 
-          // Add Bootstrap carousel dot navigation functionality
           document.querySelectorAll('.slideshow-nav .dot').forEach((dot, index) => {
             dot.addEventListener('click', () => {
               const carousel = document.querySelector('#carouselExampleFade');
