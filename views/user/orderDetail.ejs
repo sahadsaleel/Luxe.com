@@ -576,7 +576,7 @@
 
     <%- include('../../views/partials/user/footer') %>
 
-    <script>
+<script>
     const orderData = {
         orderId: '<%= order && order.orderId ? order.orderId : "N/A" %>',
         orderDate: '<%= order && order.orderDate ? new Date(order.orderDate).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" }) : "N/A" %>',
@@ -1056,7 +1056,6 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // Header Section
             doc.setFontSize(26);
             doc.setFont("helvetica", "bold");
             doc.setTextColor(4, 106, 56);
@@ -1067,13 +1066,11 @@
             doc.setFont("helvetica", "normal");
             doc.text('INVOICE', 20, 35);
             
-            // Invoice Details (Left-aligned)
             doc.setFontSize(10);
             doc.text(`Order ID: ${orderData.orderId}`, 20, 45);
             doc.text(`Date: ${orderData.orderDate}`, 20, 50);
             doc.text(`Time: ${new Date().toLocaleTimeString()}`, 20, 55);
 
-            // Company Information (Right-aligned)
             doc.setFontSize(10);
             doc.setTextColor(100, 100, 100);
             const companyInfo = [
@@ -1089,7 +1086,6 @@
                 yCompany += 5;
             });
 
-            // Shipping Address
             doc.setFontSize(12);
             doc.setTextColor(0, 0, 0);
             doc.setFont("helvetica", "bold");
@@ -1103,7 +1099,6 @@
                 yAddress += 5;
             });
 
-            // Items Table
             const tableData = orderData.items.map(item => [
                 item.productName,
                 item.quantity,
@@ -1111,7 +1106,6 @@
                 item.status === 'Cancelled' ? 'N/A' : `Rs ${Number(item.totalPrice).toFixed(2)}`
             ]);
 
-            // Additional Charges and Totals
             const additionalRows = [
                 ['Subtotal', '', '', `Rs ${Number(orderData.totalPrice).toFixed(2)}`]
             ];
@@ -1142,7 +1136,6 @@
                 margin: { left: 20, right: 20 }
             });
 
-            // Footer Section
             const finalY = doc.lastAutoTable.finalY + 10;
             doc.setFontSize(8);
             doc.setTextColor(100, 100, 100);
@@ -1151,7 +1144,6 @@
             doc.text('For any concerns, contact us at support@luxeperfumes.com or +91 22 1234 5678', 20, finalY + 5);
             doc.text('Terms: Payment due upon receipt. All sales are final.', 20, finalY + 15);
 
-            // Save the PDF
             doc.save(`invoice-${orderData.orderId}.pdf`);
             showToast('Invoice downloaded successfully!');
         } catch (error) {

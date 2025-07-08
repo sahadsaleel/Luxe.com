@@ -102,8 +102,7 @@ router.get('/orders/details/:orderId', userAuth, orderController.loadOrderDetail
 // Return and Cancel routes
 router.post('/orders/details/:orderId/cancel', userAuth, returnCancelController.cancelOrder);
 router.post('/orders/details/:orderId/cancel-item/:itemId', userAuth, returnCancelController.cancelOrderItem);
-router.post('/orders/details/:orderId/return', userAuth, returnCancelController.approveReturn);
-router.post('/orders/details/:orderId/return-item/:itemId', userAuth, returnCancelController.approveReturnItem);
+router.post('/orders/details/:orderId/return', userAuth, returnCancelController.requestReturnEntireOrder);
 router.post('/orders/details/:orderId/request-return/:itemId', userAuth, returnCancelController.requestReturnItem);
 
 
