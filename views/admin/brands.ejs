@@ -54,8 +54,9 @@
                                    data-name="<%= data[i].brandName %>"
                                    data-image="<%= data[i].brandImage %>"
                                    data-status="<%= data[i].isBlocked ? 'unlisted' : 'listed' %>"></i>
-                                <i class="fas fa-trash-alt action-icon delete-icon"
-                                   data-id="<%= data[i]._id %>"></i>
+                                <i class="fas <%= data[i].isBlocked ? 'fa-toggle-off' : 'fa-toggle-on' %> action-icon toggle-icon"
+                                   data-id="<%= data[i]._id %>"
+                                   data-status="<%= data[i].isBlocked ? 'unlisted' : 'listed' %>"></i>
                             </td>
                         </tr>
                     <% } %>
@@ -365,6 +366,7 @@
                 const id = icon.getAttribute('data-id');
                 if (!id) {
                     console.error('Edit icon missing data-id:', icon);
+                    dirigeantModal.hide();
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -493,12 +495,13 @@
             clearErrorMessages(document.getElementById('addBrandForm'));
         });
 
-        const deleteIcons = document.querySelectorAll('.delete-icon');
-        deleteIcons.forEach(icon => {
+        const toggleIcons = document.querySelectorAll('.toggle-icon');
+        toggleIcons.forEach(icon => {
             icon.addEventListener('click', () => {
                 const brandId = icon.getAttribute('data-id');
+                const currentStatus = icon.getAttribute('data-status');
                 if (!brandId) {
-                    console.error('Delete icon missing data-id:', icon);
+                    console.error('Toggle icon missing data-id:', icon);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -507,53 +510,48 @@
                     return;
                 }
                 Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'You will not be able to recover this brand!',
+                    title: `Are you sure you want to ${currentStatus === 'listed' ? 'disable' : 'enable'} this brand?`,
+                    text: `This will ${currentStatus === 'listed' ? 'unlist' : 'list'} the brand.`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#7db87d',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
+                    confirmButtonText: `Yes, ${currentStatus === 'listed' ? 'disable' : 'enable'} it!`
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // console.log('Sending delete brand request:', { id: brandId });
-                        fetch('/admin/deleteBrand', {
+                        fetch('/admin/toggleBrandStatus', {
                             method: 'POST',
                             headers: {
-                             'Content-Type': 'application/json'
+                                'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({ id: brandId })
                         })
                             .then(response => {
-                                console.log('Delete brand response:', {
-                                    status: response.status,
-                                    statusText: response.statusText,
-                                    headers: Object.fromEntries(response.headers)
-                                });
+                                console.log('Toggle response status:', response.status); // Debug log
                                 if (!response.ok) {
                                     return response.text().then(text => {
+                                        console.log('Full server response:', text); // Log full response
                                         try {
                                             const data = JSON.parse(text);
                                             throw new Error(data.error || `HTTP error ${response.status}`);
                                         } catch (e) {
-                                            throw new Error(`Non-JSON response: ${text.substring(0, 50)}...`);
+                                            throw new Error(`Non-JSON response: ${text.substring(0, 100)}...`);
                                         }
                                     });
                                 }
                                 return response.json();
                             })
                             .then(data => {
-                                console.log('Delete brand success:', data);
                                 Swal.fire(
-                                    'Deleted!',
-                                    'Brand has been deleted.',
+                                    `${data.isBlocked ? 'Disabled' : 'Enabled'}!`,
+                                    `Brand has been ${data.isBlocked ? 'disabled' : 'enabled'}.`,
                                     'success'
                                 ).then(() => {
                                     location.reload();
                                 });
                             })
                             .catch(error => {
-                                console.error('Delete Brand Error:', error.message);
+                                console.error('Toggle Brand Status Error:', error.message);
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',

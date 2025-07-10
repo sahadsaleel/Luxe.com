@@ -170,16 +170,25 @@ const editCoupon = async (req, res) => {
   }
 };
 
-const deleteCoupon = async (req, res) => {
+const toggleCouponStatus = async (req, res) => {
   try {
-    const coupon = await Coupon.findByIdAndDelete(req.params.id);
+    const coupon = await Coupon.findById(req.params.id);
     if (!coupon) {
       return res.status(404).json({ message: 'Coupon not found' });
     }
-    res.json({ message: 'Coupon deleted successfully' });
+    
+    await Coupon.updateOne(
+      { _id: req.params.id },
+      { $set: { isList: !coupon.isList } }
+    );
+
+    res.json({ 
+      message: `Coupon ${coupon.isList ? 'disabled' : 'enabled'} successfully`,
+      isList: !coupon.isList 
+    });
   } catch (error) {
-    console.error('Error deleting coupon:', error);
-    res.status(500).json({ message: 'Failed to delete coupon' });
+    console.error('Error toggling coupon status:', error);
+    res.status(500).json({ message: 'Failed to toggle coupon status' });
   }
 };
 
@@ -188,5 +197,5 @@ module.exports = {
   getCouponById,
   addCoupon,
   editCoupon,
-  deleteCoupon
+  toggleCouponStatus
  };

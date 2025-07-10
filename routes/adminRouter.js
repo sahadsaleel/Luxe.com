@@ -48,13 +48,13 @@ router.get('/wallet/:userId', adminAuth, customerController.getWallet);
 router.get('/category', adminAuth, categoryController.categoryInfo);
 router.post('/addCategory', adminAuth, categoryController.addCategory);
 router.post('/editCategory', adminAuth, categoryController.editCategory);
-router.post('/deleteCategory', adminAuth, categoryController.deleteCategory);
+router.post('/toggleCategoryStatus', adminAuth, categoryController.toggleCategoryStatus);
 
 // Brand management
 router.get('/brands', adminAuth, brandController.getBrandPage);
 router.post('/addBrand', adminAuth, uploadSingleImage, brandController.addBrand);
 router.post('/editBrand', adminAuth, uploadSingleImage, brandController.editBrand);
-router.post('/deleteBrand', adminAuth, brandController.deleteBrand);
+router.post('/toggleBrandStatus', adminAuth, brandController.toggleBrandStatus);
 
 // Product management
 router.get('/products', adminAuth, productController.getProductPage);
@@ -78,7 +78,7 @@ router.get('/coupons', adminAuth, couponController.getCoupons);
 router.get('/coupons/:id', adminAuth, couponController.getCouponById);
 router.post('/coupons/add', adminAuth, couponController.addCoupon);
 router.put('/coupons/edit/:id', adminAuth, couponController.editCoupon);
-router.delete('/coupons/delete/:id', adminAuth, couponController.deleteCoupon);
+router.post('/coupons/toggle/:id', adminAuth, couponController.toggleCouponStatus);
 
 // Offer management
 router.get('/offers',adminAuth, offerController.offerPage);

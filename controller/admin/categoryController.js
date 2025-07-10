@@ -86,14 +86,33 @@ const editCategory = async (req, res) => {
     }
 };
 
-const deleteCategory = async (req, res) => {
+const toggleCategoryStatus = async (req, res) => {
     try {
         const { id } = req.body;
 
-        await Category.deleteOne({ _id: id });
-        return res.json({ message: 'Category deleted successfully' });
+        if (!id || id === 'null' || id === '') {
+            return res.status(400).json({ error: 'Invalid category ID' });
+        }
+
+        const category = await Category.findById(id);
+        if (!category) {
+            return res.status(404).json({ error: 'Category not found' });
+        }
+
+        await Category.updateOne(
+            { _id: id },
+            { $set: { isListed: !category.isListed } }
+        );
+
+        return res.json({ 
+            message: `Category ${category.isListed ? 'disabled' : 'enabled'} successfully`,
+            isListed: !category.isListed
+        });
     } catch (error) {
-        console.error('Error in deleteCategory:', error);
+        console.error('Error in toggleCategoryStatus:', error);
+        if (error.name === 'CastError') {
+            return res.status(400).json({ error: 'Invalid category ID' });
+        }
         return res.status(500).json({ error: 'Internal server error' });
     }
 };
@@ -102,5 +121,5 @@ module.exports = {
     categoryInfo,
     addCategory,
     editCategory,
-    deleteCategory
+    toggleCategoryStatus
 };

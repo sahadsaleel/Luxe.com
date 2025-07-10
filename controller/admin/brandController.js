@@ -201,7 +201,7 @@ const editBrand = async (req, res) => {
 };
 
 
-const deleteBrand = async (req, res) => {
+const toggleBrandStatus = async (req, res) => {
   try {
     const { id } = req.body;
 
@@ -214,18 +214,27 @@ const deleteBrand = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Brand not found' });
     }
 
-    if (brand.cloudinaryPublicId) {
-      try {
-        await cloudinary.uploader.destroy(brand.cloudinaryPublicId);
-      } catch (err) {
-        console.warn('Failed to delete Cloudinary image:', err.message);
-      }
+    const updatedBrand = await Brand.findOneAndUpdate(
+      { _id: id, __v: brand.__v },
+      {
+        isBlocked: !brand.isBlocked,
+        updatedAt: new Date(),
+        $inc: { __v: 1 }
+      },
+      { new: true }
+    );
+
+    if (!updatedBrand) {
+      return res.status(409).json({ success: false, message: 'Concurrent update detected. Please refresh and try again.' });
     }
 
-    await Brand.findByIdAndDelete(id);
-    res.status(200).json({ success: true, message: 'Brand deleted successfully' });
+    res.status(200).json({ 
+      success: true, 
+      message: `Brand ${updatedBrand.isBlocked ? 'disabled' : 'enabled'} successfully`,
+      isBlocked: updatedBrand.isBlocked
+    });
   } catch (error) {
-    console.error('Error deleting brand:', error);
+    console.error('Error toggling brand status:', error);
     if (error.name === 'CastError') {
       return res.status(400).json({ success: false, message: 'Invalid brand ID' });
     }
@@ -233,9 +242,10 @@ const deleteBrand = async (req, res) => {
   }
 };
 
+
 module.exports = {
   getBrandPage,
   addBrand,
   editBrand,
-  deleteBrand,
+  toggleBrandStatus,
 };

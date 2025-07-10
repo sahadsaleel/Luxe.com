@@ -61,13 +61,8 @@
                                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                 </svg>
                             </button>
-                            <button class="action-btn delete-btn" data-id="<%= coupon._id %>">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                                </svg>
+                            <button class="action-btn toggle-btn" data-id="<%= coupon._id %>" data-status="<%= coupon.isList ? 'listed' : 'unlisted' %>">
+                                <i class="fas fa-toggle-<%= coupon.isList ? 'on' : 'off' %>"></i>
                             </button>
                         </td>
                     </tr>
@@ -287,7 +282,6 @@
                 isValid = false;
             }
 
-            // Add validation for past dates
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const validFromDate = new Date(validFrom);
@@ -440,31 +434,39 @@
             document.getElementById('editIsList').value = coupon.isList.toString();
         }
 
-        document.querySelectorAll('.delete-btn').forEach(btn => {
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const id = btn.dataset.id;
+                const currentStatus = btn.dataset.status;
                 const confirm = await Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Delete this coupon?',
+                    title: `Are you sure you want to ${currentStatus === 'listed' ? 'disable' : 'enable'} this coupon?`,
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
+                    confirmButtonText: `Yes, ${currentStatus === 'listed' ? 'disable' : 'enable'} it!`,
                     cancelButtonText: 'Cancel',
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
+                    confirmButtonColor: '#7db87d',
+                    cancelButtonColor: '#d33',
                 });
 
                 if (confirm.isConfirmed) {
                     try {
-                        const res = await fetch(`/admin/coupons/delete/${id}`, { method: 'DELETE' });
+                        const res = await fetch(`/admin/coupons/toggle/${id}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                        });
+                        const result = await res.json();
                         if (res.ok) {
-                            Swal.fire({ icon: 'success', title: 'Deleted', text: 'Coupon deleted successfully', timer: 1500 })
-                                .then(() => window.location.reload());
+                            Swal.fire({
+                                icon: 'success',
+                                title: `${result.isList ? 'Enabled' : 'Disabled'}`,
+                                text: `Coupon ${result.isList ? 'enabled' : 'disabled'} successfully`,
+                                timer: 1500
+                            }).then(() => window.location.reload());
                         } else {
-                            Swal.fire({ icon: 'error', title: 'Error', text: 'Delete failed' });
+                            Swal.fire({ icon: 'error', title: 'Error', text: result.message || 'Toggle failed' });
                         }
                     } catch (err) {
-                        console.error('Delete error:', err);
+                        console.error('Toggle error:', err);
                         Swal.fire({ icon: 'error', title: 'Error', text: 'Server error' });
                     }
                 }

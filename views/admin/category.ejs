@@ -37,8 +37,9 @@
                            data-name="<%= category.name %>"
                            data-description="<%= category.description %>"
                            data-status="<%= category.isListed ? 'listed' : 'unlisted' %>"></i>
-                        <i class="fas fa-trash-alt delete-icon"
-                           data-id="<%= category._id %>"></i>
+                        <i class="fas fa-toggle-<%= category.isListed ? 'on' : 'off' %> toggle-icon"
+                           data-id="<%= category._id %>"
+                           data-status="<%= category.isListed ? 'listed' : 'unlisted' %>"></i>
                     </td>
                 </tr>
                 <% }) %>
@@ -88,6 +89,7 @@
         <div class="modal-content">
             <span class="close-button">×</span>
             <form class="category-form" onsubmit="return handleEditFormSubmit(event)">
+                <input type="hidden" class="category-id" id="editCategoryId">
                 <div class="form-group">
                     <label for="editCategoryName">Category Name :</label>
                     <input type="text" class="form-control category-name" id="editCategoryName">
@@ -171,6 +173,7 @@
                     const status = icon.getAttribute('data-status');
 
                     const form = editModal.querySelector('.category-form');
+                    form.querySelector('.category-id').value = id;
                     form.querySelector('.category-name').value = name || '';
                     form.querySelector('.category-description').value = description || '';
                     form.querySelector('.category-status').value = status || 'listed';
@@ -193,13 +196,14 @@
                 }
             });
 
-            // Delete Category
-            const deleteIcons = document.querySelectorAll('.delete-icon');
-            deleteIcons.forEach(icon => {
+            // Toggle Category Status
+            const toggleIcons = document.querySelectorAll('.toggle-icon');
+            toggleIcons.forEach(icon => {
                 icon.addEventListener('click', () => {
                     const categoryId = icon.getAttribute('data-id');
+                    const currentStatus = icon.getAttribute('data-status');
                     if (!categoryId) {
-                        console.error('Delete icon missing data-id:', icon);
+                        console.error('Toggle icon missing data-id:', icon);
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -208,17 +212,15 @@
                         return;
                     }
                     Swal.fire({
-                        title: 'Are you sure?',
-                        text: 'You will not be able to recover this category!',
+                        title: `Are you sure you want to ${currentStatus === 'listed' ? 'disable' : 'enable'} this category?`,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#7db87d',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, delete it!'
+                        confirmButtonText: `Yes, ${currentStatus === 'listed' ? 'disable' : 'enable'} it!`
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            console.log('delete category request:', { id: categoryId });
-                            fetch('/admin/deleteCategory', {
+                            fetch('/admin/toggleCategoryStatus', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -239,17 +241,17 @@
                                     return response.json();
                                 })
                                 .then(data => {
-                                    console.log('Delete category success:', data);
+                                    console.log('Toggle category success:', data);
                                     Swal.fire(
-                                        'Deleted!',
-                                        'Category has been deleted.',
+                                        `${data.isListed ? 'Enabled' : 'Disabled'}!`,
+                                        `Category has been ${data.isListed ? 'enabled' : 'disabled'}.`,
                                         'success'
                                     ).then(() => {
                                         location.reload();
                                     });
                                 })
                                 .catch(error => {
-                                    console.error('Delete Category Error:', error.message);
+                                    console.error('Toggle Category Error:', error.message);
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error',
@@ -292,6 +294,8 @@
         }
 
         // Form validation
+
+
         function validateForm(form) {
             clearErrorMessages(form);
             const name = form.querySelector('.category-name').value.trim();
@@ -299,21 +303,27 @@
             const status = form.querySelector('.category-status').value.trim();
             let isValid = true;
 
-            if (name === '') {
-                displayErrorMessage(form, 'name-error', 'Please enter a name');
+            if (!name) {
+                displayErrorMessage(form, 'name-error', 'Please enter a category name');
                 isValid = false;
-            } else if (!/^[a-zA-Z\s]+$/.test( new RegExp(name , "i"))) {
-                displayErrorMessage(form, 'name-error', 'Category name should only contain alphabetic characters');
+            } else if (name.startsWith('$')) {
+                displayErrorMessage(form, 'name-error', 'Category name cannot start with "$"');
+                isValid = false;
+            } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+                displayErrorMessage(form, 'name-error', 'Category name should only contain alphabetic characters and spaces');
                 isValid = false;
             }
-            if (description === '') {
+
+            if (!description) {
                 displayErrorMessage(form, 'description-error', 'Please enter a description');
                 isValid = false;
             }
-            if (status === '') {
-                displayErrorMessage(form, 'status-error', 'Please select a status');
+
+            if (!status || !['listed', 'unlisted'].includes(status)) {
+                displayErrorMessage(form, 'status-error', 'Please select a valid status');
                 isValid = false;
             }
+
             if (!isValid) {
                 Swal.fire({
                     icon: 'error',
@@ -338,12 +348,11 @@
             });
         }
 
-       // Handle Add Form Submission
+        // Handle Add Form Submission
         function handleAddFormSubmit(event) {
             event.preventDefault();
             const form = event.target;
 
-            // Validate form inputs
             if (!validateForm(form)) {
                 return false;
             }
@@ -352,7 +361,6 @@
             const description = form.querySelector('.category-description').value.trim();
             const status = form.querySelector('.category-status').value.trim() === 'listed';
 
-            // Send POST request to add category
             fetch('/admin/addCategory', {
                 method: 'POST',
                 headers: {
@@ -370,7 +378,7 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('gfjhkhj:', data);
+                    console.log('Add category success:', data);
                     document.getElementById('addCategoryModal').style.display = 'none';
                     Swal.fire({
                         icon: 'success',
@@ -381,7 +389,7 @@
                     });
                 })
                 .catch(error => {
-                    console.error('Failed:', error);
+                    console.error('Add Category Error:', error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -392,56 +400,18 @@
             return false;
         }
 
-        // Validate form inputs
-        function validateForm(form) {
-            const name = form.querySelector('.category-name').value.trim();
-            const status = form.querySelector('.category-status').value.trim();
-
-            if (!name) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Category name is required',
-                });
-                return false;
-            }
-            if (name.startsWith('$')) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Category name cannot start with "$"',
-                });
-                return false;
-            }
-            if (!['listed', 'unlisted'].includes(status)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Invalid status',
-                });
-                return false;
-            }
-            return true;
-        }
-
-        // Attach event listener to form
-        document.addEventListener('DOMContentLoaded', () => {
-            const addCategoryForm = document.querySelector('#addCategoryForm'); // Adjust ID if needed
-            if (addCategoryForm) {
-                addCategoryForm.addEventListener('submit', handleAddFormSubmit);
-            }
-        });
-       // Handle Edit Form Submission
+        // Handle Edit Form Submission
         function handleEditFormSubmit(event) {
             event.preventDefault();
             const form = event.target;
+
             if (!validateForm(form)) {
                 return false;
             }
 
-            const id = form.dataset.categoryId;
+            const id = form.querySelector('.category-id').value;
             if (!id || id === 'null' || id === '') {
-                console.error('Invalid category ID found in form dataset:', form.dataset);
+                console.error('Invalid category ID found in form:', id);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -453,7 +423,6 @@
             const name = form.querySelector('.category-name').value.trim();
             const description = form.querySelector('.category-description').value.trim();
             const status = form.querySelector('.category-status').value.trim() === 'listed';
-
 
             fetch('/admin/editCategory', {
                 method: 'POST',
@@ -476,6 +445,8 @@
                     return response.json();
                 })
                 .then(data => {
+                    console.log('Edit category success:', data);
+                    document.getElementById('editCategoryModal').style.display = 'none';
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
@@ -491,6 +462,8 @@
                         title: 'Error',
                         text: error.message === 'Category already exists' 
                             ? 'Category name already exists' 
+                            : error.message === 'Invalid category ID'
+                            ? 'Invalid category ID'
                             : `Failed to update category: ${error.message}`
                     });
                 });
