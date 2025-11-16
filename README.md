@@ -12,21 +12,15 @@ Beautiful UI crafted for a high‑end shopping atmosphere.
 
 ### 🏠 Homepage
 
-![Home Page](https://i.imgur.com/cO7Nf8T.jpeg)
+<img width="1897" height="908" alt="Screenshot 2025-11-16 171945" src="https://github.com/user-attachments/assets/491aabd3-dcec-481a-acff-74134f06199c" />
 
 ### 🛒 Cart Page
 
-![Cart Page](https://i.imgur.com/JbTjL2Y.jpeg)
-
-### 🎟️ Coupon Modal
-
-![Coupon Modal](https://i.imgur.com/8EnGf6U.jpeg)
+<img width="1719" height="896" alt="Screenshot 2025-11-16 172152" src="https://github.com/user-attachments/assets/8c68fa12-489d-42da-81f5-b262da65d397" />
 
 ### 🧭 Admin Dashboard
 
-![Admin Dashboard](https://i.imgur.com/9GdYVog.jpeg)
-
-> *(Replace screenshots with your real project images for a perfect finish.)*
+<img width="1919" height="898" alt="Screenshot 2025-11-16 172420" src="https://github.com/user-attachments/assets/01071073-e25d-4935-9bf3-515c70c2cfce" />
 
 ---
 
