@@ -1,22 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Syne:wght@600;700;800&display=swap');
 
 :root {
-  --clay-bg: #f0e6ff;
-  --clay-surface: #ffffff;
-  --clay-primary: #c084fc;
-  --clay-secondary: #f9a8d4;
-  --clay-accent: #86efac;
-  --clay-text: #3b1f5e;
-  --clay-shadow-light: rgba(192, 132, 252, 0.25);
-  --clay-shadow-dark: rgba(59, 31, 94, 0.15);
-  --clay-radius: 24px;
-  --clay-radius-sm: 14px;
-  --clay-radius-lg: 36px;
+  --clay-bg:       #f7f5f2;
+  --clay-surface:  #ffffff;
+  --clay-primary:  #7F77DD;
+  --clay-secondary:#888780;
+  --clay-accent:   #D85A30;
+  --clay-text:     #2C2C2A;
+  --clay-shadow:   rgba(127,119,221,0.18);
+  --clay-radius:   24px;
+  --clay-radius-lg:36px;
 }
 
 /* Base Body and Typography */
 body {
-    background: radial-gradient(ellipse at top left, #f3e8ff 0%, #fce7f3 40%, #ecfdf5 100%) !important;
+    background: radial-gradient(ellipse at top left, #ffffff 0%, var(--clay-bg) 50%, #e8e4dc 100%) !important;
     background-attachment: fixed !important;
     font-family: 'Nunito', sans-serif !important;
     color: var(--clay-text) !important;
@@ -30,7 +28,7 @@ body::before {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-    opacity: 0.04;
+    opacity: 0.03;
     pointer-events: none;
     z-index: 9999;
 }
@@ -41,12 +39,12 @@ h1, h2, h3, h4, h5, h6, .hero-title, .section-title, .product-title {
 }
 
 /* Buttons (all) */
-button, .btn, .hero-cta, .shop-now-btn, .product-cta, .add-to-cart, .continue-btn, .social-btn, a.btn, .google-btn, .login-btn, .signup-btn {
-    background: linear-gradient(145deg, var(--clay-primary), var(--clay-secondary)) !important;
+button:not(.search-container button), .btn, .hero-cta, .shop-now-btn, .product-cta, .add-to-cart, .continue-btn, .social-btn, a.btn, .google-btn, .login-btn, .signup-btn {
+    background: linear-gradient(145deg, var(--clay-primary), #6A62C5) !important;
     border-radius: var(--clay-radius) !important;
-    box-shadow: 6px 6px 12px var(--clay-shadow-dark), -4px -4px 10px rgba(255,255,255,0.7) !important;
+    box-shadow: 6px 6px 14px var(--clay-shadow), -4px -4px 10px rgba(255,255,255,0.8) !important;
     border: none !important;
-    padding: 14px 28px !important;
+    padding: 12px 28px !important;
     font-weight: 700 !important;
     color: white !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease !important;
@@ -56,69 +54,116 @@ button, .btn, .hero-cta, .shop-now-btn, .product-cta, .add-to-cart, .continue-bt
     text-decoration: none !important;
 }
 
-button:hover, .btn:hover, .hero-cta:hover, .shop-now-btn:hover, .product-cta:hover, .add-to-cart:hover, .continue-btn:hover, .social-btn:hover, a.btn:hover {
-    transform: translateY(-3px) scale(1.03) !important;
-    box-shadow: 8px 8px 16px var(--clay-shadow-dark), -6px -6px 12px rgba(255,255,255,0.8) !important;
+button:not(.search-container button):hover, .btn:hover, .hero-cta:hover, .shop-now-btn:hover, .product-cta:hover, .add-to-cart:hover, .continue-btn:hover, .social-btn:hover, a.btn:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 8px 8px 18px var(--clay-shadow), -6px -6px 14px rgba(255,255,255,0.9) !important;
 }
 
-button:active, .btn:active, .hero-cta:active, .shop-now-btn:active, .product-cta:active, .add-to-cart:active, .continue-btn:active, .social-btn:active, a.btn:active {
+button:not(.search-container button):active, .btn:active, .hero-cta:active, .shop-now-btn:active, .product-cta:active, .add-to-cart:active, .continue-btn:active, .social-btn:active, a.btn:active {
     transform: scale(0.97) !important;
-    box-shadow: inset 4px 4px 8px var(--clay-shadow-dark), inset -4px -4px 8px rgba(255,255,255,0.7) !important;
+    box-shadow: inset 4px 4px 8px rgba(0,0,0,0.1), inset -4px -4px 8px rgba(255,255,255,0.2) !important;
 }
 
 /* Icon Buttons (Wishlist, etc) */
 .btn-wishlist, .icon-btn {
     border-radius: 50% !important;
     padding: 10px !important;
-    background: rgba(255, 255, 255, 0.85) !important;
-    box-shadow: 4px 4px 10px var(--clay-shadow-dark), -4px -4px 10px rgba(255,255,255,0.9) !important;
+    background: var(--clay-surface) !important;
+    box-shadow: 4px 4px 12px var(--clay-shadow), -4px -4px 10px rgba(255,255,255,0.9) !important;
 }
 
 /* Cards */
 .feature, .product-card, .card, .result-item, .order-card, .address-card, .login-container, .signup-container {
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
     border-radius: var(--clay-radius-lg) !important;
-    box-shadow: 8px 8px 20px var(--clay-shadow-dark), -6px -6px 16px rgba(255,255,255,0.8) !important;
-    border: 1.5px solid rgba(255,255,255,0.6) !important;
-    padding: 20px !important;
+    box-shadow: 8px 8px 24px var(--clay-shadow), -6px -6px 16px rgba(255,255,255,1) !important;
+    border: 1.5px solid rgba(255,255,255,0.8) !important;
+    padding: 24px !important;
     transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-    margin-bottom: 20px;
 }
 
 .feature:hover, .product-card:hover, .card:hover, .result-item:hover, .order-card:hover, .address-card:hover {
     transform: translateY(-6px) !important;
-    box-shadow: 12px 12px 28px var(--clay-shadow-dark), -8px -8px 20px rgba(255,255,255,0.9) !important;
+    box-shadow: 12px 12px 32px var(--clay-shadow), -8px -8px 24px rgba(255,255,255,1) !important;
 }
 
-/* Input fields & search bar */
-input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="search"], textarea, select {
-    border-radius: var(--clay-radius) !important;
-    background: rgba(255,255,255,0.6) !important;
-    box-shadow: inset 4px 4px 8px rgba(192,132,252,0.2), inset -3px -3px 6px rgba(255,255,255,0.9) !important;
-    border: 1.5px solid rgba(192,132,252,0.3) !important;
+/* Input fields (Removed width 100% and margin to fix alignment) */
+input[type="text"]:not(#searchInput), input[type="email"], input[type="password"], input[type="number"], input[type="search"]:not(#searchInput), textarea, select {
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    box-shadow: inset 4px 4px 8px rgba(127,119,221,0.1), inset -3px -3px 6px rgba(255,255,255,0.9) !important;
+    border: 1.5px solid rgba(127,119,221,0.2) !important;
     padding: 12px 20px !important;
     color: var(--clay-text) !important;
     outline: none !important;
     transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-    width: 100%;
-    margin-bottom: 10px;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus:not(#searchInput), textarea:focus, select:focus {
     border-color: var(--clay-primary) !important;
-    box-shadow: inset 5px 5px 10px rgba(192,132,252,0.3), inset -4px -4px 8px rgba(255,255,255,1) !important;
+    box-shadow: inset 5px 5px 10px rgba(127,119,221,0.15), inset -4px -4px 8px rgba(255,255,255,1) !important;
+}
+
+/* SEARCH BAR REDESIGN */
+.search-container {
+    position: relative;
+    display: flex !important;
+    align-items: center !important;
+    background: var(--clay-surface) !important;
+    border-radius: 999px !important;
+    box-shadow: inset 3px 3px 8px rgba(127,119,221,0.1), inset -3px -3px 6px rgba(255,255,255,1), 4px 4px 12px var(--clay-shadow) !important;
+    padding: 4px 16px !important;
+    transition: box-shadow 0.3s ease !important;
+    border: 1px solid rgba(255,255,255,0.8) !important;
+    margin: 0 !important;
+}
+
+.search-container:focus-within {
+    box-shadow: inset 5px 5px 12px rgba(127,119,221,0.15), inset -4px -4px 8px rgba(255,255,255,1), 6px 6px 16px var(--clay-shadow) !important;
+}
+
+#searchInput {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 8px !important;
+    margin: 0 !important;
+    color: var(--clay-text) !important;
+    min-width: 200px !important;
+}
+
+#searchInput:focus {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.search-container button {
+    background: transparent !important;
+    box-shadow: none !important;
+    color: var(--clay-primary) !important;
+    padding: 8px !important;
+    border-radius: 50% !important;
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-container button:hover {
+    transform: scale(1.1) !important;
+    color: var(--clay-accent) !important;
 }
 
 /* Navbar / Header */
 header, .navbar, .header-container {
-    background: rgba(240, 230, 255, 0.85) !important;
+    background: rgba(247, 245, 242, 0.85) !important;
     backdrop-filter: blur(16px) !important;
     -webkit-backdrop-filter: blur(16px) !important;
     border-radius: 0 0 var(--clay-radius-lg) var(--clay-radius-lg) !important;
-    box-shadow: 0 8px 24px var(--clay-shadow-light) !important;
-    border-bottom: 1px solid rgba(255,255,255,0.5) !important;
+    box-shadow: 0 8px 24px var(--clay-shadow) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.7) !important;
 }
 
 /* Modals & Popups */
@@ -127,60 +172,60 @@ header, .navbar, .header-container {
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     border-radius: var(--clay-radius-lg) !important;
-    box-shadow: 12px 12px 32px var(--clay-shadow-dark), -8px -8px 24px rgba(255,255,255,0.75) !important;
-    border: 1.5px solid rgba(255,255,255,0.6) !important;
+    box-shadow: 12px 12px 32px var(--clay-shadow), -8px -8px 24px rgba(255,255,255,0.9) !important;
+    border: 1.5px solid rgba(255,255,255,0.8) !important;
 }
 
 /* Badges & Tags */
 .badge, .product-badge, .offer-badge, .status-badge, .tag {
     border-radius: 999px !important;
-    background: linear-gradient(145deg, var(--clay-secondary), #fbcfe8) !important;
-    box-shadow: 3px 3px 8px var(--clay-shadow-dark), -2px -2px 6px rgba(255,255,255,0.7) !important;
-    padding: 4px 14px !important;
+    background: linear-gradient(145deg, var(--clay-accent), #eb815e) !important;
+    box-shadow: 3px 3px 8px var(--clay-shadow), -2px -2px 6px rgba(255,255,255,0.9) !important;
+    padding: 6px 16px !important;
     font-weight: 700 !important;
     font-size: 0.75rem !important;
-    color: var(--clay-text) !important;
+    color: white !important;
     border: none !important;
     display: inline-block;
 }
 
 .offer-badge.new {
-    background: linear-gradient(145deg, var(--clay-accent), #bbf7d0) !important;
+    background: linear-gradient(145deg, var(--clay-primary), #9a94e8) !important;
 }
 
 /* Footer */
 footer, .footer {
-    background: rgba(240, 230, 255, 0.6) !important;
+    background: rgba(247, 245, 242, 0.7) !important;
     border-radius: var(--clay-radius-lg) var(--clay-radius-lg) 0 0 !important;
-    box-shadow: 0 -6px 20px var(--clay-shadow-light) !important;
-    border-top: 1px solid rgba(255,255,255,0.5) !important;
+    box-shadow: 0 -6px 24px var(--clay-shadow) !important;
+    border-top: 1px solid rgba(255,255,255,0.8) !important;
     margin-top: 40px !important;
 }
 
 /* Dropdown menus & select */
 select, .dropdown-menu {
-    border-radius: var(--clay-radius) !important;
-    background: rgba(255,255,255,0.85) !important;
-    box-shadow: 6px 6px 16px var(--clay-shadow-dark), -4px -4px 12px rgba(255,255,255,0.8) !important;
-    border: 1.5px solid rgba(192,132,252,0.25) !important;
+    border-radius: 12px !important;
+    background: rgba(255,255,255,0.9) !important;
+    box-shadow: 6px 6px 16px var(--clay-shadow), -4px -4px 12px rgba(255,255,255,1) !important;
+    border: 1.5px solid rgba(127,119,221,0.15) !important;
 }
 
 /* Quantity Selectors & Toggle Switches */
 .quantity-selector, .quantity-btn, .toggle-switch, .qty-btn {
     border-radius: 999px !important;
-    box-shadow: inset 3px 3px 6px rgba(192,132,252,0.2), inset -2px -2px 5px rgba(255,255,255,0.9) !important;
-    background: rgba(255,255,255,0.6) !important;
+    box-shadow: inset 3px 3px 6px rgba(127,119,221,0.1), inset -2px -2px 5px rgba(255,255,255,0.9) !important;
+    background: rgba(255,255,255,0.7) !important;
     border: none !important;
 }
 .quantity-btn:active, .qty-btn:active {
-    background: linear-gradient(145deg, var(--clay-primary), var(--clay-secondary)) !important;
+    background: var(--clay-primary) !important;
     color: white !important;
 }
 
 /* Product image containers */
 .product-image-container, .product-image-section, .hero-image, .image-gallery {
-    border-radius: var(--clay-radius-lg) !important;
-    box-shadow: 8px 8px 20px var(--clay-shadow-dark), -4px -4px 14px rgba(255,255,255,0.8) !important;
+    border-radius: var(--clay-radius) !important;
+    box-shadow: 6px 6px 20px var(--clay-shadow), -4px -4px 14px rgba(255,255,255,1) !important;
     overflow: hidden !important;
     transition: transform 0.3s ease !important;
 }
@@ -191,15 +236,16 @@ select, .dropdown-menu {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-    width: 8px !important;
+    width: 10px !important;
 }
 ::-webkit-scrollbar-track {
-    background: rgba(192,132,252,0.15) !important;
+    background: rgba(127,119,221,0.08) !important;
     border-radius: 999px !important;
 }
 ::-webkit-scrollbar-thumb {
     background: linear-gradient(var(--clay-primary), var(--clay-secondary)) !important;
     border-radius: 999px !important;
+    border: 2px solid var(--clay-bg);
 }
 
 /* Loading Spinners / Skeletons */
@@ -210,7 +256,7 @@ select, .dropdown-menu {
     background: linear-gradient(90deg, rgba(255,255,255,0.4) 25%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.4) 75%) !important;
     background-size: 200% 100% !important;
     animation: skeleton-loading 1.5s infinite !important;
-    border-radius: var(--clay-radius) !important;
+    border-radius: 12px !important;
 }
 
 @keyframes skeleton-loading {
@@ -222,13 +268,15 @@ select, .dropdown-menu {
 @media (max-width: 768px) {
     :root {
         --clay-radius: 16px;
-        --clay-radius-sm: 10px;
         --clay-radius-lg: 24px;
     }
     .feature, .product-card, .card, .result-item, .login-container, .signup-container {
-        box-shadow: 4px 4px 12px var(--clay-shadow-dark), -3px -3px 10px rgba(255,255,255,0.8) !important;
+        box-shadow: 4px 4px 14px var(--clay-shadow), -3px -3px 12px rgba(255,255,255,0.9) !important;
     }
-    button, .btn, .hero-cta, .shop-now-btn, .product-cta, .add-to-cart, .continue-btn {
-        box-shadow: 4px 4px 8px var(--clay-shadow-dark), -2px -2px 6px rgba(255,255,255,0.7) !important;
+    button:not(.search-container button), .btn, .hero-cta, .shop-now-btn, .product-cta, .add-to-cart, .continue-btn {
+        box-shadow: 4px 4px 10px var(--clay-shadow), -2px -2px 8px rgba(255,255,255,0.8) !important;
+    }
+    #searchInput {
+        min-width: 120px !important;
     }
 }
