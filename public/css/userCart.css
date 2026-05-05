@@ -1,3 +1,4 @@
+@import url('/css/claymorphism.css');
 :root { --primary-color: #046A38; --secondary-color: #C4B7A6; --light-gray: #FFFFFF; --medium-gray: #f5f5f5; --dark-gray: #2E2E2E; --border-color: #C4B7A6; --success-color: #046A38; --error-color: #dc3545; --shadow: 0 2px 10px rgba(4, 106, 56, 0.1); --transition: all 0.3s ease; }
 
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2E2E2E; line-height: 1.6; background-color: #FFFFFF; margin: 0; padding: 0; }
