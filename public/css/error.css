@@ -1,7 +1,7 @@
 @import url('/css/claymorphism.css');
 :root {
-            --primary-color: #5c4fdb;
-            --secondary-color: rgba(92,79,219,0.18);
+            --primary-color: #e0e0e0;
+            --secondary-color: rgba(255,255,255,0.18);
             --text-color: #2d3436;
             --background: #f8f9fa;
         }

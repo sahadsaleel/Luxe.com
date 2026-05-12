@@ -22,7 +22,7 @@
 }
 
 .copy-btn {
-    background-color: #5c4fdb;
+    background-color: #e0e0e0;
     color: white;
     border: none;
     padding: 8px 15px;
@@ -55,12 +55,12 @@
 .stat-value {
     font-size: 24px;
     font-weight: bold;
-    color: #5c4fdb;
+    color: #e0e0e0;
     margin-bottom: 5px;
 }
 
 .stat-label {
-    color: #5c4fdb;
+    color: #e0e0e0;
     font-size: 14px;
 }
 
@@ -112,8 +112,8 @@
 }
 
 .referral-status.pending {
-    background-color: #fff3cd;
-    color: #856404;
+    background-color: #2a2200;
+    color: #e0c060;
 }
 
 .referral-status.completed {
@@ -168,15 +168,15 @@
     }
 } 
  :root {
-            --primary-color: #5c4fdb;
-            --secondary-color: rgba(92,79,219,0.18);
-            --accent-color: #e8a838;
-            --text-color: #2E2E2E;
+            --primary-color: #e0e0e0;
+            --secondary-color: rgba(255,255,255,0.18);
+            --accent-color: #c0c0c0;
+            --text-color: #e0e0e0;
             --light-text: #777;
-            --background: #FFFFFF;
-            --card-bg: #FFFFFF;
+            --background: #0d0d0d;
+            --card-bg: #0d0d0d;
             --border-radius: 4px;
-            --box-shadow: 0 4px 15px rgba(92, 79, 219, 0.1);
+            --box-shadow: 0 4px 15px rgba(255, 255, 255, 0.06);
             --transition: all 0.3s ease;
         }
 
@@ -367,7 +367,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.06);
             border-radius: 4px;
         }
 
@@ -386,7 +386,7 @@
         .stat-item {
             text-align: center;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.06);
             border-radius: 4px;
         }
 
@@ -565,8 +565,8 @@
         }
 
         .status-pending {
-            background: #fff3cd;
-            color: #856404;
+            background: #2a2200;
+            color: #e0c060;
         }
 
         .no-referrals {

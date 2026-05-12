@@ -12,13 +12,13 @@
 
 body {
     font-family: 'Nunito', sans-serif;
-    background: linear-gradient(135deg, #f4f1ee 0%, #ede8f5 55%, #f0ece4 100%);
+    background: linear-gradient(135deg, #0d0d0d 0%, #ede8f5 55%, #f0ece4 100%);
     background-attachment: fixed;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: #1e1c2e;
+    color: #f0f0f0;
 }
 
 /* ---- Header ---- */
@@ -28,14 +28,14 @@ header {
     align-items: center;
     width: 100%;
     padding: 0 32px;
-    background: rgba(244, 241, 238, 0.95);
+    background: rgba(13, 13, 13, 0.97);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 100;
     height: 64px;
-    border-bottom: 2px solid rgba(92, 79, 219, 0.12);
-    box-shadow: 0 4px 16px rgba(92, 79, 219, 0.10);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.10);
     backdrop-filter: blur(14px);
 }
 
@@ -51,21 +51,21 @@ header {
 }
 
 .contact-us {
-    color: #1e1c2e;
+    color: #f0f0f0;
     text-decoration: none;
     font-size: 15px;
     font-weight: 600;
     padding: 8px 18px;
-    border: 2px solid rgba(92, 79, 219, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.06);
     border-radius: 4px;
     transition: all 0.2s ease;
     background: rgba(255,255,255,0.6);
 }
 
 .contact-us:hover {
-    background: #5c4fdb;
+    background: #e0e0e0;
     color: #fff;
-    border-color: #5c4fdb;
+    border-color: #e0e0e0;
 }
 
 /* ---- Page Layout ---- */
@@ -91,14 +91,14 @@ main,
 
 /* ---- Signup Card ---- */
 .signup-container {
-    background: rgba(255, 255, 255, 0.82) !important;
+    background: rgba(20, 20, 20, 0.96) !important;
     backdrop-filter: blur(14px) !important;
     border-radius: 6px !important;
     box-shadow:
-        7px 7px 0px rgba(92, 79, 219, 0.18),
-        10px 10px 28px rgba(92, 79, 219, 0.15),
-        -5px -5px 18px rgba(255,255,255,1) !important;
-    border: 2px solid rgba(255,255,255,0.9) !important;
+        7px 7px 0px rgba(255, 255, 255, 0.12),
+        10px 10px 28px rgba(255, 255, 255, 0.08),
+        -5px -5px 18px rgba(255,255,255,0.06) !important;
+    border: 2px solid rgba(255,255,255,0.06) !important;
     padding: 36px 40px !important;
     width: 100%;
     max-width: 460px;
@@ -111,7 +111,7 @@ h1 {
     font-family: 'Syne', sans-serif !important;
     font-size: 22px !important;
     font-weight: 800 !important;
-    color: #1e1c2e !important;
+    color: #f0f0f0 !important;
     margin-bottom: 22px !important;
     letter-spacing: 0.8px;
     text-align: center;
@@ -119,9 +119,9 @@ h1 {
 
 /* ---- Google Button ---- */
 .google-btn {
-    color: #1e1c2e !important;
-    border: 2px solid rgba(92, 79, 219, 0.2) !important;
-    background: rgba(255,255,255,0.88) !important;
+    color: #f0f0f0 !important;
+    border: 2px solid rgba(255, 255, 255, 0.06) !important;
+    background: rgba(17,17,17,0.95) !important;
     text-decoration: none !important;
     width: 100%;
     padding: 11px 16px !important;
@@ -135,21 +135,21 @@ h1 {
     gap: 10px;
     border-radius: 4px !important;
     box-shadow:
-        4px 4px 0px rgba(92,79,219,0.12),
-        4px 4px 12px rgba(92,79,219,0.08),
-        -2px -2px 8px rgba(255,255,255,0.9) !important;
+        4px 4px 0px rgba(255,255,255,0.12),
+        4px 4px 12px rgba(255,255,255,0.08),
+        -2px -2px 8px rgba(255,255,255,0.06) !important;
     transition: all 0.2s ease !important;
 }
 
 .google-btn span {
-    color: #1e1c2e;
+    color: #f0f0f0;
     font-weight: 700;
     text-decoration: none !important;
 }
 
 .google-btn:hover {
-    background: #5c4fdb !important;
-    border-color: #5c4fdb !important;
+    background: #e0e0e0 !important;
+    border-color: #e0e0e0 !important;
     color: #fff !important;
     transform: translateY(-2px) !important;
 }
@@ -172,7 +172,7 @@ h1 {
 .or-separator {
     font-size: 12px;
     font-weight: 700;
-    color: #9390a8;
+    color: #555555;
     margin: 14px 0;
     position: relative;
     text-transform: uppercase;
@@ -186,7 +186,7 @@ h1 {
     top: 50%;
     width: 38%;
     height: 1.5px;
-    background: rgba(92,79,219,0.15);
+    background: rgba(255,255,255,0.15);
 }
 
 .or-separator::before { left: 0; }
@@ -197,13 +197,13 @@ h1 {
     font-size: 15px;
     font-weight: 600;
     margin-bottom: 4px;
-    color: #1e1c2e;
+    color: #f0f0f0;
     text-align: center;
 }
 
 .sub-instruction {
     font-size: 12px;
-    color: #9390a8;
+    color: #555555;
     margin-bottom: 16px;
     text-align: center;
     line-height: 1.5;
@@ -240,32 +240,32 @@ input[type="tel"] {
     width: 100% !important;
     box-sizing: border-box !important;
     padding: 12px 16px !important;
-    border: 2px solid rgba(92, 79, 219, 0.18) !important;
+    border: 2px solid rgba(255, 255, 255, 0.12) !important;
     border-radius: 4px !important;
     font-size: 14px;
     font-family: 'Nunito', sans-serif;
     font-weight: 600;
-    color: #1e1c2e !important;
-    background: rgba(255,255,255,0.9) !important;
+    color: #f0f0f0 !important;
+    background: rgba(255,255,255,0.06) !important;
     box-shadow:
-        inset 4px 4px 8px rgba(92,79,219,0.08),
+        inset 4px 4px 8px rgba(255,255,255,0.08),
         inset -2px -2px 6px rgba(255,255,255,0.95) !important;
     transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
     outline: none;
 }
 
 input:focus {
-    border-color: #5c4fdb !important;
+    border-color: #e0e0e0 !important;
     box-shadow:
-        inset 4px 4px 8px rgba(92,79,219,0.12),
-        inset -2px -2px 6px rgba(255,255,255,1),
-        0 0 0 3px rgba(92,79,219,0.1) !important;
-    background: #ffffff !important;
+        inset 4px 4px 8px rgba(255,255,255,0.12),
+        inset -2px -2px 6px rgba(255,255,255,0.06),
+        0 0 0 3px rgba(255,255,255,0.08) !important;
+    background: #0d0d0d !important;
 }
 
 /* ---- Validation States ---- */
 .error-message {
-    color: #e8573a;
+    color: #888888;
     font-size: 11px;
     font-weight: 700;
     text-align: left;
@@ -281,7 +281,7 @@ input:focus {
 }
 
 .form-group.invalid input {
-    border-color: #e8573a !important;
+    border-color: #888888 !important;
     box-shadow:
         inset 4px 4px 8px rgba(232,87,58,0.08),
         inset -2px -2px 6px rgba(255,255,255,0.95) !important;
@@ -289,7 +289,7 @@ input:focus {
 
 /* ---- Continue / Submit Button ---- */
 .continue-btn {
-    background: linear-gradient(160deg, #5c4fdb, #4035c2) !important;
+    background: linear-gradient(160deg, #2a2a2a, #1a1a1a) !important;
     color: #ffffff !important;
     padding: 13px 20px !important;
     border: none !important;
@@ -302,41 +302,41 @@ input:focus {
     margin-top: 14px !important;
     letter-spacing: 0.5px;
     box-shadow:
-        5px 5px 0px #2e26a8,
-        6px 6px 18px rgba(92,79,219,0.25),
-        -3px -3px 10px rgba(255,255,255,0.8) !important;
+        5px 5px 0px #000000,
+        6px 6px 18px rgba(255,255,255,0.25),
+        -3px -3px 10px rgba(255,255,255,0.06) !important;
     transition: transform 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 .continue-btn:hover {
     transform: translateY(-2px) !important;
     box-shadow:
-        6px 6px 0px #2e26a8,
-        8px 8px 22px rgba(92,79,219,0.3) !important;
+        6px 6px 0px #000000,
+        8px 8px 22px rgba(255,255,255,0.3) !important;
 }
 
 .continue-btn:active {
     transform: translateY(2px) !important;
-    box-shadow: 2px 2px 0px #2e26a8 !important;
+    box-shadow: 2px 2px 0px #000000 !important;
 }
 
 /* ---- Sign-in link ---- */
 .create-account {
     font-size: 13px;
     font-weight: 600;
-    color: #5c5a72;
+    color: #888888;
     margin-top: 14px;
     text-align: center;
 }
 
 .create-account a {
-    color: #5c4fdb;
+    color: #e0e0e0;
     text-decoration: none;
     font-weight: 700;
 }
 
 .create-account a:hover {
-    color: #e8573a;
+    color: #888888;
     text-decoration: underline;
 }
 
@@ -349,7 +349,7 @@ input:focus {
 }
 
 .footer-links a {
-    color: #9390a8;
+    color: #555555;
     text-decoration: none;
     font-size: 12px;
     font-weight: 600;
@@ -357,7 +357,7 @@ input:focus {
 }
 
 .footer-links a:hover {
-    color: #5c4fdb;
+    color: #e0e0e0;
 }
 
 /* ---- Side illustration ---- */
@@ -372,9 +372,9 @@ input:focus {
     height: auto;
     border-radius: 6px;
     box-shadow:
-        8px 8px 0px rgba(92,79,219,0.15),
-        10px 10px 28px rgba(92,79,219,0.15),
-        -4px -4px 16px rgba(255,255,255,1);
+        8px 8px 0px rgba(255,255,255,0.15),
+        10px 10px 28px rgba(255,255,255,0.15),
+        -4px -4px 16px rgba(255,255,255,0.06);
     transform: rotate(1.5deg);
     transition: transform 0.3s ease;
 }
@@ -389,7 +389,7 @@ input:focus {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(92, 79, 219, 0.4);
+    background: rgba(255, 255, 255, 0.4);
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -398,7 +398,7 @@ input:focus {
 
 .spinner {
     border: 4px solid rgba(255,255,255,0.3);
-    border-top: 4px solid #5c4fdb;
+    border-top: 4px solid #e0e0e0;
     border-radius: 0px;
     width: 40px;
     height: 40px;
@@ -406,7 +406,7 @@ input:focus {
 }
 
 .loader p {
-    color: #ffffff;
+    color: #0d0d0d;
     font-size: 15px;
     font-weight: 700;
     margin-top: 12px;

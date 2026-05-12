@@ -1,14 +1,14 @@
 @import url('/css/claymorphism.css');
  :root {
-            --primary-color: #5c4fdb;
-            --secondary-color: rgba(92,79,219,0.18);
-            --text-color: #2E2E2E;
-            --background-color: #FFFFFF;
-            --highlight-color: #e8a838;
-            --border-color: rgba(92,79,219,0.18);
+            --primary-color: #e0e0e0;
+            --secondary-color: rgba(255,255,255,0.18);
+            --text-color: #e0e0e0;
+            --background-color: #f0f0f0;
+            --highlight-color: #c0c0c0;
+            --border-color: rgba(255,255,255,0.18);
             --text-light: #6b6b6b;
-            --shadow-soft: 0 20px 60px rgba(92, 79, 219, 0.1);
-            --shadow-hover: 0 30px 80px rgba(92, 79, 219, 0.15);
+            --shadow-soft: 0 20px 60px rgba(255, 255, 255, 0.06);
+            --shadow-hover: 0 30px 80px rgba(255, 255, 255, 0.08);
         }
 
         * {
@@ -64,7 +64,7 @@ body {
             background: linear-gradient(
                 135deg, 
                 rgba(196, 183, 166, 0.1) 0%, 
-                rgba(92, 79, 219, 0.05) 100%
+                rgba(255, 255, 255, 0.04) 100%
             );
             z-index: 2;
             transition: opacity 0.6s ease;
@@ -183,7 +183,7 @@ body {
 
         .hero-cta:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(92, 79, 219, 0.3);
+            box-shadow: 0 12px 40px rgba(255, 255, 255, 0.3);
         }
 
         .hero-cta-arrow {
@@ -335,7 +335,7 @@ body {
             position: relative;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(92, 79, 219, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .feature::before {
@@ -357,14 +357,14 @@ body {
 
         .feature:hover {
             transform: translateY(-12px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(92, 79, 219, 0.2);
+            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.06);
         }
 
         .feature-image-container {
             position: relative;
             height: 220px;
             overflow: hidden;
-            background: linear-gradient(135deg, rgba(92, 79, 219, 0.05), rgba(196, 183, 166, 0.05));
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(196, 183, 166, 0.05));
         }
 
         .feature img {
@@ -386,7 +386,7 @@ body {
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(92, 79, 219, 0.7), rgba(179, 165, 128, 0.6));
+            background: linear-gradient(135deg, rgba(35, 35, 35, 0.85), rgba(179, 165, 128, 0.6));
             opacity: 0;
             transition: all 0.4s ease;
             display: flex;
@@ -439,7 +439,7 @@ body {
             color: var(--background-color);
             font-weight: bold;
             font-size: 16px;
-            box-shadow: 0 4px 12px rgba(92, 79, 219, 0.3);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
         }
 
         .feature h3 {
@@ -490,7 +490,7 @@ body {
             font-size: 0.85rem;
             letter-spacing: 1px;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 15px rgba(92, 79, 219, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -502,7 +502,7 @@ body {
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
             transition: left 0.5s ease;
         }
 
@@ -512,7 +512,7 @@ body {
 
         .shop-now-btn:hover {
             transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(92, 79, 219, 0.4);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
         }
 
         .shop-now-btn:active {
@@ -594,7 +594,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 5px 20px rgba(92, 79, 219, 0.08);
+    box-shadow: 0 5px 20px rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
     width: 100%;
     max-width: 300px;
@@ -603,7 +603,7 @@ body {
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(92, 79, 219, 0.15);
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.08);
 }
 
 .product-image-container {
@@ -735,7 +735,7 @@ body {
     font-size: 0.75rem;
     font-weight: bold;
     z-index: 1;
-    box-shadow: 0 2px 4px rgba(92, 79, 219, 0.2);
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.06);
 }
 
 .offer-badge.categories {
@@ -850,7 +850,7 @@ body {
             background: radial-gradient(
                 circle at center,
                 rgba(196, 183, 166, 0.1) 0%,
-                rgba(92, 79, 219, 0.05) 70%,
+                rgba(255, 255, 255, 0.04) 70%,
                 transparent 100%
             );
             z-index: 1;
@@ -876,11 +876,11 @@ body {
             object-fit: cover;
             border-radius: 4px;
             transition: all 0.6s ease;
-            filter: drop-shadow(0 15px 35px rgba(92, 79, 219, 0.15));
+            filter: drop-shadow(0 15px 35px rgba(255, 255, 255, 0.08));
         }
 
         .product-image:hover {
-            filter: drop-shadow(0 25px 50px rgba(92, 79, 219, 0.25));
+            filter: drop-shadow(0 25px 50px rgba(255, 255, 255, 0.08));
         }
 
         .product-content {
@@ -987,7 +987,7 @@ body {
 
         .product-cta:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 45px rgba(92, 79, 219, 0.4);
+            box-shadow: 0 15px 45px rgba(255, 255, 255, 0.4);
         }
 
         .product-cta-arrow {
@@ -1110,15 +1110,15 @@ body {
             }
         }
         :root {
-    --primary-color: #5c4fdb;
-    --secondary-color: rgba(92,79,219,0.18);
-    --text-color: #2E2E2E;
-    --background-color: #FFFFFF;
-    --highlight-color: #e8a838;
-    --border-color: rgba(92,79,219,0.18);
+    --primary-color: #e0e0e0;
+    --secondary-color: rgba(255,255,255,0.18);
+    --text-color: #e0e0e0;
+    --background-color: #f0f0f0;
+    --highlight-color: #c0c0c0;
+    --border-color: rgba(255,255,255,0.18);
     --text-light: #6b6b6b;
-    --shadow-soft: 0 20px 60px rgba(92, 79, 219, 0.1);
-    --shadow-hover: 0 30px 80px rgba(92, 79, 219, 0.15);
+    --shadow-soft: 0 20px 60px rgba(255, 255, 255, 0.06);
+    --shadow-hover: 0 30px 80px rgba(255, 255, 255, 0.08);
 }
 
 * {
@@ -1149,7 +1149,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 5px 20px rgba(92, 79, 219, 0.08);
+    box-shadow: 0 5px 20px rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
     width: 100%;
     max-width: 300px;
@@ -1158,7 +1158,7 @@ body {
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(92, 79, 219, 0.15);
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.08);
 }
 
 .product-image-container {
@@ -1289,7 +1289,7 @@ body {
     font-size: 0.75rem;
     font-weight: bold;
     z-index: 1;
-    box-shadow: 0 2px 4px rgba(92, 79, 219, 0.2);
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.06);
 }
 
 .offer-badge.categories {

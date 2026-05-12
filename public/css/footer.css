@@ -5,13 +5,13 @@
    ============================================ */
 
 footer {
-    background: linear-gradient(160deg, #5c4fdb 0%, #4035c2 60%, #2e26a8 100%) !important;
-    color: #f0eeff !important;
+    background: linear-gradient(160deg, #111111 0%, #0d0d0d 100%) !important;
+    color: #f0f0f0 !important;
     padding: 48px 24px 24px;
     margin-top: auto;
     border-radius: 0 !important;
     border-top: 4px solid rgba(232, 168, 56, 0.4) !important;
-    box-shadow: 0 -6px 28px rgba(92,79,219,0.3) !important;
+    box-shadow: 0 -6px 28px rgba(255,255,255,0.3) !important;
     position: relative;
 }
 
@@ -21,7 +21,7 @@ footer::before {
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #e8a838, #e8573a, #5c4fdb);
+    background: linear-gradient(90deg, #c0c0c0, #888888, #e0e0e0);
     border-radius: 0;
 }
 
@@ -63,7 +63,7 @@ footer::before {
     margin-bottom: 18px;
     position: relative;
     padding-bottom: 10px;
-    color: #ffffff;
+    color: #0d0d0d;
     letter-spacing: 0.5px;
     text-transform: uppercase;
 }
@@ -75,7 +75,7 @@ footer::before {
     left: 0;
     width: 36px;
     height: 3px;
-    background: #e8a838;
+    background: #e0e0e0;
     border-radius: 0;
 }
 
@@ -110,9 +110,9 @@ footer::before {
 }
 
 .social-links a:hover {
-    color: #1e1c2e;
-    background: #e8a838;
-    border-color: #e8a838;
+    color: #f0f0f0;
+    background: #e0e0e0;
+    border-color: #c0c0c0;
 }
 
 /* ---- Menu & Help Lists ---- */
@@ -141,7 +141,7 @@ footer::before {
 
 .menu ul li a:hover,
 .help ul li a:hover {
-    color: #e8a838;
+    color: #c0c0c0;
 }
 
 /* ---- Care / Visit ---- */
@@ -157,7 +157,7 @@ footer::before {
 
 .care-visit i {
     min-width: 20px;
-    color: #e8a838;
+    color: #c0c0c0;
     font-size: 16px;
 }
 

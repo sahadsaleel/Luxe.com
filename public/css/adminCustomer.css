@@ -8,7 +8,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #1a1730;
+    background: #0d0d0d;
     color: #e2e8f0;
     display: flex;
     min-height: 100vh;
@@ -31,7 +31,7 @@ table {
 }
 
 thead {
-    background: linear-gradient(135deg, #5c4fdb, #4035c2);
+    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
 }
 
 th {
@@ -40,7 +40,7 @@ th {
     font-weight: 600;
     font-size: 14px;
     color: white;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     position: sticky;
     top: 0;
 }
@@ -48,23 +48,23 @@ th {
 td {
     padding: 16px;
     text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     font-size: 14px;
     color: #e2e8f0;
     background: rgba(255, 255, 255, 0.02);
 }
 
 tbody tr:hover td {
-    background: rgba(92, 79, 219, 0.1);
+    background: rgba(255, 255, 255, 0.06);
     transition: all 0.3s ease;
 }
 
 tbody tr:nth-child(even) td {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
 }
 
 tbody tr:nth-child(even):hover td {
-    background: rgba(92, 79, 219, 0.15);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .user-image img {
@@ -72,8 +72,8 @@ tbody tr:nth-child(even):hover td {
     height: 40px;
     border-radius: 4px;
     object-fit: cover;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 2px 8px rgba(92, 79, 219, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
 }
 
 .search-user-section {
@@ -97,8 +97,8 @@ tbody tr:nth-child(even):hover td {
 }
 
 .search-input {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 4px;
     color: #e2e8f0;
     padding: 12px 15px 12px 35px;
@@ -110,8 +110,8 @@ tbody tr:nth-child(even):hover td {
 
 .search-input:focus {
     outline: none;
-    border-color: #5c4fdb;
-    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
+    border-color: #e0e0e0;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
 }
 
 .search-input::placeholder {
@@ -126,8 +126,8 @@ tbody tr:nth-child(even):hover td {
 .dropdown select,
 .custom-select {
     appearance: none;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 4px;
     padding: 10px 30px 10px 12px;
     font-size: 14px;
@@ -145,13 +145,13 @@ tbody tr:nth-child(even):hover td {
 .dropdown select:focus,
 .custom-select:focus {
     outline: none;
-    border-color: #5c4fdb;
-    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
+    border-color: #e0e0e0;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
 }
 
 .dropdown select:hover,
 .custom-select:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .dropdown select option,
@@ -232,8 +232,8 @@ tbody tr:nth-child(even):hover td {
     height: 36px;
     text-decoration: none;
     color: #e2e8f0;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 4px;
     font-size: 14px;
     font-weight: 500;
@@ -241,12 +241,12 @@ tbody tr:nth-child(even):hover td {
 }
 
 .pagination a:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: #5c4fdb;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: #e0e0e0;
 }
 
 .pagination a.active {
-    background: linear-gradient(135deg, #5c4fdb, #4035c2);
+    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
     border: none;
     color: white;
     font-weight: 600;
@@ -260,7 +260,7 @@ tbody tr:nth-child(even):hover td {
     height: 36px;
     color: #94a3b8;
     background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 4px;
     font-size: 14px;
     cursor: not-allowed;
@@ -272,17 +272,17 @@ tbody tr:nth-child(even):hover td {
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #5c4fdb, #4035c2);
+    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #4035c2, #5c4fdb);
+    background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
 }
 
 /* Wallet Modal Styles */
@@ -322,7 +322,7 @@ tbody tr:nth-child(even):hover td {
 }
 
 .wallet-modal-header {
-    background: linear-gradient(135deg, #5c4fdb, #4035c2);
+    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
     padding: 20px 30px;
     border-radius: 4px 16px 0 0;
     display: flex;
@@ -353,7 +353,7 @@ tbody tr:nth-child(even):hover td {
 }
 
 .close-modal:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.06);
     transform: scale(1.1);
 }
 
@@ -363,12 +363,12 @@ tbody tr:nth-child(even):hover td {
 }
 
 .wallet-balance-section {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     padding: 20px;
     border-radius: 4px;
     margin-bottom: 25px;
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .wallet-balance {
@@ -430,7 +430,7 @@ tbody tr:nth-child(even):hover td {
 }
 
 .transaction-item:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
 }
 
 .transaction-item.credit {
@@ -500,9 +500,9 @@ tbody tr:nth-child(even):hover td {
 }
 
 .spinner {
-    border: 3px solid rgba(255, 255, 255, 0.1);
+    border: 3px solid rgba(255, 255, 255, 0.06);
     border-radius: 4px;
-    border-top: 3px solid #5c4fdb;
+    border-top: 3px solid #e0e0e0;
     width: 30px;
     height: 30px;
     animation: spin 1s linear infinite;

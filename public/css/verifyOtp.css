@@ -1,7 +1,7 @@
 @import url('/css/claymorphism.css');
 :root {
-            --primary-color: #5c4fdb;
-            --secondary-color: rgba(92,79,219,0.18);
+            --primary-color: #e0e0e0;
+            --secondary-color: rgba(255,255,255,0.18);
             --text-color: #2d3436;
             --background: #f8f9fa;
         }
@@ -118,7 +118,7 @@
             left: 50%;
             margin: -10px 0 0 -10px;
             border: 2px solid transparent;
-            border-top-color: #ffffff;
+            border-top-color: #f0f0f0;
             border-radius: 4px;
             animation: spin 1s linear infinite;
         }

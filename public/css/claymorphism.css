@@ -2,53 +2,44 @@
 
 /* ============================================
    CLAYMORPHISM DESIGN SYSTEM — LUXE.COM
-   Color Palette: Deep Violet + Warm Amber + Coral
-   Shape: Boxy / Rectangular (no circular shapes)
+   Color Palette: Dark Monochrome / Silver
+   Shape: Boxy / Rectangular
    ============================================ */
 
 :root {
-    /* --- Core Colors --- */
-    --clay-bg: #0d0d0d;
-    /* Pure dark background */
-    --clay-surface: #1a1a1a;
-    /* Dark surface */
-    --clay-primary: #e0e0e0;
-    /* Light gray primary */
-    --clay-primary-d: #ffffff;
-    /* White hover */
-    --clay-secondary: #3a3a3a;
-    /* Dark gray */
-    --clay-accent: #c0c0c0;
-    /* Silver accent */
-    --clay-muted: #555555;
-    /* Muted gray */
-    --clay-text: #f0f0f0;
-    /* Light text */
-    --clay-text-sub: #888888;
-    /* Subdued gray text */
+  /* --- Core Colors --- */
+  --clay-bg:        #0d0d0d;   /* Pure dark background */
+  --clay-surface:   #1a1a1a;   /* Dark surface */
+  --clay-primary:   #e0e0e0;   /* Light gray primary */
+  --clay-primary-d: #ffffff;   /* White hover */
+  --clay-secondary: #3a3a3a;   /* Dark gray */
+  --clay-accent:    #c0c0c0;   /* Silver accent */
+  --clay-muted:     #555555;   /* Muted gray */
+  --clay-text:      #f0f0f0;   /* Light text */
+  --clay-text-sub:  #888888;   /* Subdued gray text */
 
-    /* --- Shadows --- */
-    --clay-shadow: rgba(0, 0, 0, 0.5);
-    --clay-shadow-sm: rgba(0, 0, 0, 0.3);
-    --clay-shadow-dk: rgba(0, 0, 0, 0.7);
+  /* --- Shadows --- */
+  --clay-shadow:    rgba(0, 0, 0, 0.5);
+  --clay-shadow-sm: rgba(0, 0, 0, 0.3);
+  --clay-shadow-dk: rgba(0, 0, 0, 0.7);
 
-    /* --- Shape: BOXY (no rounds) --- */
-    --clay-radius: 4px;
-    --clay-radius-lg: 6px;
+  /* --- Shape: BOXY --- */
+  --clay-radius:    4px;
+  --clay-radius-lg: 6px;
 
-    /* --- Spacing --- */
-    --clay-pad: 20px;
-    --clay-pad-lg: 32px;
+  /* --- Spacing --- */
+  --clay-pad:       20px;
+  --clay-pad-lg:    32px;
 }
 
 /* ============================================
    BASE — Body & Typography
    ============================================ */
 body {
-    background: linear-gradient(135deg, #f4f1ee 0%, #ede8f5 50%, #f0ece4 100%) !important;
+    background: #0d0d0d !important;
     background-attachment: fixed !important;
     font-family: 'Nunito', sans-serif !important;
-    color: var(--clay-text) !important;
+    color: #f0f0f0 !important;
     position: relative;
     min-height: 100vh;
 }
@@ -57,54 +48,36 @@ body {
 body::before {
     content: "";
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-    opacity: 0.025;
+    opacity: 0.03;
     pointer-events: none;
     z-index: 9999;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.hero-title,
-.section-title,
-.product-title {
+h1, h2, h3, h4, h5, h6,
+.hero-title, .section-title, .product-title {
     font-family: 'Syne', sans-serif !important;
-    color: var(--clay-text) !important;
+    color: #f0f0f0 !important;
 }
 
 /* ============================================
    BUTTONS — Boxy, clay-pressed style
    ============================================ */
 button:not(.search-container button),
-.btn,
-.hero-cta,
-.shop-now-btn,
-.product-cta,
-.add-to-cart,
-.continue-btn,
-.social-btn,
-a.btn,
-.google-btn,
-.login-btn,
-.signup-btn {
-    background: linear-gradient(160deg, var(--clay-primary), var(--clay-primary-d)) !important;
+.btn, .hero-cta, .shop-now-btn, .product-cta,
+.add-to-cart, .continue-btn, .social-btn,
+a.btn, .google-btn, .login-btn, .signup-btn {
+    background: linear-gradient(160deg, #2a2a2a, #1a1a1a) !important;
     border-radius: var(--clay-radius) !important;
     box-shadow:
-        5px 5px 0px var(--clay-primary-d),
-        8px 8px 18px var(--clay-shadow),
-        -3px -3px 10px rgba(255, 255, 255, 0.8) !important;
-    border: none !important;
+        4px 4px 0px #000000,
+        6px 6px 16px rgba(0,0,0,0.5),
+        -2px -2px 8px rgba(255,255,255,0.06) !important;
+    border: 1.5px solid rgba(255,255,255,0.12) !important;
     padding: 12px 28px !important;
     font-weight: 700 !important;
-    color: white !important;
+    color: #f0f0f0 !important;
     transition: transform 0.15s ease, box-shadow 0.15s ease !important;
     display: inline-flex;
     align-items: center;
@@ -114,143 +87,122 @@ a.btn,
 }
 
 button:not(.search-container button):hover,
-.btn:hover,
-.hero-cta:hover,
-.shop-now-btn:hover,
-.product-cta:hover,
-.add-to-cart:hover,
-.continue-btn:hover,
-.social-btn:hover,
-a.btn:hover {
+.btn:hover, .hero-cta:hover, .shop-now-btn:hover,
+.product-cta:hover, .add-to-cart:hover,
+.continue-btn:hover, .social-btn:hover, a.btn:hover {
+    background: linear-gradient(160deg, #3a3a3a, #2a2a2a) !important;
+    color: #ffffff !important;
     transform: translateY(-2px) !important;
     box-shadow:
-        6px 6px 0px var(--clay-primary-d),
-        10px 10px 22px var(--clay-shadow),
-        -4px -4px 12px rgba(255, 255, 255, 0.9) !important;
+        5px 5px 0px #000000,
+        8px 8px 20px rgba(0,0,0,0.6),
+        -3px -3px 10px rgba(255,255,255,0.08) !important;
 }
 
 button:not(.search-container button):active,
-.btn:active,
-.hero-cta:active,
-.shop-now-btn:active,
-.product-cta:active,
-.add-to-cart:active,
-.continue-btn:active,
-.social-btn:active,
-a.btn:active {
+.btn:active, .hero-cta:active, .shop-now-btn:active,
+.product-cta:active, .add-to-cart:active,
+.continue-btn:active, .social-btn:active, a.btn:active {
     transform: translateY(2px) !important;
     box-shadow:
-        2px 2px 0px var(--clay-primary-d),
-        inset 3px 3px 8px rgba(0, 0, 0, 0.12) !important;
+        1px 1px 0px #000000,
+        inset 3px 3px 8px rgba(0,0,0,0.4) !important;
 }
 
-/* --- Icon Buttons (Wishlist, etc) --- */
-.btn-wishlist,
-.icon-btn {
+/* --- Icon Buttons --- */
+.btn-wishlist, .icon-btn {
     border-radius: var(--clay-radius) !important;
     padding: 10px !important;
-    background: var(--clay-surface) !important;
+    background: #1a1a1a !important;
     box-shadow:
-        4px 4px 0px rgba(92, 79, 219, 0.2),
-        4px 4px 12px var(--clay-shadow),
-        -3px -3px 10px rgba(255, 255, 255, 0.9) !important;
+        3px 3px 0px #000000,
+        4px 4px 12px rgba(0,0,0,0.5),
+        -2px -2px 8px rgba(255,255,255,0.05) !important;
+    border: 1.5px solid rgba(255,255,255,0.1) !important;
 }
 
 /* ============================================
-   CARDS — Clay surface, boxy, soft shadow
+   CARDS — Dark clay surface, boxy
    ============================================ */
-.feature,
-.product-card,
-.card,
-.result-item,
-.order-card,
-.address-card,
-.login-container,
-.signup-container {
-    background: rgba(255, 255, 255, 0.78) !important;
+.feature, .product-card, .card, .result-item,
+.order-card, .address-card,
+.login-container, .signup-container {
+    background: rgba(26, 26, 26, 0.92) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
     border-radius: var(--clay-radius-lg) !important;
     box-shadow:
-        6px 6px 0px rgba(92, 79, 219, 0.12),
-        8px 8px 24px var(--clay-shadow),
-        -5px -5px 16px rgba(255, 255, 255, 1) !important;
-    border: 2px solid rgba(255, 255, 255, 0.85) !important;
+        5px 5px 0px rgba(0,0,0,0.6),
+        8px 8px 24px rgba(0,0,0,0.5),
+        -3px -3px 10px rgba(255,255,255,0.04) !important;
+    border: 1.5px solid rgba(255,255,255,0.1) !important;
     padding: 24px !important;
     transition: transform 0.25s ease, box-shadow 0.25s ease !important;
 }
 
-.feature:hover,
-.product-card:hover,
-.card:hover,
-.result-item:hover,
-.order-card:hover,
-.address-card:hover {
-    transform: translateY(-5px) !important;
+.feature:hover, .product-card:hover, .card:hover,
+.result-item:hover, .order-card:hover, .address-card:hover {
+    transform: translateY(-4px) !important;
     box-shadow:
-        8px 8px 0px rgba(92, 79, 219, 0.15),
-        12px 12px 32px var(--clay-shadow),
-        -7px -7px 24px rgba(255, 255, 255, 1) !important;
+        7px 7px 0px rgba(0,0,0,0.7),
+        12px 12px 30px rgba(0,0,0,0.6),
+        -4px -4px 14px rgba(255,255,255,0.05) !important;
 }
 
 /* ============================================
-   INPUT FIELDS — Boxy, inset clay
+   INPUT FIELDS — Dark inset clay
    ============================================ */
 input[type="text"]:not(#searchInput),
 input[type="email"],
 input[type="password"],
 input[type="number"],
 input[type="search"]:not(#searchInput),
-textarea,
-select {
+textarea, select {
     border-radius: var(--clay-radius) !important;
-    background: rgba(255, 255, 255, 0.88) !important;
+    background: #111111 !important;
     box-shadow:
-        inset 4px 4px 8px rgba(92, 79, 219, 0.09),
-        inset -3px -3px 6px rgba(255, 255, 255, 0.95) !important;
-    border: 1.5px solid rgba(92, 79, 219, 0.18) !important;
+        inset 3px 3px 8px rgba(0,0,0,0.6),
+        inset -2px -2px 6px rgba(255,255,255,0.04) !important;
+    border: 1.5px solid rgba(255,255,255,0.12) !important;
     padding: 12px 18px !important;
-    color: var(--clay-text) !important;
+    color: #f0f0f0 !important;
     outline: none !important;
     transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
     font-family: 'Nunito', sans-serif !important;
 }
 
-input:focus:not(#searchInput),
-textarea:focus,
-select:focus {
-    border-color: var(--clay-primary) !important;
+input:focus:not(#searchInput), textarea:focus, select:focus {
+    border-color: #e0e0e0 !important;
     box-shadow:
-        inset 5px 5px 10px rgba(92, 79, 219, 0.12),
-        inset -4px -4px 8px rgba(255, 255, 255, 1),
-        0 0 0 3px rgba(92, 79, 219, 0.1) !important;
+        inset 4px 4px 10px rgba(0,0,0,0.5),
+        inset -2px -2px 6px rgba(255,255,255,0.06),
+        0 0 0 3px rgba(255,255,255,0.08) !important;
 }
 
 /* ============================================
-   SEARCH BAR — Boxy clay pill
+   SEARCH BAR
    ============================================ */
 .search-container {
     position: relative;
     display: flex !important;
     align-items: center !important;
-    background: var(--clay-surface) !important;
+    background: #1a1a1a !important;
     border-radius: var(--clay-radius) !important;
     box-shadow:
-        inset 3px 3px 7px rgba(92, 79, 219, 0.08),
-        inset -2px -2px 6px rgba(255, 255, 255, 1),
-        4px 4px 10px var(--clay-shadow) !important;
+        inset 3px 3px 7px rgba(0,0,0,0.5),
+        inset -2px -2px 6px rgba(255,255,255,0.04),
+        3px 3px 10px rgba(0,0,0,0.4) !important;
     padding: 4px 14px !important;
     transition: box-shadow 0.25s ease !important;
-    border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+    border: 1.5px solid rgba(255,255,255,0.1) !important;
     margin: 0 !important;
 }
 
 .search-container:focus-within {
+    border-color: rgba(255,255,255,0.25) !important;
     box-shadow:
-        inset 5px 5px 10px rgba(92, 79, 219, 0.12),
-        inset -3px -3px 8px rgba(255, 255, 255, 1),
-        6px 6px 16px var(--clay-shadow) !important;
-    border-color: rgba(92, 79, 219, 0.25) !important;
+        inset 4px 4px 8px rgba(0,0,0,0.55),
+        0 0 0 3px rgba(255,255,255,0.06) !important;
 }
 
 #searchInput {
@@ -259,7 +211,7 @@ select:focus {
     box-shadow: none !important;
     padding: 8px !important;
     margin: 0 !important;
-    color: var(--clay-text) !important;
+    color: #f0f0f0 !important;
     min-width: 200px !important;
 }
 
@@ -268,12 +220,17 @@ select:focus {
     box-shadow: none !important;
 }
 
+#searchInput::placeholder {
+    color: #555555;
+}
+
 .search-container button {
     background: transparent !important;
     box-shadow: none !important;
-    color: var(--clay-primary) !important;
+    color: #c0c0c0 !important;
     padding: 8px !important;
     border-radius: var(--clay-radius) !important;
+    border: none !important;
     margin: 0 !important;
     display: flex;
     align-items: center;
@@ -282,143 +239,126 @@ select:focus {
 
 .search-container button:hover {
     transform: scale(1.1) !important;
-    color: var(--clay-accent) !important;
+    color: #ffffff !important;
 }
 
 /* ============================================
-   NAVBAR / HEADER — Boxy, clay glass
+   NAVBAR / HEADER
    ============================================ */
-header,
-.navbar,
-.header-container {
-    background: rgba(244, 241, 238, 0.92) !important;
+header, .navbar, .header-container {
+    background: rgba(13, 13, 13, 0.96) !important;
     backdrop-filter: blur(18px) !important;
     -webkit-backdrop-filter: blur(18px) !important;
     border-radius: 0 !important;
-    box-shadow: 0 6px 20px var(--clay-shadow) !important;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.75) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6) !important;
+    border-bottom: 1.5px solid rgba(255,255,255,0.08) !important;
 }
 
-/* Nav links — remove green hover */
 .nav-links li a:hover,
 .nav-links li a.active {
-    color: var(--clay-primary) !important;
+    color: #ffffff !important;
 }
 
 /* ============================================
    CART COUNT BADGE
    ============================================ */
-.cart-count,
-#cartCount {
-    background-color: var(--clay-accent) !important;
-    color: #ffffff !important;
+.cart-count, #cartCount {
+    background-color: #e0e0e0 !important;
+    color: #0d0d0d !important;
     border-radius: 3px !important;
 }
 
 /* ============================================
    MODALS & POPUPS
    ============================================ */
-.modal,
-.dropdown-content,
-.search-results,
-.cart-drawer,
-.swal2-popup {
-    background: rgba(255, 255, 255, 0.9) !important;
+.modal, .dropdown-content, .search-results,
+.cart-drawer, .swal2-popup {
+    background: rgba(20, 20, 20, 0.97) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     border-radius: var(--clay-radius-lg) !important;
     box-shadow:
-        10px 10px 0px rgba(92, 79, 219, 0.1),
-        12px 12px 32px var(--clay-shadow),
-        -8px -8px 24px rgba(255, 255, 255, 0.9) !important;
-    border: 2px solid rgba(255, 255, 255, 0.85) !important;
+        8px 8px 0px rgba(0,0,0,0.7),
+        12px 12px 32px rgba(0,0,0,0.6) !important;
+    border: 1.5px solid rgba(255,255,255,0.1) !important;
 }
 
 /* ============================================
    BADGES & TAGS — Boxy
    ============================================ */
-.badge,
-.product-badge,
-.offer-badge,
-.status-badge,
-.tag {
+.badge, .product-badge, .offer-badge,
+.status-badge, .tag {
     border-radius: var(--clay-radius) !important;
-    background: linear-gradient(145deg, var(--clay-accent), #f07558) !important;
+    background: linear-gradient(145deg, #3a3a3a, #2a2a2a) !important;
     box-shadow:
-        3px 3px 0px rgba(232, 87, 58, 0.3),
-        4px 4px 10px var(--clay-shadow-sm) !important;
+        2px 2px 0px #000000,
+        3px 3px 8px rgba(0,0,0,0.5) !important;
     padding: 5px 14px !important;
     font-weight: 700 !important;
     font-size: 0.75rem !important;
-    color: white !important;
-    border: none !important;
+    color: #f0f0f0 !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
     display: inline-block;
 }
 
 .offer-badge.new {
-    background: linear-gradient(145deg, var(--clay-primary), #7b71e8) !important;
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a) !important;
+    border-color: rgba(255,255,255,0.18) !important;
+    color: #ffffff !important;
 }
 
 /* ============================================
-   FOOTER — Clay warm base
+   FOOTER
    ============================================ */
-footer,
-.footer {
-    background: linear-gradient(135deg, var(--clay-primary), var(--clay-primary-d)) !important;
+footer, .footer {
+    background: #111111 !important;
     border-radius: 0 !important;
-    box-shadow: 0 -6px 24px var(--clay-shadow) !important;
-    border-top: 3px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.6) !important;
+    border-top: 2px solid rgba(255,255,255,0.08) !important;
     margin-top: 40px !important;
-    color: #fff !important;
+    color: #f0f0f0 !important;
 }
 
 /* ============================================
    DROPDOWN / SELECT
    ============================================ */
-select,
-.dropdown-menu {
+select, .dropdown-menu {
     border-radius: var(--clay-radius) !important;
-    background: rgba(255, 255, 255, 0.95) !important;
+    background: #1a1a1a !important;
+    color: #f0f0f0 !important;
     box-shadow:
-        6px 6px 0px rgba(92, 79, 219, 0.1),
-        6px 6px 16px var(--clay-shadow),
-        -4px -4px 12px rgba(255, 255, 255, 1) !important;
-    border: 1.5px solid rgba(92, 79, 219, 0.15) !important;
+        4px 4px 0px #000000,
+        6px 6px 14px rgba(0,0,0,0.5) !important;
+    border: 1.5px solid rgba(255,255,255,0.12) !important;
 }
 
 /* ============================================
-   QUANTITY SELECTORS & TOGGLES — Boxy
+   QUANTITY SELECTORS & TOGGLES
    ============================================ */
-.quantity-selector,
-.quantity-btn,
-.toggle-switch,
-.qty-btn {
+.quantity-selector, .quantity-btn, .toggle-switch, .qty-btn {
     border-radius: var(--clay-radius) !important;
     box-shadow:
-        inset 3px 3px 6px rgba(92, 79, 219, 0.1),
-        inset -2px -2px 5px rgba(255, 255, 255, 0.9) !important;
-    background: rgba(255, 255, 255, 0.75) !important;
-    border: none !important;
+        inset 2px 2px 6px rgba(0,0,0,0.5),
+        inset -1px -1px 4px rgba(255,255,255,0.04) !important;
+    background: #1a1a1a !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: #f0f0f0 !important;
 }
 
-.quantity-btn:active,
-.qty-btn:active {
-    background: var(--clay-primary) !important;
-    color: white !important;
+.quantity-btn:active, .qty-btn:active {
+    background: #e0e0e0 !important;
+    color: #0d0d0d !important;
 }
 
 /* ============================================
-   PRODUCT IMAGE CONTAINERS — Boxy
+   PRODUCT IMAGE CONTAINERS
    ============================================ */
-.product-image-container,
-.product-image-section,
-.hero-image,
-.image-gallery {
+.product-image-container, .product-image-section,
+.hero-image, .image-gallery {
     border-radius: var(--clay-radius) !important;
     box-shadow:
-        6px 6px 0px rgba(92, 79, 219, 0.1),
-        6px 6px 20px var(--clay-shadow),
-        -4px -4px 14px rgba(255, 255, 255, 1) !important;
+        5px 5px 0px rgba(0,0,0,0.6),
+        6px 6px 18px rgba(0,0,0,0.5) !important;
     overflow: hidden !important;
     transition: transform 0.25s ease !important;
 }
@@ -429,62 +369,49 @@ select,
 }
 
 /* ============================================
-   SCROLLBAR — Boxy clay
+   SCROLLBAR
    ============================================ */
-::-webkit-scrollbar {
-    width: 8px !important;
-}
-
+::-webkit-scrollbar { width: 8px !important; }
 ::-webkit-scrollbar-track {
-    background: rgba(92, 79, 219, 0.06) !important;
+    background: #111111 !important;
     border-radius: 2px !important;
 }
-
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(var(--clay-primary), var(--clay-primary-d)) !important;
+    background: #3a3a3a !important;
     border-radius: 2px !important;
-    border: 2px solid var(--clay-bg);
+    border: 2px solid #0d0d0d;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #555555 !important;
 }
 
 /* ============================================
    LOADING / SKELETON
    ============================================ */
-.loading-spinner i,
-.spinner {
-    color: var(--clay-primary) !important;
+.loading-spinner i, .spinner {
+    color: #e0e0e0 !important;
 }
 
 .skeleton {
     background: linear-gradient(90deg,
-            rgba(255, 255, 255, 0.4) 25%,
-            rgba(255, 255, 255, 0.8) 50%,
-            rgba(255, 255, 255, 0.4) 75%) !important;
+        rgba(30,30,30,0.8) 25%,
+        rgba(60,60,60,0.8) 50%,
+        rgba(30,30,30,0.8) 75%) !important;
     background-size: 200% 100% !important;
     animation: skeleton-loading 1.5s infinite !important;
     border-radius: var(--clay-radius) !important;
 }
 
 @keyframes skeleton-loading {
-    0% {
-        background-position: 200% 0;
-    }
-
-    100% {
-        background-position: -200% 0;
-    }
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 /* ============================================
-   UTILITY — Remove green color from any
-   leftover inline or library styles
+   UTILITY LINKS
    ============================================ */
-a {
-    color: var(--clay-primary);
-}
-
-a:hover {
-    color: var(--clay-primary-d);
-}
+a { color: #c0c0c0; }
+a:hover { color: #ffffff; }
 
 /* ============================================
    RESPONSIVE
@@ -495,29 +422,19 @@ a:hover {
         --clay-radius-lg: 6px;
     }
 
-    .feature,
-    .product-card,
-    .card,
-    .result-item,
-    .login-container,
-    .signup-container {
+    .feature, .product-card, .card, .result-item,
+    .login-container, .signup-container {
         box-shadow:
-            4px 4px 0px rgba(92, 79, 219, 0.1),
-            5px 5px 14px var(--clay-shadow),
-            -3px -3px 10px rgba(255, 255, 255, 0.9) !important;
+            3px 3px 0px rgba(0,0,0,0.6),
+            5px 5px 14px rgba(0,0,0,0.5) !important;
     }
 
     button:not(.search-container button),
-    .btn,
-    .hero-cta,
-    .shop-now-btn,
-    .product-cta,
-    .add-to-cart,
-    .continue-btn {
+    .btn, .hero-cta, .shop-now-btn,
+    .product-cta, .add-to-cart, .continue-btn {
         box-shadow:
-            3px 3px 0px var(--clay-primary-d),
-            4px 4px 10px var(--clay-shadow),
-            -2px -2px 8px rgba(255, 255, 255, 0.8) !important;
+            3px 3px 0px #000000,
+            4px 4px 10px rgba(0,0,0,0.5) !important;
     }
 
     #searchInput {

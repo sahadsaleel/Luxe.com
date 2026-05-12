@@ -1,12 +1,12 @@
 @import url('/css/claymorphism.css');
  :root {
-            --primary-color: #5c4fdb;
-            --secondary-color: rgba(92,79,219,0.18);
-            --accent-color: #e8a838;
+            --primary-color: #e0e0e0;
+            --secondary-color: rgba(255,255,255,0.18);
+            --accent-color: #c0c0c0;
             --text-color: #2d3436;
             --light-text: #6c757d;
             --background: #f8f9fa;
-            --card-bg: #ffffff;
+            --card-bg: #0d0d0d;
             --border-radius: 4px;
             --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
@@ -42,7 +42,7 @@
         .success-icon {
             width: 120px;
             height: 120px;
-            background-color: rgba(92, 79, 219, 0.1);
+            background-color: rgba(255, 255, 255, 0.06);
             border-radius: 4px;
             display: flex;
             align-items: center;
@@ -69,7 +69,7 @@
         }
 
         .order-info {
-            background-color: rgba(92, 79, 219, 0.05);
+            background-color: rgba(255, 255, 255, 0.04);
             border-radius: var(--border-radius);
             padding: 20px;
             margin-bottom: 30px;
@@ -139,7 +139,7 @@
         }
 
         .btn-secondary:hover {
-            background-color: rgba(92, 79, 219, 0.1);
+            background-color: rgba(255, 255, 255, 0.06);
         }
 
         .btn-link {
@@ -225,7 +225,7 @@
         }
 
         .invoice-table th {
-            background-color: rgba(92, 79, 219, 0.05);
+            background-color: rgba(255, 255, 255, 0.04);
             font-weight: 600;
         }
 

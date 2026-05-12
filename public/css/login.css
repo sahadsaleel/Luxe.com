@@ -12,13 +12,13 @@
 
 body {
     font-family: 'Nunito', sans-serif;
-    background: linear-gradient(135deg, #f4f1ee 0%, #ede8f5 55%, #f0ece4 100%);
+    background: #0d0d0d;
     background-attachment: fixed;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: #1e1c2e;
+    color: #f0f0f0;
 }
 
 /* ---- Header ---- */
@@ -28,14 +28,14 @@ header {
     align-items: center;
     width: 100%;
     padding: 0 32px;
-    background: rgba(244, 241, 238, 0.95);
+    background: rgba(13, 13, 13, 0.98);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 100;
     height: 64px;
-    border-bottom: 2px solid rgba(92, 79, 219, 0.12);
-    box-shadow: 0 4px 16px rgba(92, 79, 219, 0.10);
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(14px);
 }
 
@@ -51,21 +51,21 @@ header {
 }
 
 .contact-us {
-    color: #1e1c2e;
+    color: #c0c0c0;
     text-decoration: none;
     font-size: 15px;
     font-weight: 600;
     padding: 8px 18px;
-    border: 2px solid rgba(92, 79, 219, 0.2);
+    border: 1.5px solid rgba(255,255,255,0.12);
     border-radius: 4px;
     transition: all 0.2s ease;
-    background: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.05);
 }
 
 .contact-us:hover {
-    background: var(--clay-primary, #5c4fdb);
-    color: #fff;
-    border-color: var(--clay-primary, #5c4fdb);
+    background: #e0e0e0;
+    color: #0d0d0d;
+    border-color: #e0e0e0;
 }
 
 /* ---- Main ---- */
@@ -80,14 +80,14 @@ main {
 
 /* ---- Login Card ---- */
 .login-container {
-    background: rgba(255, 255, 255, 0.82) !important;
+    background: rgba(20, 20, 20, 0.96) !important;
     backdrop-filter: blur(14px) !important;
     border-radius: 6px !important;
     box-shadow:
-        7px 7px 0px rgba(92, 79, 219, 0.18),
-        10px 10px 28px rgba(92, 79, 219, 0.15),
-        -5px -5px 18px rgba(255,255,255,1) !important;
-    border: 2px solid rgba(255,255,255,0.9) !important;
+        7px 7px 0px rgba(255, 255, 255, 0.12),
+        10px 10px 28px rgba(255, 255, 255, 0.08),
+        -5px -5px 18px rgba(255,255,255,0.06) !important;
+    border: 2px solid rgba(255,255,255,0.06) !important;
     padding: 40px 44px !important;
     width: 100%;
     max-width: 420px;
@@ -99,7 +99,7 @@ main {
     font-family: 'Syne', sans-serif !important;
     font-size: 22px;
     font-weight: 800;
-    color: #1e1c2e !important;
+    color: #f0f0f0 !important;
     margin-bottom: 24px;
     letter-spacing: 1px;
     text-align: center;
@@ -107,8 +107,8 @@ main {
 
 /* ---- Google Button ---- */
 .google-btn {
-    color: #1e1c2e !important;
-    border: 2px solid rgba(92, 79, 219, 0.2) !important;
+    color: #f0f0f0 !important;
+    border: 2px solid rgba(255, 255, 255, 0.06) !important;
     background: rgba(255,255,255,0.85) !important;
     text-decoration: none !important;
     width: 100%;
@@ -123,21 +123,21 @@ main {
     gap: 10px;
     border-radius: 4px !important;
     box-shadow:
-        4px 4px 0px rgba(92,79,219,0.12),
-        4px 4px 12px rgba(92,79,219,0.08),
-        -2px -2px 8px rgba(255,255,255,0.9) !important;
+        4px 4px 0px rgba(255,255,255,0.12),
+        4px 4px 12px rgba(255,255,255,0.08),
+        -2px -2px 8px rgba(255,255,255,0.06) !important;
     transition: all 0.2s ease !important;
 }
 
 .google-btn span {
-    color: #1e1c2e;
+    color: #f0f0f0;
     font-weight: 700;
     text-decoration: none !important;
 }
 
 .google-btn:hover {
-    background: var(--clay-primary, #5c4fdb) !important;
-    border-color: var(--clay-primary, #5c4fdb) !important;
+    background: var(--clay-primary, #e0e0e0) !important;
+    border-color: var(--clay-primary, #e0e0e0) !important;
     color: #fff !important;
     transform: translateY(-2px) !important;
 }
@@ -160,7 +160,7 @@ main {
 .or-separator {
     font-size: 13px;
     font-weight: 700;
-    color: #9390a8;
+    color: #555555;
     margin: 18px 0;
     position: relative;
     text-transform: uppercase;
@@ -174,7 +174,7 @@ main {
     top: 50%;
     width: 38%;
     height: 1.5px;
-    background: rgba(92,79,219,0.15);
+    background: rgba(255,255,255,0.15);
 }
 
 .or-separator::before { left: 0; }
@@ -185,13 +185,13 @@ main {
     font-size: 15px;
     font-weight: 600;
     margin-bottom: 4px;
-    color: #1e1c2e;
+    color: #f0f0f0;
     text-align: center;
 }
 
 .sub-instruction {
     font-size: 12px;
-    color: #9390a8;
+    color: #555555;
     margin-bottom: 20px;
     text-align: center;
 }
@@ -207,15 +207,15 @@ input[type="password"] {
     width: 100% !important;
     box-sizing: border-box !important;
     padding: 12px 16px !important;
-    border: 2px solid rgba(92, 79, 219, 0.18) !important;
+    border: 2px solid rgba(255, 255, 255, 0.12) !important;
     border-radius: 4px !important;
     font-size: 14px;
     font-family: 'Nunito', sans-serif;
     font-weight: 600;
-    color: #1e1c2e !important;
-    background: rgba(255,255,255,0.9) !important;
+    color: #f0f0f0 !important;
+    background: rgba(255,255,255,0.06) !important;
     box-shadow:
-        inset 4px 4px 8px rgba(92,79,219,0.08),
+        inset 4px 4px 8px rgba(255,255,255,0.08),
         inset -2px -2px 6px rgba(255,255,255,0.95) !important;
     transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
     outline: none;
@@ -223,18 +223,18 @@ input[type="password"] {
 
 input[type="email"]:focus,
 input[type="password"]:focus {
-    border-color: var(--clay-primary, #5c4fdb) !important;
+    border-color: var(--clay-primary, #e0e0e0) !important;
     box-shadow:
-        inset 4px 4px 8px rgba(92,79,219,0.12),
-        inset -2px -2px 6px rgba(255,255,255,1),
-        0 0 0 3px rgba(92,79,219,0.1) !important;
+        inset 4px 4px 8px rgba(255,255,255,0.12),
+        inset -2px -2px 6px rgba(255,255,255,0.06),
+        0 0 0 3px rgba(255,255,255,0.08) !important;
 }
 
 /* ---- Forgot Password ---- */
 .forgot-password {
     display: block;
     text-align: right;
-    color: var(--clay-primary, #5c4fdb);
+    color: var(--clay-primary, #e0e0e0);
     font-size: 12px;
     font-weight: 700;
     margin-bottom: 20px;
@@ -243,13 +243,13 @@ input[type="password"]:focus {
 }
 
 .forgot-password:hover {
-    color: var(--clay-accent, #e8573a);
+    color: var(--clay-accent, #888888);
     text-decoration: underline;
 }
 
 /* ---- Continue Button ---- */
 .continue-btn {
-    background: linear-gradient(160deg, #5c4fdb, #4035c2) !important;
+    background: linear-gradient(160deg, #2a2a2a, #1a1a1a) !important;
     color: #ffffff !important;
     padding: 13px 20px !important;
     border: none !important;
@@ -262,45 +262,45 @@ input[type="password"]:focus {
     margin-bottom: 12px !important;
     letter-spacing: 0.5px;
     box-shadow:
-        5px 5px 0px #2e26a8,
-        6px 6px 18px rgba(92,79,219,0.25),
-        -3px -3px 10px rgba(255,255,255,0.8) !important;
+        5px 5px 0px #000000,
+        6px 6px 18px rgba(255,255,255,0.25),
+        -3px -3px 10px rgba(255,255,255,0.06) !important;
     transition: transform 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 .continue-btn:hover {
     transform: translateY(-2px) !important;
     box-shadow:
-        6px 6px 0px #2e26a8,
-        8px 8px 22px rgba(92,79,219,0.3) !important;
+        6px 6px 0px #000000,
+        8px 8px 22px rgba(255,255,255,0.3) !important;
 }
 
 .continue-btn:active {
     transform: translateY(2px) !important;
-    box-shadow: 2px 2px 0px #2e26a8 !important;
+    box-shadow: 2px 2px 0px #000000 !important;
 }
 
 /* ---- Create Account ---- */
 .create-account {
     font-size: 13px;
-    color: #5c5a72;
+    color: #888888;
     font-weight: 600;
 }
 
 .create-account a {
-    color: var(--clay-primary, #5c4fdb);
+    color: var(--clay-primary, #e0e0e0);
     text-decoration: none;
     font-weight: 700;
 }
 
 .create-account a:hover {
-    color: var(--clay-accent, #e8573a);
+    color: var(--clay-accent, #888888);
     text-decoration: underline;
 }
 
 /* ---- Error States ---- */
 .error-message {
-    color: #e8573a;
+    color: #888888;
     margin-bottom: 10px;
     font-size: 13px;
     font-weight: 600;
@@ -308,7 +308,7 @@ input[type="password"]:focus {
 }
 
 .error-text {
-    color: #e8573a;
+    color: #888888;
     font-size: 0.82rem;
     font-weight: 600;
     margin-top: 4px;

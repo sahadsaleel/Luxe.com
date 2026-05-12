@@ -1,19 +1,19 @@
 @import url('/css/claymorphism.css');
 :root {
-    --primary-color: #5c4fdb;      /* Emerald Green */
-    --secondary-color: rgba(92,79,219,0.18);    /* Soft Taupe */
-    --accent-color: #e8a838;       /* Muted Gold */
-    --text-color: #2E2E2E;         /* Dark Charcoal */
+    --primary-color: #e0e0e0;      /* Emerald Green */
+    --secondary-color: rgba(255,255,255,0.18);    /* Soft Taupe */
+    --accent-color: #c0c0c0;       /* Muted Gold */
+    --text-color: #e0e0e0;         /* Dark Charcoal */
     --light-text: #777777;
-    --background: #FFFFFF;         /* Ivory White */
-    --card-bg: #FFFFFF;
+    --background: #0d0d0d;         /* Ivory White */
+    --card-bg: #0d0d0d;
     --border-radius: 4px;
-    --box-shadow: 0 4px 15px rgba(92, 79, 219, 0.1);
+    --box-shadow: 0 4px 15px rgba(255, 255, 255, 0.06);
     --transition: all 0.3s ease;
-    --pending-bg: rgba(92, 79, 219, 0.1);
-    --pending-color: #5c4fdb;
-    --delivered-bg: rgba(92, 79, 219, 0.15);
-    --delivered-color: #5c4fdb;
+    --pending-bg: rgba(255, 255, 255, 0.06);
+    --pending-color: #e0e0e0;
+    --delivered-bg: rgba(255, 255, 255, 0.08);
+    --delivered-color: #e0e0e0;
     --failed-bg: #ffe6e6;
     --failed-color: #cc0000;
 }
@@ -53,7 +53,7 @@ body {
 
 .breadcrumb-container {
     padding: 10px 0;
-    background-color: #fff;
+    background-color: #f0f0f0;
     border-bottom: 1px solid #eee;
 }
 
@@ -168,12 +168,12 @@ body {
 }
 
 .nav-menu a:hover {
-    background-color: rgba(92, 79, 219, 0.1);
+    background-color: rgba(255, 255, 255, 0.06);
     color: var(--primary-color);
 }
 
 .nav-menu a.active {
-    background-color: rgba(92, 79, 219, 0.15);
+    background-color: rgba(255, 255, 255, 0.08);
     color: var(--primary-color);
     font-weight: 600;
 }
@@ -218,7 +218,7 @@ body {
 }
 
 .orders-table th {
-    background-color: rgba(92, 79, 219, 0.05);
+    background-color: rgba(255, 255, 255, 0.04);
     color: var(--text-color);
     font-weight: 600;
     padding: 15px;
@@ -232,7 +232,7 @@ body {
 }
 
 .orders-table tr:hover {
-    background-color: rgba(92, 79, 219, 0.02);
+    background-color: rgba(255, 255, 255, 0.02);
 }
 
 /* Status Badges */
@@ -278,7 +278,7 @@ body {
     text-decoration: none;
     min-width: 120px;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(92, 79, 219, 0.1);
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.06);
 }
 
 .action-button i {
@@ -288,12 +288,12 @@ body {
 .action-button:hover {
     background-color: var(--accent-color);
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(92, 79, 219, 0.15);
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.08);
 }
 
 .action-button:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(92, 79, 219, 0.1);
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.06);
 }
 
 .action-button:disabled {
@@ -312,7 +312,7 @@ body {
 }
 
 .action-button.secondary:hover {
-    background-color: rgba(92, 79, 219, 0.1);
+    background-color: rgba(255, 255, 255, 0.06);
     color: var(--primary-color);
 }
 
@@ -450,7 +450,7 @@ body {
 .form-control:focus {
     outline: none;
     border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.2);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
 }
 
 .form-row {

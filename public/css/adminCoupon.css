@@ -9,7 +9,7 @@
 }
 
 body {
-    background: #1a1730;
+    background: #0d0d0d;
     color: #e2e8f0;
     min-height: 100vh;
     overflow-x: hidden;
@@ -38,8 +38,8 @@ body {
 }
 
 .search-input {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 4px;
     color: #e2e8f0;
     padding: 12px 15px 12px 40px;
@@ -51,8 +51,8 @@ body {
 
 .search-input:focus {
     outline: none;
-    border-color: #5c4fdb;
-    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
+    border-color: #e0e0e0;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
 }
 
 .search-input::placeholder {
@@ -75,8 +75,8 @@ body {
 
 .dropdown select {
     appearance: none;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 4px;
     padding: 12px 30px 12px 15px;
     font-size: 14px;
@@ -93,12 +93,12 @@ body {
 
 .dropdown select:focus {
     outline: none;
-    border-color: #5c4fdb;
-    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
+    border-color: #e0e0e0;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
 }
 
 .dropdown select:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .dropdown select option {
@@ -107,7 +107,7 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #5c4fdb, #4035c2);
+    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
     color: white;
     border: none;
     padding: 12px 25px;
@@ -117,13 +117,13 @@ body {
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(92, 79, 219, 0.4);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    background: linear-gradient(135deg, #4035c2, #5c4fdb);
-    box-shadow: 0 6px 20px rgba(92, 79, 219, 0.6);
+    background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
+    box-shadow: 0 6px 20px rgba(40, 40, 40, 0.8);
 }
 
 table {
@@ -137,18 +137,18 @@ table {
 }
 
 th {
-    background: linear-gradient(135deg, #5c4fdb, #4035c2);
+    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
     color: white;
     text-align: left;
     padding: 16px 20px;
     font-size: 14px;
     font-weight: 600;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 td {
     padding: 16px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     background: rgba(255, 255, 255, 0.02);
     font-size: 14px;
     color: #e2e8f0;
@@ -156,16 +156,16 @@ td {
 }
 
 tr:hover td {
-    background: rgba(92, 79, 219, 0.1);
+    background: rgba(255, 255, 255, 0.06);
     transition: all 0.3s ease;
 }
 
 tr:nth-child(even) td {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
 }
 
 tr:nth-child(even):hover td {
-    background: rgba(92, 79, 219, 0.15);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .action-btn {
@@ -180,7 +180,7 @@ tr:nth-child(even):hover td {
 }
 
 .action-btn:hover {
-    color: #5c4fdb;
+    color: #e0e0e0;
 }
 
 .modal {
@@ -197,8 +197,8 @@ tr:nth-child(even):hover td {
 }
 
 .modal-content {
-    background: rgba(26, 26, 46, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(20, 20, 20, 0.97);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     margin: 5% auto;
     padding: 2rem;
     border-radius: 4px;
@@ -217,7 +217,7 @@ tr:nth-child(even):hover td {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #5c4fdb, #4035c2);
+    background: linear-gradient(90deg, #e0e0e0, #888888);
 }
 
 .close-btn {
@@ -255,9 +255,9 @@ label {
 
 input[type="text"], select, input[type="number"], input[type="date"] {
     padding: 12px 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     color: #e2e8f0;
     font-size: 14px;
     transition: all 0.3s ease;
@@ -267,8 +267,8 @@ input[type="text"], select, input[type="number"], input[type="date"] {
 
 input[type="text"]:focus, select:focus, input[type="number"]:focus, input[type="date"]:focus {
     outline: none;
-    border-color: #5c4fdb;
-    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
+    border-color: #e0e0e0;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
 }
 
 select {
@@ -298,7 +298,7 @@ select option {
     margin-right: 8px;
     width: 1.5rem;
     height: 1.5rem;
-    border: 0.25em solid #5c4fdb;
+    border: 0.25em solid #e0e0e0;
     border-right-color: transparent;
 }
 
@@ -324,17 +324,17 @@ select option {
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #5c4fdb, #4035c2);
+    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #4035c2, #5c4fdb);
+    background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
 }
 
 /* Responsive Design */

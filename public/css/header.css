@@ -13,17 +13,17 @@
 
 body {
     padding-top: 72px;
-    background: linear-gradient(135deg, #f4f1ee 0%, #ede8f5 55%, #f0ece4 100%);
+    background: linear-gradient(135deg, #0d0d0d 0%, #ede8f5 55%, #f0ece4 100%);
     background-attachment: fixed;
-    color: #1e1c2e;
+    color: #f0f0f0;
 }
 
 /* ---- Header ---- */
 header {
-    background: rgba(244, 241, 238, 0.96) !important;
+    background: rgba(13, 13, 13, 0.98) !important;
     backdrop-filter: blur(18px) !important;
     -webkit-backdrop-filter: blur(18px) !important;
-    border-bottom: 2px solid rgba(92, 79, 219, 0.12) !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.12) !important;
     border-radius: 0 !important;
     padding: 0 24px !important;
     position: fixed !important;
@@ -32,7 +32,7 @@ header {
     left: 0 !important;
     z-index: 1000 !important;
     height: 72px !important;
-    box-shadow: 0 4px 20px rgba(92, 79, 219, 0.12) !important;
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.12) !important;
     display: flex;
     align-items: center;
 }
@@ -67,7 +67,7 @@ header {
 
 .nav-links li a {
     text-decoration: none;
-    color: #1e1c2e;
+    color: #f0f0f0;
     font-weight: 700;
     font-size: 14px;
     padding: 8px 14px;
@@ -79,9 +79,9 @@ header {
 
 .nav-links li a:hover,
 .nav-links li a.active {
-    color: #5c4fdb;
-    background: rgba(92, 79, 219, 0.08);
-    border-color: rgba(92, 79, 219, 0.15);
+    color: #e0e0e0;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 /* ---- Header Icons ---- */
@@ -92,7 +92,7 @@ header {
 }
 
 .icon {
-    color: #1e1c2e;
+    color: #f0f0f0;
     position: relative;
     display: inline-flex;
     cursor: pointer;
@@ -108,13 +108,13 @@ header {
 }
 
 .icon:hover {
-    background: rgba(92, 79, 219, 0.08);
-    border-color: rgba(92, 79, 219, 0.15);
-    color: #5c4fdb;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #e0e0e0;
 }
 
 .icon:hover svg {
-    color: #5c4fdb;
+    color: #e0e0e0;
 }
 
 /* ---- Cart Count Badge — boxy ---- */
@@ -122,8 +122,8 @@ header {
     position: absolute;
     top: -4px;
     right: -4px;
-    background: #e8573a !important;
-    color: #ffffff;
+    background: #888888 !important;
+    color: #0d0d0d;
     border-radius: 3px !important;
     padding: 2px 5px;
     font-size: 10px;
@@ -141,20 +141,20 @@ header {
     background: rgba(255,255,255,0.85) !important;
     border-radius: 4px !important;
     box-shadow:
-        inset 3px 3px 7px rgba(92,79,219,0.08),
-        inset -2px -2px 6px rgba(255,255,255,1),
-        4px 4px 10px rgba(92,79,219,0.10) !important;
-    border: 2px solid rgba(92,79,219,0.15) !important;
+        inset 3px 3px 7px rgba(255,255,255,0.08),
+        inset -2px -2px 6px rgba(255,255,255,0.06),
+        4px 4px 10px rgba(255,255,255,0.10) !important;
+    border: 2px solid rgba(255,255,255,0.15) !important;
     padding: 2px 10px !important;
     transition: all 0.25s ease !important;
     margin: 0 !important;
 }
 
 .search-container:focus-within {
-    border-color: rgba(92,79,219,0.35) !important;
+    border-color: rgba(255,255,255,0.35) !important;
     box-shadow:
-        inset 4px 4px 8px rgba(92,79,219,0.1),
-        0 0 0 3px rgba(92,79,219,0.08) !important;
+        inset 4px 4px 8px rgba(255,255,255,0.1),
+        0 0 0 3px rgba(255,255,255,0.08) !important;
 }
 
 .search-container input,
@@ -165,7 +165,7 @@ header {
     outline: none !important;
     width: 220px !important;
     background: transparent !important;
-    color: #1e1c2e !important;
+    color: #f0f0f0 !important;
     font-weight: 600;
     font-size: 14px;
     box-shadow: none !important;
@@ -176,7 +176,7 @@ header {
     border: none !important;
     border-radius: 4px !important;
     box-shadow: none !important;
-    color: #5c4fdb !important;
+    color: #e0e0e0 !important;
     padding: 6px !important;
     cursor: pointer;
     display: flex;
@@ -185,7 +185,7 @@ header {
 }
 
 .search-container button:hover {
-    color: #e8573a !important;
+    color: #888888 !important;
     transform: scale(1.1) !important;
 }
 
@@ -196,11 +196,11 @@ header {
     left: 0;
     width: 100%;
     background: rgba(255,255,255,0.96) !important;
-    border: 2px solid rgba(92,79,219,0.15) !important;
+    border: 2px solid rgba(255,255,255,0.15) !important;
     border-radius: 4px !important;
     box-shadow:
-        6px 6px 0px rgba(92,79,219,0.12),
-        8px 8px 20px rgba(92,79,219,0.12) !important;
+        6px 6px 0px rgba(255,255,255,0.12),
+        8px 8px 20px rgba(255,255,255,0.12) !important;
     max-height: 300px;
     overflow-y: auto;
     z-index: 1000;
@@ -216,8 +216,8 @@ header {
     align-items: center;
     padding: 12px;
     text-decoration: none;
-    color: #1e1c2e;
-    border-bottom: 1px solid rgba(92,79,219,0.08);
+    color: #f0f0f0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
     transition: background 0.2s ease;
     border-radius: 0 !important;
     box-shadow: none !important;
@@ -225,7 +225,7 @@ header {
 }
 
 .result-item:hover {
-    background: rgba(92,79,219,0.06) !important;
+    background: rgba(255,255,255,0.06) !important;
     transform: none !important;
 }
 
@@ -247,12 +247,12 @@ header {
 .result-item-content span {
     font-size: 13px;
     line-height: 1.4;
-    color: #1e1c2e;
+    color: #f0f0f0;
     font-weight: 600;
 }
 
 .result-item-content span:last-child {
-    color: #5c4fdb;
+    color: #e0e0e0;
     font-weight: 700;
 }
 
@@ -260,7 +260,7 @@ header {
     padding: 16px;
     text-align: center;
     font-size: 14px;
-    color: #9390a8;
+    color: #555555;
     font-weight: 600;
 }
 
@@ -275,10 +275,10 @@ header {
     right: 0;
     top: calc(100% + 8px);
     background: rgba(255,255,255,0.96) !important;
-    border: 2px solid rgba(92,79,219,0.15) !important;
+    border: 2px solid rgba(255,255,255,0.15) !important;
     box-shadow:
-        6px 6px 0px rgba(92,79,219,0.12),
-        8px 8px 24px rgba(92,79,219,0.14) !important;
+        6px 6px 0px rgba(255,255,255,0.12),
+        8px 8px 24px rgba(255,255,255,0.14) !important;
     border-radius: 4px !important;
     z-index: 100;
     min-width: 180px;
@@ -294,21 +294,21 @@ header {
     display: block;
     padding: 12px 16px;
     text-decoration: none;
-    color: #1e1c2e;
+    color: #f0f0f0;
     font-weight: 600;
     font-size: 14px;
     transition: background 0.2s ease, color 0.2s ease;
 }
 
 .dropdown-content a:hover {
-    background: rgba(92,79,219,0.07);
-    color: #5c4fdb;
+    background: rgba(255,255,255,0.07);
+    color: #e0e0e0;
 }
 
 .user-name {
     font-weight: 800;
-    border-bottom: 2px solid rgba(92,79,219,0.12);
-    color: #5c4fdb !important;
+    border-bottom: 2px solid rgba(255,255,255,0.12);
+    color: #e0e0e0 !important;
 }
 
 /* ---- Auth Links ---- */
@@ -320,20 +320,20 @@ header {
 
 .auth-links a {
     text-decoration: none;
-    color: #1e1c2e;
+    color: #f0f0f0;
     font-weight: 700;
     font-size: 14px;
     transition: all 0.2s ease;
     padding: 8px 16px;
-    border: 2px solid rgba(92,79,219,0.2);
+    border: 2px solid rgba(255,255,255,0.2);
     border-radius: 4px;
     background: rgba(255,255,255,0.5);
 }
 
 .auth-links a:hover {
     color: #fff;
-    border-color: #5c4fdb;
-    background: #5c4fdb;
+    border-color: #e0e0e0;
+    background: #e0e0e0;
 }
 
 /* ---- Responsive ---- */

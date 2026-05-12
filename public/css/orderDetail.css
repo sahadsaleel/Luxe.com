@@ -18,12 +18,12 @@
             font-size: 0.9rem;
             text-transform: capitalize;
         }
-        .status.pending { background-color: #fff3cd; color: #856404; }
+        .status.pending { background-color: #2a2200; color: #e0c060; }
         .status.processing { background-color: #d1ecf1; color: #0c5460; }
         .status.shipped { background-color: #cce5ff; color: #004085; }
         .status.delivered { background-color: #d4edda; color: #155724; }
         .status.cancelled { background-color: #f8d7da; color: #721c24; }
-        .status.return-requested { background-color: #fff3cd; color: #856404; }
+        .status.return-requested { background-color: #2a2200; color: #e0c060; }
         .status.return-approved { background-color: #d1ecf1; color: #0c5460; }
         .status.return-completed { background-color: #d4edda; color: #155724; }
         .order-items-table {
@@ -62,7 +62,7 @@
             margin-bottom: 20px;
         }
         .address-card {
-            background-color: #fff;
+            background-color: #f0f0f0;
             padding: 20px;
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -101,7 +101,7 @@
             display: flex;
         }
         .modal {
-            background-color: #fff;
+            background-color: #f0f0f0;
             border-radius: 4px;
             width: 500px;
             max-width: 90%;
@@ -443,7 +443,7 @@
         .invoice-label {
             font-size: 2rem;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(26, 26, 26, 0.95);
         }
         .detail-group {
             margin-bottom: 15px;

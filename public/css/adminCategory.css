@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #1a1730;
+    background: #0d0d0d;
     color: #e2e8f0;
     min-height: 100vh;
     overflow-x: hidden;
@@ -26,7 +26,7 @@ body {
 }
 
 .add-button {
-    background: linear-gradient(135deg, #5c4fdb, #4035c2);
+    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
     color: white;
     border: none;
     padding: 12px 25px;
@@ -36,13 +36,13 @@ body {
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(92, 79, 219, 0.4);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
 }
 
 .add-button:hover {
     transform: translateY(-2px);
-    background: linear-gradient(135deg, #4035c2, #5c4fdb);
-    box-shadow: 0 6px 20px rgba(92, 79, 219, 0.6);
+    background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
+    box-shadow: 0 6px 20px rgba(40, 40, 40, 0.8);
 }
 
 table {
@@ -56,34 +56,34 @@ table {
 }
 
 th {
-    background: linear-gradient(135deg, #5c4fdb, #4035c2);
+    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
     color: white;
     text-align: left;
     padding: 16px 20px;
     font-size: 14px;
     font-weight: 600;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 td {
     padding: 16px 20px;
     background: rgba(255, 255, 255, 0.02);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     font-size: 14px;
     color: #e2e8f0;
 }
 
 tbody tr:hover td {
-    background: rgba(92, 79, 219, 0.1);
+    background: rgba(255, 255, 255, 0.06);
     transition: all 0.3s ease;
 }
 
 tbody tr:nth-child(even) td {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
 }
 
 tbody tr:nth-child(even):hover td {
-    background: rgba(92, 79, 219, 0.15);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .actions-cell {
@@ -100,7 +100,7 @@ tbody tr:nth-child(even):hover td {
 }
 
 .edit-icon:hover {
-    color: #5c4fdb;
+    color: #e0e0e0;
 }
 
 .delete-icon:hover {
@@ -122,8 +122,8 @@ tbody tr:nth-child(even):hover td {
 }
 
 .modal-content {
-    background: rgba(26, 26, 46, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(20, 20, 20, 0.97);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     margin: 10% auto;
     padding: 2rem;
     border-radius: 4px;
@@ -142,7 +142,7 @@ tbody tr:nth-child(even):hover td {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #5c4fdb, #4035c2);
+    background: linear-gradient(90deg, #e0e0e0, #888888);
 }
 
 .form-group {
@@ -161,9 +161,9 @@ tbody tr:nth-child(even):hover td {
 .form-control {
     width: 100%;
     padding: 12px 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     color: #e2e8f0;
     font-size: 14px;
     transition: all 0.3s ease;
@@ -172,8 +172,8 @@ tbody tr:nth-child(even):hover td {
 
 .form-control:focus {
     outline: none;
-    border-color: #5c4fdb;
-    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
+    border-color: #e0e0e0;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
 }
 
 .form-control.textarea {
@@ -190,9 +190,9 @@ tbody tr:nth-child(even):hover td {
 .dropdown-select {
     width: 100%;
     padding: 12px 30px 12px 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     color: #e2e8f0;
     font-size: 14px;
     cursor: pointer;
@@ -206,12 +206,12 @@ tbody tr:nth-child(even):hover td {
 
 .dropdown-select:focus {
     outline: none;
-    border-color: #5c4fdb;
-    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
+    border-color: #e0e0e0;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
 }
 
 .dropdown-select:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .dropdown-menu {
@@ -220,9 +220,9 @@ tbody tr:nth-child(even):hover td {
     top: 100%;
     left: 0;
     width: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-top: none;
-    background: rgba(26, 26, 46, 0.95);
+    background: rgba(20, 20, 20, 0.97);
     z-index: 10;
     border-radius: 0 0 8px 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -241,19 +241,19 @@ tbody tr:nth-child(even):hover td {
 }
 
 .dropdown-item:hover {
-    background: rgba(92, 79, 219, 0.1);
-    color: #5c4fdb;
+    background: rgba(255, 255, 255, 0.06);
+    color: #e0e0e0;
 }
 
 .modal-footer {
     text-align: right;
     margin-top: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
     padding-top: 1rem;
 }
 
 .modal-submit-btn {
-    background: linear-gradient(135deg, #5c4fdb, #4035c2);
+    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
     color: white;
     border: none;
     padding: 12px 25px;
@@ -262,13 +262,13 @@ tbody tr:nth-child(even):hover td {
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(92, 79, 219, 0.4);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
 }
 
 .modal-submit-btn:hover {
     transform: translateY(-2px);
-    background: linear-gradient(135deg, #4035c2, #5c4fdb);
-    box-shadow: 0  6px 20px rgba(92, 79, 219, 0.6);
+    background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
+    box-shadow: 0  6px 20px rgba(40, 40, 40, 0.8);
 }
 
 .close-button {
@@ -301,17 +301,17 @@ tbody tr:nth-child(even):hover td {
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #5c4fdb, #4035c2);
+    background: linear-gradient(135deg, #e0e0e0, #c0c0c0);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #4035c2, #5c4fdb);
+    background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
 }
 
 /* Responsive Design */
