@@ -1,15 +1,15 @@
 @import url('/css/claymorphism.css');
 :root {
-  --primary-color: #046A38;
-  --secondary-color: #C4B7A6;
+  --primary-color: #5c4fdb;
+  --secondary-color: rgba(92,79,219,0.18);
   --text-color: #2E2E2E;
   --background-color: #FFFFFF;
-  --highlight-color: #B3A580;
-  --border-color: #C4B7A6;
+  --highlight-color: #e8a838;
+  --border-color: rgba(92,79,219,0.18);
   --light-bg: #F8F9FA;
-  --shadow-light: 0 2px 12px rgba(4, 106, 56, 0.08);
-  --shadow-medium: 0 8px 32px rgba(4, 106, 56, 0.12);
-  --shadow-heavy: 0 16px 48px rgba(4, 106, 56, 0.15);
+  --shadow-light: 0 2px 12px rgba(92, 79, 219, 0.08);
+  --shadow-medium: 0 8px 32px rgba(92, 79, 219, 0.12);
+  --shadow-heavy: 0 16px 48px rgba(92, 79, 219, 0.15);
 }
 
 * {
@@ -52,7 +52,7 @@ nav {
   border: 2px solid var(--primary-color);
   color: var(--primary-color);
   padding: 12px 20px;
-  border-radius: 12px;
+  border-radius: 4px;
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
@@ -117,7 +117,7 @@ nav {
 
 .modal-content {
   background: var(--background-color);
-  border-radius: 20px;
+  border-radius: 4px;
   box-shadow: var(--shadow-heavy);
   width: 400px;
   max-width: 90vw;
@@ -150,7 +150,7 @@ nav {
   border: none;
   width: 36px;
   height: 36px;
-  border-radius: 50%;
+  border-radius: 4px;
   color: var(--background-color);
   cursor: pointer;
   transition: all 0.3s ease;
@@ -197,9 +197,9 @@ nav {
 }
 
 .filter-title {
-  background: linear-gradient(135deg, rgba(4, 106, 56, 0.05), rgba(196, 183, 166, 0.05));
+  background: linear-gradient(135deg, rgba(92, 79, 219, 0.05), rgba(196, 183, 166, 0.05));
   border: 1px solid rgba(196, 183, 166, 0.3);
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -239,7 +239,7 @@ nav {
   overflow: hidden;
   transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   background: rgba(248, 249, 250, 0.5);
-  border-radius: 12px;
+  border-radius: 4px;
   margin-top: 8px;
 }
 
@@ -294,14 +294,14 @@ nav {
   padding: 16px;
   background: rgba(248, 249, 250, 0.7);
   border: 2px solid transparent;
-  border-radius: 12px;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .sort-option:hover {
   border-color: var(--primary-color);
-  background: rgba(4, 106, 56, 0.05);
+  background: rgba(92, 79, 219, 0.05);
   transform: translateX(4px);
 }
 
@@ -313,9 +313,9 @@ nav {
 }
 
 .price-section {
-  background: linear-gradient(135deg, rgba(4, 106, 56, 0.03), rgba(196, 183, 166, 0.03));
+  background: linear-gradient(135deg, rgba(92, 79, 219, 0.03), rgba(196, 183, 166, 0.03));
   border: 1px solid rgba(196, 183, 166, 0.2);
-  border-radius: 16px;
+  border-radius: 4px;
   padding: 20px;
   margin-bottom: 24px;
 }
@@ -345,7 +345,7 @@ nav {
 .price-input {
   padding: 12px 16px;
   border: 2px solid rgba(196, 183, 166, 0.3);
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 0.95rem;
   transition: all 0.3s ease;
   background: var(--background-color);
@@ -355,7 +355,7 @@ nav {
 .price-input:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(4, 106, 56, 0.1);
+  box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
   transform: translateY(-1px);
 }
 
@@ -370,7 +370,7 @@ nav {
 .clear-button, .show-button {
   flex: 1;
   padding: 14px 20px;
-  border-radius: 12px;
+  border-radius: 4px;
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
@@ -386,7 +386,7 @@ nav {
 }
 
 .clear-button:hover {
-  background: rgba(4, 106, 56, 0.1);
+  background: rgba(92, 79, 219, 0.1);
   transform: translateY(-2px);
   box-shadow: var(--shadow-light);
 }
@@ -413,7 +413,7 @@ nav {
 
 .product-card {
   background: var(--background-color);
-  border-radius: 16px;
+  border-radius: 4px;
   overflow: hidden;
   box-shadow: var(--shadow-light);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -424,7 +424,7 @@ nav {
 .product-card:hover {
   transform: translateY(-8px);
   box-shadow: var(--shadow-heavy);
-  border-color: rgba(4, 106, 56, 0.2);
+  border-color: rgba(92, 79, 219, 0.2);
 }
 
 .product-image-container {
@@ -452,7 +452,7 @@ nav {
   background: linear-gradient(135deg, var(--primary-color), var(--highlight-color));
   color: var(--background-color);
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -469,7 +469,7 @@ nav {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border: none;
-  border-radius: 50%;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -545,7 +545,7 @@ nav {
   background: var(--background-color);
   color: var(--primary-color);
   border: 2px solid var(--primary-color);
-  border-radius: 12px;
+  border-radius: 4px;
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
@@ -605,7 +605,7 @@ nav {
   background: var(--background-color);
   color: var(--primary-color);
   border: 2px solid rgba(196, 183, 166, 0.3);
-  border-radius: 10px;
+  border-radius: 4px;
   text-decoration: none;
   font-weight: 500;
   transition: all 0.3s ease;
@@ -614,7 +614,7 @@ nav {
 }
 
 .page-link:hover {
-  background: rgba(4, 106, 56, 0.1);
+  background: rgba(92, 79, 219, 0.1);
   border-color: var(--primary-color);
   color: var(--primary-color);
   transform: translateY(-2px);
@@ -709,7 +709,7 @@ nav {
   background: linear-gradient(135deg, var(--primary-color), var(--highlight-color));
   color: var(--background-color);
   border: 2px solid var(--highlight-color);
-  border-radius: 50px;
+  border-radius: 4px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -741,7 +741,7 @@ nav {
   width: 14px;
   height: 14px;
   background: rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -838,14 +838,14 @@ nav {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--highlight-color) 100%);
   color: var(--background-color);
   border: none;
-  border-radius: 50px;
+  border-radius: 4px;
   font-weight: 700;
   text-transform: uppercase;
   font-size: 1rem;
   letter-spacing: 1.5px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: 0 6px 20px rgba(4, 106, 56, 0.3);
+  box-shadow: 0 6px 20px rgba(92, 79, 219, 0.3);
   position: relative;
   overflow: hidden;
   z-index: 1;
@@ -865,7 +865,7 @@ nav {
 
 .load-more-btn:hover {
   transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 12px 30px rgba(4, 106, 56, 0.4);
+  box-shadow: 0 12px 30px rgba(92, 79, 219, 0.4);
 }
 
 .load-more-btn:hover::before {
@@ -886,7 +886,7 @@ nav {
   height: 24px;
   border: 3px solid var(--background-color);
   border-top: 3px solid transparent;
-  border-radius: 50%;
+  border-radius: 4px;
   animation: spin 1s linear infinite;
 }
 
@@ -917,8 +917,8 @@ nav {
   animation: fadeInUp 0.8s ease forwards 0.3s;
   background: var(--background-color);
   padding: 10px 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(4, 106, 56, 0.1);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(92, 79, 219, 0.1);
   display: inline-block;
 }
 

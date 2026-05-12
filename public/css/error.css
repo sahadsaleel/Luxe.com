@@ -1,7 +1,7 @@
 @import url('/css/claymorphism.css');
 :root {
-            --primary-color: #046A38;
-            --secondary-color: #C4B7A6;
+            --primary-color: #5c4fdb;
+            --secondary-color: rgba(92,79,219,0.18);
             --text-color: #2d3436;
             --background: #f8f9fa;
         }
@@ -27,7 +27,7 @@
         .error-container {
             background: white;
             padding: 40px;
-            border-radius: 12px;
+            border-radius: 4px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
             max-width: 600px;
@@ -55,7 +55,7 @@
         .error-details {
             background: #f8f9fa;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 4px;
             margin-bottom: 25px;
             text-align: left;
             font-family: monospace;

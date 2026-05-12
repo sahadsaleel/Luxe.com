@@ -22,7 +22,7 @@
 }
 
 .copy-btn {
-    background-color: #046A38;
+    background-color: #5c4fdb;
     color: white;
     border: none;
     padding: 8px 15px;
@@ -49,18 +49,18 @@
     text-align: center;
     padding: 20px;
     background-color: #f9f9f9;
-    border-radius: 10px;
+    border-radius: 4px;
 }
 
 .stat-value {
     font-size: 24px;
     font-weight: bold;
-    color: #046A38;
+    color: #5c4fdb;
     margin-bottom: 5px;
 }
 
 .stat-label {
-    color: #046A38;
+    color: #5c4fdb;
     font-size: 14px;
 }
 
@@ -107,7 +107,7 @@
 
 .referral-status {
     padding: 5px 10px;
-    border-radius: 15px;
+    border-radius: 4px;
     font-size: 14px;
 }
 
@@ -168,15 +168,15 @@
     }
 } 
  :root {
-            --primary-color: #046A38;
-            --secondary-color: #C4B7A6;
-            --accent-color: #B3A580;
+            --primary-color: #5c4fdb;
+            --secondary-color: rgba(92,79,219,0.18);
+            --accent-color: #e8a838;
             --text-color: #2E2E2E;
             --light-text: #777;
             --background: #FFFFFF;
             --card-bg: #FFFFFF;
-            --border-radius: 12px;
-            --box-shadow: 0 4px 15px rgba(4, 106, 56, 0.1);
+            --border-radius: 4px;
+            --box-shadow: 0 4px 15px rgba(92, 79, 219, 0.1);
             --transition: all 0.3s ease;
         }
 
@@ -260,7 +260,7 @@
         .profile-image img {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
+            border-radius: 4px;
             object-fit: cover;
         }
 
@@ -300,7 +300,7 @@
             text-decoration: none;
             font-size: 15px;
             padding: 8px 15px;
-            border-radius: 8px;
+            border-radius: 4px;
             transition: var(--transition);
         }
 
@@ -347,7 +347,7 @@
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             padding: 2rem;
-            border-radius: 15px;
+            border-radius: 4px;
             margin-bottom: 2rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -368,7 +368,7 @@
             align-items: center;
             justify-content: center;
             background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
+            border-radius: 4px;
         }
 
         .referral-overview .card-header h2 {
@@ -387,7 +387,7 @@
             text-align: center;
             padding: 15px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            border-radius: 4px;
         }
 
         .stat-value {
@@ -405,7 +405,7 @@
             text-align: center;
             padding: 30px;
             background: #f8f9fa;
-            border-radius: 15px;
+            border-radius: 4px;
             margin-bottom: 25px;
         }
 
@@ -415,7 +415,7 @@
             color: var(--primary-color);
             background: white;
             padding: 15px 30px;
-            border-radius: 10px;
+            border-radius: 4px;
             border: 2px dashed var(--primary-color);
             margin: 20px 0;
             letter-spacing: 3px;
@@ -426,7 +426,7 @@
             color: white;
             border: none;
             padding: 12px 30px;
-            border-radius: 8px;
+            border-radius: 4px;
             cursor: pointer;
             font-weight: 600;
             transition: var(--transition);
@@ -448,7 +448,7 @@
         .share-btn {
             width: 50px;
             height: 50px;
-            border-radius: 50%;
+            border-radius: 4px;
             border: none;
             cursor: pointer;
             display: flex;
@@ -506,7 +506,7 @@
 
         .referral-item {
             background: white;
-            border-radius: 10px;
+            border-radius: 4px;
             padding: 1.5rem;
             margin-bottom: 1rem;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -553,7 +553,7 @@
 
         .referral-status {
             padding: 4px 12px;
-            border-radius: 20px;
+            border-radius: 4px;
             font-size: 0.8rem;
             font-weight: 600;
             text-transform: uppercase;
@@ -587,7 +587,7 @@
             padding: 15px 20px;
             background: #28a745;
             color: white;
-            border-radius: 8px;
+            border-radius: 4px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             transform: translateX(100%);

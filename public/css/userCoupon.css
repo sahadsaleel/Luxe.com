@@ -1,14 +1,14 @@
 @import url('/css/claymorphism.css');
 :root {
-    --primary-color: #046A38;
-    --secondary-color: #C4B7A6;
-    --accent-color: #B3A580;
+    --primary-color: #5c4fdb;
+    --secondary-color: rgba(92,79,219,0.18);
+    --accent-color: #e8a838;
     --text-color: #2E2E2E;
     --light-text: #777;
     --background: #FFFFFF;
     --card-bg: #FFFFFF;
-    --border-radius: 12px;
-    --box-shadow: 0 4px 15px rgba(4, 106, 56, 0.1);
+    --border-radius: 4px;
+    --box-shadow: 0 4px 15px rgba(92, 79, 219, 0.1);
     --transition: all 0.3s ease;
 }
 
@@ -107,7 +107,7 @@ body {
 .profile-image {
     width: 120px;
     height: 120px;
-    border-radius: 50%;
+    border-radius: 4px;
     overflow: hidden;
     margin-bottom: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -156,7 +156,7 @@ body {
     color: var(--text-color);
     font-size: 15px;
     padding: 8px 15px;
-    border-radius: 8px;
+    border-radius: 4px;
     transition: var(--transition);
 }
 
@@ -217,7 +217,7 @@ body {
     align-items: center;
     justify-content: center;
     background-color: rgba(138, 106, 148, 0.1);
-    border-radius: 50%;
+    border-radius: 4px;
 }
 
 .card-header h2 {
@@ -237,7 +237,7 @@ body {
     align-items: center;
     padding: 15px;
     border: 1px solid #eaeaea;
-    border-radius: 8px;
+    border-radius: 4px;
     transition: var(--transition);
 }
 
@@ -307,7 +307,7 @@ body {
     color: white;
     border: none;
     padding: 8px 15px;
-    border-radius: 8px;
+    border-radius: 4px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -323,7 +323,7 @@ body {
     border: 1px solid var(--primary-color);
     color: var(--primary-color);
     padding: 8px 15px;
-    border-radius: 8px;
+    border-radius: 4px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -398,7 +398,7 @@ body {
     justify-content: center;
     width: 32px;
     height: 32px;
-    border-radius: 50%;
+    border-radius: 4px;
     transition: var(--transition);
 }
 

@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #0f0f23;
+    background: #1a1730;
     color: #e2e8f0;
     line-height: 1.5;
     min-height: 100vh;
@@ -24,7 +24,7 @@ body {
     gap: 1rem;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
+    border-radius: 4px;
     margin: 2rem;
     backdrop-filter: blur(10px);
 }
@@ -39,7 +39,7 @@ body {
 .search-input {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: 4px;
     color: #e2e8f0;
     padding: 12px 15px 12px 40px;
     width: 100%;
@@ -50,8 +50,8 @@ body {
 
 .search-input:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #5c4fdb;
+    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
 }
 
 .search-input::placeholder {
@@ -73,7 +73,7 @@ body {
 
 .dropdown select {
     padding: 10px 15px;
-    border-radius: 8px;
+    border-radius: 4px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.05);
     color: #e2e8f0;
@@ -90,8 +90,8 @@ body {
 
 .dropdown select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #5c4fdb;
+    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
 }
 
 .dropdown select:hover {
@@ -100,21 +100,21 @@ body {
 
 /* Buttons */
 .btn-primary {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     color: white;
     border: none;
     padding: 12px 25px;
     font-weight: 600;
-    border-radius: 12px;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(92, 79, 219, 0.4);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    box-shadow: 0 6px 20px rgba(92, 79, 219, 0.6);
+    background: linear-gradient(135deg, #4035c2, #5c4fdb);
 }
 
 /* Main Container */
@@ -128,7 +128,7 @@ body {
 input[type="text"], select, textarea, input[type="number"] {
     padding: 12px 15px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: 4px;
     background: rgba(255, 255, 255, 0.05);
     color: #e2e8f0;
     width: 100%;
@@ -139,8 +139,8 @@ input[type="text"], select, textarea, input[type="number"] {
 
 input[type="text"]:focus, select:focus, textarea:focus, input[type="number"]:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #5c4fdb;
+    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
 }
 
 /* Modal-specific select styles for brand, category, and status */
@@ -148,7 +148,7 @@ input[type="text"]:focus, select:focus, textarea:focus, input[type="number"]:foc
 .modal-content select option {
     background: rgba(26, 26, 46, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
+    border-radius: 4px;
     color: #e2e8f0;
     padding: 12px 15px;
     font-size: 14px;
@@ -163,13 +163,13 @@ input[type="text"]:focus, select:focus, textarea:focus, input[type="number"]:foc
 
 .modal-content select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #5c4fdb;
+    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
 }
 
 .modal-content select:hover {
     background: rgba(26, 26, 46, 1);
-    border-color: #667eea;
+    border-color: #5c4fdb;
 }
 
 .modal-content select option {
@@ -184,13 +184,13 @@ table {
     border-collapse: collapse;
     margin-top: 20px;
     background: rgba(255, 255, 255, 0.02);
-    border-radius: 16px;
+    border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 th {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     padding: 16px;
     text-align: left;
     font-weight: 600;
@@ -210,7 +210,7 @@ td {
 }
 
 tr:hover td {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(92, 79, 219, 0.1);
     transition: all 0.3s ease;
 }
 
@@ -219,16 +219,16 @@ tr:nth-child(even) td {
 }
 
 tr:nth-child(even):hover td {
-    background: rgba(102, 126, 234, 0.15);
+    background: rgba(92, 79, 219, 0.15);
 }
 
 .product-image {
     width: 60px;
     height: 60px;
     object-fit: cover;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    border-radius: 4px;
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
+    box-shadow: 0 4px 15px rgba(92, 79, 219, 0.4);
 }
 
 /* Modal */
@@ -250,7 +250,7 @@ tr:nth-child(even):hover td {
     border: 1px solid rgba(255, 255, 255, 0.15);
     margin: 5% auto;
     padding: 2rem;
-    border-radius: 16px;
+    border-radius: 4px;
     width: 90%;
     max-width: 900px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
@@ -267,7 +267,7 @@ tr:nth-child(even):hover td {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
+    background: linear-gradient(90deg, #5c4fdb, #4035c2);
 }
 
 .close-btn {
@@ -282,7 +282,7 @@ tr:nth-child(even):hover td {
 }
 
 .close-btn:hover {
-    color: #667eea;
+    color: #5c4fdb;
 }
 
 /* Form Grid */
@@ -313,13 +313,13 @@ label {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border-radius: 12px;
+    border-radius: 4px;
     background: rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
 }
 
 .image-upload:hover {
-    border-color: #667eea;
+    border-color: #5c4fdb;
     background: rgba(255, 255, 255, 0.08);
 }
 
@@ -342,7 +342,7 @@ label {
     height: 100%;
     object-fit: cover;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: 4px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -353,7 +353,7 @@ label {
     background: #d33;
     color: white;
     border: none;
-    border-radius: 50%;
+    border-radius: 4px;
     width: 20px;
     height: 20px;
     cursor: pointer;
@@ -381,7 +381,7 @@ label {
     color: white;
     border: none;
     padding: 10px 15px;
-    border-radius: 8px;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -393,20 +393,20 @@ label {
 }
 
 .add-variant-btn {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     color: white;
     border: none;
     padding: 12px 20px;
-    border-radius: 12px;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(92, 79, 219, 0.4);
 }
 
 .add-variant-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    box-shadow: 0 6px 20px rgba(92, 79, 219, 0.6);
+    background: linear-gradient(135deg, #4035c2, #5c4fdb);
 }
 
 /* Action Buttons */
@@ -421,7 +421,7 @@ label {
 }
 
 .action-btn:hover {
-    color: #667eea;
+    color: #5c4fdb;
 }
 
 /* Crop Modal */
@@ -443,7 +443,7 @@ label {
     border: 1px solid rgba(255, 255, 255, 0.15);
     margin: 5% auto;
     padding: 2rem;
-    border-radius: 16px;
+    border-radius: 4px;
     width: 90%;
     max-width: 600px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
@@ -460,13 +460,13 @@ label {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
+    background: linear-gradient(90deg, #5c4fdb, #4035c2);
 }
 
 .crop-container img {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
+    border-radius: 4px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -480,21 +480,21 @@ label {
 .crop-btn {
     padding: 12px 25px;
     border: none;
-    border-radius: 12px;
+    border-radius: 4px;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.3s ease;
 }
 
 .crop-btn-confirm {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(92, 79, 219, 0.4);
 }
 
 .crop-btn-confirm:hover {
     transform: translateY(-2px);
-    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    background: linear-gradient(135deg, #4035c2, #5c4fdb);
 }
 
 .crop-btn-cancel {
@@ -516,7 +516,7 @@ label {
     display: none;
     background: rgba(248, 113, 113, 0.1);
     padding: 6px 12px;
-    border-radius: 8px;
+    border-radius: 4px;
 }
 
 /* Scrollbar Styling */
@@ -531,12 +531,12 @@ label {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    background: linear-gradient(135deg, #4035c2, #5c4fdb);
 }
 
 /* Responsive Design */
@@ -597,7 +597,7 @@ label {
     justify-content: space-between;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: 4px;
     padding: 8px 12px;
     margin-bottom: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -606,8 +606,8 @@ label {
 }
 
 .variant-stock:hover {
-    background: rgba(102, 126, 234, 0.1);
-    border-color: #667eea;
+    background: rgba(92, 79, 219, 0.1);
+    border-color: #5c4fdb;
     transform: translateY(-1px);
 }
 
@@ -617,7 +617,7 @@ label {
     font-size: 13px;
     color: #e2e8f0;
     text-transform: uppercase;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }

@@ -1,28 +1,42 @@
 @import url('/css/claymorphism.css');
-body {
-    font-family: Arial, sans-serif;
-    background-color: #FFFFFF;
+
+/* ============================================
+   USER LOGIN PAGE — Claymorphism + Boxy
+   ============================================ */
+
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    box-sizing: border-box;
 }
 
+body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #f4f1ee 0%, #ede8f5 55%, #f0ece4 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #1e1c2e;
+}
+
+/* ---- Header ---- */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 20px 0px;
-    background-color: #FFFFFF;
+    padding: 0 32px;
+    background: rgba(244, 241, 238, 0.95);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 100;
-    height: 60px;
-    border-bottom: 1px solid #C4B7A6;
+    height: 64px;
+    border-bottom: 2px solid rgba(92, 79, 219, 0.12);
+    box-shadow: 0 4px 16px rgba(92, 79, 219, 0.10);
+    backdrop-filter: blur(14px);
 }
 
 .logo {
@@ -31,64 +45,105 @@ header {
 }
 
 .logo-img {
-    width: 100px;
-    height: 100px;
-    padding-left: 20px;
-}
-
-.site-name {
-    font-size: 24px;
-    margin-left: auto;
-    color: #046A38;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
 }
 
 .contact-us {
-    color: #2E2E2E;
+    color: #1e1c2e;
     text-decoration: none;
-    font-size: 18px;
-    padding-right: 55px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 8px 18px;
+    border: 2px solid rgba(92, 79, 219, 0.2);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    background: rgba(255,255,255,0.6);
 }
 
+.contact-us:hover {
+    background: var(--clay-primary, #5c4fdb);
+    color: #fff;
+    border-color: var(--clay-primary, #5c4fdb);
+}
+
+/* ---- Main ---- */
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    width: 100%;
+    padding: 100px 20px 40px;
+}
+
+/* ---- Login Card ---- */
 .login-container {
-    background-color: #FFFFFF;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 0 20px rgba(4, 106, 56, 0.1);
-    border: 1px solid #C4B7A6;
+    background: rgba(255, 255, 255, 0.82) !important;
+    backdrop-filter: blur(14px) !important;
+    border-radius: 6px !important;
+    box-shadow:
+        7px 7px 0px rgba(92, 79, 219, 0.18),
+        10px 10px 28px rgba(92, 79, 219, 0.15),
+        -5px -5px 18px rgba(255,255,255,1) !important;
+    border: 2px solid rgba(255,255,255,0.9) !important;
+    padding: 40px 44px !important;
+    width: 100%;
+    max-width: 420px;
     text-align: center;
-    width: 400px;
-    margin-top: 80px;
 }
 
+/* ---- Heading ---- */
+.login-container h1 {
+    font-family: 'Syne', sans-serif !important;
+    font-size: 22px;
+    font-weight: 800;
+    color: #1e1c2e !important;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+/* ---- Google Button ---- */
 .google-btn {
-    color: #2E2E2E !important;
-    border: 1px solid #C4B7A6;
-    background-color: #FFFFFF;
+    color: #1e1c2e !important;
+    border: 2px solid rgba(92, 79, 219, 0.2) !important;
+    background: rgba(255,255,255,0.85) !important;
     text-decoration: none !important;
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 11px 16px !important;
+    margin-bottom: 12px;
     font-size: 14px;
+    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
+    border-radius: 4px !important;
+    box-shadow:
+        4px 4px 0px rgba(92,79,219,0.12),
+        4px 4px 12px rgba(92,79,219,0.08),
+        -2px -2px 8px rgba(255,255,255,0.9) !important;
+    transition: all 0.2s ease !important;
 }
 
 .google-btn span {
+    color: #1e1c2e;
+    font-weight: 700;
     text-decoration: none !important;
-    color: black;
 }
 
 .google-btn:hover {
-    background-color: #046A38;
-    border-color: #046A38;
-    color: #FFFFFF !important;
+    background: var(--clay-primary, #5c4fdb) !important;
+    border-color: var(--clay-primary, #5c4fdb) !important;
+    color: #fff !important;
+    transform: translateY(-2px) !important;
 }
 
 .google-btn:hover span {
-    color: #FFFFFF;
+    color: #fff;
 }
 
 .google-btn::before {
@@ -101,17 +156,15 @@ header {
     object-fit: contain;
 }
 
-h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #046A38;
-}
-
+/* ---- Separator ---- */
 .or-separator {
-    font-size: 14px;
-    color: #2E2E2E;
-    margin: 20px 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #9390a8;
+    margin: 18px 0;
     position: relative;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .or-separator::before,
@@ -119,100 +172,144 @@ h1 {
     content: "";
     position: absolute;
     top: 50%;
-    width: 40%;
-    height: 1px;
-    background-color: #C4B7A6;
+    width: 38%;
+    height: 1.5px;
+    background: rgba(92,79,219,0.15);
 }
 
-.or-separator::before {
-    left: 0;
-}
+.or-separator::before { left: 0; }
+.or-separator::after  { right: 0; }
 
-.or-separator::after {
-    right: 0;
-}
-
+/* ---- Instruction text ---- */
 .instruction {
-    font-size: 16px;
-    margin-bottom: 5px;
-    color: #2E2E2E;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1e1c2e;
+    text-align: center;
 }
 
 .sub-instruction {
     font-size: 12px;
-    color: #2E2E2E;
+    color: #9390a8;
     margin-bottom: 20px;
+    text-align: center;
 }
 
+/* ---- Form ---- */
 .form-group {
-    margin-bottom: 10px;
+    margin-bottom: 14px;
+    text-align: left;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #C4B7A6;
-    border-radius: 5px;
+input[type="email"],
+input[type="password"] {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 12px 16px !important;
+    border: 2px solid rgba(92, 79, 219, 0.18) !important;
+    border-radius: 4px !important;
     font-size: 14px;
-    color: #2E2E2E;
-}
-
-input:focus {
-    border-color: #046A38;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    color: #1e1c2e !important;
+    background: rgba(255,255,255,0.9) !important;
+    box-shadow:
+        inset 4px 4px 8px rgba(92,79,219,0.08),
+        inset -2px -2px 6px rgba(255,255,255,0.95) !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
     outline: none;
-    box-shadow: 0 0 5px rgba(4, 106, 56, 0.2);
 }
 
+input[type="email"]:focus,
+input[type="password"]:focus {
+    border-color: var(--clay-primary, #5c4fdb) !important;
+    box-shadow:
+        inset 4px 4px 8px rgba(92,79,219,0.12),
+        inset -2px -2px 6px rgba(255,255,255,1),
+        0 0 0 3px rgba(92,79,219,0.1) !important;
+}
+
+/* ---- Forgot Password ---- */
 .forgot-password {
     display: block;
     text-align: right;
-    color: #046A38;
+    color: var(--clay-primary, #5c4fdb);
     font-size: 12px;
+    font-weight: 700;
     margin-bottom: 20px;
     text-decoration: none;
+    transition: color 0.2s ease;
 }
 
 .forgot-password:hover {
+    color: var(--clay-accent, #e8573a);
     text-decoration: underline;
 }
 
+/* ---- Continue Button ---- */
 .continue-btn {
-    background-color: #046A38;
-    color: #FFFFFF;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    width: 100%;
-    margin-bottom: 10px;
+    background: linear-gradient(160deg, #5c4fdb, #4035c2) !important;
+    color: #ffffff !important;
+    padding: 13px 20px !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    font-family: 'Nunito', sans-serif !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    margin-bottom: 12px !important;
+    letter-spacing: 0.5px;
+    box-shadow:
+        5px 5px 0px #2e26a8,
+        6px 6px 18px rgba(92,79,219,0.25),
+        -3px -3px 10px rgba(255,255,255,0.8) !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 .continue-btn:hover {
-    background-color: #B3A580;
+    transform: translateY(-2px) !important;
+    box-shadow:
+        6px 6px 0px #2e26a8,
+        8px 8px 22px rgba(92,79,219,0.3) !important;
 }
 
+.continue-btn:active {
+    transform: translateY(2px) !important;
+    box-shadow: 2px 2px 0px #2e26a8 !important;
+}
+
+/* ---- Create Account ---- */
 .create-account {
-    font-size: 12px;
-    color: #2E2E2E;
+    font-size: 13px;
+    color: #5c5a72;
+    font-weight: 600;
 }
 
 .create-account a {
-    color: #046A38;
+    color: var(--clay-primary, #5c4fdb);
     text-decoration: none;
+    font-weight: 700;
 }
 
 .create-account a:hover {
+    color: var(--clay-accent, #e8573a);
     text-decoration: underline;
 }
 
+/* ---- Error States ---- */
 .error-message {
-    color: #dc3545;
+    color: #e8573a;
     margin-bottom: 10px;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
 }
+
 .error-text {
-      color: red;
-      font-size: 0.9rem;
-      margin-top: 5px;
+    color: #e8573a;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-top: 4px;
 }

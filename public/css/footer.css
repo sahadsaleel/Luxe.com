@@ -1,25 +1,45 @@
 @import url('/css/claymorphism.css');
-    
-/* Footer */
+
+/* ============================================
+   FOOTER — Claymorphism + Boxy, Clay Violet
+   ============================================ */
+
 footer {
-    background-color: #046A38;
-    color: #FFFFFF;
-    padding: 40px 20px;
+    background: linear-gradient(160deg, #5c4fdb 0%, #4035c2 60%, #2e26a8 100%) !important;
+    color: #f0eeff !important;
+    padding: 48px 24px 24px;
     margin-top: auto;
+    border-radius: 0 !important;
+    border-top: 4px solid rgba(232, 168, 56, 0.4) !important;
+    box-shadow: 0 -6px 28px rgba(92,79,219,0.3) !important;
+    position: relative;
 }
 
+/* Amber top accent stripe */
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #e8a838, #e8573a, #5c4fdb);
+    border-radius: 0;
+}
+
+/* ---- Footer Logo ---- */
 .footer-logo {
     display: flex;
     justify-content: center;
-    margin-bottom: 30px;
+    margin-bottom: 32px;
 }
 
 .footer-logo img {
-    width: 100px;
+    width: 90px;
     height: auto;
     filter: brightness(0) invert(1);
+    border-radius: 4px;
 }
 
+/* ---- Footer Grid ---- */
 .footer-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -27,19 +47,25 @@ footer {
     justify-content: space-between;
     align-items: flex-start;
     gap: 40px;
+    flex-wrap: wrap;
 }
 
+/* ---- Footer Column ---- */
 .footer-column {
     flex: 1;
-    min-width: 200px;
+    min-width: 180px;
 }
 
 .footer-column h3 {
-    font-size: 18px;
-    margin-bottom: 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 18px;
     position: relative;
     padding-bottom: 10px;
-    color: #FFFFFF;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
 .footer-column h3::after {
@@ -47,33 +73,49 @@ footer {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 40px;
-    height: 2px;
-    background-color: #B3A580;
+    width: 36px;
+    height: 3px;
+    background: #e8a838;
+    border-radius: 0;
 }
 
+/* ---- Who We Are ---- */
 .who-we-are p {
-    color: #C4B7A6;
-    line-height: 1.6;
-    margin-bottom: 20px;
+    color: rgba(240, 238, 255, 0.72);
+    line-height: 1.7;
+    margin-bottom: 18px;
+    font-size: 14px;
+    font-weight: 600;
 }
 
+/* ---- Social Links ---- */
 .social-links {
     display: flex;
-    gap: 15px;
-    margin-top: 20px;
+    gap: 12px;
+    margin-top: 16px;
 }
 
 .social-links a {
-    color: #C4B7A6;
+    color: rgba(240, 238, 255, 0.65);
     font-size: 18px;
-    transition: color 0.3s;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    background: rgba(255,255,255,0.05);
 }
 
 .social-links a:hover {
-    color: #B3A580;
+    color: #1e1c2e;
+    background: #e8a838;
+    border-color: #e8a838;
 }
 
+/* ---- Menu & Help Lists ---- */
 .menu ul,
 .help ul {
     list-style: none;
@@ -88,103 +130,55 @@ footer {
 .menu ul li a,
 .help ul li a {
     text-decoration: none;
-    color: #C4B7A6;
-    transition: color 0.3s;
+    color: rgba(240, 238, 255, 0.65);
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .menu ul li a:hover,
 .help ul li a:hover {
-    color: #B3A580;
+    color: #e8a838;
 }
 
+/* ---- Care / Visit ---- */
 .care-visit p {
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
-    color: #C4B7A6;
+    margin-bottom: 12px;
+    color: rgba(240, 238, 255, 0.65);
+    font-size: 14px;
+    font-weight: 600;
+    gap: 10px;
 }
 
 .care-visit i {
-    margin-right: 10px;
     min-width: 20px;
-    color: #B3A580;
+    color: #e8a838;
+    font-size: 16px;
 }
 
+/* ---- Footer Bottom ---- */
 .footer-bottom {
     text-align: center;
-    padding-top: 30px;
-    margin-top: 40px;
-    border-top: 1px solid rgba(196, 183, 166, 0.2);
-    color: #C4B7A6;
-    font-size: 14px;
+    padding-top: 28px;
+    margin-top: 36px;
+    border-top: 2px solid rgba(255,255,255,0.1);
+    color: rgba(240, 238, 255, 0.5);
+    font-size: 13px;
+    font-weight: 600;
 }
 
-/* Responsive Adjustments */
+/* ---- Responsive ---- */
 @media (max-width: 768px) {
-    .header-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .nav-links {
-        margin: 20px 0;
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .header-icons {
-        width: 100%;
-        justify-content: flex-end;
-        gap: 10px;
-    }
-
-    .auth-links {
-        font-size: 13px;
-        gap: 5px;
-    }
-
-    .auth-links a {
-        padding: 3px 5px;
-    }
-
-    .auth-links a.login::after {
-        margin-left: 5px;
-    }
-
-    .dropdown-content {
-        min-width: 120px;
-    }
-
-    .product-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    }
-
-    .features {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .feature {
-        max-width: 100%;
-    }
-
-    .feature img {
-        width: 80px;
-        height: 80px;
-    }
-
-    .celebrity-content {
-        width: 100%;
-        padding: 20px;
-    }
-
-    .celebrity-products {
-        grid-template-columns: 1fr;
-    }
-
     .footer-container {
         flex-direction: column;
+        align-items: center;
         text-align: center;
+        gap: 28px;
     }
 
     .footer-column h3::after {
@@ -200,12 +194,7 @@ footer {
         justify-content: center;
     }
 
-    .hero-image {
-        height: 300px;
-        top: 80px;
-    }
-
     .footer-logo img {
-        width: 80px;
+        width: 72px;
     }
 }

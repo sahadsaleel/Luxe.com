@@ -8,7 +8,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #0f0f23;
+    background: #1a1730;
     color: #e2e8f0;
     display: flex;
     min-height: 100vh;
@@ -25,13 +25,13 @@ table {
     border-collapse: collapse;
     margin-top: 20px;
     background: rgba(255, 255, 255, 0.02);
-    border-radius: 16px;
+    border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 thead {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
 }
 
 th {
@@ -55,7 +55,7 @@ td {
 }
 
 tbody tr:hover td {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(92, 79, 219, 0.1);
     transition: all 0.3s ease;
 }
 
@@ -64,16 +64,16 @@ tbody tr:nth-child(even) td {
 }
 
 tbody tr:nth-child(even):hover td {
-    background: rgba(102, 126, 234, 0.15);
+    background: rgba(92, 79, 219, 0.15);
 }
 
 .user-image img {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 4px;
     object-fit: cover;
     border: 2px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 2px 8px rgba(92, 79, 219, 0.3);
 }
 
 .search-user-section {
@@ -99,7 +99,7 @@ tbody tr:nth-child(even):hover td {
 .search-input {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: 4px;
     color: #e2e8f0;
     padding: 12px 15px 12px 35px;
     width: 300px;
@@ -110,8 +110,8 @@ tbody tr:nth-child(even):hover td {
 
 .search-input:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #5c4fdb;
+    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
 }
 
 .search-input::placeholder {
@@ -128,7 +128,7 @@ tbody tr:nth-child(even):hover td {
     appearance: none;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: 4px;
     padding: 10px 30px 10px 12px;
     font-size: 14px;
     font-weight: 500;
@@ -145,8 +145,8 @@ tbody tr:nth-child(even):hover td {
 .dropdown select:focus,
 .custom-select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #5c4fdb;
+    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.1);
 }
 
 .dropdown select:hover,
@@ -169,7 +169,7 @@ tbody tr:nth-child(even):hover td {
 .action-icon {
     width: 32px;
     height: 32px;
-    border-radius: 8px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -234,7 +234,7 @@ tbody tr:nth-child(even):hover td {
     color: #e2e8f0;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: 4px;
     font-size: 14px;
     font-weight: 500;
     transition: all 0.3s ease;
@@ -242,11 +242,11 @@ tbody tr:nth-child(even):hover td {
 
 .pagination a:hover:not(.active) {
     background: rgba(255, 255, 255, 0.08);
-    border-color: #667eea;
+    border-color: #5c4fdb;
 }
 
 .pagination a.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     border: none;
     color: white;
     font-weight: 600;
@@ -261,7 +261,7 @@ tbody tr:nth-child(even):hover td {
     color: #94a3b8;
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: 4px;
     font-size: 14px;
     cursor: not-allowed;
 }
@@ -277,12 +277,12 @@ tbody tr:nth-child(even):hover td {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    background: linear-gradient(135deg, #4035c2, #5c4fdb);
 }
 
 /* Wallet Modal Styles */
@@ -303,7 +303,7 @@ tbody tr:nth-child(even):hover td {
     margin: 5% auto;
     padding: 0;
     border: none;
-    border-radius: 16px;
+    border-radius: 4px;
     width: 90%;
     max-width: 800px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
@@ -322,9 +322,9 @@ tbody tr:nth-child(even):hover td {
 }
 
 .wallet-modal-header {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     padding: 20px 30px;
-    border-radius: 16px 16px 0 0;
+    border-radius: 4px 16px 0 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -348,7 +348,7 @@ tbody tr:nth-child(even):hover td {
     border: none;
     background: none;
     padding: 5px;
-    border-radius: 50%;
+    border-radius: 4px;
     transition: all 0.3s ease;
 }
 
@@ -365,7 +365,7 @@ tbody tr:nth-child(even):hover td {
 .wallet-balance-section {
     background: rgba(255, 255, 255, 0.05);
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 4px;
     margin-bottom: 25px;
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -423,7 +423,7 @@ tbody tr:nth-child(even):hover td {
 .transaction-item {
     background: rgba(255, 255, 255, 0.03);
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 4px;
     margin-bottom: 10px;
     border-left: 4px solid transparent;
     transition: all 0.3s ease;
@@ -501,8 +501,8 @@ tbody tr:nth-child(even):hover td {
 
 .spinner {
     border: 3px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    border-top: 3px solid #667eea;
+    border-radius: 4px;
+    border-top: 3px solid #5c4fdb;
     width: 30px;
     height: 30px;
     animation: spin 1s linear infinite;

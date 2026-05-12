@@ -1,29 +1,42 @@
 @import url('/css/claymorphism.css');
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #FFFFFF;
+
+/* ============================================
+   USER SIGNUP PAGE — Claymorphism + Boxy
+   ============================================ */
+
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    box-sizing: border-box;
 }
 
+body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #f4f1ee 0%, #ede8f5 55%, #f0ece4 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #1e1c2e;
+}
+
+/* ---- Header ---- */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 15px 20px;
-    background: linear-gradient(to bottom, #FFFFFF, #F8F6F1);
+    padding: 0 32px;
+    background: rgba(244, 241, 238, 0.95);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 100;
-    height: 60px;
-    border-bottom: 1px solid #C4B7A6;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    height: 64px;
+    border-bottom: 2px solid rgba(92, 79, 219, 0.12);
+    box-shadow: 0 4px 16px rgba(92, 79, 219, 0.10);
+    backdrop-filter: blur(14px);
 }
 
 .logo {
@@ -32,75 +45,117 @@ header {
 }
 
 .logo-img {
-    width: 80px;
-    height: 80px;
-    padding-left: 20px;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
 }
 
 .contact-us {
-    color: #2E2E2E;
+    color: #1e1c2e;
     text-decoration: none;
-    font-size: 16px;
-    font-weight: 400;
-    padding-right: 60px;
-    transition: color 0.3s ease;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 8px 18px;
+    border: 2px solid rgba(92, 79, 219, 0.2);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    background: rgba(255,255,255,0.6);
 }
 
 .contact-us:hover {
-    color: #046A38;
+    background: #5c4fdb;
+    color: #fff;
+    border-color: #5c4fdb;
 }
 
+/* ---- Page Layout ---- */
+main,
+.signup-page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    padding: 100px 20px 40px;
+    min-height: 100vh;
+}
+
+/* ---- Signup Wrapper (side image + card) ---- */
 .signup-wrapper {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 40px;
-    margin-top: 80px;
-    max-width: 1100px;
+    max-width: 1050px;
+    width: 100%;
+    margin: 0 auto;
 }
 
+/* ---- Signup Card ---- */
 .signup-container {
-    background-color: #FFFFFF;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(4, 106, 56, 0.1);
-    border: 1px solid #C4B7A6;
+    background: rgba(255, 255, 255, 0.82) !important;
+    backdrop-filter: blur(14px) !important;
+    border-radius: 6px !important;
+    box-shadow:
+        7px 7px 0px rgba(92, 79, 219, 0.18),
+        10px 10px 28px rgba(92, 79, 219, 0.15),
+        -5px -5px 18px rgba(255,255,255,1) !important;
+    border: 2px solid rgba(255,255,255,0.9) !important;
+    padding: 36px 40px !important;
+    width: 100%;
+    max-width: 460px;
     text-align: center;
-    width: 460px;
 }
 
+/* ---- Heading ---- */
+.signup-container h1,
+h1 {
+    font-family: 'Syne', sans-serif !important;
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    color: #1e1c2e !important;
+    margin-bottom: 22px !important;
+    letter-spacing: 0.8px;
+    text-align: center;
+}
+
+/* ---- Google Button ---- */
 .google-btn {
-    color: #2E2E2E !important;
-    border: 1px solid #C4B7A6;
-    background-color: #FFFFFF;
+    color: #1e1c2e !important;
+    border: 2px solid rgba(92, 79, 219, 0.2) !important;
+    background: rgba(255,255,255,0.88) !important;
     text-decoration: none !important;
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 11px 16px !important;
+    margin-bottom: 14px;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    gap: 10px;
+    border-radius: 4px !important;
+    box-shadow:
+        4px 4px 0px rgba(92,79,219,0.12),
+        4px 4px 12px rgba(92,79,219,0.08),
+        -2px -2px 8px rgba(255,255,255,0.9) !important;
+    transition: all 0.2s ease !important;
 }
 
 .google-btn span {
+    color: #1e1c2e;
+    font-weight: 700;
     text-decoration: none !important;
-    color: #2E2E2E;
 }
 
 .google-btn:hover {
-    background: linear-gradient(to right, #046A38, #05814a);
-    border-color: #046A38;
-    color: #FFFFFF !important;
-    box-shadow: 0 2px 8px rgba(4, 106, 56, 0.2);
+    background: #5c4fdb !important;
+    border-color: #5c4fdb !important;
+    color: #fff !important;
+    transform: translateY(-2px) !important;
 }
 
 .google-btn:hover span {
-    color: #FFFFFF;
+    color: #fff;
 }
 
 .google-btn::before {
@@ -113,21 +168,15 @@ header {
     object-fit: contain;
 }
 
-h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    color: #046A38;
-    letter-spacing: 0.5px;
-}
-
+/* ---- OR Separator ---- */
 .or-separator {
-    font-size: 14px;
-    color: #2E2E2E;
-    margin: 15px 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: #9390a8;
+    margin: 14px 0;
     position: relative;
-    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .or-separator::before,
@@ -135,45 +184,46 @@ h1 {
     content: "";
     position: absolute;
     top: 50%;
-    width: 40%;
-    height: 1px;
-    background-color: #C4B7A6;
+    width: 38%;
+    height: 1.5px;
+    background: rgba(92,79,219,0.15);
 }
 
-.or-separator::before {
-    left: 0;
-}
+.or-separator::before { left: 0; }
+.or-separator::after  { right: 0; }
 
-.or-separator::after {
-    right: 0;
-}
-
+/* ---- Instruction ---- */
 .instruction {
-    font-size: 16px;
-    font-weight: 400;
-    margin-bottom: 5px;
-    color: #2E2E2E;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1e1c2e;
+    text-align: center;
 }
 
 .sub-instruction {
     font-size: 12px;
-    font-weight: 300;
-    color: #2E2E2E;
-    margin-bottom: 15px;
+    color: #9390a8;
+    margin-bottom: 16px;
+    text-align: center;
+    line-height: 1.5;
 }
 
+/* ---- Form Container ---- */
 .form-container {
-    margin-top: 15px;
+    margin-top: 12px;
+    text-align: left;
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 16px;
     position: relative;
 }
 
+/* Name side-by-side row */
 .name-group {
     display: flex;
-    gap: 20px;
+    gap: 14px;
     justify-content: space-between;
 }
 
@@ -182,35 +232,48 @@ h1 {
     position: relative;
 }
 
-input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #C4B7A6;
-    border-radius: 8px;
+/* ---- Inputs ---- */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"] {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 12px 16px !important;
+    border: 2px solid rgba(92, 79, 219, 0.18) !important;
+    border-radius: 4px !important;
     font-size: 14px;
-    font-weight: 300;
-    box-sizing: border-box;
-    color: #2E2E2E;
-    background-color: #F8F6F1;
-    transition: all 0.3s ease;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    color: #1e1c2e !important;
+    background: rgba(255,255,255,0.9) !important;
+    box-shadow:
+        inset 4px 4px 8px rgba(92,79,219,0.08),
+        inset -2px -2px 6px rgba(255,255,255,0.95) !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    outline: none;
 }
 
 input:focus {
-    border-color: #046A38;
-    outline: none;
-    box-shadow: 0 0 8px rgba(4, 106, 56, 0.2);
-    background-color: #FFFFFF;
+    border-color: #5c4fdb !important;
+    box-shadow:
+        inset 4px 4px 8px rgba(92,79,219,0.12),
+        inset -2px -2px 6px rgba(255,255,255,1),
+        0 0 0 3px rgba(92,79,219,0.1) !important;
+    background: #ffffff !important;
 }
 
+/* ---- Validation States ---- */
 .error-message {
-    color: #dc3545;
-    font-size: 12px;
-    font-weight: 300;
+    color: #e8573a;
+    font-size: 11px;
+    font-weight: 700;
     text-align: left;
     position: absolute;
-    top: -15px;
+    top: -16px;
     left: 0;
     visibility: hidden;
+    white-space: nowrap;
 }
 
 .form-group.invalid .error-message {
@@ -218,91 +281,115 @@ input:focus {
 }
 
 .form-group.invalid input {
-    border-color: #dc3545;
+    border-color: #e8573a !important;
+    box-shadow:
+        inset 4px 4px 8px rgba(232,87,58,0.08),
+        inset -2px -2px 6px rgba(255,255,255,0.95) !important;
 }
 
+/* ---- Continue / Submit Button ---- */
 .continue-btn {
-    background: linear-gradient(to right, #046A38, #05814a);
-    color: #FFFFFF;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 400;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 15px;
-    transition: all 0.3s ease;
+    background: linear-gradient(160deg, #5c4fdb, #4035c2) !important;
+    color: #ffffff !important;
+    padding: 13px 20px !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    font-family: 'Nunito', sans-serif !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    margin-top: 14px !important;
+    letter-spacing: 0.5px;
+    box-shadow:
+        5px 5px 0px #2e26a8,
+        6px 6px 18px rgba(92,79,219,0.25),
+        -3px -3px 10px rgba(255,255,255,0.8) !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 .continue-btn:hover {
-    background: linear-gradient(to right, #B3A580, #c0b28f);
-    box-shadow: 0 2px 8px rgba(179, 165, 128, 0.3);
+    transform: translateY(-2px) !important;
+    box-shadow:
+        6px 6px 0px #2e26a8,
+        8px 8px 22px rgba(92,79,219,0.3) !important;
 }
 
+.continue-btn:active {
+    transform: translateY(2px) !important;
+    box-shadow: 2px 2px 0px #2e26a8 !important;
+}
+
+/* ---- Sign-in link ---- */
 .create-account {
-    font-size: 12px;
-    font-weight: 300;
-    color: #2E2E2E;
-    margin-top: 15px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5c5a72;
+    margin-top: 14px;
+    text-align: center;
 }
 
 .create-account a {
-    color: #046A38;
+    color: #5c4fdb;
     text-decoration: none;
-    font-weight: 400;
+    font-weight: 700;
 }
 
 .create-account a:hover {
+    color: #e8573a;
     text-decoration: underline;
 }
 
+/* ---- Footer Links ---- */
 .footer-links {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    margin-top: 15px;
+    gap: 16px;
+    margin-top: 14px;
 }
 
 .footer-links a {
-    color: #2E2E2E;
+    color: #9390a8;
     text-decoration: none;
     font-size: 12px;
-    font-weight: 300;
-    transition: color 0.3s ease;
+    font-weight: 600;
+    transition: color 0.2s ease;
 }
 
 .footer-links a:hover {
-    color: #046A38;
+    color: #5c4fdb;
 }
 
+/* ---- Side illustration ---- */
 .icons {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    padding-top: 20px;
 }
 
 .icon {
-    width: 425px;
+    width: 400px;
     height: auto;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(4, 106, 56, 0.1);
-    transform: rotate(2deg);
+    border-radius: 6px;
+    box-shadow:
+        8px 8px 0px rgba(92,79,219,0.15),
+        10px 10px 28px rgba(92,79,219,0.15),
+        -4px -4px 16px rgba(255,255,255,1);
+    transform: rotate(1.5deg);
     transition: transform 0.3s ease;
 }
 
 .icon:hover {
     transform: rotate(0deg);
-    box-shadow: 0 6px 24px rgba(4, 106, 56, 0.2);
 }
 
+/* ---- Loader ---- */
 .loader {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(4, 106, 56, 0.5);
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(92, 79, 219, 0.4);
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -310,36 +397,45 @@ input:focus {
 }
 
 .spinner {
-    border: 4px solid #FFFFFF;
-    border-top: 4px solid #046A38;
-    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.3);
+    border-top: 4px solid #5c4fdb;
+    border-radius: 0px;
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
 }
 
 .loader p {
-    color: #FFFFFF;
-    font-size: 16px;
-    font-weight: 300;
-    margin-top: 10px;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 12px;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
+    0%   { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-@media (max-width: 1100px) {
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
     .signup-wrapper {
         flex-direction: column;
         align-items: center;
-        gap: 20px;
+        gap: 24px;
     }
-    .icon {
-        width: 320px;
-    }
+    .icons { display: none; }
     .signup-container {
-        width: 360px;
+        max-width: 420px;
+    }
+}
+
+@media (max-width: 480px) {
+    .signup-container {
+        padding: 28px 22px !important;
+    }
+    .name-group {
+        flex-direction: column;
+        gap: 0;
     }
 }

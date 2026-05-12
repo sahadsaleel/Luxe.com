@@ -1,13 +1,13 @@
 @import url('/css/claymorphism.css');
  :root {
-            --primary-color: #046A38;
-            --secondary-color: #C4B7A6;
-            --accent-color: #B3A580;
+            --primary-color: #5c4fdb;
+            --secondary-color: rgba(92,79,219,0.18);
+            --accent-color: #e8a838;
             --text-color: #2d3436;
             --light-text: #6c757d;
             --background: #f8f9fa;
             --card-bg: #ffffff;
-            --border-radius: 12px;
+            --border-radius: 4px;
             --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             --error-color: #dc3545;
         }
@@ -67,7 +67,7 @@
             width: 120px;
             height: 120px;
             background-color: rgba(220, 53, 69, 0.1);
-            border-radius: 50%;
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -109,7 +109,7 @@
 
         .btn {
             padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: 4px;
             font-size: 16px;
             font-weight: 600;
             text-decoration: none;
@@ -138,7 +138,7 @@
         }
 
         .btn-secondary:hover {
-            background-color: rgba(4, 106, 56, 0.1);
+            background-color: rgba(92, 79, 219, 0.1);
         }
 
         .btn-link {

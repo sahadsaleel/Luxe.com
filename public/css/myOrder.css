@@ -1,19 +1,19 @@
 @import url('/css/claymorphism.css');
 :root {
-    --primary-color: #046A38;      /* Emerald Green */
-    --secondary-color: #C4B7A6;    /* Soft Taupe */
-    --accent-color: #B3A580;       /* Muted Gold */
+    --primary-color: #5c4fdb;      /* Emerald Green */
+    --secondary-color: rgba(92,79,219,0.18);    /* Soft Taupe */
+    --accent-color: #e8a838;       /* Muted Gold */
     --text-color: #2E2E2E;         /* Dark Charcoal */
     --light-text: #777777;
     --background: #FFFFFF;         /* Ivory White */
     --card-bg: #FFFFFF;
-    --border-radius: 12px;
-    --box-shadow: 0 4px 15px rgba(4, 106, 56, 0.1);
+    --border-radius: 4px;
+    --box-shadow: 0 4px 15px rgba(92, 79, 219, 0.1);
     --transition: all 0.3s ease;
-    --pending-bg: rgba(4, 106, 56, 0.1);
-    --pending-color: #046A38;
-    --delivered-bg: rgba(4, 106, 56, 0.15);
-    --delivered-color: #046A38;
+    --pending-bg: rgba(92, 79, 219, 0.1);
+    --pending-color: #5c4fdb;
+    --delivered-bg: rgba(92, 79, 219, 0.15);
+    --delivered-color: #5c4fdb;
     --failed-bg: #ffe6e6;
     --failed-color: #cc0000;
 }
@@ -113,7 +113,7 @@ body {
 .profile-image {
     width: 120px;
     height: 120px;
-    border-radius: 50%;
+    border-radius: 4px;
     overflow: hidden;
     margin-bottom: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -163,17 +163,17 @@ body {
     color: var(--text-color);
     font-size: 15px;
     padding: 8px 15px;
-    border-radius: 8px;
+    border-radius: 4px;
     transition: var(--transition);
 }
 
 .nav-menu a:hover {
-    background-color: rgba(4, 106, 56, 0.1);
+    background-color: rgba(92, 79, 219, 0.1);
     color: var(--primary-color);
 }
 
 .nav-menu a.active {
-    background-color: rgba(4, 106, 56, 0.15);
+    background-color: rgba(92, 79, 219, 0.15);
     color: var(--primary-color);
     font-weight: 600;
 }
@@ -218,7 +218,7 @@ body {
 }
 
 .orders-table th {
-    background-color: rgba(4, 106, 56, 0.05);
+    background-color: rgba(92, 79, 219, 0.05);
     color: var(--text-color);
     font-weight: 600;
     padding: 15px;
@@ -232,14 +232,14 @@ body {
 }
 
 .orders-table tr:hover {
-    background-color: rgba(4, 106, 56, 0.02);
+    background-color: rgba(92, 79, 219, 0.02);
 }
 
 /* Status Badges */
 .status {
     display: inline-block;
     padding: 6px 12px;
-    border-radius: 20px;
+    border-radius: 4px;
     font-size: 12px;
     font-weight: 500;
     text-transform: capitalize;
@@ -278,7 +278,7 @@ body {
     text-decoration: none;
     min-width: 120px;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(4, 106, 56, 0.1);
+    box-shadow: 0 2px 4px rgba(92, 79, 219, 0.1);
 }
 
 .action-button i {
@@ -288,12 +288,12 @@ body {
 .action-button:hover {
     background-color: var(--accent-color);
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(4, 106, 56, 0.15);
+    box-shadow: 0 4px 8px rgba(92, 79, 219, 0.15);
 }
 
 .action-button:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(4, 106, 56, 0.1);
+    box-shadow: 0 2px 4px rgba(92, 79, 219, 0.1);
 }
 
 .action-button:disabled {
@@ -312,7 +312,7 @@ body {
 }
 
 .action-button.secondary:hover {
-    background-color: rgba(4, 106, 56, 0.1);
+    background-color: rgba(92, 79, 219, 0.1);
     color: var(--primary-color);
 }
 
@@ -392,7 +392,7 @@ body {
     justify-content: center;
     width: 32px;
     height: 32px;
-    border-radius: 50%;
+    border-radius: 4px;
     transition: var(--transition);
 }
 
@@ -442,7 +442,7 @@ body {
     width: 100%;
     padding: 12px 15px;
     border: 1px solid #e1e1e1;
-    border-radius: 8px;
+    border-radius: 4px;
     font-size: 15px;
     transition: var(--transition);
 }
@@ -450,7 +450,7 @@ body {
 .form-control:focus {
     outline: none;
     border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(4, 106, 56, 0.2);
+    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.2);
 }
 
 .form-row {
@@ -478,7 +478,7 @@ body {
 
 .modal-btn {
     padding: 10px 20px;
-    border-radius: 8px;
+    border-radius: 4px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -685,7 +685,7 @@ body {
     flex: 1;
     padding: 12px;
     border: none;
-    border-radius: 8px;
+    border-radius: 4px;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);

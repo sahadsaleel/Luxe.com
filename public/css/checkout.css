@@ -39,17 +39,17 @@ body {
 
 .breadcrumb-item {
     font-size: 0.875rem;
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
 }
 
 .breadcrumb-item:not(:last-child)::after {
     content: '›';
     margin: 0 8px;
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
 }
 
 .breadcrumb-item a {
-    color: #046A38;
+    color: #5c4fdb;
     text-decoration: none;
     transition: color 0.2s ease;
 }
@@ -92,8 +92,8 @@ body {
 /* ===== CHECKOUT BOX STYLES ===== */
 .checkout-box {
     background: #FFFFFF;
-    border: 1px solid #C4B7A6;
-    border-radius: 8px;
+    border: 1px solid rgba(92,79,219,0.18);
+    border-radius: 4px;
     overflow: hidden;
 }
 
@@ -113,10 +113,10 @@ body {
 }
 
 .box-badge {
-    background: #C4B7A6;
+    background: rgba(92,79,219,0.18);
     color: #FFFFFF;
     padding: 4px 12px;
-    border-radius: 9999px;
+    border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 500;
 }
@@ -137,24 +137,24 @@ body {
     gap: 16px;
     padding: 16px;
     background: #f9f9f9;
-    border-radius: 8px;
-    border: 1px solid #C4B7A6;
+    border-radius: 4px;
+    border: 1px solid rgba(92,79,219,0.18);
 }
 
 .offer-badge {
     position: absolute;
     top: -8px;
     right: -8px;
-    background: #B3A580;
+    background: #e8a838;
     color: #2E2E2E;
     padding: 4px 8px;
-    border-radius: 9999px;
+    border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 600;
 }
 
 .offer-badge.limited-time {
-    background: #046A38;
+    background: #5c4fdb;
     color: #FFFFFF;
 }
 
@@ -163,7 +163,7 @@ body {
     height: 80px;
     border-radius: 6px;
     overflow: hidden;
-    background: #C4B7A6;
+    background: rgba(92,79,219,0.18);
 }
 
 .item-image img {
@@ -193,12 +193,12 @@ body {
 }
 
 .item-meta {
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
     font-size: 0.875rem;
 }
 
 .low-stock-warning {
-    color: #B3A580;
+    color: #e8a838;
     font-size: 0.75rem;
     font-weight: 500;
     margin-top: 4px;
@@ -218,37 +218,37 @@ body {
 .current-price {
     font-size: 1rem;
     font-weight: 600;
-    color: #046A38;
+    color: #5c4fdb;
 }
 
 .original-price {
     font-size: 0.875rem;
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
     text-decoration: line-through;
 }
 
 .discount-percent {
     font-size: 0.75rem;
-    color: #B3A580;
+    color: #e8a838;
     font-weight: 500;
 }
 
 .savings-text {
     font-size: 0.75rem;
-    color: #046A38;
+    color: #5c4fdb;
     font-weight: 500;
 }
 
 .item-quantity {
     font-size: 0.875rem;
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
 }
 
 /* ===== ADDRESS STYLES ===== */
 .address-card {
     padding: 16px;
-    border: 1px solid #C4B7A6;
-    border-radius: 8px;
+    border: 1px solid rgba(92,79,219,0.18);
+    border-radius: 4px;
     margin-bottom: 12px;
     cursor: pointer;
     background: #FFFFFF;
@@ -256,11 +256,11 @@ body {
 }
 
 .address-card:hover {
-    border-color: #B3A580;
+    border-color: #e8a838;
 }
 
 .address-card.selected {
-    border-color: #046A38;
+    border-color: #5c4fdb;
     background: #f9f9f9;
 }
 
@@ -271,9 +271,9 @@ body {
     right: 12px;
     width: 20px;
     height: 20px;
-    background: #046A38;
+    background: #5c4fdb;
     color: #FFFFFF;
-    border-radius: 9999px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -282,10 +282,10 @@ body {
 
 .address-tag {
     display: inline-block;
-    background: #046A38;
+    background: #5c4fdb;
     color: #FFFFFF;
     padding: 4px 10px;
-    border-radius: 9999px;
+    border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 500;
     margin-bottom: 8px;
@@ -299,7 +299,7 @@ body {
 }
 
 .address-details {
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
     font-size: 0.875rem;
     line-height: 1.5;
 }
@@ -310,9 +310,9 @@ body {
 
 .address-btn {
     padding: 6px 12px;
-    border: 1px solid #C4B7A6;
+    border: 1px solid rgba(92,79,219,0.18);
     background: transparent;
-    color: #046A38;
+    color: #5c4fdb;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.875rem;
@@ -320,20 +320,20 @@ body {
 }
 
 .address-btn:hover {
-    background: #046A38;
+    background: #5c4fdb;
     color: #FFFFFF;
-    border-color: #046A38;
+    border-color: #5c4fdb;
 }
 
 .no-addresses {
     text-align: center;
     padding: 32px 16px;
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
 }
 
 .no-addresses i {
     font-size: 2rem;
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
     margin-bottom: 12px;
 }
 
@@ -350,7 +350,7 @@ body {
 
 .add-first-address-btn,
 .add-address-btn {
-    background: #046A38;
+    background: #5c4fdb;
     color: #FFFFFF;
     padding: 10px 20px;
     border: none;
@@ -379,19 +379,19 @@ body {
     align-items: center;
     gap: 12px;
     padding: 16px;
-    border: 1px solid #C4B7A6;
-    border-radius: 8px;
+    border: 1px solid rgba(92,79,219,0.18);
+    border-radius: 4px;
     cursor: pointer;
     background: #FFFFFF;
     transition: border-color 0.2s ease;
 }
 
 .delivery-option:hover {
-    border-color: #B3A580;
+    border-color: #e8a838;
 }
 
 .delivery-option.selected {
-    border-color: #046A38;
+    border-color: #5c4fdb;
     background: #f9f9f9;
 }
 
@@ -402,14 +402,14 @@ body {
 .custom-radio {
     width: 16px;
     height: 16px;
-    border: 2px solid #C4B7A6;
-    border-radius: 9999px;
+    border: 2px solid rgba(92,79,219,0.18);
+    border-radius: 4px;
     position: relative;
 }
 
 .delivery-option.selected .custom-radio {
-    border-color: #046A38;
-    background: #046A38;
+    border-color: #5c4fdb;
+    background: #5c4fdb;
 }
 
 .delivery-option.selected .custom-radio::after {
@@ -421,7 +421,7 @@ body {
     width: 6px;
     height: 6px;
     background: #FFFFFF;
-    border-radius: 9999px;
+    border-radius: 4px;
 }
 
 .delivery-info h3 {
@@ -432,13 +432,13 @@ body {
 }
 
 .delivery-info p {
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
     font-size: 0.875rem;
 }
 
 .delivery-price {
     font-weight: 600;
-    color: #046A38;
+    color: #5c4fdb;
     font-size: 0.875rem;
 }
 
@@ -455,19 +455,19 @@ body {
     align-items: center;
     gap: 8px;
     padding: 16px;
-    border: 1px solid #C4B7A6;
-    border-radius: 8px;
+    border: 1px solid rgba(92,79,219,0.18);
+    border-radius: 4px;
     cursor: pointer;
     background: #FFFFFF;
     transition: border-color 0.2s ease;
 }
 
 .payment-option:hover {
-    border-color: #B3A580;
+    border-color: #e8a838;
 }
 
 .payment-option.selected {
-    border-color: #046A38;
+    border-color: #5c4fdb;
     background: #f9f9f9;
 }
 
@@ -478,14 +478,14 @@ body {
 .payment-radio .custom-radio {
     width: 16px;
     height: 16px;
-    border: 2px solid #C4B7A6;
-    border-radius: 9999px;
+    border: 2px solid rgba(92,79,219,0.18);
+    border-radius: 4px;
     position: relative;
 }
 
 .payment-option.selected .custom-radio {
-    border-color: #046A38;
-    background: #046A38;
+    border-color: #5c4fdb;
+    background: #5c4fdb;
 }
 
 .payment-option.selected .custom-radio::after {
@@ -497,12 +497,12 @@ body {
     width: 6px;
     height: 6px;
     background: #FFFFFF;
-    border-radius: 9999px;
+    border-radius: 4px;
 }
 
 .payment-icon {
     font-size: 1.5rem;
-    color: #046A38;
+    color: #5c4fdb;
 }
 
 .payment-label {
@@ -538,7 +538,7 @@ body {
 }
 
 .discount-row .summary-value {
-    color: #046A38;
+    color: #5c4fdb;
 }
 
 .savings-row {
@@ -550,14 +550,14 @@ body {
 
 .savings-row .summary-label,
 .savings-row .summary-value {
-    color: #046A38;
+    color: #5c4fdb;
 }
 
 .total-row {
-    background: #046A38;
+    background: #5c4fdb;
     color: #FFFFFF;
     padding: 16px;
-    border-radius: 8px;
+    border-radius: 4px;
     margin: 16px 0;
 }
 
@@ -582,7 +582,7 @@ body {
 .coupon-section input {
     flex: 1;
     padding: 8px 12px;
-    border: 1px solid #C4B7A6;
+    border: 1px solid rgba(92,79,219,0.18);
     border-radius: 6px;
     font-size: 0.875rem;
     transition: border-color 0.2s ease;
@@ -590,12 +590,12 @@ body {
 
 .coupon-section input:focus {
     outline: none;
-    border-color: #046A38;
+    border-color: #5c4fdb;
 }
 
 .coupon-section input:disabled {
     background: #f9f9f9;
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
     cursor: not-allowed;
 }
 
@@ -611,7 +611,7 @@ body {
 }
 
 .apply-btn {
-    background: #046A38;
+    background: #5c4fdb;
     color: #FFFFFF;
 }
 
@@ -620,7 +620,7 @@ body {
 }
 
 .remove-btn {
-    background: #B3A580;
+    background: #e8a838;
     color: #2E2E2E;
 }
 
@@ -630,7 +630,7 @@ body {
 
 .coupon-applied {
     background: #f9f9f9;
-    color: #046A38;
+    color: #5c4fdb;
     padding: 8px 12px;
     border-radius: 6px;
     font-weight: 500;
@@ -643,7 +643,7 @@ body {
 .checkout-btn {
     width: 100%;
     padding: 12px 20px;
-    background: #046A38;
+    background: #5c4fdb;
     color: #FFFFFF;
     border: none;
     border-radius: 6px;
@@ -671,7 +671,7 @@ body {
     width: 16px;
     height: 16px;
     border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 9999px;
+    border-radius: 4px;
     border-top-color: #FFFFFF;
     animation: spin 1s ease-in-out infinite;
     margin-right: 8px;
@@ -690,13 +690,13 @@ body {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
     font-size: 0.875rem;
     margin-top: 12px;
 }
 
 .secure-checkout i {
-    color: #046A38;
+    color: #5c4fdb;
 }
 
 /* ===== MODAL STYLES ===== */
@@ -726,7 +726,7 @@ body {
     max-width: 500px;
     max-height: 90vh;
     background: #FFFFFF;
-    border-radius: 8px;
+    border-radius: 4px;
     overflow: hidden;
     transform: scale(0.95);
     transition: transform 0.3s ease;
@@ -737,7 +737,7 @@ body {
 }
 
 .modal-header {
-    background: #046A38;
+    background: #5c4fdb;
     color: #FFFFFF;
     padding: 16px 20px;
     display: flex;
@@ -795,7 +795,7 @@ body {
 
 .required-note {
     font-size: 0.75rem;
-    color: #B3A580;
+    color: #e8a838;
 }
 
 .form-group {
@@ -813,7 +813,7 @@ body {
 .form-control {
     width: 100%;
     padding: 8px 12px;
-    border: 1px solid #C4B7A6;
+    border: 1px solid rgba(92,79,219,0.18);
     border-radius: 6px;
     font-size: 0.875rem;
     transition: border-color 0.2s ease;
@@ -822,21 +822,21 @@ body {
 
 .form-control:focus {
     outline: none;
-    border-color: #046A38;
+    border-color: #5c4fdb;
 }
 
 .form-control:disabled {
     background: #f9f9f9;
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
     cursor: not-allowed;
 }
 
 .form-group.invalid .form-control {
-    border-color: #B3A580;
+    border-color: #e8a838;
 }
 
 .error-message {
-    color: #B3A580;
+    color: #e8a838;
     font-size: 0.75rem;
     margin-top: 4px;
     display: none;
@@ -865,7 +865,7 @@ body {
 }
 
 .cancel-btn {
-    background: #C4B7A6;
+    background: rgba(92,79,219,0.18);
     color: #2E2E2E;
 }
 
@@ -874,7 +874,7 @@ body {
 }
 
 .save-btn {
-    background: #046A38;
+    background: #5c4fdb;
     color: #FFFFFF;
 }
 
@@ -888,7 +888,7 @@ body {
 }
 
 .item-subtitle {
-    color: #B3A580;
+    color: #e8a838;
     font-size: 0.875rem;
     font-weight: 500;
 }
@@ -904,7 +904,7 @@ body {
 }
 
 .form-control::placeholder {
-    color: #C4B7A6;
+    color: rgba(92,79,219,0.18);
 }
 
 /* ===== TOASTIFY OVERRIDES ===== */
@@ -916,11 +916,11 @@ body {
 }
 
 .Toastify__toast--success {
-    background: #046A38 !important;
+    background: #5c4fdb !important;
 }
 
 .Toastify__toast--error {
-    background: #B3A580 !important;
+    background: #e8a838 !important;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */

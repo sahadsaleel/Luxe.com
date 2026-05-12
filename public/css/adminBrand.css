@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #0f0f23;
+    background: #1a1730;
     color: #e2e8f0;
     line-height: 1.5;
     min-height: 100vh;
@@ -28,22 +28,22 @@ body {
 }
 
 .btn-add-brand {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     color: white;
     border: none;
     padding: 12px 25px;
     font-weight: 600;
     text-transform: uppercase;
-    border-radius: 12px;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(92, 79, 219, 0.4);
 }
 
 .btn-add-brand:hover {
     transform: translateY(-2px);
-    background: linear-gradient(135deg, #5a67d8, #6b46c1);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    background: linear-gradient(135deg, #4035c2, #5c4fdb);
+    box-shadow: 0 6px 20px rgba(92, 79, 219, 0.6);
 }
 
 .table {
@@ -51,13 +51,13 @@ body {
     border-collapse: collapse;
     margin-bottom: 2rem;
     background: rgba(255, 255, 255, 0.02);
-    border-radius: 16px;
+    border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .table thead {
-    background: linear-gradient(135deg, #667eea, #764ba2) ;
+    background: linear-gradient(135deg, #5c4fdb, #4035c2) ;
 }
 
 .table th {
@@ -69,7 +69,7 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: sticky;
     top: 0;
-    background: linear-gradient(135deg, #667eea, #764ba2) 
+    background: linear-gradient(135deg, #5c4fdb, #4035c2) 
 }
 
 .table td {
@@ -83,7 +83,7 @@ body {
 }
 
 .table tbody tr:hover td {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(92, 79, 219, 0.1);
     transition: all 0.3s ease;
 }
 
@@ -92,12 +92,12 @@ body {
 }
 
 .table tbody tr:nth-child(even):hover td {
-    background: rgba(102, 126, 234, 0.15);
+    background: rgba(92, 79, 219, 0.15);
 }
 
 .badge {
     padding: 8px 16px;
-    border-radius: 20px;
+    border-radius: 4px;
     font-size: 12px;
     font-weight: 600;
     display: inline-block;
@@ -124,7 +124,7 @@ body {
 }
 
 .action-icon:hover {
-    color: #667eea;
+    color: #5c4fdb;
 }
 
 .pagination-container {
@@ -143,17 +143,17 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: 4px;
     transition: all 0.3s ease;
 }
 
 .pagination .page-item .page-link:hover {
     background: rgba(255, 255, 255, 0.08);
-    border-color: #667eea;
+    border-color: #5c4fdb;
 }
 
 .pagination .page-item.active .page-link {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     color: white;
     font-weight: 600;
     border: none;
@@ -195,7 +195,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.15);
     margin: 5% auto;
     padding: 2rem;
-    border-radius: 16px;
+    border-radius: 4px;
     width: 90%;
     max-width: 600px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
@@ -211,7 +211,7 @@ body {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
+    background: linear-gradient(90deg, #5c4fdb, #4035c2);
 }
 
 .image-preview-container {
@@ -224,13 +224,13 @@ body {
     margin: 0 auto 20px;
     position: relative;
     cursor: pointer;
-    border-radius: 12px;
+    border-radius: 4px;
     background: rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
 }
 
 .image-preview-container:hover {
-    border-color: #667eea;
+    border-color: #5c4fdb;
     background: rgba(255, 255, 255, 0.08);
 }
 
@@ -238,7 +238,7 @@ body {
     max-width: 100%;
     max-height: 100%;
     display: none;
-    border-radius: 8px;
+    border-radius: 4px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -261,7 +261,7 @@ body {
 }
 
 .add-btn, .edit-btn {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     border: none;
     color: white;
     width: 50%;
@@ -270,16 +270,16 @@ body {
     font-weight: 600;
     text-transform: uppercase;
     padding: 12px 25px;
-    border-radius: 12px;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(92, 79, 219, 0.4);
 }
 
 .add-btn:hover, .edit-btn:hover {
     transform: translateY(-2px);
-    background: linear-gradient(135deg, #5a67d8, #6b46c1);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    background: linear-gradient(135deg, #4035c2, #5c4fdb);
+    box-shadow: 0 6px 20px rgba(92, 79, 219, 0.6);
 }
 
 .add-btn:disabled, .edit-btn:disabled {
@@ -299,7 +299,7 @@ body {
 }
 
 .close-button:hover {
-    color: #667eea;
+    color: #5c4fdb;
 }
 
 .loading-overlay {
@@ -318,7 +318,7 @@ body {
 .loading-overlay .spinner-border {
     width: 3rem;
     height: 3rem;
-    color: #667eea;
+    color: #5c4fdb;
 }
 
 ::-webkit-scrollbar {
@@ -332,12 +332,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #5c4fdb, #4035c2);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    background: linear-gradient(135deg, #4035c2, #5c4fdb);
 }
 
 /* Responsive Design */
@@ -375,7 +375,7 @@ body {
 .form-control {
     padding: 12px 15px;
     border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
+    border-radius: 4px;
     background: rgba(20, 20, 40, 0.95);
     color: #e2e8f0;
     font-size: 14px;
@@ -385,8 +385,8 @@ body {
 
 .form-control:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2), inset 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-color: #5c4fdb;
+    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.2), inset 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .form-control::placeholder {
@@ -397,7 +397,7 @@ body {
 .modal-content select {
     background: rgba(20, 20, 40, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
+    border-radius: 4px;
     color: #e2e8f0;
     padding: 12px 15px;
     font-size: 14px;
@@ -412,13 +412,13 @@ body {
 
 .modal-content select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2), inset 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-color: #5c4fdb;
+    box-shadow: 0 0 0 3px rgba(92, 79, 219, 0.2), inset 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content select:hover {
     background: rgba(25, 25, 45, 1);
-    border-color: #667eea;
+    border-color: #5c4fdb;
 }
 
 .modal-content select option {
