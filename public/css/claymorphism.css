@@ -7,29 +7,38 @@
    ============================================ */
 
 :root {
-  /* --- Core Colors --- */
-  --clay-bg:        #f4f1ee;
-  --clay-surface:   #ffffff;
-  --clay-primary:   #5c4fdb;        /* Deep violet */
-  --clay-primary-d: #4035c2;        /* Darker violet */
-  --clay-secondary: #e8a838;        /* Warm amber */
-  --clay-accent:    #e8573a;        /* Coral */
-  --clay-muted:     #9390a8;        /* Muted slate */
-  --clay-text:      #1e1c2e;        /* Near-black */
-  --clay-text-sub:  #5c5a72;        /* Subdued text */
+    /* --- Core Colors --- */
+    --clay-bg: #0d0d0d;
+    /* Pure dark background */
+    --clay-surface: #1a1a1a;
+    /* Dark surface */
+    --clay-primary: #e0e0e0;
+    /* Light gray primary */
+    --clay-primary-d: #ffffff;
+    /* White hover */
+    --clay-secondary: #3a3a3a;
+    /* Dark gray */
+    --clay-accent: #c0c0c0;
+    /* Silver accent */
+    --clay-muted: #555555;
+    /* Muted gray */
+    --clay-text: #f0f0f0;
+    /* Light text */
+    --clay-text-sub: #888888;
+    /* Subdued gray text */
 
-  /* --- Shadows --- */
-  --clay-shadow:    rgba(92, 79, 219, 0.18);
-  --clay-shadow-sm: rgba(92, 79, 219, 0.10);
-  --clay-shadow-dk: rgba(30, 28, 46, 0.22);
+    /* --- Shadows --- */
+    --clay-shadow: rgba(0, 0, 0, 0.5);
+    --clay-shadow-sm: rgba(0, 0, 0, 0.3);
+    --clay-shadow-dk: rgba(0, 0, 0, 0.7);
 
-  /* --- Shape: BOXY (no rounds) --- */
-  --clay-radius:    4px;
-  --clay-radius-lg: 6px;
+    /* --- Shape: BOXY (no rounds) --- */
+    --clay-radius: 4px;
+    --clay-radius-lg: 6px;
 
-  /* --- Spacing --- */
-  --clay-pad:       20px;
-  --clay-pad-lg:    32px;
+    /* --- Spacing --- */
+    --clay-pad: 20px;
+    --clay-pad-lg: 32px;
 }
 
 /* ============================================
@@ -48,15 +57,25 @@ body {
 body::before {
     content: "";
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
     opacity: 0.025;
     pointer-events: none;
     z-index: 9999;
 }
 
-h1, h2, h3, h4, h5, h6,
-.hero-title, .section-title, .product-title {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.hero-title,
+.section-title,
+.product-title {
     font-family: 'Syne', sans-serif !important;
     color: var(--clay-text) !important;
 }
@@ -65,15 +84,23 @@ h1, h2, h3, h4, h5, h6,
    BUTTONS — Boxy, clay-pressed style
    ============================================ */
 button:not(.search-container button),
-.btn, .hero-cta, .shop-now-btn, .product-cta,
-.add-to-cart, .continue-btn, .social-btn,
-a.btn, .google-btn, .login-btn, .signup-btn {
+.btn,
+.hero-cta,
+.shop-now-btn,
+.product-cta,
+.add-to-cart,
+.continue-btn,
+.social-btn,
+a.btn,
+.google-btn,
+.login-btn,
+.signup-btn {
     background: linear-gradient(160deg, var(--clay-primary), var(--clay-primary-d)) !important;
     border-radius: var(--clay-radius) !important;
     box-shadow:
         5px 5px 0px var(--clay-primary-d),
         8px 8px 18px var(--clay-shadow),
-        -3px -3px 10px rgba(255,255,255,0.8) !important;
+        -3px -3px 10px rgba(255, 255, 255, 0.8) !important;
     border: none !important;
     padding: 12px 28px !important;
     font-weight: 700 !important;
@@ -87,63 +114,83 @@ a.btn, .google-btn, .login-btn, .signup-btn {
 }
 
 button:not(.search-container button):hover,
-.btn:hover, .hero-cta:hover, .shop-now-btn:hover,
-.product-cta:hover, .add-to-cart:hover,
-.continue-btn:hover, .social-btn:hover, a.btn:hover {
+.btn:hover,
+.hero-cta:hover,
+.shop-now-btn:hover,
+.product-cta:hover,
+.add-to-cart:hover,
+.continue-btn:hover,
+.social-btn:hover,
+a.btn:hover {
     transform: translateY(-2px) !important;
     box-shadow:
         6px 6px 0px var(--clay-primary-d),
         10px 10px 22px var(--clay-shadow),
-        -4px -4px 12px rgba(255,255,255,0.9) !important;
+        -4px -4px 12px rgba(255, 255, 255, 0.9) !important;
 }
 
 button:not(.search-container button):active,
-.btn:active, .hero-cta:active, .shop-now-btn:active,
-.product-cta:active, .add-to-cart:active,
-.continue-btn:active, .social-btn:active, a.btn:active {
+.btn:active,
+.hero-cta:active,
+.shop-now-btn:active,
+.product-cta:active,
+.add-to-cart:active,
+.continue-btn:active,
+.social-btn:active,
+a.btn:active {
     transform: translateY(2px) !important;
     box-shadow:
         2px 2px 0px var(--clay-primary-d),
-        inset 3px 3px 8px rgba(0,0,0,0.12) !important;
+        inset 3px 3px 8px rgba(0, 0, 0, 0.12) !important;
 }
 
 /* --- Icon Buttons (Wishlist, etc) --- */
-.btn-wishlist, .icon-btn {
+.btn-wishlist,
+.icon-btn {
     border-radius: var(--clay-radius) !important;
     padding: 10px !important;
     background: var(--clay-surface) !important;
     box-shadow:
-        4px 4px 0px rgba(92,79,219,0.2),
+        4px 4px 0px rgba(92, 79, 219, 0.2),
         4px 4px 12px var(--clay-shadow),
-        -3px -3px 10px rgba(255,255,255,0.9) !important;
+        -3px -3px 10px rgba(255, 255, 255, 0.9) !important;
 }
 
 /* ============================================
    CARDS — Clay surface, boxy, soft shadow
    ============================================ */
-.feature, .product-card, .card, .result-item,
-.order-card, .address-card,
-.login-container, .signup-container {
+.feature,
+.product-card,
+.card,
+.result-item,
+.order-card,
+.address-card,
+.login-container,
+.signup-container {
     background: rgba(255, 255, 255, 0.78) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
     border-radius: var(--clay-radius-lg) !important;
     box-shadow:
-        6px 6px 0px rgba(92,79,219,0.12),
+        6px 6px 0px rgba(92, 79, 219, 0.12),
         8px 8px 24px var(--clay-shadow),
-        -5px -5px 16px rgba(255,255,255,1) !important;
-    border: 2px solid rgba(255,255,255,0.85) !important;
+        -5px -5px 16px rgba(255, 255, 255, 1) !important;
+    border: 2px solid rgba(255, 255, 255, 0.85) !important;
     padding: 24px !important;
     transition: transform 0.25s ease, box-shadow 0.25s ease !important;
 }
 
-.feature:hover, .product-card:hover, .card:hover,
-.result-item:hover, .order-card:hover, .address-card:hover {
+.feature:hover,
+.product-card:hover,
+.card:hover,
+.result-item:hover,
+.order-card:hover,
+.address-card:hover {
     transform: translateY(-5px) !important;
     box-shadow:
-        8px 8px 0px rgba(92,79,219,0.15),
+        8px 8px 0px rgba(92, 79, 219, 0.15),
         12px 12px 32px var(--clay-shadow),
-        -7px -7px 24px rgba(255,255,255,1) !important;
+        -7px -7px 24px rgba(255, 255, 255, 1) !important;
 }
 
 /* ============================================
@@ -154,13 +201,14 @@ input[type="email"],
 input[type="password"],
 input[type="number"],
 input[type="search"]:not(#searchInput),
-textarea, select {
+textarea,
+select {
     border-radius: var(--clay-radius) !important;
     background: rgba(255, 255, 255, 0.88) !important;
     box-shadow:
-        inset 4px 4px 8px rgba(92,79,219,0.09),
-        inset -3px -3px 6px rgba(255,255,255,0.95) !important;
-    border: 1.5px solid rgba(92,79,219,0.18) !important;
+        inset 4px 4px 8px rgba(92, 79, 219, 0.09),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.95) !important;
+    border: 1.5px solid rgba(92, 79, 219, 0.18) !important;
     padding: 12px 18px !important;
     color: var(--clay-text) !important;
     outline: none !important;
@@ -168,12 +216,14 @@ textarea, select {
     font-family: 'Nunito', sans-serif !important;
 }
 
-input:focus:not(#searchInput), textarea:focus, select:focus {
+input:focus:not(#searchInput),
+textarea:focus,
+select:focus {
     border-color: var(--clay-primary) !important;
     box-shadow:
-        inset 5px 5px 10px rgba(92,79,219,0.12),
-        inset -4px -4px 8px rgba(255,255,255,1),
-        0 0 0 3px rgba(92,79,219,0.1) !important;
+        inset 5px 5px 10px rgba(92, 79, 219, 0.12),
+        inset -4px -4px 8px rgba(255, 255, 255, 1),
+        0 0 0 3px rgba(92, 79, 219, 0.1) !important;
 }
 
 /* ============================================
@@ -186,21 +236,21 @@ input:focus:not(#searchInput), textarea:focus, select:focus {
     background: var(--clay-surface) !important;
     border-radius: var(--clay-radius) !important;
     box-shadow:
-        inset 3px 3px 7px rgba(92,79,219,0.08),
-        inset -2px -2px 6px rgba(255,255,255,1),
+        inset 3px 3px 7px rgba(92, 79, 219, 0.08),
+        inset -2px -2px 6px rgba(255, 255, 255, 1),
         4px 4px 10px var(--clay-shadow) !important;
     padding: 4px 14px !important;
     transition: box-shadow 0.25s ease !important;
-    border: 1.5px solid rgba(255,255,255,0.9) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
     margin: 0 !important;
 }
 
 .search-container:focus-within {
     box-shadow:
-        inset 5px 5px 10px rgba(92,79,219,0.12),
-        inset -3px -3px 8px rgba(255,255,255,1),
+        inset 5px 5px 10px rgba(92, 79, 219, 0.12),
+        inset -3px -3px 8px rgba(255, 255, 255, 1),
         6px 6px 16px var(--clay-shadow) !important;
-    border-color: rgba(92,79,219,0.25) !important;
+    border-color: rgba(92, 79, 219, 0.25) !important;
 }
 
 #searchInput {
@@ -238,13 +288,15 @@ input:focus:not(#searchInput), textarea:focus, select:focus {
 /* ============================================
    NAVBAR / HEADER — Boxy, clay glass
    ============================================ */
-header, .navbar, .header-container {
+header,
+.navbar,
+.header-container {
     background: rgba(244, 241, 238, 0.92) !important;
     backdrop-filter: blur(18px) !important;
     -webkit-backdrop-filter: blur(18px) !important;
     border-radius: 0 !important;
     box-shadow: 0 6px 20px var(--clay-shadow) !important;
-    border-bottom: 2px solid rgba(255,255,255,0.75) !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.75) !important;
 }
 
 /* Nav links — remove green hover */
@@ -256,7 +308,8 @@ header, .navbar, .header-container {
 /* ============================================
    CART COUNT BADGE
    ============================================ */
-.cart-count, #cartCount {
+.cart-count,
+#cartCount {
     background-color: var(--clay-accent) !important;
     color: #ffffff !important;
     border-radius: 3px !important;
@@ -265,28 +318,34 @@ header, .navbar, .header-container {
 /* ============================================
    MODALS & POPUPS
    ============================================ */
-.modal, .dropdown-content, .search-results,
-.cart-drawer, .swal2-popup {
-    background: rgba(255,255,255,0.9) !important;
+.modal,
+.dropdown-content,
+.search-results,
+.cart-drawer,
+.swal2-popup {
+    background: rgba(255, 255, 255, 0.9) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     border-radius: var(--clay-radius-lg) !important;
     box-shadow:
-        10px 10px 0px rgba(92,79,219,0.1),
+        10px 10px 0px rgba(92, 79, 219, 0.1),
         12px 12px 32px var(--clay-shadow),
-        -8px -8px 24px rgba(255,255,255,0.9) !important;
-    border: 2px solid rgba(255,255,255,0.85) !important;
+        -8px -8px 24px rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid rgba(255, 255, 255, 0.85) !important;
 }
 
 /* ============================================
    BADGES & TAGS — Boxy
    ============================================ */
-.badge, .product-badge, .offer-badge,
-.status-badge, .tag {
+.badge,
+.product-badge,
+.offer-badge,
+.status-badge,
+.tag {
     border-radius: var(--clay-radius) !important;
     background: linear-gradient(145deg, var(--clay-accent), #f07558) !important;
     box-shadow:
-        3px 3px 0px rgba(232,87,58,0.3),
+        3px 3px 0px rgba(232, 87, 58, 0.3),
         4px 4px 10px var(--clay-shadow-sm) !important;
     padding: 5px 14px !important;
     font-weight: 700 !important;
@@ -303,11 +362,12 @@ header, .navbar, .header-container {
 /* ============================================
    FOOTER — Clay warm base
    ============================================ */
-footer, .footer {
+footer,
+.footer {
     background: linear-gradient(135deg, var(--clay-primary), var(--clay-primary-d)) !important;
     border-radius: 0 !important;
     box-shadow: 0 -6px 24px var(--clay-shadow) !important;
-    border-top: 3px solid rgba(255,255,255,0.15) !important;
+    border-top: 3px solid rgba(255, 255, 255, 0.15) !important;
     margin-top: 40px !important;
     color: #fff !important;
 }
@@ -315,29 +375,34 @@ footer, .footer {
 /* ============================================
    DROPDOWN / SELECT
    ============================================ */
-select, .dropdown-menu {
+select,
+.dropdown-menu {
     border-radius: var(--clay-radius) !important;
-    background: rgba(255,255,255,0.95) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
     box-shadow:
-        6px 6px 0px rgba(92,79,219,0.1),
+        6px 6px 0px rgba(92, 79, 219, 0.1),
         6px 6px 16px var(--clay-shadow),
-        -4px -4px 12px rgba(255,255,255,1) !important;
-    border: 1.5px solid rgba(92,79,219,0.15) !important;
+        -4px -4px 12px rgba(255, 255, 255, 1) !important;
+    border: 1.5px solid rgba(92, 79, 219, 0.15) !important;
 }
 
 /* ============================================
    QUANTITY SELECTORS & TOGGLES — Boxy
    ============================================ */
-.quantity-selector, .quantity-btn, .toggle-switch, .qty-btn {
+.quantity-selector,
+.quantity-btn,
+.toggle-switch,
+.qty-btn {
     border-radius: var(--clay-radius) !important;
     box-shadow:
-        inset 3px 3px 6px rgba(92,79,219,0.1),
-        inset -2px -2px 5px rgba(255,255,255,0.9) !important;
-    background: rgba(255,255,255,0.75) !important;
+        inset 3px 3px 6px rgba(92, 79, 219, 0.1),
+        inset -2px -2px 5px rgba(255, 255, 255, 0.9) !important;
+    background: rgba(255, 255, 255, 0.75) !important;
     border: none !important;
 }
 
-.quantity-btn:active, .qty-btn:active {
+.quantity-btn:active,
+.qty-btn:active {
     background: var(--clay-primary) !important;
     color: white !important;
 }
@@ -345,13 +410,15 @@ select, .dropdown-menu {
 /* ============================================
    PRODUCT IMAGE CONTAINERS — Boxy
    ============================================ */
-.product-image-container, .product-image-section,
-.hero-image, .image-gallery {
+.product-image-container,
+.product-image-section,
+.hero-image,
+.image-gallery {
     border-radius: var(--clay-radius) !important;
     box-shadow:
-        6px 6px 0px rgba(92,79,219,0.1),
+        6px 6px 0px rgba(92, 79, 219, 0.1),
         6px 6px 20px var(--clay-shadow),
-        -4px -4px 14px rgba(255,255,255,1) !important;
+        -4px -4px 14px rgba(255, 255, 255, 1) !important;
     overflow: hidden !important;
     transition: transform 0.25s ease !important;
 }
@@ -367,10 +434,12 @@ select, .dropdown-menu {
 ::-webkit-scrollbar {
     width: 8px !important;
 }
+
 ::-webkit-scrollbar-track {
-    background: rgba(92,79,219,0.06) !important;
+    background: rgba(92, 79, 219, 0.06) !important;
     border-radius: 2px !important;
 }
+
 ::-webkit-scrollbar-thumb {
     background: linear-gradient(var(--clay-primary), var(--clay-primary-d)) !important;
     border-radius: 2px !important;
@@ -380,31 +449,42 @@ select, .dropdown-menu {
 /* ============================================
    LOADING / SKELETON
    ============================================ */
-.loading-spinner i, .spinner {
+.loading-spinner i,
+.spinner {
     color: var(--clay-primary) !important;
 }
 
 .skeleton {
     background: linear-gradient(90deg,
-        rgba(255,255,255,0.4) 25%,
-        rgba(255,255,255,0.8) 50%,
-        rgba(255,255,255,0.4) 75%) !important;
+            rgba(255, 255, 255, 0.4) 25%,
+            rgba(255, 255, 255, 0.8) 50%,
+            rgba(255, 255, 255, 0.4) 75%) !important;
     background-size: 200% 100% !important;
     animation: skeleton-loading 1.5s infinite !important;
     border-radius: var(--clay-radius) !important;
 }
 
 @keyframes skeleton-loading {
-    0%   { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 /* ============================================
    UTILITY — Remove green color from any
    leftover inline or library styles
    ============================================ */
-a { color: var(--clay-primary); }
-a:hover { color: var(--clay-primary-d); }
+a {
+    color: var(--clay-primary);
+}
+
+a:hover {
+    color: var(--clay-primary-d);
+}
 
 /* ============================================
    RESPONSIVE
@@ -415,21 +495,29 @@ a:hover { color: var(--clay-primary-d); }
         --clay-radius-lg: 6px;
     }
 
-    .feature, .product-card, .card, .result-item,
-    .login-container, .signup-container {
+    .feature,
+    .product-card,
+    .card,
+    .result-item,
+    .login-container,
+    .signup-container {
         box-shadow:
-            4px 4px 0px rgba(92,79,219,0.1),
+            4px 4px 0px rgba(92, 79, 219, 0.1),
             5px 5px 14px var(--clay-shadow),
-            -3px -3px 10px rgba(255,255,255,0.9) !important;
+            -3px -3px 10px rgba(255, 255, 255, 0.9) !important;
     }
 
     button:not(.search-container button),
-    .btn, .hero-cta, .shop-now-btn,
-    .product-cta, .add-to-cart, .continue-btn {
+    .btn,
+    .hero-cta,
+    .shop-now-btn,
+    .product-cta,
+    .add-to-cart,
+    .continue-btn {
         box-shadow:
             3px 3px 0px var(--clay-primary-d),
             4px 4px 10px var(--clay-shadow),
-            -2px -2px 8px rgba(255,255,255,0.8) !important;
+            -2px -2px 8px rgba(255, 255, 255, 0.8) !important;
     }
 
     #searchInput {
