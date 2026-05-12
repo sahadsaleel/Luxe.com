@@ -1,25 +1,26 @@
 @import url('/css/claymorphism.css');
   :root {
-    --background: #0d0d0d;   
-    --primary: #e0e0e0;      
-    --text: #e0e0e0;         
-    --secondary: rgba(255,255,255,0.18);   
-    --highlight: #c0c0c0;    
-    --light-bg: #F8F9FA;     
+    --background: #0d0d0d;
+    --primary:    #e0e0e0;
+    --text:       #e0e0e0;
+    --secondary:  rgba(255,255,255,0.18);
+    --highlight:  #c0c0c0;
+    --light-bg:   #1a1a1a;  /* dark surface — replaces light #F8F9FA */
   }
 
   body {
     background-color: var(--background);
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Nunito', 'Helvetica Neue', Arial, sans-serif;
     color: var(--text);
     margin: 0;
     padding: 0;
+    padding-top: 64px; /* fixed header clearance */
   }
 
   .breadcrumb-container {
-    padding: 15px 0;
-    background-color: var(--light-bg);
-    border-bottom: 1px solid var(--secondary);
+    padding: 12px 0;
+    background-color: #111111;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
 
   .breadcrumb {
@@ -387,7 +388,7 @@
     position: absolute;
     top: 20px;
     right: 30px;
-    color: var(--background);
+    color: #e0e0e0;
     font-size: 40px;
     font-weight: bold;
     transition: 0.3s;
@@ -395,7 +396,7 @@
   }
 
   .zoom-close:hover {
-    color: var(--highlight);
+    color: #ffffff;
   }
 
   .similar-products-container {
@@ -460,17 +461,23 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    background: rgba(255, 255, 255, 0.8);
-    border: none;
-    width: 30px;
-    height: 30px;
+    background: rgba(13, 13, 13, 0.88);
+    border: 1px solid rgba(255,255,255,0.15);
+    width: 34px;
+    height: 34px;
     border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, background 0.2s ease;
+    color: #e0e0e0;
+  }
+
+  .btn-wishlist:hover {
+    background: rgba(30, 30, 30, 0.98);
+    color: #ffffff;
   }
 
   .similar-product-card:hover .btn-wishlist {
@@ -574,12 +581,13 @@
   }
 
   .discount-percent {
-    background: var(--primary);
-    color: var(--background);
+    background: #3a3a3a;
+    color: #e0e0e0;
     padding: 2px 6px;
     border-radius: 3px;
     font-size: 0.75rem;
     font-weight: bold;
+    border: 1px solid rgba(255,255,255,0.15);
   }
 
   .savings-text {
@@ -628,21 +636,25 @@
   }
 
   .countdown-timer {
-    background: var(--text);
-    color: var(--background);
-    padding: 4px 8px;
+    background: #1a1a1a;
+    color: #e0e0e0;
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 6px 10px;
     border-radius: 4px;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: bold;
-    margin-top: 4px;
+    margin-top: 6px;
     text-align: center;
+    letter-spacing: 0.5px;
   }
 
   .timer-digit {
-    background: var(--primary);
-    padding: 2px 4px;
+    background: #2a2a2a;
+    color: #ffffff;
+    padding: 3px 6px;
     border-radius: 2px;
-    margin: 0 1px;
+    margin: 0 2px;
+    border: 1px solid rgba(255,255,255,0.1);
   }
 
   @media (max-width: 1200px) {

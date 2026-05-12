@@ -536,30 +536,42 @@
 
           window.changePage = (page) => fetchProducts(page);
 
+          // --- Bootstrap Carousel: explicit initialization for auto-slide ---
+          const carouselEl = document.getElementById('carouselExampleFade');
+          const bsCarousel = new bootstrap.Carousel(carouselEl, {
+            interval: 4000,
+            ride: 'carousel',
+            wrap: true,
+            pause: 'hover'
+          });
+          bsCarousel.cycle(); // start auto-cycling immediately
+
+          // Dot navigation using existing instance
+          document.querySelectorAll('.slideshow-nav .dot').forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+              bsCarousel.to(index);
+            });
+          });
+
+          // Update active dot on slide change
+          carouselEl.addEventListener('slid.bs.carousel', (e) => {
+            document.querySelectorAll('.slideshow-nav .dot').forEach((dot, i) => {
+              dot.classList.toggle('active', i === e.to);
+            });
+          });
+          // Set first dot active on load
+          const firstDot = document.querySelector('.slideshow-nav .dot');
+          if (firstDot) firstDot.classList.add('active');
+
+          // Preload images
           const media = [
             'https://www.xerjoff.com/img/purpleAccentodeDesk.jpg',
             'https://www.xerjoff.com/img/slidep33BlankDesk.jpg',
             'https://www.xerjoff.com/img/slideBlackMoonlightDesk1.jpg'
           ];
           media.forEach(src => {
-            if (src.endsWith('.mp4')) {
-              const video = document.createElement('video');
-              video.src = src;
-              video.preload = 'auto';
-            } else {
-              const img = new Image();
-              img.src = src;
-            }
-          });
-
-          document.querySelector('.carousel-item').classList.add('active');
-
-          document.querySelectorAll('.slideshow-nav .dot').forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-              const carousel = document.querySelector('#carouselExampleFade');
-              const bsCarousel = new bootstrap.Carousel(carousel);
-              bsCarousel.to(index);
-            });
+            const img = new Image();
+            img.src = src;
           });
         });
       </script>

@@ -8,13 +8,14 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
+    /* ---- Dark Monochrome overrides for product view page ---- */
     :root {
-      --primary: #046A38;     
-      --background: #FFFFFF;   
-      --text: #2E2E2E;       
-      --secondary: #C4B7A6;    
-      --highlight: #B3A580;  
-      --light-bg: #F8F9FA;
+      --primary:    #e0e0e0;
+      --background: #0d0d0d;
+      --text:       #e0e0e0;
+      --secondary:  rgba(255,255,255,0.18);
+      --highlight:  #c0c0c0;
+      --light-bg:   #1a1a1a;
     }
 
     .purchase-buttons {
@@ -25,66 +26,72 @@
 
     .btn-add-to-bag {
       flex: 1;
-      background-color: var(--background);
-      color: var(--primary);
-      border: 1px solid var(--primary);
+      background-color: #1a1a1a;
+      color: #e0e0e0;
+      border: 2px solid rgba(255,255,255,0.25);
       border-radius: 4px;
       padding: 12px 0;
       text-transform: uppercase;
-      font-weight: 500;
+      font-weight: 700;
+      font-family: 'Nunito', sans-serif;
       letter-spacing: 1px;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
+      box-shadow: 3px 3px 0px rgba(0,0,0,0.6);
     }
 
     .btn-add-to-bag:hover {
-      background-color: var(--primary);
-      color: var(--background);
+      background-color: #e0e0e0;
+      color: #0d0d0d;
+      box-shadow: 4px 4px 0px rgba(0,0,0,0.7);
     }
 
     .btn-buy-now {
       flex: 1;
-      background-color: var(--primary);
-      color: var(--background);
+      background-color: #e0e0e0;
+      color: #0d0d0d;
       border: none;
       border-radius: 4px;
       padding: 12px 0;
       text-transform: uppercase;
-      font-weight: 500;
+      font-weight: 700;
+      font-family: 'Nunito', sans-serif;
       letter-spacing: 1px;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
+      box-shadow: 3px 3px 0px rgba(0,0,0,0.6);
     }
 
     .btn-buy-now:hover {
-      background-color: var(--highlight);
-      color: var(--text);
+      background-color: #ffffff;
+      color: #0d0d0d;
     }
 
     .btn-add-to-bag:disabled,
     .btn-buy-now:disabled,
     .wishlist-icon:disabled,
     .btn-wishlist:disabled {
-      background-color: var(--secondary);
-      color: var(--text);
-      border-color: var(--secondary);
+      background-color: #333333;
+      color: #888888;
+      border-color: #333333;
       cursor: not-allowed;
       opacity: 0.6;
+      box-shadow: none;
     }
 
     .purchase-buttons .btn {
-        font-size: 17px;
-        font-weight: 700;
+      font-size: 15px;
+      font-weight: 700;
     }
 
     .wishlist-icon, .btn-wishlist {
       background: transparent;
       border: none;
       font-size: 1.2rem;
-      color: var(--primary);
-      transition: color 0.3s ease;
+      color: #e0e0e0;
+      transition: color 0.2s ease;
     }
 
     .wishlist-icon:hover, .btn-wishlist:hover {
-      color: var(--highlight);
+      color: #ffffff;
     }
 
     .btn-wishlist {
@@ -94,9 +101,9 @@
     }
 
     .breadcrumb-container {
-        padding: 16px 0;
-        background-color: var(--light-bg, #f9f9f9);
-        border-bottom: 1px solid var(--secondary, #e0e0e0);
+        padding: 12px 0;
+        background-color: #111111;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
       }
 
       .breadcrumb {
@@ -117,12 +124,12 @@
 
       .breadcrumb a {
         text-decoration: none;
-        color: var(--primary, #046A38);
+        color: var(--primary, #e0e0e0);
         transition: color 0.2s ease;
       }
 
       .breadcrumb a:hover {
-        color: var(--accent, #034f2b);
+        color: var(--accent, #ffffff);
         text-decoration: underline;
       }
 
@@ -222,7 +229,7 @@
 
     .size-option input[type="radio"]:checked + label {
       border-color: var(--primary);
-      background-color: rgba(4, 106, 56, 0.05);
+      background-color: rgba(255, 255, 255, 0.05);
     }
 
     .gift-option {
@@ -256,7 +263,7 @@
       position: absolute;
       top: 20px;
       right: 30px;
-      color: var(--background);
+      color: #e0e0e0;
       font-size: 2.5rem;
       font-weight: 300;
       cursor: pointer;
@@ -264,20 +271,20 @@
     }
 
     .zoom-close:hover {
-      color: var(--highlight);
+      color: #ffffff;
     }
 
     .similar-product-card {
       background-color: var(--background);
       border-radius: 4px;
       overflow: hidden;
-      box-shadow: 0 5px 20px rgba(4, 106, 56, 0.08);
+      box-shadow: 0 5px 20px rgba(255, 255, 255, 0.04);
       transition: all 0.3s ease;
     }
 
     .similar-product-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(4, 106, 56, 0.15);
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.07);
     }
 
     .carousel-control {
@@ -286,7 +293,7 @@
       border-radius: 50%;
       background-color: var(--background);
       border: 1px solid var(--primary);
-      box-shadow: 0 5px 20px rgba(4, 106, 56, 0.1);
+      box-shadow: 0 5px 20px rgba(255, 255, 255, 0.05);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -375,7 +382,7 @@
       font-size: 0.75rem;
       font-weight: bold;
       z-index: 1;
-      box-shadow: 0 2px 4px rgba(4, 106, 56, 0.2);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .offer-badge.categories {
@@ -411,12 +418,13 @@
     }
 
     .discount-percent {
-      background: var(--primary);
-      color: var(--background);
-      padding: 2px 6px;
+      background: #2a2a2a;
+      color: #e0e0e0;
+      padding: 2px 8px;
       border-radius: 3px;
       font-size: 0.75rem;
       font-weight: bold;
+      border: 1px solid rgba(255,255,255,0.15);
     }
 
     .savings-text {
@@ -468,22 +476,87 @@
 
     /* Countdown Timer */
     .countdown-timer {
-      background: var(--text);
-      color: var(--background);
-      padding: 4px 8px;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 6px 10px;
       border-radius: 4px;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: bold;
-      margin-top: 4px;
+      margin-top: 6px;
       text-align: center;
+      letter-spacing: 0.5px;
     }
 
     .timer-digit {
-      background: var(--primary);
-      padding: 2px 4px;
+      background: #2a2a2a;
+      color: #ffffff;
+      padding: 3px 6px;
       border-radius: 2px;
-      margin: 0 1px;
+      margin: 0 2px;
+      border: 1px solid rgba(255,255,255,0.1);
     }
+
+    /* Fragrance notes */
+    .fragrance-note {
+      display: inline-block;
+      background: #1e1e1e;
+      color: #c0c0c0;
+      padding: 5px 14px;
+      margin: 4px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.12);
+      letter-spacing: 0.03em;
+    }
+
+    /* Bootstrap accordion dark overrides */
+    .accordion-button {
+      background-color: #111111 !important;
+      color: #e0e0e0 !important;
+      border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+      box-shadow: none !important;
+    }
+    .accordion-button:not(.collapsed) {
+      background-color: #1a1a1a !important;
+      color: #ffffff !important;
+    }
+    .accordion-button::after {
+      filter: invert(1);
+    }
+    .accordion-item {
+      background-color: #0d0d0d !important;
+      border: none !important;
+    }
+    .accordion-body {
+      background-color: #0d0d0d;
+      color: #c0c0c0;
+    }
+
+    /* Info badges */
+    .info-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      color: #c0c0c0;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+    }
+
+    /* Product details section */
+    .product-specs .row {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 8px 0;
+      color: #e0e0e0;
+    }
+    h3 { color: #e0e0e0; }
+    .text-muted { color: #888888 !important; }
   </style>
 </head>
 <body>
@@ -828,7 +901,7 @@
         } else {
           icon.classList.remove('fa-regular', 'fa-heart');
           icon.classList.add('fa-solid', 'fa-heart');
-          icon.style.color = '#046A38';
+          icon.style.color = '#e0e0e0';
           showToast('Added to wishlist', 'success');
         }
       } else {
